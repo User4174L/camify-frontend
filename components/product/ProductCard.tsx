@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import type { Product } from '@/data/products';
+import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
 
 function formatPrice(price: number): string {
   return price.toLocaleString('nl-NL');
@@ -10,13 +11,14 @@ function formatPrice(price: number): string {
 
 export default function ProductCard({
   product,
-  recentlyViewed,
 }: {
   product: Product;
   onQuickView?: (id: string) => void;
-  recentlyViewed?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
+  const [wishlisted, setWishlisted] = useState(false);
+  const { isProductViewed } = useRecentlyViewed();
+  const recentlyViewed = isProductViewed(product.slug);
 
   /* Price range from variants */
   const prices = product.variants.map(v => v.price);
@@ -129,6 +131,7 @@ export default function ProductCard({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              setWishlisted(prev => !prev);
             }}
             aria-label="Wishlist"
             style={{
@@ -144,7 +147,7 @@ export default function ProductCard({
               boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
             }}
           >
-            <svg width="16" height="16" fill="none" stroke="#888" strokeWidth="1.8" viewBox="0 0 24 24">
+            <svg width="16" height="16" fill={wishlisted ? '#ef4444' : 'none'} stroke={wishlisted ? '#ef4444' : '#888'} strokeWidth="1.8" viewBox="0 0 24 24">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
           </button>
@@ -194,10 +197,28 @@ export default function ProductCard({
         {/* Stock indicator */}
         {product.stock > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', display: 'inline-block', flexShrink: 0 }} />
-            <span style={{ fontSize: 13, color: '#6b7280' }}>
-              {product.stock} in stock
-            </span>
+            {product.stock <= 2 ? (
+              <>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#ef4444' }}>
+                  Last {product.stock} in stock!
+                </span>
+              </>
+            ) : product.stock <= 5 ? (
+              <>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#f59e0b' }}>
+                  Only {product.stock} left
+                </span>
+              </>
+            ) : (
+              <>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ fontSize: 13, color: '#6b7280' }}>
+                  {product.stock} in stock
+                </span>
+              </>
+            )}
           </div>
         )}
       </Link>

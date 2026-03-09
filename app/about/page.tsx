@@ -15,13 +15,16 @@ const tabs = [
 
 export default function AboutPage() {
   const [activeTab, setActiveTab] = useState('story');
+  const [contactSubmitted, setContactSubmitted] = useState(false);
 
   return (
     <div className="container">
       <Breadcrumb items={[{ label: 'About Us' }]} />
 
-      <section style={{ background: 'var(--dark)', color: '#fff', borderRadius: 'var(--rl)', padding: '48px 40px', marginBottom: 48, textAlign: 'center' }}>
-        <h1 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 700, marginBottom: 12 }}>About Camify</h1>
+      <section style={{ background: 'linear-gradient(135deg, #1E2133 0%, #2a2d42 50%, #1E2133 100%)', color: '#fff', borderRadius: 'var(--rl)', padding: '48px 40px', marginBottom: 48, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(232,105,42,.08) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', bottom: -60, left: -20, width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(circle, rgba(232,105,42,.05) 0%, transparent 70%)' }} />
+        <h1 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 700, marginBottom: 12, position: 'relative' }}>About Camify</h1>
         <p style={{ fontSize: 16, color: 'rgba(255,255,255,.7)', maxWidth: 600, margin: '0 auto 32px' }}>
           The trusted marketplace for second-hand camera equipment. Founded in 2018, serving photographers across Europe.
         </p>
@@ -46,7 +49,7 @@ export default function AboutPage() {
           <button
             key={t.id}
             className={`filter-tab${activeTab === t.id ? ' filter-tab--active' : ''}`}
-            onClick={() => setActiveTab(t.id)}
+            onClick={(e) => { e.preventDefault(); const scrollY = window.scrollY; setActiveTab(t.id); requestAnimationFrame(() => window.scrollTo(0, scrollY)); }}
           >
             {t.label}
           </button>
@@ -88,7 +91,7 @@ export default function AboutPage() {
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>Warranty & Returns</h2>
             <p style={{ fontSize: 15, color: 'var(--text-sec)', lineHeight: 1.7 }}>
-              Every item comes with a minimum 12-month warranty. You have 14 days to return any item, no questions asked. We want you to be completely satisfied with your purchase.
+              Every item comes with a minimum 12-month warranty. For online purchases, you have 14 days to return any item, no questions asked. We want you to be completely satisfied with your purchase.
             </p>
           </div>
         )}
@@ -114,15 +117,31 @@ export default function AboutPage() {
             <p style={{ fontSize: 15, color: 'var(--text-sec)', lineHeight: 1.7, marginBottom: 24 }}>
               Have a question? We are here to help.
             </p>
-            <form onSubmit={e => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <input placeholder="First name" style={{ padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--r)', fontSize: 14, fontFamily: 'inherit', outline: 'none' }} />
-                <input placeholder="Last name" style={{ padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--r)', fontSize: 14, fontFamily: 'inherit', outline: 'none' }} />
+            <div style={{ background: 'var(--surface)', borderRadius: 12, padding: '20px 24px', marginBottom: 24, border: '1px solid var(--border)', textAlign: 'left' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 32px', fontSize: 14 }}>
+                <div><span style={{ color: 'var(--text-sec)', fontWeight: 500 }}>Bedrijf:</span> <span style={{ fontWeight: 600 }}>Camera-tweedehands.nl B.V.</span></div>
+                <div><span style={{ color: 'var(--text-sec)', fontWeight: 500 }}>E-mail:</span> <span style={{ fontWeight: 600 }}>support@camera-tweedehands.nl</span></div>
+                <div><span style={{ color: 'var(--text-sec)', fontWeight: 500 }}>Adres:</span> <span style={{ fontWeight: 600 }}>Kerkstraat 47 Bis, 4191AA Geldermalsen</span></div>
+                <div><span style={{ color: 'var(--text-sec)', fontWeight: 500 }}>Telefoon:</span> <span style={{ fontWeight: 600 }}>085 301 83 32</span></div>
+                <div><span style={{ color: 'var(--text-sec)', fontWeight: 500 }}>KVK:</span> <span style={{ fontWeight: 600 }}>80564674</span></div>
+                <div><span style={{ color: 'var(--text-sec)', fontWeight: 500 }}>BTW:</span> <span style={{ fontWeight: 600 }}>NL861717971B01</span></div>
               </div>
-              <input type="email" placeholder="Email" style={{ padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--r)', fontSize: 14, fontFamily: 'inherit', outline: 'none' }} />
-              <textarea placeholder="Your message" rows={5} style={{ padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--r)', fontSize: 14, fontFamily: 'inherit', outline: 'none', resize: 'vertical' }} />
-              <button className="btn btn--primary" type="submit" style={{ alignSelf: 'flex-start' }}>Send Message</button>
-            </form>
+            </div>
+            {contactSubmitted ? (
+              <p style={{ fontSize: 15, color: '#22c55e', fontWeight: 600, padding: '24px 0' }}>
+                Bericht verstuurd! We nemen zo snel mogelijk contact op.
+              </p>
+            ) : (
+              <form onSubmit={e => { e.preventDefault(); setContactSubmitted(true); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <input placeholder="First name" style={{ padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--r)', fontSize: 14, fontFamily: 'inherit', outline: 'none' }} />
+                  <input placeholder="Last name" style={{ padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--r)', fontSize: 14, fontFamily: 'inherit', outline: 'none' }} />
+                </div>
+                <input type="email" placeholder="Email" style={{ padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--r)', fontSize: 14, fontFamily: 'inherit', outline: 'none' }} />
+                <textarea placeholder="Your message" rows={5} style={{ padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--r)', fontSize: 14, fontFamily: 'inherit', outline: 'none', resize: 'vertical' }} />
+                <button className="btn btn--primary" type="submit" style={{ alignSelf: 'flex-start' }}>Send Message</button>
+              </form>
+            )}
           </div>
         )}
       </div>

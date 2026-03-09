@@ -199,7 +199,7 @@ export const navCategories: NavCategory[] = [
 
   // ── VIDEO & CINEMA ──
   {
-    label: 'Video & Cinema',
+    label: 'Video',
     href: '/cinema',
     menuCols: 4,
     columns: [

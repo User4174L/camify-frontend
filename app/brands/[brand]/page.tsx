@@ -14,7 +14,14 @@ export default function BrandPage() {
   const brandName = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
   const brandProducts = products.filter(p => p.brand.toLowerCase() === brandSlug.toLowerCase());
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState('relevance');
   const quickViewProduct = quickViewId ? products.find(p => p.id === quickViewId) ?? null : null;
+
+  const sortedProducts = [...brandProducts].sort((a, b) => {
+    if (sortBy === 'price-low') return a.price - b.price;
+    if (sortBy === 'price-high') return b.price - a.price;
+    return 0;
+  });
 
   const cameraCount = brandProducts.filter(p => p.category === 'cameras').length;
   const lensCount = brandProducts.filter(p => p.category === 'lenses').length;
@@ -54,14 +61,14 @@ export default function BrandPage() {
 
       <div className="results-bar">
         <span>Showing {brandProducts.length} results</span>
-        <select defaultValue="relevance">
+        <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
           <option value="relevance">Sort by: Relevance</option>
           <option value="price-low">Price: low → high</option>
           <option value="price-high">Price: high → low</option>
         </select>
       </div>
 
-      <ProductGrid products={brandProducts} onQuickView={setQuickViewId} />
+      <ProductGrid products={sortedProducts} onQuickView={setQuickViewId} />
 
       <QuickView product={quickViewProduct} onClose={() => setQuickViewId(null)} />
     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumb from '@/components/layout/Breadcrumb';
@@ -9,7 +9,38 @@ import QuickView from '@/components/product/QuickView';
 import { products } from '@/data/products';
 
 const inStockCameras = products.filter(p => p.category === 'cameras' && p.stock > 0);
-const oosProducts = products.filter(p => p.category === 'cameras' && p.stock === 0);
+
+/* ── Filter matching helpers ── */
+function matchesPriceRange(price: number, range: string): boolean {
+  if (range === 'Under €500') return price < 500;
+  if (range === '€500 – €1,000') return price >= 500 && price <= 1000;
+  if (range === '€1,000 – €2,000') return price >= 1000 && price <= 2000;
+  if (range === '€2,000 – €5,000') return price >= 2000 && price <= 5000;
+  if (range === '€5,000+') return price >= 5000;
+  return false;
+}
+
+function matchesSensor(sensorSpec: string | undefined, filter: string): boolean {
+  if (!sensorSpec) return false;
+  const s = sensorSpec.toLowerCase();
+  if (filter === 'Full Frame') return s.includes('full frame');
+  if (filter === 'APS-C / DX') return s.includes('aps-c') || s.includes('dx');
+  if (filter === 'Micro Four Thirds') return s.includes('micro four thirds');
+  if (filter === 'Medium Format') return s.includes('medium format');
+  if (filter === '1-inch') return s.includes('1-inch') || s.includes('1"');
+  return false;
+}
+
+function matchesVideo(videoSpec: string | undefined, filter: string): boolean {
+  if (!videoSpec) return false;
+  const v = videoSpec.toLowerCase();
+  if (filter === '4K') return v.includes('4k');
+  if (filter === '6K') return v.includes('6k');
+  if (filter === '8K') return v.includes('8k');
+  if (filter === '4K 120fps') return v.includes('4k 120');
+  if (filter === 'RAW Video') return v.includes('raw');
+  return false;
+}
 
 const subcategories = [
   { label: 'All Cameras', href: '/cameras', count: '850+', active: true, image: null },
@@ -71,11 +102,99 @@ const ArrowRight = () => (
   </svg>
 );
 
+
 export default function CamerasPage() {
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
   const [openFilter, setOpenFilter] = useState<string | null>(null);
+  const filterBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (filterBarRef.current && !filterBarRef.current.contains(e.target as Node)) {
+        setOpenFilter(null);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const [readMore, setReadMore] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  /* ── Filter & sort state ── */
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedPrices, setSelectedPrices] = useState<string[]>([]);
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
+  const [selectedMounts, setSelectedMounts] = useState<string[]>([]);
+  const [selectedVideos, setSelectedVideos] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState('relevance');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filterStateMap: Record<string, { selected: string[]; toggle: (v: string) => void }> = {
+    Brand: { selected: selectedBrands, toggle: (v) => setSelectedBrands(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
+    Price: { selected: selectedPrices, toggle: (v) => setSelectedPrices(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
+    Condition: { selected: selectedConditions, toggle: (v) => setSelectedConditions(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
+    'Sensor Size': { selected: selectedSensors, toggle: (v) => setSelectedSensors(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
+    Mount: { selected: selectedMounts, toggle: (v) => setSelectedMounts(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
+    Video: { selected: selectedVideos, toggle: (v) => setSelectedVideos(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
+  };
+
+  /* ── Derived filtered + sorted list ── */
+  const filteredSortedCameras = useMemo(() => {
+    let result = [...inStockCameras];
+
+    // Brand filter
+    if (selectedBrands.length > 0) {
+      result = result.filter(p => selectedBrands.includes(p.brand));
+    }
+    // Price filter
+    if (selectedPrices.length > 0) {
+      result = result.filter(p => selectedPrices.some(range => matchesPriceRange(p.price, range)));
+    }
+    // Condition filter — match if any variant has a matching conditionLabel
+    if (selectedConditions.length > 0) {
+      result = result.filter(p =>
+        p.variants.some(v => selectedConditions.includes(v.conditionLabel))
+      );
+    }
+    // Sensor Size filter
+    if (selectedSensors.length > 0) {
+      result = result.filter(p =>
+        selectedSensors.some(f => matchesSensor(p.specs?.['Sensor'], f))
+      );
+    }
+    // Mount filter
+    if (selectedMounts.length > 0) {
+      result = result.filter(p => {
+        const mount = p.specs?.['Mount'];
+        return mount ? selectedMounts.includes(mount) : false;
+      });
+    }
+    // Video filter
+    if (selectedVideos.length > 0) {
+      result = result.filter(p =>
+        selectedVideos.some(f => matchesVideo(p.specs?.['Video'], f))
+      );
+    }
+
+    // Sorting
+    if (sortBy === 'price-low') {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-high') {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'newest') {
+      result.sort((a, b) => Number(b.id) - Number(a.id));
+    }
+
+    return result;
+  }, [selectedBrands, selectedPrices, selectedConditions, selectedSensors, selectedMounts, selectedVideos, sortBy]);
+
+  const ITEMS_PER_PAGE = 16;
+  const totalPages = Math.max(1, Math.ceil(filteredSortedCameras.length / ITEMS_PER_PAGE));
+  const paginatedCameras = filteredSortedCameras.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const firstHalf = paginatedCameras.slice(0, 8);
+  const secondHalf = paginatedCameras.slice(8);
 
   const quickViewProduct = quickViewId ? products.find(p => p.id === quickViewId) ?? null : null;
 
@@ -84,6 +203,7 @@ export default function CamerasPage() {
       scrollRef.current.scrollBy({ left: dir * 200, behavior: 'smooth' });
     }
   };
+
 
   return (
     <div className="container">
@@ -125,7 +245,7 @@ export default function CamerasPage() {
 
         {readMore && (
           <p style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)', maxWidth: 800, marginTop: 12 }}>
-            Whether you&apos;re a hobbyist upgrading from a smartphone or a professional looking for a reliable backup body, our range covers every need and budget. All cameras come with detailed condition reports, accurate shutter counts, and are covered by our comprehensive warranty program. We ship across Europe with fast delivery and easy 14-day returns.
+            Whether you&apos;re a hobbyist upgrading from a smartphone or a professional looking for a reliable backup body, our range covers every need and budget. All cameras come with detailed condition reports, accurate shutter counts, and are covered by our comprehensive warranty program. We ship across Europe with fast delivery and easy 14-day returns for online purchases.
           </p>
         )}
       </div>
@@ -252,65 +372,77 @@ export default function CamerasPage() {
       </div>
 
       {/* Filter bar */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-        {filterButtons.map(f => (
-          <div key={f} style={{ position: 'relative' }}>
-            <button
-              onClick={() => setOpenFilter(openFilter === f ? null : f)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: '8px 16px',
-                borderRadius: 999,
-                border: '1.5px solid var(--border)',
-                background: openFilter === f ? 'var(--accent)' : 'transparent',
-                color: openFilter === f ? '#fff' : 'var(--text)',
-                fontSize: 13,
-                fontWeight: 500,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {f}
-              <ChevronDown />
-            </button>
-
-            {openFilter === f && filterOptions[f] && (
-              <div
+      <div ref={filterBarRef} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+        {filterButtons.map(f => {
+          const activeCount = filterStateMap[f].selected.length;
+          const hasActive = activeCount > 0;
+          return (
+            <div key={f} style={{ position: 'relative' }}>
+              <button
+                onClick={() => setOpenFilter(openFilter === f ? null : f)}
                 style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 6px)',
-                  left: 0,
-                  background: 'var(--bg)',
-                  border: '1.5px solid var(--border)',
-                  borderRadius: 12,
-                  padding: '8px 0',
-                  minWidth: 180,
-                  zIndex: 10,
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '8px 16px',
+                  borderRadius: 999,
+                  border: hasActive ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
+                  background: openFilter === f ? 'var(--accent)' : hasActive ? 'rgba(249,115,22,0.1)' : 'transparent',
+                  color: openFilter === f ? '#fff' : 'var(--text)',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                {filterOptions[f].map(option => (
-                  <label
-                    key={option}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      padding: '8px 16px',
-                      fontSize: 13,
-                      cursor: 'pointer',
-                      color: 'var(--text)',
-                    }}
-                  >
-                    <input type="checkbox" /> {option}
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+                {f}{hasActive ? ` (${activeCount})` : ''}
+                <ChevronDown />
+              </button>
+
+              {openFilter === f && filterOptions[f] && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 6px)',
+                    left: 0,
+                    background: 'var(--bg)',
+                    border: '1.5px solid var(--border)',
+                    borderRadius: 12,
+                    padding: '8px 0',
+                    minWidth: 180,
+                    zIndex: 10,
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                  }}
+                >
+                  {filterOptions[f].map(option => (
+                    <label
+                      key={option}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: '8px 16px',
+                        fontSize: 13,
+                        cursor: 'pointer',
+                        color: 'var(--text)',
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={filterStateMap[f].selected.includes(option)}
+                        onChange={() => {
+                          filterStateMap[f].toggle(option);
+                          setCurrentPage(1);
+                        }}
+                        style={{ accentColor: 'var(--accent)' }}
+                      /> {option}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Results bar */}
@@ -324,9 +456,10 @@ export default function CamerasPage() {
           color: 'var(--text-secondary)',
         }}
       >
-        <span>Showing {inStockCameras.length > 0 ? inStockCameras.length : '850'} results</span>
+        <span>Showing {filteredSortedCameras.length} result{filteredSortedCameras.length !== 1 ? 's' : ''}</span>
         <select
-          defaultValue="relevance"
+          value={sortBy}
+          onChange={(e) => { setSortBy(e.target.value); setCurrentPage(1); }}
           style={{
             padding: '6px 12px',
             borderRadius: 8,
@@ -345,7 +478,32 @@ export default function CamerasPage() {
       </div>
 
       {/* Product grid */}
-      <ProductGrid products={inStockCameras} onQuickView={setQuickViewId} />
+      {filteredSortedCameras.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-secondary)' }}>
+          <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No cameras match your filters</p>
+          <p style={{ fontSize: 14 }}>Try removing some filters to see more results.</p>
+        </div>
+      ) : (
+        <>
+          <ProductGrid products={firstHalf} onQuickView={setQuickViewId} />
+
+          {secondHalf.length > 0 && (
+            <>
+              {/* USP trust band */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 32, padding: '28px 0', margin: '24px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+                {['12-month warranty', 'Professionally inspected', 'Free shipping from \u20AC50', '14-day returns'].map(text => (
+                  <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                    {text}
+                  </div>
+                ))}
+              </div>
+
+              <ProductGrid products={secondHalf} onQuickView={setQuickViewId} />
+            </>
+          )}
+        </>
+      )}
 
       {/* Pagination */}
       <div
@@ -358,176 +516,89 @@ export default function CamerasPage() {
         }}
       >
         <button
+          onClick={() => {
+            if (currentPage > 1) { setCurrentPage(currentPage - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+          }}
+          disabled={currentPage <= 1}
           style={{
             width: 36,
             height: 36,
             borderRadius: 8,
             border: '1.5px solid var(--border)',
             background: 'transparent',
-            cursor: 'pointer',
+            cursor: currentPage <= 1 ? 'default' : 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--text)',
+            color: currentPage <= 1 ? 'var(--text-tertiary, #ccc)' : 'var(--text)',
+            opacity: currentPage <= 1 ? 0.4 : 1,
           }}
         >
           <ArrowLeft />
         </button>
-        {[1, 2, 3, 4, 5].map(page => (
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
           <button
             key={page}
+            onClick={() => { setCurrentPage(page); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             style={{
               width: 36,
               height: 36,
               borderRadius: 8,
-              border: page === 1 ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
-              background: page === 1 ? 'var(--accent)' : 'transparent',
-              color: page === 1 ? '#fff' : 'var(--text)',
+              border: page === currentPage ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
+              background: page === currentPage ? 'var(--accent)' : 'transparent',
+              color: page === currentPage ? '#fff' : 'var(--text)',
               cursor: 'pointer',
               fontSize: 14,
-              fontWeight: page === 1 ? 600 : 400,
+              fontWeight: page === currentPage ? 600 : 400,
             }}
           >
             {page}
           </button>
         ))}
         <button
+          onClick={() => {
+            if (currentPage < totalPages) { setCurrentPage(currentPage + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+          }}
+          disabled={currentPage >= totalPages}
           style={{
             width: 36,
             height: 36,
             borderRadius: 8,
             border: '1.5px solid var(--border)',
             background: 'transparent',
-            cursor: 'pointer',
+            cursor: currentPage >= totalPages ? 'default' : 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--text)',
+            color: currentPage >= totalPages ? 'var(--text-tertiary, #ccc)' : 'var(--text)',
+            opacity: currentPage >= totalPages ? 0.4 : 1,
           }}
         >
           <ArrowRight />
         </button>
+        <span style={{ marginLeft: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
+          Page {currentPage} of {totalPages}
+        </span>
       </div>
 
-      {/* Out of stock section */}
-      {oosProducts.length > 0 && (
-        <div style={{ marginTop: 32 }}>
-          {/* Divider */}
-          <div style={{ borderTop: '1px solid #e5e7eb' }} />
-
-          {/* Pill / badge */}
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                border: '1px solid #e5e7eb',
-                borderRadius: 999,
-                padding: '8px 20px',
-                fontSize: 14,
-                color: '#6b7280',
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              Out of stock models — create an alert to get notified
-            </span>
-          </div>
-
-          {/* OOS product grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 16,
-            }}
-          >
-            {oosProducts.map(product => (
-              <div
-                key={product.id}
-                style={{
-                  border: '1px solid #e5e7eb',
-                  borderRadius: 12,
-                  background: '#fff',
-                  overflow: 'hidden',
-                }}
-              >
-                {/* Image container */}
-                <div style={{ position: 'relative' }}>
-                  <div
-                    style={{
-                      aspectRatio: '1',
-                      background: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '12%',
-                    }}
-                  >
-                    <Image
-                      src={product.image}
-                      alt={product.title}
-                      width={300}
-                      height={300}
-                      style={{ objectFit: 'contain', width: '100%', height: '100%' }}
-                    />
-                  </div>
-                  {/* Out of stock badge on image */}
-                  <span
-                    style={{
-                      position: 'absolute',
-                      bottom: 8,
-                      right: 8,
-                      background: '#1f2937',
-                      color: '#fff',
-                      fontSize: 12,
-                      fontWeight: 600,
-                      padding: '4px 10px',
-                      borderRadius: 999,
-                    }}
-                  >
-                    Out of stock
-                  </span>
-                </div>
-
-                {/* Card body */}
-                <div style={{ padding: '12px 16px 16px' }}>
-                  <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>
-                    {product.title}
-                  </div>
-                  <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 12 }}>
-                    Out of stock
-                  </div>
-                  <button
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      background: '#f97316',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 999,
-                      padding: '8px 18px',
-                      fontSize: 13,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                    </svg>
-                    Notify me
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* OOS CTA */}
+      <div style={{ textAlign: 'center', padding: '32px 0', borderTop: '1px solid var(--border)', marginTop: 16 }}>
+        <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginBottom: 16 }}>
+          Looking for a model that&apos;s currently unavailable?
+        </p>
+        <Link
+          href="/cameras/out-of-stock"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '12px 28px', border: '2px solid var(--accent)',
+            borderRadius: 999, background: 'transparent', color: 'var(--accent)',
+            fontSize: 14, fontWeight: 600, textDecoration: 'none',
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          View out of stock &amp; set alerts
+        </Link>
+      </div>
 
       {/* SEO text block */}
       <div
@@ -558,11 +629,32 @@ export default function CamerasPage() {
           </p>
           <p style={{ marginTop: 12 }}>
             Every camera comes with a detailed condition report, accurate shutter count, and our comprehensive 12-month warranty.
-            We offer fast shipping across Europe, secure payments, and easy 14-day returns.
+            We offer fast shipping across Europe, secure payments, and easy 14-day returns for online purchases.
             Browse our <Link href="/cameras/compact" style={orangeLink}>compact cameras</Link>,{' '}
             <Link href="/cameras/rangefinder" style={orangeLink}>rangefinders</Link>, or{' '}
             <Link href="/cameras/analog-film" style={orangeLink}>analog film cameras</Link> to find the perfect match for your photography.
           </p>
+        </div>
+      </div>
+
+      {/* FAQs */}
+      <div style={{ marginBottom: 48 }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Frequently asked questions</h2>
+        <div className="accordion">
+          {[
+            { q: 'What warranty do your cameras come with?', a: 'Every camera comes with a 12-month Camify warranty covering manufacturing defects and mechanical failures. This includes shutter mechanisms, autofocus systems, and sensor issues.' },
+            { q: 'How do you determine the condition grade?', a: 'Our team inspects every camera using a standardized checklist. We check cosmetic condition, sensor cleanliness, autofocus accuracy, shutter mechanism, and all buttons and dials. The grade reflects the overall state of the camera.' },
+            { q: 'Can I return a camera if I\'m not satisfied?', a: 'Yes. For online purchases you have 14 days after delivery to return the camera, no questions asked. The item must be in the same condition as received. We\'ll arrange a prepaid return label.' },
+            { q: 'Are shutter counts accurate?', a: 'Yes. We read shutter counts directly from the camera\'s EXIF data using professional diagnostic tools. For Canon, we use manufacturer service software. The exact count is shown on every listing.' },
+          ].map((faq, i) => (
+            <div key={i} className={`accordion__item${openFaq === i ? ' is-open' : ''}`}>
+              <button className="accordion__trigger" aria-expanded={openFaq === i} onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                {faq.q}
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div className="accordion__body"><p>{faq.a}</p></div>
+            </div>
+          ))}
         </div>
       </div>
 

@@ -1,10 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import type { CartItem } from '@/context/CartContext';
 import type { Product } from '@/data/products';
-import { products } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 
 interface UpsellItem {
@@ -18,30 +16,96 @@ function getUpsellItems(brand: string): UpsellItem[] {
   const b = brand.toLowerCase();
   if (b === 'nikon') {
     return [
-      { id: 'upsell-nikon-battery', name: 'Nikon EN-EL15c Battery', description: 'Original Nikon rechargeable Li-ion battery', price: 59 },
-      { id: 'upsell-nikon-card', name: 'Sony CFexpress Type B 128GB', description: 'High-speed memory card for 8K video', price: 149 },
-      { id: 'upsell-nikon-adapter', name: 'Nikon FTZ II Mount Adapter', description: 'Use F-mount lenses on Z-mount bodies', price: 219 },
+      { id: 'upsell-900001', name: 'Nikon EN-EL15c Battery', description: 'Original Nikon rechargeable Li-ion battery', price: 59 },
+      { id: 'upsell-900002', name: 'Sony CFexpress Type B 128GB', description: 'High-speed memory card for 8K video', price: 149 },
+      { id: 'upsell-900003', name: 'Nikon FTZ II Mount Adapter', description: 'Use F-mount lenses on Z-mount bodies', price: 219 },
     ];
   }
   if (b === 'canon') {
     return [
-      { id: 'upsell-canon-battery', name: 'Canon LP-E6NH Battery', description: 'High-capacity rechargeable battery pack', price: 59 },
-      { id: 'upsell-canon-card', name: 'SanDisk CFexpress Type B 128GB', description: 'Professional-grade memory card', price: 149 },
-      { id: 'upsell-canon-adapter', name: 'Canon Mount Adapter EF-EOS R', description: 'Use EF/EF-S lenses on RF-mount bodies', price: 99 },
+      { id: 'upsell-900004', name: 'Canon LP-E6NH Battery', description: 'High-capacity rechargeable battery pack', price: 59 },
+      { id: 'upsell-900005', name: 'SanDisk CFexpress Type B 128GB', description: 'Professional-grade memory card', price: 149 },
+      { id: 'upsell-900006', name: 'Canon Mount Adapter EF-EOS R', description: 'Use EF/EF-S lenses on RF-mount bodies', price: 99 },
     ];
   }
   if (b === 'sony') {
     return [
-      { id: 'upsell-sony-battery', name: 'Sony NP-FZ100 Battery', description: 'Rechargeable battery for Alpha series', price: 59 },
-      { id: 'upsell-sony-card', name: 'Sony CFexpress Type A 160GB', description: 'Compact high-speed memory card', price: 189 },
-      { id: 'upsell-sony-adapter', name: 'Sony LA-EA5 Mount Adapter', description: 'Use A-mount lenses on E-mount bodies', price: 249 },
+      { id: 'upsell-900007', name: 'Sony NP-FZ100 Battery', description: 'Rechargeable battery for Alpha series', price: 59 },
+      { id: 'upsell-900008', name: 'Sony CFexpress Type A 160GB', description: 'Compact high-speed memory card', price: 189 },
+      { id: 'upsell-900009', name: 'Sony LA-EA5 Mount Adapter', description: 'Use A-mount lenses on E-mount bodies', price: 249 },
     ];
   }
   return [
-    { id: 'upsell-default-battery', name: 'Extra Battery', description: 'Compatible replacement battery', price: 49 },
-    { id: 'upsell-default-card', name: 'Memory Card 128GB', description: 'High-speed SD memory card', price: 99 },
-    { id: 'upsell-default-bag', name: 'Camera Bag', description: 'Padded shoulder bag for your camera', price: 79 },
+    { id: 'upsell-900010', name: 'Extra Battery', description: 'Compatible replacement battery', price: 49 },
+    { id: 'upsell-900011', name: 'Memory Card 128GB', description: 'High-speed SD memory card', price: 99 },
+    { id: 'upsell-900012', name: 'Camera Bag', description: 'Padded shoulder bag for your camera', price: 79 },
   ];
+}
+
+function getUpsellIcon(name: string): { bg: string; icon: React.ReactNode } {
+  const n = name.toLowerCase();
+  if (n.includes('battery') || n.includes('accu')) {
+    return {
+      bg: '#fff7ed',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="6" y="4" width="12" height="18" rx="2" />
+          <line x1="10" y1="1" x2="10" y2="4" />
+          <line x1="14" y1="1" x2="14" y2="4" />
+          <line x1="10" y1="11" x2="14" y2="11" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+        </svg>
+      ),
+    };
+  }
+  if (n.includes('memory') || n.includes('cfexpress') || n.includes('sd ') || n.includes('card')) {
+    return {
+      bg: '#eff6ff',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 2h8l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
+          <line x1="8" y1="6" x2="8" y2="10" />
+          <line x1="11" y1="6" x2="11" y2="10" />
+          <line x1="14" y1="6" x2="14" y2="8" />
+        </svg>
+      ),
+    };
+  }
+  if (n.includes('adapter') || n.includes('mount')) {
+    return {
+      bg: '#f5f3ff',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="5" />
+          <circle cx="12" cy="12" r="2" />
+        </svg>
+      ),
+    };
+  }
+  if (n.includes('bag') || n.includes('case') || n.includes('tas')) {
+    return {
+      bg: '#f0fdf4',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <path d="M16 10a4 4 0 0 1-8 0" />
+        </svg>
+      ),
+    };
+  }
+  // Fallback
+  return {
+    bg: '#f3f4f6',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <path d="m21 15-5-5L5 21" />
+      </svg>
+    ),
+  };
 }
 
 function formatPrice(price: number): string {
@@ -63,14 +127,6 @@ export default function UpsellPopup({
   const [addedUpsells, setAddedUpsells] = useState<Set<string>>(new Set());
 
   const upsellItems = getUpsellItems(product.brand);
-
-  // "You might also like" - products from same category, different brand if possible
-  const sameCategory = products.filter(
-    (p) => p.category === product.category && p.id !== product.id
-  );
-  const differentBrand = sameCategory.filter((p) => p.brand !== product.brand);
-  const alsoLikePool = differentBrand.length >= 3 ? differentBrand : sameCategory;
-  const alsoLike = alsoLikePool.slice(0, 3);
 
   const handleAddUpsell = (upsell: UpsellItem) => {
     addItem({
@@ -191,25 +247,26 @@ export default function UpsellPopup({
                     borderRadius: 10,
                   }}
                 >
-                  {/* Placeholder thumbnail */}
-                  <div
-                    style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 8,
-                      background: '#f3f4f6',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.5">
-                      <rect x="3" y="3" width="18" height="18" rx="2" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <path d="m21 15-5-5L5 21" />
-                    </svg>
-                  </div>
+                  {/* Product type thumbnail */}
+                  {(() => {
+                    const { bg, icon } = getUpsellIcon(upsell.name);
+                    return (
+                      <div
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: 8,
+                          background: bg,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {icon}
+                      </div>
+                    );
+                  })()}
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#111' }}>{upsell.name}</div>
@@ -243,85 +300,6 @@ export default function UpsellPopup({
             })}
           </div>
         </div>
-
-        {/* You Might Also Like */}
-        {alsoLike.length > 0 && (
-          <div style={{ padding: '4px 24px 20px' }}>
-            <div
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                color: '#9ca3af',
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                marginBottom: 14,
-              }}
-            >
-              You might also like
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-              {alsoLike.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/product/${p.slug}`}
-                  onClick={onClose}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <div
-                    style={{
-                      border: '1px solid #e5e7eb',
-                      borderRadius: 10,
-                      overflow: 'hidden',
-                      background: '#fff',
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: '#f3f4f6',
-                        aspectRatio: '1',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 8,
-                      }}
-                    >
-                      <img
-                        src={p.image}
-                        alt={p.title}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain',
-                        }}
-                      />
-                    </div>
-                    <div style={{ padding: '8px 10px 10px' }}>
-                      <div
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 600,
-                          color: '#111',
-                          lineHeight: 1.3,
-                          marginBottom: 4,
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {p.title}
-                      </div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: '#f97316' }}>
-                        {p.fromPrice && 'from '}
-                        &euro; {formatPrice(p.price)}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Bottom actions */}
         <div style={{ padding: '0 24px 24px' }}>

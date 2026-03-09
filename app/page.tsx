@@ -4,16 +4,18 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ProductGrid from '@/components/product/ProductGrid';
 import QuickView from '@/components/product/QuickView';
-import { products, categories } from '@/data/products';
+import { products } from '@/data/products';
 
-const categoryIcons: Record<string, React.ReactNode> = {
-  camera: <svg width="48" height="48" fill="none" stroke="#6B6D80" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M7 6V4h4v2"/></svg>,
-  lens: <svg width="48" height="48" fill="none" stroke="#6B6D80" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/></svg>,
-  cinema: <svg width="48" height="48" fill="none" stroke="#6B6D80" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10,9 16,12 10,15"/></svg>,
-  drone: <svg width="48" height="48" fill="none" stroke="#6B6D80" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><rect x="9" y="9" width="6" height="6" rx="1"/><line x1="6" y1="6" x2="9" y2="9"/><line x1="18" y1="6" x2="15" y2="9"/><line x1="6" y1="18" x2="9" y2="15"/><line x1="18" y1="18" x2="15" y2="15"/></svg>,
-  accessories: <svg width="48" height="48" fill="none" stroke="#6B6D80" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M20 7h-4l-2-3H10L8 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="14" r="3"/></svg>,
-  sale: <svg width="48" height="48" fill="none" stroke="#E8692A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
-};
+const topBrands = [
+  { name: 'Canon', count: 2450, slug: 'canon' },
+  { name: 'Nikon', count: 1830, slug: 'nikon' },
+  { name: 'Sony', count: 2100, slug: 'sony' },
+  { name: 'Fujifilm', count: 890, slug: 'fujifilm' },
+  { name: 'Leica', count: 420, slug: 'leica' },
+  { name: 'Sigma', count: 650, slug: 'sigma' },
+  { name: 'Hasselblad', count: 180, slug: 'hasselblad' },
+  { name: 'Panasonic', count: 540, slug: 'panasonic' },
+];
 
 const justAddedProducts = products.filter(p => p.stock > 0).slice(0, 4);
 const bestsellerProducts = products.filter(p => p.stock > 0).slice(2, 6);
@@ -42,6 +44,29 @@ export default function HomePage() {
               {[1,2,3,4,5].map(i => <span key={i} className="trustpilot-star">&#9733;</span>)}
             </div>
             <span className="trustpilot-logo"><span className="tp-star">&#9733;</span> Trustpilot</span>
+          </div>
+        </div>
+      </section>
+
+      {/* JUST ADDED — right after hero */}
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section__header">
+            <div>
+              <h2 className="section__title">Just <span>Added</span></h2>
+              <p className="section__subtitle">Fresh arrivals added this week</p>
+            </div>
+            <Link href="/new" className="section__link">View all →</Link>
+          </div>
+          <div className="filter-tabs">
+            <button className="filter-tab filter-tab--active">All</button>
+            <button className="filter-tab">Cameras</button>
+            <button className="filter-tab">Lenses</button>
+            <button className="filter-tab">Accessories</button>
+          </div>
+          {/* Desktop: grid, Mobile: horizontal scroll */}
+          <div className="just-added-scroll">
+            <ProductGrid products={justAddedProducts} onQuickView={setQuickViewId} />
           </div>
         </div>
       </section>
@@ -76,49 +101,45 @@ export default function HomePage() {
                 <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9"/><polyline points="3 3 3 12 9 12"/></svg>
               </div>
               <div className="trust-badge__title">14-Day Returns</div>
-              <div className="trust-badge__text">No questions asked</div>
+              <div className="trust-badge__text">For online purchases, no questions asked</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SHOP BY CATEGORY */}
-      <section className="categories">
-        <div className="container">
-          <div className="section__header">
-            <div>
-              <h2 className="section__title">Shop by <span>Category</span></h2>
-            </div>
-          </div>
-          <div className="categories__grid">
-            {categories.map(cat => (
-              <Link key={cat.href} href={cat.href} className="category-tile">
-                <div className="category-tile__icon">{categoryIcons[cat.icon]}</div>
-                <div className="category-tile__label">{cat.label}</div>
-                <div className="category-tile__count">{cat.count.toLocaleString()} items</div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* JUST ADDED */}
+      {/* SHOP BY BRAND */}
       <section className="section">
         <div className="container">
           <div className="section__header">
             <div>
-              <h2 className="section__title">Just <span>Added</span></h2>
-              <p className="section__subtitle">Fresh arrivals added this week</p>
+              <h2 className="section__title">Shop by <span>Brand</span></h2>
             </div>
-            <Link href="/cameras" className="section__link">View all →</Link>
+            <Link href="/brands" className="section__link">All brands →</Link>
           </div>
-          <div className="filter-tabs">
-            <button className="filter-tab filter-tab--active">All</button>
-            <button className="filter-tab">Cameras</button>
-            <button className="filter-tab">Lenses</button>
-            <button className="filter-tab">Accessories</button>
+          <style>{`
+            .home-brands-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+            .home-brand-card{display:flex;align-items:center;gap:14px;padding:18px 20px;background:#1E2133;border-radius:12px;text-decoration:none;color:#fff;transition:transform .2s,box-shadow .2s;overflow:hidden;position:relative}
+            .home-brand-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(30,33,51,.25)}
+            .home-brand-card__icon{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#E8692A;flex-shrink:0;letter-spacing:-.5px}
+            .home-brand-card__name{font-size:15px;font-weight:700;line-height:1.2}
+            .home-brand-card__count{font-size:12px;color:rgba(255,255,255,.5);font-weight:400}
+            .home-brand-card__arrow{margin-left:auto;opacity:.3;transition:opacity .2s}
+            .home-brand-card:hover .home-brand-card__arrow{opacity:.7}
+            @media(max-width:1024px){.home-brands-grid{grid-template-columns:repeat(2,1fr)}}
+            @media(max-width:540px){.home-brands-grid{grid-template-columns:repeat(2,1fr);gap:8px}.home-brand-card{padding:14px 14px}}
+          `}</style>
+          <div className="home-brands-grid">
+            {topBrands.map(brand => (
+              <Link key={brand.slug} href={`/brands/${brand.slug}`} className="home-brand-card">
+                <div className="home-brand-card__icon">{brand.name.charAt(0)}</div>
+                <div>
+                  <div className="home-brand-card__name">{brand.name}</div>
+                  <div className="home-brand-card__count">{brand.count.toLocaleString()} items</div>
+                </div>
+                <svg className="home-brand-card__arrow" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+              </Link>
+            ))}
           </div>
-          <ProductGrid products={justAddedProducts} onQuickView={setQuickViewId} />
         </div>
       </section>
 

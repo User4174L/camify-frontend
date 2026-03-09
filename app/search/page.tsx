@@ -11,19 +11,30 @@ import { products } from '@/data/products';
 function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
+  const category = searchParams.get('category') || '';
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
   const [notifyModal, setNotifyModal] = useState<string | null>(null);
   const [notifyEmail, setNotifyEmail] = useState('');
   const [notifySuccess, setNotifySuccess] = useState(false);
+  const [sortBy, setSortBy] = useState('relevance');
 
   const quickViewProduct = quickViewId ? products.find(p => p.id === quickViewId) ?? null : null;
 
-  const searchResults = query.length > 0
+  let searchResults = query.length > 0
     ? products.filter(p =>
         p.title.toLowerCase().includes(query.toLowerCase()) ||
         p.brand.toLowerCase().includes(query.toLowerCase())
       )
     : products;
+
+  if (category.length > 0) {
+    searchResults = searchResults.filter(p =>
+      p.category.toLowerCase() === category.toLowerCase()
+    );
+  }
+
+  if (sortBy === 'price-low') searchResults = [...searchResults].sort((a, b) => a.price - b.price);
+  else if (sortBy === 'price-high') searchResults = [...searchResults].sort((a, b) => b.price - a.price);
 
   return (
     <div className="container">
@@ -36,7 +47,7 @@ function SearchContent() {
 
       <div className="results-bar">
         <span>Showing {searchResults.length} results</span>
-        <select defaultValue="relevance">
+        <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
           <option value="relevance">Sort by: Relevance</option>
           <option value="price-low">Price: low → high</option>
           <option value="price-high">Price: high → low</option>

@@ -1,27 +1,50 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import ProductGrid from '@/components/product/ProductGrid';
 import QuickView from '@/components/product/QuickView';
 import { products } from '@/data/products';
 
-const allMirrorless = products.filter(p => p.category === 'cameras');
+const allCanon = products.filter(p => p.brand === 'Canon' && p.category === 'cameras');
 
-const mountFilters = [
-  { label: 'All Mirrorless', href: '/cameras/mirrorless', active: true, image: null, count: 856 },
-  { label: 'Canon R', href: '/cameras/mirrorless/canon-r', active: false, image: '/images/canon-r5.jpg', count: 124 },
-  { label: 'Nikon Z', href: '/cameras/mirrorless/nikon-z', active: false, image: '/images/nikon-z8.jpg', count: 98 },
-  { label: 'Sony E / FE', href: '/cameras/mirrorless/sony-e-fe', active: false, image: '/images/sony-a7-iv.jpg', count: 186 },
-  { label: 'Fujifilm X', href: '/cameras/mirrorless/fujifilm-x', active: false, image: '/images/fujifilm-x-t4.jpg', count: 112 },
-  { label: 'Olympus / OM System', href: '/cameras/mirrorless/olympus-om-system', active: false, image: '/images/nikon-zf.jpg', count: 67 },
-  { label: 'Panasonic', href: '/cameras/mirrorless/panasonic-g', active: false, image: '/images/sony-a1.jpg', count: 45 },
-  { label: 'Leica', href: '/cameras/mirrorless/leica-sl', active: false, image: '/images/hasselblad-x2d-100c.jpg', count: 23 },
+const popularModels = [
+  { name: 'Canon R5', image: '/images/canon-r5.jpg', count: 12, slug: 'canon-eos-r5' },
+  { name: 'Canon R5 II', image: '/images/canon-r5.jpg', count: 8, slug: 'canon-eos-r5-ii' },
+  { name: 'Canon R6 II', image: '/images/canon-r5.jpg', count: 15, slug: 'canon-eos-r6-ii' },
+  { name: 'Canon R6', image: '/images/canon-r5.jpg', count: 18, slug: 'canon-eos-r6' },
+  { name: 'Canon R3', image: '/images/canon-r5.jpg', count: 5, slug: 'canon-eos-r3' },
+  { name: 'Canon R7', image: '/images/canon-r5.jpg', count: 9, slug: 'canon-eos-r7' },
+  { name: 'Canon R8', image: '/images/canon-r5.jpg', count: 7, slug: 'canon-eos-r8' },
+  { name: 'Canon R10', image: '/images/canon-r5.jpg', count: 11, slug: 'canon-eos-r10' },
+  { name: 'Canon R50', image: '/images/canon-r5.jpg', count: 6, slug: 'canon-eos-r50' },
+  { name: 'Canon R100', image: '/images/canon-r5.jpg', count: 4, slug: 'canon-eos-r100' },
+  { name: 'Canon RP', image: '/images/canon-r5.jpg', count: 20, slug: 'canon-eos-rp' },
+  { name: 'Canon R1', image: '/images/canon-r5.jpg', count: 1, slug: 'canon-eos-r1' },
+  { name: 'Canon R', image: '/images/canon-r5.jpg', count: 3, slug: 'canon-eos-r' },
+  { name: 'Canon R5 C', image: '/images/canon-r5.jpg', count: 2, slug: 'canon-eos-r5-c' },
+  { name: 'Canon R6 III', image: '/images/canon-r5.jpg', count: 1, slug: 'canon-eos-r6-iii' },
+  { name: 'Canon R7 II', image: '/images/canon-r5.jpg', count: 4, slug: 'canon-eos-r7-ii' },
 ];
 
-const brandOptions = ['Canon', 'Nikon', 'Sony', 'Fujifilm', 'Leica', 'Panasonic', 'Olympus'];
-const conditionOptions = ['As New', 'Excellent', 'Good', 'Used', 'Heavily Used'];
+const conditionOptions = ['As New', 'Excellent', 'Good', 'Used'];
+const priceOptions = ['Under €1,000', '€1,000 – €2,000', '€2,000 – €3,000', '€3,000+'];
+const sensorOptions = ['Full Frame', 'APS-C'];
+
+function matchesPrice(price: number, range: string): boolean {
+  if (range === 'Under €1,000') return price < 1000;
+  if (range === '€1,000 – €2,000') return price >= 1000 && price <= 2000;
+  if (range === '€2,000 – €3,000') return price >= 2000 && price <= 3000;
+  if (range === '€3,000+') return price >= 3000;
+  return false;
+}
+
+const orangeLink: React.CSSProperties = {
+  color: 'var(--accent)',
+  fontWeight: 600,
+  textDecoration: 'none',
+};
 
 const ArrowLeft = () => (
   <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -35,11 +58,13 @@ const ArrowRight = () => (
   </svg>
 );
 
-export default function MirrorlessPage() {
+export default function CanonRPage() {
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
   const [openFilter, setOpenFilter] = useState<string | null>(null);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [readMore, setReadMore] = useState(false);
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [selectedPrices, setSelectedPrices] = useState<string[]>([]);
+  const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('relevance');
   const [currentPage, setCurrentPage] = useState(1);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -55,15 +80,25 @@ export default function MirrorlessPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const filters = [
+    { key: 'Condition', options: conditionOptions, selected: selectedConditions, toggle: (v: string) => setSelectedConditions(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) },
+    { key: 'Price', options: priceOptions, selected: selectedPrices, toggle: (v: string) => setSelectedPrices(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) },
+    { key: 'Sensor Size', options: sensorOptions, selected: selectedSensors, toggle: (v: string) => setSelectedSensors(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) },
+  ];
+
   const filtered = useMemo(() => {
-    let result = [...allMirrorless];
-    if (selectedBrands.length > 0) result = result.filter(p => selectedBrands.includes(p.brand));
+    let result = [...allCanon];
     if (selectedConditions.length > 0) result = result.filter(p => p.variants.some(v => selectedConditions.includes(v.conditionLabel)));
+    if (selectedPrices.length > 0) result = result.filter(p => selectedPrices.some(r => matchesPrice(p.price, r)));
+    if (selectedSensors.length > 0) result = result.filter(p => {
+      const s = p.specs?.['Sensor']?.toLowerCase() || '';
+      return selectedSensors.some(f => f === 'Full Frame' ? s.includes('full frame') : s.includes('aps-c'));
+    });
     if (sortBy === 'price-low') result.sort((a, b) => a.price - b.price);
     else if (sortBy === 'price-high') result.sort((a, b) => b.price - a.price);
     else if (sortBy === 'newest') result.sort((a, b) => Number(b.id) - Number(a.id));
     return result;
-  }, [selectedBrands, selectedConditions, sortBy]);
+  }, [selectedConditions, selectedPrices, selectedSensors, sortBy]);
 
   const ITEMS_PER_PAGE = 16;
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
@@ -73,53 +108,78 @@ export default function MirrorlessPage() {
 
   const quickViewProduct = quickViewId ? products.find(p => p.id === quickViewId) ?? null : null;
 
-  const toggleBrand = (b: string) => setSelectedBrands(prev => prev.includes(b) ? prev.filter(x => x !== b) : [...prev, b]);
-  const toggleCondition = (c: string) => setSelectedConditions(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
-
   return (
     <div className="container">
       <Breadcrumb items={[
         { label: 'Cameras', href: '/cameras' },
-        { label: 'Mirrorless' },
+        { label: 'Mirrorless', href: '/cameras/mirrorless' },
+        { label: 'Canon R' },
       ]} />
 
-      <div style={{ marginBottom: 8 }}>
-        <h1 className="section__title">Mirrorless Cameras</h1>
-        <p className="section__subtitle">856 mirrorless cameras from top brands</p>
-      </div>
+      {/* Title + SEO intro */}
+      <div style={{ marginBottom: 24 }}>
+        <h1 className="section__title" style={{ marginBottom: 8 }}>Canon R Mirrorless Cameras</h1>
+        <p style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)', maxWidth: 800 }}>
+          Discover our selection of used Canon EOS R mirrorless cameras. From the professional{' '}
+          <Link href="/product/canon-eos-r5" style={orangeLink}>Canon R5</Link> and{' '}
+          <Link href="/product/canon-eos-r3" style={orangeLink}>R3</Link> to the versatile{' '}
+          <Link href="/product/canon-eos-r6-ii" style={orangeLink}>R6 II</Link> and affordable{' '}
+          <Link href="/product/canon-eos-rp" style={orangeLink}>RP</Link> &mdash; every camera is professionally
+          inspected, graded and backed by our 12-month warranty.
+        </p>
 
-      <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '4px 0', marginBottom: 20, scrollbarWidth: 'none' }}>
-        {mountFilters.map(m => (
-          <Link
-            key={m.href}
-            href={m.href}
+        {!readMore && (
+          <button
+            onClick={() => setReadMore(true)}
             style={{
-              flex: '0 0 130px', width: 130, borderRadius: 12,
-              border: m.active ? '2px solid #f97316' : '1.5px solid #e5e7eb',
-              overflow: 'hidden', display: 'flex', flexDirection: 'column',
-              alignItems: 'center', textDecoration: 'none', color: 'inherit',
-              background: '#fff', transition: 'border-color 0.2s',
+              background: 'none', border: 'none', color: 'var(--accent)',
+              fontWeight: 600, fontSize: 14, cursor: 'pointer', padding: '8px 0 0',
+              display: 'inline-flex', alignItems: 'center', gap: 4,
             }}
           >
-            <div style={{ width: '100%', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10%', background: m.image ? '#fff' : '#1f2937' }}>
-              {m.image ? (
-                <img src={m.image} alt={m.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-              ) : (
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-              )}
-            </div>
-            <div style={{ padding: '8px 6px', textAlign: 'center' }}>
-              <div style={{ fontSize: 12, fontWeight: 600, lineHeight: 1.2 }}>{m.label}</div>
-              <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>{m.count} products</div>
-            </div>
-          </Link>
-        ))}
+            Read more <span style={{ fontSize: 12 }}>&#8595;</span>
+          </button>
+        )}
+
+        {readMore && (
+          <p style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)', maxWidth: 800, marginTop: 12 }}>
+            Canon&apos;s EOS R system combines industry-leading autofocus with exceptional image quality.
+            The full-frame R5 and R3 deliver professional-grade performance, while the APS-C R7 and R10 offer
+            outstanding value. All Canon R mount cameras in our inventory include accurate shutter counts and
+            detailed condition reports. Compatible with all Canon RF and RF-S lenses.
+          </p>
+        )}
       </div>
 
+      {/* Popular models row */}
+      <div style={{ marginBottom: 28 }}>
+        <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Popular Models</h2>
+        <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '4px 0', scrollbarWidth: 'none' }}>
+          {popularModels.map(m => (
+            <Link key={m.slug} href={`/product/${m.slug}`} style={{
+              flex: '0 0 130px', width: 130, borderRadius: 12,
+              border: '1.5px solid #e5e7eb', overflow: 'hidden',
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              textDecoration: 'none', color: 'inherit', background: '#fff',
+              transition: 'border-color 0.2s',
+            }}>
+              <div style={{ width: '100%', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10%', background: '#fff' }}>
+                <img src={m.image} alt={m.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              </div>
+              <div style={{ padding: '8px 6px', textAlign: 'center' }}>
+                <div style={{ fontSize: 12, fontWeight: 600, lineHeight: 1.2 }}>{m.name}</div>
+                <div style={{ fontSize: 11, color: m.count <= 1 ? '#ef4444' : '#9ca3af', fontWeight: m.count <= 1 ? 600 : 400, marginTop: 2 }}>
+                  {m.count <= 1 ? 'Last one!' : `${m.count} in stock`}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Filter bar */}
       <div ref={filterBarRef} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-        {[{ key: 'brand', label: 'Brand', options: brandOptions, selected: selectedBrands, toggle: toggleBrand },
-          { key: 'condition', label: 'Condition', options: conditionOptions, selected: selectedConditions, toggle: toggleCondition }
-        ].map(f => (
+        {filters.map(f => (
           <div key={f.key} style={{ position: 'relative' }}>
             <button
               onClick={() => setOpenFilter(openFilter === f.key ? null : f.key)}
@@ -131,7 +191,7 @@ export default function MirrorlessPage() {
                 fontSize: 13, fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap',
               }}
             >
-              {f.label}{f.selected.length > 0 ? ` (${f.selected.length})` : ''}
+              {f.key}{f.selected.length > 0 ? ` (${f.selected.length})` : ''}
               <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ marginLeft: 4 }}><path d="m6 9 6 6 6-6" /></svg>
             </button>
             {openFilter === f.key && (
@@ -140,9 +200,9 @@ export default function MirrorlessPage() {
                 border: '1.5px solid var(--border)', borderRadius: 12, padding: '8px 0',
                 minWidth: 180, zIndex: 10, boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
               }}>
-                {f.options.map(opt => (
-                  <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', fontSize: 13, cursor: 'pointer' }}>
-                    <input type="checkbox" checked={f.selected.includes(opt)} onChange={() => f.toggle(opt)} style={{ accentColor: 'var(--accent)' }} /> {opt}
+                {f.options.map(option => (
+                  <label key={option} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', fontSize: 13, cursor: 'pointer' }}>
+                    <input type="checkbox" checked={f.selected.includes(option)} onChange={() => f.toggle(option)} style={{ accentColor: 'var(--accent)' }} /> {option}
                   </label>
                 ))}
               </div>
@@ -151,7 +211,11 @@ export default function MirrorlessPage() {
         ))}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, fontSize: 14, color: 'var(--text-secondary)' }}>
+      {/* Results bar */}
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        marginBottom: 20, fontSize: 14, color: 'var(--text-secondary)',
+      }}>
         <span>Showing {filtered.length} results</span>
         <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{
           padding: '6px 12px', borderRadius: 8, border: '1.5px solid var(--border)',
@@ -164,6 +228,7 @@ export default function MirrorlessPage() {
         </select>
       </div>
 
+      {/* Product grid */}
       <ProductGrid products={firstHalf} onQuickView={setQuickViewId} />
 
       {secondHalf.length > 0 && (
@@ -261,7 +326,7 @@ export default function MirrorlessPage() {
         <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginBottom: 16 }}>
           Looking for a model that&apos;s currently unavailable?
         </p>
-        <Link href="/cameras/mirrorless/out-of-stock" style={{
+        <Link href="/cameras/mirrorless/canon-r/out-of-stock" style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
           padding: '12px 28px', border: '2px solid var(--accent)',
           borderRadius: 999, background: 'transparent', color: 'var(--accent)',
@@ -274,10 +339,20 @@ export default function MirrorlessPage() {
 
       {/* SEO text */}
       <div style={{ padding: '32px 0', borderTop: '1px solid var(--border)' }}>
-        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12 }}>Buy Used Mirrorless Cameras</h2>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12 }}>Buy Used Canon R Cameras</h2>
         <div style={{ fontSize: 14, lineHeight: 1.8, color: 'var(--text-secondary)', maxWidth: 800 }}>
-          <p>Mirrorless cameras have become the standard for modern photography. With electronic viewfinders, in-body stabilisation, and advanced autofocus systems, they outperform traditional DSLRs in nearly every way. At Camera-tweedehands.nl, every mirrorless camera is professionally inspected and backed by our 12-month warranty.</p>
-          <p style={{ marginTop: 12 }}>Browse our collection from Canon, Nikon, Sony, Fujifilm, and more. Each listing includes accurate shutter counts, real photos, and detailed condition reports.</p>
+          <p>
+            The Canon EOS R system represents Canon&apos;s latest mirrorless technology. The{' '}
+            <Link href="/product/canon-eos-r5" style={orangeLink}>Canon R5</Link> offers 45MP resolution with 8K video,
+            while the <Link href="/product/canon-eos-r6-ii" style={orangeLink}>R6 II</Link> delivers exceptional
+            low-light performance. For sports and wildlife, the{' '}
+            <Link href="/product/canon-eos-r3" style={orangeLink}>R3</Link> provides unmatched autofocus speed.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            All Canon R cameras come with our 12-month warranty, detailed condition reports, and accurate shutter counts.
+            Browse our full range of <Link href="/lenses/mirrorless/canon-rf" style={orangeLink}>Canon RF lenses</Link> to
+            complete your system.
+          </p>
         </div>
       </div>
 
@@ -286,10 +361,10 @@ export default function MirrorlessPage() {
         <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Frequently asked questions</h2>
         <div className="accordion">
           {[
-            { q: 'What is the advantage of mirrorless over DSLR?', a: 'Mirrorless cameras are generally lighter, more compact, and offer faster autofocus with better eye and subject tracking. They also provide real-time exposure preview through the electronic viewfinder.' },
-            { q: 'Do all mirrorless cameras have in-body stabilisation?', a: 'Not all. Higher-end models from Sony, Nikon, Canon, and Fujifilm include IBIS (In-Body Image Stabilisation), but some entry-level models rely on lens-based stabilisation only. Check the specifications on each listing.' },
-            { q: 'Can I use my DSLR lenses on a mirrorless camera?', a: 'In most cases, yes — with the right adapter. Canon EF lenses work on Canon RF bodies, Nikon F lenses on Nikon Z bodies, and so on. Adapted lenses may have slightly slower autofocus depending on the combination.' },
-            { q: 'How do I choose the right mirrorless camera?', a: 'Consider your primary use (portraits, sports, landscape, video), budget, and preferred brand ecosystem. Full-frame models offer the best image quality, while APS-C and Micro Four Thirds systems are more compact and affordable.' },
+            { q: 'Which Canon R camera is best for beginners?', a: 'The Canon R10 and R50 are excellent entry points. They offer APS-C sensors with Canon\'s latest autofocus technology at an accessible price. The Canon RP is a great affordable full-frame option.' },
+            { q: 'What is the difference between Canon RF and RF-S lenses?', a: 'RF lenses are designed for full-frame Canon R bodies, while RF-S lenses are designed for APS-C models like the R7 and R10. You can use RF lenses on APS-C bodies, but not RF-S on full-frame.' },
+            { q: 'How accurate are the shutter counts?', a: 'We read Canon shutter counts using manufacturer service software. The exact count is listed on every product page so you know exactly how much use the camera has had.' },
+            { q: 'Do Canon R cameras come with a warranty?', a: 'Yes, every Canon R camera from Camera-tweedehands.nl comes with our 12-month warranty covering manufacturing defects and mechanical failures.' },
           ].map((faq, i) => (
             <div key={i} className={`accordion__item${openFaq === i ? ' is-open' : ''}`}>
               <button className="accordion__trigger" aria-expanded={openFaq === i} onClick={() => setOpenFaq(openFaq === i ? null : i)}>

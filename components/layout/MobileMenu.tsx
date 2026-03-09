@@ -8,7 +8,7 @@ const ChevronDown = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
 );
 
-export default function MobileMenu({ isOpen }: { isOpen: boolean }) {
+export default function MobileMenu({ isOpen, onClose }: { isOpen: boolean; onClose?: () => void }) {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   const toggle = (key: string) => {
@@ -23,7 +23,7 @@ export default function MobileMenu({ isOpen }: { isOpen: boolean }) {
           {navCategories.map(cat => (
             <div key={cat.label}>
               <div className={`mobile-menu__item${openItems[cat.label] ? ' is-open' : ''}`} onClick={() => toggle(cat.label)}>
-                <Link href={cat.href} className="mobile-menu__link" onClick={e => e.stopPropagation()}>{cat.label}</Link>
+                <Link href={cat.href} className="mobile-menu__link" onClick={e => { e.stopPropagation(); onClose?.(); }}>{cat.label}</Link>
                 <button className="mobile-menu__expand"><ChevronDown /></button>
               </div>
               {openItems[cat.label] && (
@@ -33,13 +33,13 @@ export default function MobileMenu({ isOpen }: { isOpen: boolean }) {
                       {col.items.length > 0 ? (
                         <>
                           <div className={`mobile-menu__subitem${openItems[`${cat.label}-${col.title}`] ? ' is-open' : ''}`} onClick={() => toggle(`${cat.label}-${col.title}`)}>
-                            <Link href={col.titleHref} className="mobile-menu__sublink" onClick={e => e.stopPropagation()}>{col.title}</Link>
+                            <Link href={col.titleHref} className="mobile-menu__sublink" onClick={e => { e.stopPropagation(); onClose?.(); }}>{col.title}</Link>
                             <button className="mobile-menu__expand"><ChevronDown size={14} /></button>
                           </div>
                           {openItems[`${cat.label}-${col.title}`] && (
                             <div className="mobile-menu__subsub" style={{ display: 'block' }}>
                               {col.items.map(item => (
-                                <Link key={item.href} href={item.href}>{item.label}</Link>
+                                <Link key={item.href} href={item.href} onClick={onClose}>{item.label}</Link>
                               ))}
                             </div>
                           )}
@@ -56,8 +56,8 @@ export default function MobileMenu({ isOpen }: { isOpen: boolean }) {
         </div>
 
         <div className="mobile-menu__section">
-          <Link href="/sale" className="mobile-menu__link mobile-menu__link--sale">Sale</Link>
-          <Link href="/new" className="mobile-menu__link">New</Link>
+          <Link href="/sale" className="mobile-menu__link mobile-menu__link--sale" onClick={onClose}>Sale</Link>
+          <Link href="/new" className="mobile-menu__link" onClick={onClose}>New</Link>
         </div>
 
         <div className="mobile-menu__section">

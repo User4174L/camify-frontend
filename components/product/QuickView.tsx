@@ -53,11 +53,13 @@ function formatPrice(price: number): string {
 export default function QuickView({ product, onClose }: { product: Product | null; onClose: () => void }) {
   const { addItem } = useCart();
   const [currentImage, setCurrentImage] = useState(0);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
 
   const THUMB_COUNT = 6;
 
   useEffect(() => {
     setCurrentImage(0);
+    setSelectedVariantIndex(0);
   }, [product]);
 
   useEffect(() => {
@@ -70,7 +72,7 @@ export default function QuickView({ product, onClose }: { product: Product | nul
 
   if (!product || product.variants.length === 0) return null;
 
-  const variant = product.variants[0];
+  const variant = product.variants[selectedVariantIndex];
   const thumbnails = Array.from({ length: THUMB_COUNT }, () => product.image);
 
   const prevImage = () => setCurrentImage(i => (i - 1 + THUMB_COUNT) % THUMB_COUNT);
@@ -276,6 +278,40 @@ export default function QuickView({ product, onClose }: { product: Product | nul
           {/* Divider */}
           <div style={{ height: 1, background: '#e5e7eb', marginBottom: 16 }} />
 
+          {/* Variant selector */}
+          {product.variants.length > 1 && (
+            <>
+              <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9ca3af', marginBottom: 10 }}>
+                Choose Variant
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+                {product.variants.map((v, idx) => (
+                  <button
+                    key={v.sku}
+                    onClick={() => setSelectedVariantIndex(idx)}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: 10,
+                      border: idx === selectedVariantIndex ? '2px solid #f97316' : '1px solid #d1d5db',
+                      background: idx === selectedVariantIndex ? '#fff7ed' : '#fff',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      gap: 2,
+                      minWidth: 0,
+                    }}
+                  >
+                    <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>{v.conditionLabel}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#f97316' }}>&euro;{formatPrice(v.price)}</span>
+                  </button>
+                ))}
+              </div>
+              {/* Divider */}
+              <div style={{ height: 1, background: '#e5e7eb', marginBottom: 16 }} />
+            </>
+          )}
+
           {/* Condition section */}
           <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9ca3af', marginBottom: 10 }}>
             Condition
@@ -414,7 +450,7 @@ export default function QuickView({ product, onClose }: { product: Product | nul
             <span style={{ color: '#d1d5db' }}>&middot;</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9"/><polyline points="3 3 3 12 9 12"/></svg>
-              14-Day Returns
+              14-Day Returns (online)
             </span>
             <span style={{ color: '#d1d5db' }}>&middot;</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
