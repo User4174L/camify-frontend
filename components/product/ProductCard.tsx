@@ -32,7 +32,7 @@ export default function ProductCard({
         borderRadius: 12,
         overflow: 'hidden',
         background: '#fff',
-        border: recentlyViewed ? '2px solid #f97316' : '1px solid #e5e7eb',
+        border: '1px solid #e5e7eb',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
@@ -46,6 +46,8 @@ export default function ProductCard({
           aspectRatio: '1',
           overflow: 'hidden',
           cursor: 'pointer',
+          borderRadius: '11px 11px 0 0',
+          isolation: 'isolate',
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -61,6 +63,25 @@ export default function ProductCard({
             padding: '12%',
           }}
         />
+
+        {/* Recently viewed label — top-left, behind orange lines */}
+        {recentlyViewed && (
+          <div style={{ position: 'absolute', top: 0, left: 0, background: '#fff7ed', padding: '3px 10px 3px 6px', fontSize: 11, fontWeight: 600, color: '#f97316', zIndex: 2 }}>Recently viewed</div>
+        )}
+
+        {/* Orange border — continuous curve through corner, fades out */}
+        {recentlyViewed && (
+          <div style={{
+            position: 'absolute', top: 0, left: 0, width: '65%', height: '55%',
+            borderTop: '2px solid #f97316', borderLeft: '2px solid #f97316',
+            borderBottom: 'none', borderRight: 'none',
+            borderTopLeftRadius: 11, zIndex: 4, pointerEvents: 'none',
+            WebkitMaskImage: 'linear-gradient(to right, black 60%, transparent), linear-gradient(to bottom, black 60%, transparent)',
+            WebkitMaskComposite: 'intersect',
+            maskImage: 'linear-gradient(to right, black 60%, transparent), linear-gradient(to bottom, black 60%, transparent)',
+            maskComposite: 'intersect',
+          }} />
+        )}
 
         {/* Badge top-left */}
         {product.badge && product.badge !== 'vat' && (
@@ -96,6 +117,7 @@ export default function ProductCard({
             transition: 'opacity 0.2s ease',
             pointerEvents: hovered ? 'auto' : 'none',
             textDecoration: 'none',
+            zIndex: 5,
           }}
         >
           <span
@@ -152,22 +174,6 @@ export default function ProductCard({
             </svg>
           </button>
 
-          {recentlyViewed && (
-            <span
-              style={{
-                background: '#fff7ed',
-                color: '#f97316',
-                border: '1px solid #f97316',
-                borderRadius: 999,
-                padding: '2px 10px',
-                fontSize: 11,
-                fontWeight: 600,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              Recently viewed
-            </span>
-          )}
         </div>
       </div>
 

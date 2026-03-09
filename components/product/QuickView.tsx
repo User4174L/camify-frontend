@@ -31,13 +31,13 @@ function getConditionDescription(conditionLabel: string, shutterCount?: number):
 function getConditionColor(condition: string): string {
   switch (condition) {
     case 'as-new':
-      return '#16a34a';
+      return '#059669';
     case 'excellent':
-      return '#22c55e';
+      return '#16a34a';
     case 'good':
-      return '#f59e0b';
+      return '#65a30d';
     case 'used':
-      return '#ef4444';
+      return '#ca8a04';
     default:
       return '#6b7280';
   }
@@ -325,19 +325,17 @@ export default function QuickView({ product, onClose }: { product: Product | nul
                 borderRadius: 999,
                 fontSize: 13,
                 fontWeight: 600,
-                color: '#fff',
-                background: getConditionColor(variant.condition),
+                color: getConditionColor(variant.condition),
+                background: (() => {
+                  const c = variant.condition;
+                  if (c === 'as-new' || c === 'excellent') return '#dcfce7';
+                  if (c === 'good') return '#fef9c3';
+                  if (c === 'used') return '#fefce8';
+                  return '#f3f4f6';
+                })(),
               }}
             >
               {variant.conditionLabel}
-            </span>
-            {/* Stars */}
-            <span style={{ display: 'flex', gap: 2 }}>
-              {[1, 2, 3, 4, 5].map(star => (
-                <svg key={star} width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" strokeWidth="1">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-              ))}
             </span>
           </div>
           <p style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.5, margin: '0 0 16px' }}>

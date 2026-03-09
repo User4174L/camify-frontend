@@ -453,15 +453,6 @@ export default function ProductPage() {
                   </table>
                 </div>
               </div>
-              <div className={`accordion__item${openAccordion === 'shipping' ? ' is-open' : ''}`}>
-                <button className="accordion__trigger" aria-expanded={openAccordion === 'shipping'} onClick={() => setOpenAccordion(openAccordion === 'shipping' ? null : 'shipping')}>
-                  Shipping &amp; Returns
-                  {chevronSvg}
-                </button>
-                <div className="accordion__body">
-                  <p>Free shipping on orders above &euro;50 within NL/BE. International shipping available to 10+ EU countries. 14-day no-questions-asked return policy for online purchases. Items must be returned in the same condition as received.</p>
-                </div>
-              </div>
             </div>
           )}
         </>
@@ -588,22 +579,45 @@ export default function ProductPage() {
               const isHovered = hoveredVariant === v.sku;
               const condColors = (() => {
                 const c = v.condition.toLowerCase().replace(/[\s-]/g, '');
-                if (c === 'asnew' || c === 'excellent') return { bg: '#dcfce7', color: '#16a34a' };
-                if (c === 'good') return { bg: '#fef9c3', color: '#ca8a04' };
+                if (c === 'asnew') return { bg: '#dcfce7', color: '#059669' };
+                if (c === 'excellent') return { bg: '#dcfce7', color: '#16a34a' };
+                if (c === 'good') return { bg: '#fef9c3', color: '#65a30d' };
+                if (c === 'used') return { bg: '#fefce8', color: '#ca8a04' };
                 return { bg: '#f3f4f6', color: '#6b7280' };
               })();
+              const viewed = isVariantViewed(v.sku);
               return (
-                <div key={v.sku} style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: isVariantViewed(v.sku) ? '2px solid #f97316' : '1px solid #e5e7eb', display: 'flex', flexDirection: 'column' }}>
+                <div key={v.sku}>
+                <div style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                   {/* Image with hover overlay */}
                   <div
-                    style={{ position: 'relative', background: '#fff', aspectRatio: '1', overflow: 'hidden' }}
+                    style={{ position: 'relative', background: '#fff', aspectRatio: '1', overflow: 'hidden', borderRadius: '11px 11px 0 0', isolation: 'isolate' }}
                     onMouseEnter={() => setHoveredVariant(v.sku)}
                     onMouseLeave={() => setHoveredVariant(null)}
                   >
                     <img src={v.images[0] || product.image} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', padding: 16 }} />
 
+                    {/* Recently viewed label — top-left, behind orange lines */}
+                    {viewed && (
+                      <div style={{ position: 'absolute', top: 0, left: 0, background: '#fff7ed', padding: '3px 10px 3px 6px', fontSize: 11, fontWeight: 600, color: '#f97316', zIndex: 2 }}>Recently viewed</div>
+                    )}
+
+                    {/* Orange border — continuous curve through corner, fades out */}
+                    {viewed && (
+                      <div style={{
+                        position: 'absolute', top: 0, left: 0, width: '65%', height: '55%',
+                        borderTop: '2px solid #f97316', borderLeft: '2px solid #f97316',
+                        borderBottom: 'none', borderRight: 'none',
+                        borderTopLeftRadius: 11, zIndex: 4, pointerEvents: 'none',
+                        WebkitMaskImage: 'linear-gradient(to right, black 60%, transparent), linear-gradient(to bottom, black 60%, transparent)',
+                        WebkitMaskComposite: 'intersect',
+                        maskImage: 'linear-gradient(to right, black 60%, transparent), linear-gradient(to bottom, black 60%, transparent)',
+                        maskComposite: 'intersect',
+                      }} />
+                    )}
+
                     {/* Hover overlay: Quick View + Full View */}
-                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, opacity: isHovered ? 1 : 0, transition: 'opacity 0.2s ease', pointerEvents: isHovered ? 'auto' : 'none' }}>
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, opacity: isHovered ? 1 : 0, transition: 'opacity 0.2s ease', pointerEvents: isHovered ? 'auto' : 'none', zIndex: 5 }}>
                       <button
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setQuickViewVariant(v); }}
                         style={{ background: '#fff', color: '#111', border: 'none', borderRadius: 999, padding: '10px 32px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
@@ -615,34 +629,34 @@ export default function ProductPage() {
                       </Link>
                     </div>
 
-                    {/* Recently viewed badge — top-left */}
-                    {isVariantViewed(v.sku) && (
-                      <span style={{ position: 'absolute', top: 8, left: 8, background: '#fff7ed', color: '#f97316', border: '1px solid #f97316', borderRadius: 999, padding: '2px 10px', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap', zIndex: 2 }}>Recently viewed</span>
-                    )}
-
                     {/* Badges — top-right */}
-                    <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, zIndex: 2 }}>
-                      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} aria-label="Wishlist" style={{ background: '#fff', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }}>
-                        <svg width="16" height="16" fill="none" stroke="#888" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                      </button>
-                      {product.badge === 'outlet' && (
-                        <span style={{ background: '#f97316', color: '#fff', borderRadius: 999, padding: '2px 10px', fontSize: 11, fontWeight: 600 }}>OUTLET</span>
-                      )}
-                    </div>
+                    {v.badges && v.badges.length > 0 && (
+                      <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', gap: 4, zIndex: 2 }}>
+                        {v.badges.map(badge => (
+                          <span key={badge} style={{
+                            borderRadius: 999, padding: '2px 10px', fontSize: 11, fontWeight: 600,
+                            background: badge === 'sale' ? '#ef4444' : badge === 'new' ? '#22c55e' : badge === 'outlet' ? '#f97316' : badge === 'vat' ? '#6b7280' : '#6b7280',
+                            color: '#fff',
+                          }}>
+                            {badge === 'sale' ? 'Sale' : badge === 'new' ? 'New' : badge === 'outlet' ? 'Outlet' : badge === 'vat' ? 'Incl. VAT' : badge}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
+                  {/* SKU under photo */}
+                  <div style={{ padding: '4px 14px', fontSize: 12, color: '#9ca3af' }}>SKU: {v.sku}</div>
+
                   {/* Info */}
-                  <div style={{ padding: '12px 14px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    {/* Top row: price left, condition right */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ fontSize: 20, fontWeight: 700, color: '#111' }}>&euro; {v.price.toLocaleString('nl-NL')}</div>
-                      <span style={{ display: 'inline-flex', background: condColors.bg, color: condColors.color, borderRadius: 999, padding: '3px 12px', fontSize: 12, fontWeight: 600 }}>{v.conditionLabel}</span>
-                    </div>
-                    {/* Second row: SKU left, shutter count right */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#9ca3af' }}>
-                      <span>SKU: {v.sku}</span>
+                  <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {/* Price */}
+                    <div style={{ fontSize: 20, fontWeight: 700, color: '#111' }}>&euro; {v.price.toLocaleString('nl-NL')}</div>
+                    {/* Condition and shutter count stacked */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <span style={{ display: 'inline-flex', alignSelf: 'flex-start', background: condColors.bg, color: condColors.color, borderRadius: 999, padding: '3px 12px', fontSize: 12, fontWeight: 600 }}>{v.conditionLabel}</span>
                       {v.shutterCount != null && (
-                        <span>{v.shutterCount.toLocaleString('nl-NL')} actuations</span>
+                        <span style={{ fontSize: 12, color: '#374151', fontWeight: 700 }}>Shuttercount: {v.shutterCount.toLocaleString('nl-NL')}</span>
                       )}
                     </div>
 
@@ -662,9 +676,6 @@ export default function ProductPage() {
                       ) : <span />}
 
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} aria-label="Wishlist" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                          <svg width="18" height="18" fill="none" stroke="#9ca3af" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        </button>
                         <button
                           className="product-add-to-cart"
                           onClick={() => {
@@ -687,6 +698,7 @@ export default function ProductPage() {
                       </ul>
                     )}
                   </div>
+                </div>
                 </div>
               );
             })}
@@ -732,16 +744,6 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {/* 9. Shipping & returns accordion */}
-            <div className={`accordion__item${openAccordion === 'shipping' ? ' is-open' : ''}`}>
-              <button className="accordion__trigger" aria-expanded={openAccordion === 'shipping'} onClick={() => setOpenAccordion(openAccordion === 'shipping' ? null : 'shipping')}>
-                Shipping &amp; Returns
-                {chevronSvg}
-              </button>
-              <div className="accordion__body">
-                <p>Free shipping on orders above &euro;50 within NL/BE. International shipping available to 10+ EU countries. 14-day no-questions-asked return policy for online purchases. Items must be returned in the same condition as received.</p>
-              </div>
-            </div>
         </div>
       )}
 

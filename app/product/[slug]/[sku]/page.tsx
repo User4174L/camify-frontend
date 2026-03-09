@@ -307,6 +307,8 @@ export default function VariantDetailPage() {
   const [showCartPopup, setShowCartPopup] = useState(false);
   const [showConditionModal, setShowConditionModal] = useState(false);
   const [showShutterModal, setShowShutterModal] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIdx, setLightboxIdx] = useState(0);
 
   if (!product || !variant) {
     return (
@@ -372,7 +374,7 @@ export default function VariantDetailPage() {
       </div>
 
       {/* Two-column grid — stacks on mobile */}
-      <div className="variant-detail-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginTop: 24 }}>
+      <div className="variant-detail-grid" style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 40, marginTop: 24 }}>
 
         {/* ============ GALLERY ============ */}
         <div className="variant-detail__gallery">
@@ -394,7 +396,6 @@ export default function VariantDetailPage() {
             position: 'relative',
             background: '#ffffff',
             borderRadius: 12,
-            border: '1px solid #f0f0f2',
             overflow: 'hidden',
             aspectRatio: '1 / 1',
             display: 'flex',
@@ -407,7 +408,8 @@ export default function VariantDetailPage() {
               width={600}
               height={600}
               priority
-              style={{ objectFit: 'contain', maxWidth: '85%', maxHeight: '85%' }}
+              onClick={() => { setLightboxIdx(imgIdx); setLightboxOpen(true); }}
+              style={{ objectFit: 'contain', maxWidth: '85%', maxHeight: '85%', cursor: 'zoom-in' }}
             />
 
             {/* Prev / Next buttons */}
@@ -491,105 +493,39 @@ export default function VariantDetailPage() {
             </svg>
             We photograph every unique item individually — what you see is exactly what you get.
           </p>
+
+          {/* SKU under photo */}
+          <p style={{ fontSize: 12, color: '#9ca3af', margin: '4px 0 0' }}>SKU: {sku}</p>
         </div>
 
         {/* ============ INFO COLUMN ============ */}
         <div className="variant-detail__info">
-          {/* Back link (desktop only) */}
-          <div className="variant-detail__back-desktop">
-            <Link
-              href={`/product/${slug}`}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#f97316', fontWeight: 600, fontSize: 14, textDecoration: 'none', marginBottom: 8 }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-              All {product.title} variants
-            </Link>
-          </div>
-
-          {/* SKU */}
-          <p style={{ fontSize: 12, color: '#9ca3af', margin: '0 0 4px' }}>SKU: {sku}</p>
-
           {/* Title */}
-          <h1 style={{ fontSize: 26, fontWeight: 700, color: '#1f2937', margin: '0 0 12px', lineHeight: 1.2 }}>{product.title}</h1>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: '#1f2937', margin: '0 0 8px', lineHeight: 1.2 }}>{product.title}</h1>
+
+          {/* Condition label + badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: '#6b7280' }}>
+              Condition: <span style={{ display: 'inline-block', background: conditionBg(variant.condition), color: conditionColor(variant.condition), borderRadius: 999, padding: '3px 12px', fontSize: 12, fontWeight: 600 }}>{variant.conditionLabel}</span>
+              <InfoButton onClick={() => setShowConditionModal(true)} />
+            </span>
+            {product.badge && product.badge !== 'vat' && (
+              <span style={{
+                background: product.badge === 'sale' ? '#ef4444' : product.badge === 'new' ? '#22c55e' : product.badge === 'outlet' ? '#f97316' : '#6b7280',
+                color: '#fff', borderRadius: 999, padding: '3px 12px', fontSize: 11, fontWeight: 700, textTransform: 'uppercase' as const,
+              }}>
+                {product.badge === 'sale' ? 'Sale' : product.badge === 'new' ? 'New' : product.badge === 'outlet' ? 'OUTLET' : product.badge}
+              </span>
+            )}
+          </div>
 
           {/* Price */}
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 16 }}>
+          <div style={{ marginBottom: 12 }}>
             <span style={{ fontSize: 32, fontWeight: 700, color: '#1f2937' }}>&euro; {formattedPrice}</span>
-            <span style={{ fontSize: 13, color: '#6b7280' }}>{variant.inclVat ? 'incl. VAT' : 'excl. VAT'}</span>
-          </div>
-
-          {/* Condition + shutter — one compact block */}
-          <div style={{ borderRadius: 12, border: '1px solid #eeeef2', overflow: 'hidden', marginBottom: 12 }}>
-            {/* Condition row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: '#f9fafb' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: conditionColor(variant.condition), flexShrink: 0 }} />
-                <span style={{ fontSize: 14, fontWeight: 700, color: conditionColor(variant.condition) }}>{variant.conditionLabel}</span>
-                <InfoButton onClick={() => setShowConditionModal(true)} />
-              </div>
-              {variant.shutterCount !== undefined && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontSize: 13, color: '#6b7280' }}>Shutter:</span>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#1f2937' }}>{variant.shutterCount.toLocaleString('nl-NL')}</span>
-                  <InfoButton onClick={() => setShowShutterModal(true)} />
-                </div>
-              )}
-            </div>
-
-            {/* Shutter bar */}
-            {variant.shutterCount !== undefined && (
-              <div style={{ padding: '0 14px 10px', background: '#f9fafb' }}>
-                <div style={{ width: '100%', height: 4, background: '#e5e7eb', borderRadius: 999, overflow: 'hidden' }}>
-                  <div style={{ width: `${shutterPct}%`, height: '100%', background: shutterPct < 30 ? '#22c55e' : shutterPct < 60 ? '#3b82f6' : '#f59e0b', borderRadius: 999 }} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#9ca3af', marginTop: 2 }}>
-                  <span>0</span><span>200,000</span>
-                </div>
-              </div>
-            )}
-
-            {/* What's in the box */}
-            {variant.accessories && variant.accessories.length > 0 && (
-              <div style={{ padding: '10px 14px', borderTop: '1px solid #eeeef2' }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 6 }}>What&apos;s in the box</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#16a34a', fontWeight: 500 }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"/></svg>
-                    12 mo. warranty
-                  </span>
-                  {variant.accessories.map((acc, i) => (
-                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#374151' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><path d="M20 6 9 17l-5-5"/></svg>
-                      {acc}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* AI summary */}
-          <p style={{ fontSize: 13, color: '#4b5563', lineHeight: 1.6, margin: '0 0 10px', padding: '0 2px' }}>
-            This {product.title} is in <strong>{variant.conditionLabel.toLowerCase()}</strong> condition{variant.shutterCount ? ` with only ${variant.shutterCount.toLocaleString('nl-NL')} shutter actuations` : ''}.
-            Professionally inspected, graded, and backed by our 12-month warranty.
-          </p>
-
-          {/* Seller remark */}
-          <div style={{
-            display: 'flex', alignItems: 'flex-start', gap: 8,
-            padding: '10px 12px', background: '#fffbeb', borderRadius: 8, border: '1px solid #fde68a',
-            marginBottom: 16, fontSize: 13, color: '#92400e', lineHeight: 1.5,
-          }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" style={{ flexShrink: 0, marginTop: 2 }}>
-              <path d="M1 21h22L12 2 1 21z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            <span>On the back screen is a small scratch — does not impact display quality or functionality.</span>
           </div>
 
           {/* Add to cart */}
-          <div className="variant-detail__cart-desktop" style={{ marginBottom: 12 }}>
+          <div className="variant-detail__cart-desktop" style={{ marginBottom: 16 }}>
             <div style={{ display: 'flex', gap: 10 }}>
               <button
                 className="variant-detail__add-to-cart"
@@ -634,7 +570,7 @@ export default function VariantDetailPage() {
           <div style={{
             display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 16px',
             padding: '12px 0', borderTop: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb',
-            marginBottom: 14,
+            marginBottom: 20,
           }}>
             {[
               { icon: <WarrantyIcon />, text: '12 Mo. Warranty' },
@@ -647,6 +583,57 @@ export default function VariantDetailPage() {
                 <span style={{ fontSize: 12, color: '#374151', fontWeight: 500 }}>{usp.text}</span>
               </div>
             ))}
+          </div>
+
+          {/* --- Detail cards --- */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+
+            {/* Card: Shutter Count */}
+            {variant.shutterCount !== undefined && (
+              <div style={{ background: '#f9fafb', borderRadius: 12, padding: '14px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>Shutter count</span>
+                  <InfoButton onClick={() => setShowShutterModal(true)} />
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#1f2937', marginBottom: 8 }}>{variant.shutterCount.toLocaleString('nl-NL')} actuations</div>
+                <div style={{ width: '100%', height: 6, background: '#e5e7eb', borderRadius: 999, overflow: 'hidden' }}>
+                  <div style={{ width: `${shutterPct}%`, height: '100%', background: shutterPct < 30 ? '#22c55e' : shutterPct < 60 ? '#3b82f6' : '#f59e0b', borderRadius: 999 }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#9ca3af', marginTop: 4 }}>
+                  <span>0</span>
+                  <span style={{ color: shutterPct < 30 ? '#16a34a' : shutterPct < 60 ? '#2563eb' : '#d97706' }}>{Math.round(shutterPct)}% of rated shutter life used</span>
+                  <span>200.000</span>
+                </div>
+              </div>
+            )}
+
+            {/* Card: Seller Notes */}
+            {variant.cosmeticRemark && (
+              <div style={{ background: '#fffbeb', borderRadius: 12, padding: '14px 16px' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#92400e', textTransform: 'uppercase' as const, letterSpacing: '0.05em', marginBottom: 6 }}>Seller notes</div>
+                <div style={{ fontSize: 13, color: '#78350f', lineHeight: 1.5 }}>{variant.cosmeticRemark}</div>
+              </div>
+            )}
+
+            {/* Card: What's Included */}
+            {variant.accessories && variant.accessories.length > 0 && (
+              <div style={{ background: '#f9fafb', borderRadius: 12, padding: '14px 16px' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' as const, letterSpacing: '0.05em', marginBottom: 8 }}>What&apos;s included</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 16px' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#16a34a', fontWeight: 600 }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+                    12 months warranty
+                  </span>
+                  {variant.accessories.map((acc, i) => (
+                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#374151' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      {acc}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
           </div>
 
           {/* View all variants (expandable) */}
@@ -710,17 +697,16 @@ export default function VariantDetailPage() {
                               {v.conditionLabel}
                             </span>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#6b7280' }}>
-                            {v.shutterCount !== undefined && <span>{v.shutterCount.toLocaleString('nl-NL')} clicks</span>}
-                            {v.shutterCount !== undefined && <span>&middot;</span>}
-                            <Stars />
-                          </div>
+                          {v.shutterCount !== undefined && (
+                            <div style={{ fontSize: 12, color: '#6b7280' }}>
+                              {v.shutterCount.toLocaleString('nl-NL')} clicks
+                            </div>
+                          )}
                         </div>
                         <div style={{ textAlign: 'right', flexShrink: 0 }}>
                           <div style={{ fontSize: 15, fontWeight: 700, color: '#1f2937' }}>
                             &euro; {v.price.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </div>
-                          <div style={{ fontSize: 11, color: '#6b7280' }}>{v.inclVat ? 'incl. VAT' : 'excl. VAT'}</div>
                         </div>
                       </Link>
                     );
@@ -795,7 +781,6 @@ export default function VariantDetailPage() {
       <div className="variant-detail__sticky-cart" style={{ display: 'none' }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 18, fontWeight: 700, color: '#1f2937' }}>&euro; {formattedPrice}</div>
-          <div style={{ fontSize: 11, color: '#6b7280' }}>{variant.inclVat ? 'incl. VAT' : 'excl. VAT'}</div>
         </div>
         <button
           onClick={handleAddToCart}
@@ -826,6 +811,58 @@ export default function VariantDetailPage() {
       <Modal className="info-modal-shutter" open={showShutterModal} onClose={() => setShowShutterModal(false)}>
         <ShutterCountModalContent />
       </Modal>
+
+      {/* ============ LIGHTBOX ============ */}
+      {lightboxOpen && (
+        <div
+          onClick={() => setLightboxOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 10000,
+            background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <button onClick={() => setLightboxOpen(false)} style={{ position: 'absolute', top: 20, right: 20, background: '#fff', border: 'none', borderRadius: '50%', width: 40, height: 40, cursor: 'pointer', zIndex: 10001, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          {totalImages > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx - 1 + totalImages) % totalImages); }}
+                style={{ position: 'absolute', left: 20, background: '#fff', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx + 1) % totalImages); }}
+                style={{ position: 'absolute', right: 20, background: '#fff', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </>
+          )}
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#fff', borderRadius: 16, padding: 24, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
+            <Image
+              src={images[lightboxIdx % totalImages]}
+              alt={`${product.title} — photo ${lightboxIdx + 1}`}
+              width={1200}
+              height={1200}
+              style={{ objectFit: 'contain', maxWidth: '80vw', maxHeight: '80vh', width: 'auto', height: 'auto' }}
+            />
+          </div>
+          {totalImages > 1 && (
+            <div style={{ position: 'absolute', bottom: 20, display: 'flex', gap: 8 }}>
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setLightboxIdx(i); }}
+                  style={{ width: 10, height: 10, borderRadius: '50%', border: 'none', background: i === lightboxIdx ? '#f97316' : 'rgba(0,0,0,0.2)', cursor: 'pointer' }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ============ CART POPUP ============ */}
         <div

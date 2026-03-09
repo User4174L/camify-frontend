@@ -4,9 +4,14 @@ export interface ProductVariant {
   condition: string;
   conditionLabel: string;
   shutterCount?: number;
+  cosmeticRemark?: string;
+  sensorCleaned?: boolean;
+  firmwareVersion?: string;
+  boxIncluded?: boolean;
   accessories?: string[];
   images: string[];
   inclVat?: boolean;
+  badges?: ('outlet' | 'new' | 'sale' | 'vat')[];
 }
 
 export interface Product {
@@ -34,14 +39,19 @@ export const products: Product[] = [
     category: 'cameras',
     price: 1749,
     fromPrice: true,
-    stock: 6,
+    stock: 8,
     image: '/images/sony-a7-iv.jpg',
     badge: 'vat',
     description: 'Full-frame mirrorless camera with 33MP sensor',
     variants: [
-      { sku: '257962', price: 1749, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 12400, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap'], images: ['/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg'], inclVat: true },
-      { sku: '257999', price: 1649, condition: 'good', conditionLabel: 'Good', shutterCount: 34200, accessories: ['Body cap', 'Battery NP-FZ100'], images: ['/images/sony-a7-iv.jpg'], inclVat: true },
-      { sku: '258040', price: 1499, condition: 'used', conditionLabel: 'Used', shutterCount: 67800, accessories: ['Body cap'], images: ['/images/sony-a7-iv.jpg'] },
+      { sku: '257962', price: 1749, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 12400, cosmeticRemark: 'On the back screen is a small scratch — does not impact display quality or functionality.', sensorCleaned: true, firmwareVersion: '2.01', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap'], images: ['/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg'], inclVat: true, badges: ['vat'] },
+      { sku: '257999', price: 1649, condition: 'good', conditionLabel: 'Good', shutterCount: 34200, cosmeticRemark: 'Light wear marks on the top plate and bottom plate. Fully functional.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100'], images: ['/images/sony-a7-iv.jpg'], inclVat: true, badges: ['outlet', 'vat'] },
+      { sku: '258040', price: 1499, condition: 'used', conditionLabel: 'Used', shutterCount: 67800, cosmeticRemark: 'Visible wear on body edges and grip rubber. LCD has minor scratches. All functions work perfectly.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap'], images: ['/images/sony-a7-iv.jpg'] },
+      { sku: '258041', price: 1849, condition: 'as-new', conditionLabel: 'As New', shutterCount: 980, sensorCleaned: true, firmwareVersion: '2.01', boxIncluded: true, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap', 'USB-C cable', 'Box'], images: ['/images/sony-a7-iv.jpg'], inclVat: true, badges: ['new'] },
+      { sku: '258042', price: 1699, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 18500, cosmeticRemark: 'Tiny mark on the hot shoe — cosmetic only.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger'], images: ['/images/sony-a7-iv.jpg'], inclVat: true, badges: ['vat'] },
+      { sku: '258043', price: 1599, condition: 'good', conditionLabel: 'Good', shutterCount: 41200, cosmeticRemark: 'General wear on grip and dials. Screen in good condition.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100'], images: ['/images/sony-a7-iv.jpg'], badges: ['outlet'] },
+      { sku: '258044', price: 1549, condition: 'good', conditionLabel: 'Good', shutterCount: 52000, cosmeticRemark: 'Wear marks on bottom plate and edges.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap'], images: ['/images/sony-a7-iv.jpg'], inclVat: true, badges: ['vat'] },
+      { sku: '258045', price: 1399, condition: 'used', conditionLabel: 'Used', shutterCount: 89000, cosmeticRemark: 'Heavy use visible. Brassing on edges, grip wear. Fully functional.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap'], images: ['/images/sony-a7-iv.jpg'] },
     ],
     specs: { 'Sensor': '33MP Full Frame CMOS', 'Mount': 'Sony E', 'ISO Range': '100-51200', 'Video': '4K 60p', 'Weight': '658g', 'Year': '2021' },
   },
@@ -58,8 +68,8 @@ export const products: Product[] = [
     badge: 'vat',
     description: '45MP full-frame mirrorless with 8K video',
     variants: [
-      { sku: '258093', price: 2899, condition: 'as-new', conditionLabel: 'As New', shutterCount: 2100, accessories: ['Body cap', 'Battery LP-E6NH', 'Charger', 'Strap', 'USB-C cable'], images: ['/images/canon-r5.jpg'], inclVat: true },
-      { sku: '258130', price: 2649, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 18700, accessories: ['Body cap', 'Battery LP-E6NH', 'Charger'], images: ['/images/canon-r5.jpg'], inclVat: true },
+      { sku: '258093', price: 2899, condition: 'as-new', conditionLabel: 'As New', shutterCount: 2100, sensorCleaned: true, firmwareVersion: '1.8.1', boxIncluded: true, accessories: ['Body cap', 'Battery LP-E6NH', 'Charger', 'Strap', 'USB-C cable'], images: ['/images/canon-r5.jpg'], inclVat: true },
+      { sku: '258130', price: 2649, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 18700, cosmeticRemark: 'Minor scuff marks on the bottom plate — barely visible in use.', sensorCleaned: true, firmwareVersion: '1.8.1', boxIncluded: false, accessories: ['Body cap', 'Battery LP-E6NH', 'Charger'], images: ['/images/canon-r5.jpg'], inclVat: true },
     ],
     specs: { 'Sensor': '45MP Full Frame CMOS', 'Mount': 'Canon RF', 'ISO Range': '100-51200', 'Video': '8K 30p / 4K 120p', 'Weight': '738g', 'Year': '2020' },
   },
@@ -75,8 +85,8 @@ export const products: Product[] = [
     image: '/images/nikon-z8.jpg',
     description: 'Flagship mirrorless with 45.7MP stacked sensor',
     variants: [
-      { sku: '258177', price: 3199, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 8900, accessories: ['Body cap', 'Battery EN-EL15c', 'Charger', 'Strap'], images: ['/images/nikon-z8.jpg'], inclVat: true },
-      { sku: '258214', price: 2999, condition: 'good', conditionLabel: 'Good', shutterCount: 24500, accessories: ['Body cap', 'Battery EN-EL15c'], images: ['/images/nikon-z8.jpg'] },
+      { sku: '258177', price: 3199, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 8900, cosmeticRemark: 'Faint mark on the eyecup — cosmetic only.', sensorCleaned: true, firmwareVersion: '2.10', boxIncluded: true, accessories: ['Body cap', 'Battery EN-EL15c', 'Charger', 'Strap'], images: ['/images/nikon-z8.jpg'], inclVat: true },
+      { sku: '258214', price: 2999, condition: 'good', conditionLabel: 'Good', shutterCount: 24500, cosmeticRemark: 'Light wear on grip rubber and minor marks on the bottom plate.', sensorCleaned: true, firmwareVersion: '2.00', boxIncluded: false, accessories: ['Body cap', 'Battery EN-EL15c'], images: ['/images/nikon-z8.jpg'] },
     ],
     specs: { 'Sensor': '45.7MP Stacked CMOS', 'Mount': 'Nikon Z', 'ISO Range': '64-25600', 'Video': '8K 30p / 4K 120p', 'Weight': '910g', 'Year': '2023' },
   },
@@ -93,9 +103,9 @@ export const products: Product[] = [
     badge: 'new',
     description: '26.1MP APS-C mirrorless with IBIS and classic design',
     variants: [
-      { sku: '258267', price: 1099, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 8200, accessories: ['Body cap', 'Battery NP-W235', 'Charger', 'Strap'], images: ['/images/fujifilm-x-t4.jpg'], inclVat: true },
-      { sku: '258308', price: 949, condition: 'good', conditionLabel: 'Good', shutterCount: 22400, accessories: ['Body cap', 'Battery NP-W235'], images: ['/images/fujifilm-x-t4.jpg'], inclVat: true },
-      { sku: '258345', price: 849, condition: 'used', conditionLabel: 'Used', shutterCount: 51000, accessories: ['Body cap'], images: ['/images/fujifilm-x-t4.jpg'] },
+      { sku: '258267', price: 1099, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 8200, sensorCleaned: true, firmwareVersion: '1.22', boxIncluded: false, accessories: ['Body cap', 'Battery NP-W235', 'Charger', 'Strap'], images: ['/images/fujifilm-x-t4.jpg'], inclVat: true },
+      { sku: '258308', price: 949, condition: 'good', conditionLabel: 'Good', shutterCount: 22400, cosmeticRemark: 'Light paint wear on edges. Screen protector was applied (included).', sensorCleaned: true, firmwareVersion: '1.20', boxIncluded: false, accessories: ['Body cap', 'Battery NP-W235'], images: ['/images/fujifilm-x-t4.jpg'], inclVat: true },
+      { sku: '258345', price: 849, condition: 'used', conditionLabel: 'Used', shutterCount: 51000, cosmeticRemark: 'Visible wear on body and dials. Small dent on hot shoe — does not affect flash mounting.', sensorCleaned: true, firmwareVersion: '1.13', boxIncluded: false, accessories: ['Body cap'], images: ['/images/fujifilm-x-t4.jpg'] },
     ],
     specs: { 'Sensor': '26.1MP APS-C X-Trans 4', 'Mount': 'Fujifilm X', 'ISO Range': '160-12800', 'Video': '4K 60p', 'IBIS': '6.5 stops', 'Weight': '607g', 'Year': '2020' },
   },
@@ -112,8 +122,8 @@ export const products: Product[] = [
     badge: 'vat',
     description: 'Professional standard zoom lens',
     variants: [
-      { sku: '258398', price: 1399, condition: 'excellent', conditionLabel: 'Excellent', accessories: ['Front cap', 'Rear cap', 'Hood', 'Pouch'], images: ['/images/sony-fe-24-70mm-f28-gm.jpg'], inclVat: true },
-      { sku: '258439', price: 1249, condition: 'good', conditionLabel: 'Good', accessories: ['Front cap', 'Rear cap'], images: ['/images/sony-fe-24-70mm-f28-gm.jpg'], inclVat: true },
+      { sku: '258398', price: 1399, condition: 'excellent', conditionLabel: 'Excellent', firmwareVersion: '03', boxIncluded: true, accessories: ['Front cap', 'Rear cap', 'Hood', 'Pouch'], images: ['/images/sony-fe-24-70mm-f28-gm.jpg'], inclVat: true },
+      { sku: '258439', price: 1249, condition: 'good', conditionLabel: 'Good', cosmeticRemark: 'Light wear ring on the zoom barrel — does not affect smoothness.', firmwareVersion: '03', boxIncluded: false, accessories: ['Front cap', 'Rear cap'], images: ['/images/sony-fe-24-70mm-f28-gm.jpg'], inclVat: true },
     ],
     specs: { 'Focal Length': '24-70mm', 'Aperture': 'f/2.8', 'Mount': 'Sony E', 'Stabilization': 'No (IBIS compatible)', 'Weight': '886g', 'Year': '2016' },
   },
@@ -129,8 +139,8 @@ export const products: Product[] = [
     image: '/images/canon-rf-24-70mm-f28-l-is-usm.jpg',
     description: 'Professional standard zoom with IS',
     variants: [
-      { sku: '258476', price: 1849, condition: 'excellent', conditionLabel: 'Excellent', accessories: ['Front cap', 'Rear cap', 'Hood', 'Case'], images: ['/images/canon-rf-24-70mm-f28-l-is-usm.jpg'], inclVat: true },
-      { sku: '258529', price: 1649, condition: 'good', conditionLabel: 'Good', accessories: ['Front cap', 'Rear cap', 'Hood'], images: ['/images/canon-rf-24-70mm-f28-l-is-usm.jpg'] },
+      { sku: '258476', price: 1849, condition: 'excellent', conditionLabel: 'Excellent', firmwareVersion: '1.0.6', boxIncluded: true, accessories: ['Front cap', 'Rear cap', 'Hood', 'Case'], images: ['/images/canon-rf-24-70mm-f28-l-is-usm.jpg'], inclVat: true },
+      { sku: '258529', price: 1649, condition: 'good', conditionLabel: 'Good', cosmeticRemark: 'Minor marks on the lens hood. Glass elements are clean and scratch-free.', firmwareVersion: '1.0.6', boxIncluded: false, accessories: ['Front cap', 'Rear cap', 'Hood'], images: ['/images/canon-rf-24-70mm-f28-l-is-usm.jpg'] },
     ],
     specs: { 'Focal Length': '24-70mm', 'Aperture': 'f/2.8', 'Mount': 'Canon RF', 'Stabilization': '5 stops IS', 'Weight': '900g', 'Year': '2019' },
   },
@@ -146,8 +156,8 @@ export const products: Product[] = [
     image: '/images/sony-a7r-v.jpg',
     description: '61MP full-frame mirrorless with AI-based AF',
     variants: [
-      { sku: '258570', price: 2999, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 4800, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap', 'Box'], images: ['/images/sony-a7r-v.jpg'], inclVat: true },
-      { sku: '258607', price: 2749, condition: 'good', conditionLabel: 'Good', shutterCount: 21500, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger'], images: ['/images/sony-a7r-v.jpg'] },
+      { sku: '258570', price: 2999, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 4800, sensorCleaned: true, firmwareVersion: '2.01', boxIncluded: true, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap', 'Box'], images: ['/images/sony-a7r-v.jpg'], inclVat: true },
+      { sku: '258607', price: 2749, condition: 'good', conditionLabel: 'Good', shutterCount: 21500, cosmeticRemark: 'Small scuff on the bottom plate near the tripod mount.', sensorCleaned: true, firmwareVersion: '2.00', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger'], images: ['/images/sony-a7r-v.jpg'] },
     ],
     specs: { 'Sensor': '61MP Full Frame BSI CMOS', 'Mount': 'Sony E', 'ISO Range': '100-32000', 'Video': '8K 24p / 4K 60p', 'Weight': '723g', 'Year': '2022' },
   },
@@ -164,8 +174,8 @@ export const products: Product[] = [
     badge: 'sale',
     description: '50.1MP flagship with 30fps burst and 8K video',
     variants: [
-      { sku: '258660', price: 5499, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 11200, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap', 'HDMI cable'], images: ['/images/sony-a1.jpg'], inclVat: true },
-      { sku: '258701', price: 4999, condition: 'good', conditionLabel: 'Good', shutterCount: 45600, accessories: ['Body cap', 'Battery NP-FZ100'], images: ['/images/sony-a1.jpg'] },
+      { sku: '258660', price: 5499, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 11200, sensorCleaned: true, firmwareVersion: '2.10', boxIncluded: true, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap', 'HDMI cable'], images: ['/images/sony-a1.jpg'], inclVat: true },
+      { sku: '258701', price: 4999, condition: 'good', conditionLabel: 'Good', shutterCount: 45600, cosmeticRemark: 'Wear marks on the grip and bottom plate. EVF and LCD in perfect condition.', sensorCleaned: true, firmwareVersion: '2.02', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100'], images: ['/images/sony-a1.jpg'] },
     ],
     specs: { 'Sensor': '50.1MP Stacked CMOS', 'Mount': 'Sony E', 'ISO Range': '100-32000', 'Video': '8K 30p / 4K 120p', 'Burst': '30fps', 'Weight': '737g', 'Year': '2021' },
   },
@@ -182,8 +192,8 @@ export const products: Product[] = [
     badge: 'new',
     description: 'Retro-styled 24.5MP full-frame mirrorless',
     variants: [
-      { sku: '258738', price: 1699, condition: 'as-new', conditionLabel: 'As New', shutterCount: 1200, accessories: ['Body cap', 'Battery EN-EL15c', 'Charger', 'Strap', 'USB-C cable'], images: ['/images/nikon-zf.jpg'], inclVat: true },
-      { sku: '258791', price: 1549, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 7800, accessories: ['Body cap', 'Battery EN-EL15c', 'Charger'], images: ['/images/nikon-zf.jpg'], inclVat: true },
+      { sku: '258738', price: 1699, condition: 'as-new', conditionLabel: 'As New', shutterCount: 1200, sensorCleaned: true, firmwareVersion: '1.40', boxIncluded: true, accessories: ['Body cap', 'Battery EN-EL15c', 'Charger', 'Strap', 'USB-C cable'], images: ['/images/nikon-zf.jpg'], inclVat: true },
+      { sku: '258791', price: 1549, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 7800, cosmeticRemark: 'Very faint mark on the top dial — barely visible.', sensorCleaned: true, firmwareVersion: '1.30', boxIncluded: false, accessories: ['Body cap', 'Battery EN-EL15c', 'Charger'], images: ['/images/nikon-zf.jpg'], inclVat: true },
     ],
     specs: { 'Sensor': '24.5MP Full Frame CMOS', 'Mount': 'Nikon Z', 'ISO Range': '100-64000', 'Video': '4K 30p', 'IBIS': '8 stops', 'Weight': '710g', 'Year': '2023' },
   },
@@ -211,7 +221,7 @@ export const products: Product[] = [
     image: '/images/hasselblad-x2d-100c.jpg',
     description: '100MP medium format mirrorless camera',
     variants: [
-      { sku: '258832', price: 7499, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 1800, accessories: ['Body cap', 'Battery', 'Charger', 'Strap', 'Box'], images: ['/images/hasselblad-x2d-100c.jpg'], inclVat: true },
+      { sku: '258832', price: 7499, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 1800, sensorCleaned: true, firmwareVersion: '1.4.0', boxIncluded: true, accessories: ['Body cap', 'Battery', 'Charger', 'Strap', 'Box'], images: ['/images/hasselblad-x2d-100c.jpg'], inclVat: true },
     ],
     specs: { 'Sensor': '100MP Medium Format CMOS', 'Mount': 'Hasselblad X', 'ISO Range': '64-25600', 'Video': '2.7K', 'Weight': '895g', 'Year': '2022' },
   },
@@ -228,9 +238,9 @@ export const products: Product[] = [
     badge: 'outlet',
     description: 'Professional telephoto zoom lens',
     variants: [
-      { sku: '258869', price: 2149, condition: 'as-new', conditionLabel: 'As New', accessories: ['Front cap', 'Rear cap', 'Hood', 'Case', 'Strap'], images: ['/images/sony-fe-70-200mm-f28-gm-oss-ii.jpg'], inclVat: true },
-      { sku: '258922', price: 1949, condition: 'excellent', conditionLabel: 'Excellent', accessories: ['Front cap', 'Rear cap', 'Hood'], images: ['/images/sony-fe-70-200mm-f28-gm-oss-ii.jpg'], inclVat: true },
-      { sku: '258963', price: 1749, condition: 'good', conditionLabel: 'Good', accessories: ['Front cap', 'Rear cap'], images: ['/images/sony-fe-70-200mm-f28-gm-oss-ii.jpg'] },
+      { sku: '258869', price: 2149, condition: 'as-new', conditionLabel: 'As New', firmwareVersion: '04', boxIncluded: true, accessories: ['Front cap', 'Rear cap', 'Hood', 'Case', 'Strap'], images: ['/images/sony-fe-70-200mm-f28-gm-oss-ii.jpg'], inclVat: true },
+      { sku: '258922', price: 1949, condition: 'excellent', conditionLabel: 'Excellent', cosmeticRemark: 'Tiny mark on the lens hood — glass is perfect.', firmwareVersion: '04', boxIncluded: false, accessories: ['Front cap', 'Rear cap', 'Hood'], images: ['/images/sony-fe-70-200mm-f28-gm-oss-ii.jpg'], inclVat: true },
+      { sku: '258963', price: 1749, condition: 'good', conditionLabel: 'Good', cosmeticRemark: 'Light wear on focus ring and barrel. Optics are clean.', firmwareVersion: '03', boxIncluded: false, accessories: ['Front cap', 'Rear cap'], images: ['/images/sony-fe-70-200mm-f28-gm-oss-ii.jpg'] },
     ],
     specs: { 'Focal Length': '70-200mm', 'Aperture': 'f/2.8', 'Mount': 'Sony E', 'Stabilization': 'OSS', 'Weight': '1045g', 'Year': '2021' },
   },
