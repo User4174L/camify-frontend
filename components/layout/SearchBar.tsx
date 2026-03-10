@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { searchProducts, searchBlogPosts, products } from '@/data/products';
+import { assetPath } from '@/lib/utils';
 
 const popularSearches = ['Sony A1', 'Nikon Z8', 'Canon R5 II', 'Canon 70-200mm 2.8', 'Leica M11', 'Sony 24-70mm GM', 'Hasselblad', 'DJI Mavic'];
 
@@ -94,7 +95,7 @@ function SearchDropdown({
           {filteredProducts.map(p => (
             <Link key={p.slug} href={`/product/${p.slug}`} className="search-dd__item" onClick={() => setIsOpen(false)}>
               <div className="search-dd__thumb">
-                <img src="/images/placeholder-camera.svg" alt={p.title} />
+                <img src={assetPath("/images/placeholder-camera.svg")} alt={p.title} />
               </div>
               <div className="search-dd__info">
                 <div className="search-dd__title">{p.title}</div>

@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { assetPath } from '@/lib/utils';
 
 /* ───────── constants ───────── */
 const STEPS = ['Details', 'Shipping', 'Protection', 'Payment'] as const;
@@ -866,7 +867,7 @@ export default function CheckoutPage() {
                 background: CSS.surface, overflow: 'hidden', flexShrink: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={assetPath(item.image)} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '.78rem', fontWeight: 600, color: CSS.text, lineHeight: 1.3, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name}</div>

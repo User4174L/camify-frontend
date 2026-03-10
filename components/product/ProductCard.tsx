@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import type { Product } from '@/data/products';
 import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
+import { assetPath } from '@/lib/utils';
 
 function formatPrice(price: number): string {
   return price.toLocaleString('nl-NL');
@@ -53,7 +54,7 @@ export default function ProductCard({
         onMouseLeave={() => setHovered(false)}
       >
         <img
-          src={product.image}
+          src={assetPath(product.image)}
           alt={product.title}
           style={{
             width: '100%',

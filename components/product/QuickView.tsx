@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import type { Product } from '@/data/products';
+import { assetPath } from '@/lib/utils';
 
 function getConditionDescription(conditionLabel: string, shutterCount?: number): string {
   let base = '';
@@ -73,7 +74,7 @@ export default function QuickView({ product, onClose }: { product: Product | nul
   if (!product || product.variants.length === 0) return null;
 
   const variant = product.variants[selectedVariantIndex];
-  const thumbnails = Array.from({ length: THUMB_COUNT }, () => product.image);
+  const thumbnails = Array.from({ length: THUMB_COUNT }, () => assetPath(product.image));
 
   const prevImage = () => setCurrentImage(i => (i - 1 + THUMB_COUNT) % THUMB_COUNT);
   const nextImage = () => setCurrentImage(i => (i + 1) % THUMB_COUNT);

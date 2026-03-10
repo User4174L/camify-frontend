@@ -1,6 +1,7 @@
 'use client';
 
 import { useCart } from '@/context/CartContext';
+import { assetPath } from '@/lib/utils';
 
 export default function CartDrawer() {
   const { items, removeItem, isDrawerOpen, closeDrawer, subtotal, vatAmount, total } = useCart();
@@ -45,7 +46,7 @@ export default function CartDrawer() {
                   width: 64, height: 64, background: 'var(--surface)', borderRadius: 8,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, flexShrink: 0,
                 }}>
-                  <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src={assetPath(item.image)} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{item.name}</div>

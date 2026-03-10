@@ -6,6 +6,7 @@ import Breadcrumb from '@/components/layout/Breadcrumb';
 import ProductGrid from '@/components/product/ProductGrid';
 import QuickView from '@/components/product/QuickView';
 import { products } from '@/data/products';
+import { assetPath } from '@/lib/utils';
 
 const allCanon = products.filter(p => p.brand === 'Canon' && p.category === 'cameras');
 
@@ -164,7 +165,7 @@ export default function CanonRPage() {
               transition: 'border-color 0.2s',
             }}>
               <div style={{ width: '100%', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10%', background: '#fff' }}>
-                <img src={m.image} alt={m.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={assetPath(m.image)} alt={m.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
               <div style={{ padding: '8px 6px', textAlign: 'center' }}>
                 <div style={{ fontSize: 12, fontWeight: 600, lineHeight: 1.2 }}>{m.name}</div>

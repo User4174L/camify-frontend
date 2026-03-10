@@ -6,6 +6,7 @@ import Breadcrumb from '@/components/layout/Breadcrumb';
 import ProductGrid from '@/components/product/ProductGrid';
 import QuickView from '@/components/product/QuickView';
 import { products } from '@/data/products';
+import { assetPath } from '@/lib/utils';
 
 const allMirrorless = products.filter(p => p.category === 'cameras');
 
@@ -103,7 +104,7 @@ export default function MirrorlessPage() {
           >
             <div style={{ width: '100%', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10%', background: m.image ? '#fff' : '#1f2937' }}>
               {m.image ? (
-                <img src={m.image} alt={m.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src={assetPath(m.image)} alt={m.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               ) : (
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
               )}

@@ -8,6 +8,7 @@ import Breadcrumb from '@/components/layout/Breadcrumb';
 import { products } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
+import { assetPath } from '@/lib/utils';
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
@@ -901,7 +902,7 @@ export default function VariantDetailPage() {
             <div style={{ display: 'flex', gap: 14, padding: '16px 20px', borderBottom: '1px solid #f3f4f6' }}>
               <div style={{ width: 64, height: 64, borderRadius: 8, overflow: 'hidden', background: '#f9fafb', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={product.image} alt={product.title} style={{ width: '90%', height: '90%', objectFit: 'contain' }} />
+                <img src={assetPath(product.image)} alt={product.title} style={{ width: '90%', height: '90%', objectFit: 'contain' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: '#1f2937', marginBottom: 2 }}>{product.title}</div>
@@ -924,7 +925,7 @@ export default function VariantDetailPage() {
                   }}>
                     <div style={{ width: 48, height: 48, borderRadius: 6, background: '#f9fafb', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={item.image} alt={item.name} style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
+                      <img src={assetPath(item.image)} alt={item.name} style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: '#1f2937' }}>{item.name}</div>

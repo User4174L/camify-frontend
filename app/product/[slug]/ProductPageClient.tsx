@@ -8,6 +8,7 @@ import QuickView from '@/components/product/QuickView';
 import { products, type Product, type ProductVariant } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
+import { assetPath } from '@/lib/utils';
 
 /* ------------------------------------------------------------------ */
 /*  SEO texts per product slug                                        */
@@ -347,7 +348,7 @@ export default function ProductPage() {
           <div className="oos-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, marginBottom: 48 }}>
             {/* Image */}
             <div style={{ borderRadius: 12, border: '1px solid #e0e0e4', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8%', position: 'relative', background: '#fff' }}>
-              <img src={product.image} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'grayscale(1) opacity(0.5)' }} />
+              <img src={assetPath(product.image)} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'grayscale(1) opacity(0.5)' }} />
               <span style={{ position: 'absolute', bottom: 16, right: 16, background: '#1f2937', color: '#fff', padding: '6px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600 }}>Out of stock</span>
             </div>
 
@@ -595,7 +596,7 @@ export default function ProductPage() {
                     onMouseEnter={() => setHoveredVariant(v.sku)}
                     onMouseLeave={() => setHoveredVariant(null)}
                   >
-                    <img src={v.images[0] || product.image} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', padding: 16 }} />
+                    <img src={assetPath(v.images[0] || product.image)} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', padding: 16 }} />
 
                     {/* Recently viewed label — top-left, behind orange lines */}
                     {viewed && (
@@ -793,7 +794,7 @@ export default function ProductPage() {
                       padding: '12%',
                       background: '#fff',
                     }}>
-                      <img src={rp.image} alt={rp.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                      <img src={assetPath(rp.image)} alt={rp.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                     </div>
                     <button
                       onClick={(e) => e.preventDefault()}
@@ -867,7 +868,7 @@ export default function ProductPage() {
               {cv && (
                 <div style={{ display: 'flex', gap: 14, padding: '16px 20px', borderBottom: '1px solid #f3f4f6' }}>
                   <div style={{ width: 64, height: 64, borderRadius: 8, overflow: 'hidden', background: '#f9fafb', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <img src={product.image} alt={product.title} style={{ width: '90%', height: '90%', objectFit: 'contain' }} />
+                    <img src={assetPath(product.image)} alt={product.title} style={{ width: '90%', height: '90%', objectFit: 'contain' }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#1f2937', marginBottom: 2 }}>{product.title}</div>
@@ -890,7 +891,7 @@ export default function ProductPage() {
                       cursor: 'pointer', transition: 'border-color 0.15s',
                     }}>
                       <div style={{ width: 48, height: 48, borderRadius: 6, background: '#f9fafb', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                        <img src={item.image} alt={item.name} style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
+                        <img src={assetPath(item.image)} alt={item.name} style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 500, color: '#1f2937' }}>{item.name}</div>
