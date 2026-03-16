@@ -12,14 +12,15 @@ import CartDrawer from '@/components/cart/CartDrawer';
 import UpsellPopup from '@/components/cart/UpsellPopup';
 
 const SITE_PIN = '4174';
+const SKIP_PIN = process.env.NEXT_PUBLIC_SKIP_PIN === '1';
 
 function PinGate({ children }: { children: React.ReactNode }) {
-  const [unlocked, setUnlocked] = useState(false);
+  const [unlocked, setUnlocked] = useState(SKIP_PIN);
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (sessionStorage.getItem('site_unlocked') === '1') setUnlocked(true);
+    if (SKIP_PIN || sessionStorage.getItem('site_unlocked') === '1') setUnlocked(true);
   }, []);
 
   if (unlocked) return <>{children}</>;

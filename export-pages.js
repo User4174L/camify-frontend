@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 
 const PORT = 3099;
-const OUTPUT_DIR = path.join(process.env.HOME, 'Desktop/Camify Front-end design/Design pagina\'s/camify-viewer');
+const OUTPUT_DIR = process.env.EXPORT_OUTPUT_DIR || path.join(process.env.HOME, 'Desktop/Camify Front-end design/Design pagina\'s/camify-viewer');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 // All pages to export
@@ -158,7 +158,7 @@ function navHighlightScript(currentName) {
 async function main() {
   // 1. Build
   console.log('Building...');
-  execSync('"' + path.join(__dirname, 'node_modules/.bin/next') + '" build', { cwd: __dirname, stdio: 'inherit' });
+  execSync('"' + path.join(__dirname, 'node_modules/.bin/next') + '" build', { cwd: __dirname, stdio: 'inherit', env: { ...process.env, NEXT_PUBLIC_SKIP_PIN: '1' } });
   console.log('Build done.\n');
 
   // 2. Read CSS from build output
@@ -171,11 +171,12 @@ async function main() {
   const imageCache = buildImageCache();
   console.log(`Images: ${Object.keys(imageCache).length} files cached\n`);
 
-  // 4. Start server
+  // 4. Start server (with pin bypass)
   const nextBin = path.join(__dirname, 'node_modules/.bin/next');
   const server = require('child_process').spawn(nextBin, ['start', '-p', String(PORT)], {
     cwd: __dirname,
     stdio: 'pipe',
+    env: { ...process.env, NEXT_PUBLIC_SKIP_PIN: '1' },
   });
 
   // Wait for server to be ready
