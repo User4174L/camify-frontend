@@ -43,52 +43,52 @@ const NAV_ITEMS: { key: string; label: string; badge?: number }[] = [
 /*  Mock data                                                          */
 /* ------------------------------------------------------------------ */
 const MOCK_PRODUCTS = [
-  { name: 'Venus Laowa 9mm T2.9 Zero-D', brand: 'Laowa', multipleStock: false, stock: 1, active: true },
-  { name: 'Z CAM E2-S6 Super 35mm 6K', brand: 'Z CAM', multipleStock: false, stock: 0, active: true },
-  { name: 'Canon EOS R5', brand: 'Canon', multipleStock: true, stock: 4, active: true },
-  { name: 'Nikon Z6 III', brand: 'Nikon', multipleStock: true, stock: 2, active: true },
-  { name: 'Sony A7 IV', brand: 'Sony', multipleStock: true, stock: 3, active: true },
-  { name: 'Fujifilm X-T5', brand: 'Fujifilm', multipleStock: false, stock: 1, active: true },
-  { name: 'Sigma 35mm f/1.4 DG DN Art', brand: 'Sigma', multipleStock: false, stock: 1, active: true },
-  { name: 'Tamron 28-75mm f/2.8 Di III VXD G2', brand: 'Tamron', multipleStock: false, stock: 0, active: false },
-  { name: 'Canon RF 50mm f/1.2L USM', brand: 'Canon', multipleStock: true, stock: 2, active: true },
-  { name: 'Nikon NIKKOR Z 24-70mm f/2.8 S', brand: 'Nikon', multipleStock: false, stock: 1, active: true },
-  { name: 'Sony FE 70-200mm f/2.8 GM OSS II', brand: 'Sony', multipleStock: true, stock: 3, active: true },
-  { name: 'Panasonic Lumix S5 IIX', brand: 'Panasonic', multipleStock: false, stock: 0, active: false },
-  { name: 'Leica Q3', brand: 'Leica', multipleStock: false, stock: 1, active: true },
-  { name: 'Hasselblad X2D 100C', brand: 'Hasselblad', multipleStock: false, stock: 1, active: true },
-  { name: 'Olympus OM-1 Mark II', brand: 'Olympus', multipleStock: false, stock: 0, active: false },
+  { name: 'Venus Laowa 9mm T2.9 Zero-D', brand: 'Laowa', multipleStock: false, stock: 1, active: true, hardloper: false },
+  { name: 'Z CAM E2-S6 Super 35mm 6K', brand: 'Z CAM', multipleStock: false, stock: 0, active: true, hardloper: false },
+  { name: 'Canon EOS R5', brand: 'Canon', multipleStock: true, stock: 4, active: true, hardloper: true },
+  { name: 'Nikon Z6 III', brand: 'Nikon', multipleStock: true, stock: 2, active: true, hardloper: false },
+  { name: 'Sony A7 IV', brand: 'Sony', multipleStock: true, stock: 3, active: true, hardloper: true },
+  { name: 'Fujifilm X-T5', brand: 'Fujifilm', multipleStock: false, stock: 1, active: true, hardloper: true },
+  { name: 'Sigma 35mm f/1.4 DG DN Art', brand: 'Sigma', multipleStock: false, stock: 1, active: true, hardloper: false },
+  { name: 'Tamron 28-75mm f/2.8 Di III VXD G2', brand: 'Tamron', multipleStock: false, stock: 0, active: false, hardloper: false },
+  { name: 'Canon RF 50mm f/1.2L USM', brand: 'Canon', multipleStock: true, stock: 2, active: true, hardloper: false },
+  { name: 'Nikon NIKKOR Z 24-70mm f/2.8 S', brand: 'Nikon', multipleStock: false, stock: 1, active: true, hardloper: false },
+  { name: 'Sony FE 70-200mm f/2.8 GM OSS II', brand: 'Sony', multipleStock: true, stock: 3, active: true, hardloper: true },
+  { name: 'Panasonic Lumix S5 IIX', brand: 'Panasonic', multipleStock: false, stock: 0, active: false, hardloper: false },
+  { name: 'Leica Q3', brand: 'Leica', multipleStock: false, stock: 1, active: true, hardloper: false },
+  { name: 'Hasselblad X2D 100C', brand: 'Hasselblad', multipleStock: false, stock: 1, active: true, hardloper: false },
+  { name: 'Olympus OM-1 Mark II', brand: 'Olympus', multipleStock: false, stock: 0, active: false, hardloper: false },
 ];
 
 const MOCK_VARIANTS = [
-  { title: 'Canon EOS R5 Body', conditie: 'A', sku: '21304', status: 'Verkoopbaar', shuttercount: 12450, stock: 1, locatie: 'C-L-3', inkoopprijs: 1850, verkoopprijs: 2199, btw: 'Marge', inkoopdatum: '12-01-2026' },
-  { title: 'Canon EOS R5 Body', conditie: 'B+', sku: '21305', status: 'In reparatie', shuttercount: 34200, stock: 1, locatie: 'N-C-3', inkoopprijs: 1650, verkoopprijs: 1999, btw: '21%', inkoopdatum: '05-02-2026' },
-  { title: 'Canon EOS R5 Body', conditie: 'B', sku: '21306', status: 'Afbeelding afwachten', shuttercount: 58100, stock: 1, locatie: 'L-L-5', inkoopprijs: 1450, verkoopprijs: 1799, btw: 'Marge', inkoopdatum: '18-02-2026' },
-  { title: 'Canon EOS R5 Body', conditie: 'A+', sku: '21307', status: 'Gereserveerd', shuttercount: 3200, stock: 1, locatie: 'C-L-4', inkoopprijs: 1950, verkoopprijs: 2349, btw: 'Marge', inkoopdatum: '01-03-2026' },
-  { title: 'Sony A7 IV Body', conditie: 'A', sku: '04398', status: 'Verkoopbaar', shuttercount: 8900, stock: 1, locatie: 'C-L-1', inkoopprijs: 1350, verkoopprijs: 1599, btw: 'Marge', inkoopdatum: '20-01-2026' },
-  { title: 'Sony A7 IV Body', conditie: 'B+', sku: '04399', status: 'Verkoopbaar', shuttercount: 21500, stock: 1, locatie: 'N-C-1', inkoopprijs: 1200, verkoopprijs: 1449, btw: '21%', inkoopdatum: '14-02-2026' },
-  { title: 'Sony A7 IV Body', conditie: 'C', sku: '04400', status: 'Defect', shuttercount: 95000, stock: 1, locatie: 'L-L-2', inkoopprijs: 750, verkoopprijs: 0, btw: 'Marge', inkoopdatum: '22-02-2026' },
-  { title: 'Nikon Z6 III Body', conditie: 'A+', sku: '15201', status: 'Verkoopbaar', shuttercount: 1200, stock: 1, locatie: 'C-L-2', inkoopprijs: 1800, verkoopprijs: 2149, btw: 'Marge', inkoopdatum: '03-03-2026' },
-  { title: 'Nikon Z6 III Body', conditie: 'A', sku: '15202', status: 'Verkoopbaar', shuttercount: 15400, stock: 1, locatie: 'N-C-2', inkoopprijs: 1600, verkoopprijs: 1899, btw: '21%', inkoopdatum: '25-01-2026' },
-  { title: 'Sigma 35mm f/1.4 DG DN Art', conditie: 'A', sku: '30712', status: 'Verkoopbaar', shuttercount: 0, stock: 1, locatie: 'L-L-1', inkoopprijs: 450, verkoopprijs: 599, btw: 'Marge', inkoopdatum: '10-02-2026' },
-  { title: 'Canon RF 50mm f/1.2L USM', conditie: 'A+', sku: '21480', status: 'Verkoopbaar', shuttercount: 0, stock: 1, locatie: 'C-L-5', inkoopprijs: 1500, verkoopprijs: 1799, btw: 'Marge', inkoopdatum: '28-02-2026' },
-  { title: 'Canon RF 50mm f/1.2L USM', conditie: 'B', sku: '21481', status: 'Kwijt', shuttercount: 0, stock: 1, locatie: '\u2014', inkoopprijs: 1100, verkoopprijs: 1399, btw: '21%', inkoopdatum: '15-01-2026' },
-  { title: 'Leica Q3', conditie: 'A+', sku: '50891', status: 'Verkoopbaar', shuttercount: 2100, stock: 1, locatie: 'C-L-6', inkoopprijs: 4200, verkoopprijs: 4899, btw: 'Marge', inkoopdatum: '06-03-2026' },
-  { title: 'Fujifilm X-T5 Body', conditie: 'A', sku: '18743', status: 'Afbeelding afwachten', shuttercount: 5600, stock: 1, locatie: 'N-C-4', inkoopprijs: 1100, verkoopprijs: 1349, btw: 'Marge', inkoopdatum: '08-03-2026' },
-  { title: 'Hasselblad X2D 100C', conditie: 'A+', sku: '60125', status: 'Verkoopbaar', shuttercount: 800, stock: 1, locatie: 'C-L-7', inkoopprijs: 5800, verkoopprijs: 6499, btw: 'Marge', inkoopdatum: '02-03-2026' },
+  { title: 'Canon EOS R5 Body', conditie: 'Als nieuw', sku: '21304', status: 'Verkoopbaar', shuttercount: 12450, stock: 1, locatie: 'C-L-3', inkoopprijs: 1850, verkoopprijs: 2199, btw: 'Marge', inkoopdatum: '12-01-2026' },
+  { title: 'Canon EOS R5 Body', conditie: 'Uitstekend', sku: '21305', status: 'In reparatie', shuttercount: 34200, stock: 1, locatie: 'N-C-3', inkoopprijs: 1650, verkoopprijs: 1999, btw: '21%', inkoopdatum: '05-02-2026' },
+  { title: 'Canon EOS R5 Body', conditie: 'Goed', sku: '21306', status: 'Afbeelding afwachten', shuttercount: 58100, stock: 1, locatie: 'L-L-5', inkoopprijs: 1450, verkoopprijs: 1799, btw: 'Marge', inkoopdatum: '18-02-2026' },
+  { title: 'Canon EOS R5 Body', conditie: 'Als nieuw', sku: '21307', status: 'Gereserveerd', shuttercount: 3200, stock: 1, locatie: 'C-L-4', inkoopprijs: 1950, verkoopprijs: 2349, btw: 'Marge', inkoopdatum: '01-03-2026' },
+  { title: 'Sony A7 IV Body', conditie: 'Als nieuw', sku: '04398', status: 'Verkoopbaar', shuttercount: 8900, stock: 1, locatie: 'C-L-1', inkoopprijs: 1350, verkoopprijs: 1599, btw: 'Marge', inkoopdatum: '20-01-2026' },
+  { title: 'Sony A7 IV Body', conditie: 'Uitstekend', sku: '04399', status: 'Verkoopbaar', shuttercount: 21500, stock: 1, locatie: 'N-C-1', inkoopprijs: 1200, verkoopprijs: 1449, btw: '21%', inkoopdatum: '14-02-2026' },
+  { title: 'Sony A7 IV Body', conditie: 'Gebruikt', sku: '04400', status: 'Defect', shuttercount: 95000, stock: 1, locatie: 'L-L-2', inkoopprijs: 750, verkoopprijs: 0, btw: 'Marge', inkoopdatum: '22-02-2026' },
+  { title: 'Nikon Z6 III Body', conditie: 'Als nieuw', sku: '15201', status: 'Verkoopbaar', shuttercount: 1200, stock: 1, locatie: 'C-L-2', inkoopprijs: 1800, verkoopprijs: 2149, btw: 'Marge', inkoopdatum: '03-03-2026' },
+  { title: 'Nikon Z6 III Body', conditie: 'Als nieuw', sku: '15202', status: 'Verkoopbaar', shuttercount: 15400, stock: 1, locatie: 'N-C-2', inkoopprijs: 1600, verkoopprijs: 1899, btw: '21%', inkoopdatum: '25-01-2026' },
+  { title: 'Sigma 35mm f/1.4 DG DN Art', conditie: 'Als nieuw', sku: '30712', status: 'Verkoopbaar', shuttercount: 0, stock: 1, locatie: 'L-L-1', inkoopprijs: 450, verkoopprijs: 599, btw: 'Marge', inkoopdatum: '10-02-2026' },
+  { title: 'Canon RF 50mm f/1.2L USM', conditie: 'Als nieuw', sku: '21480', status: 'Verkoopbaar', shuttercount: 0, stock: 1, locatie: 'C-L-5', inkoopprijs: 1500, verkoopprijs: 1799, btw: 'Marge', inkoopdatum: '28-02-2026' },
+  { title: 'Canon RF 50mm f/1.2L USM', conditie: 'Goed', sku: '21481', status: 'Kwijt', shuttercount: 0, stock: 1, locatie: '\u2014', inkoopprijs: 1100, verkoopprijs: 1399, btw: '21%', inkoopdatum: '15-01-2026' },
+  { title: 'Leica Q3', conditie: 'Als nieuw', sku: '50891', status: 'Verkoopbaar', shuttercount: 2100, stock: 1, locatie: 'C-L-6', inkoopprijs: 4200, verkoopprijs: 4899, btw: 'Marge', inkoopdatum: '06-03-2026' },
+  { title: 'Fujifilm X-T5 Body', conditie: 'Als nieuw', sku: '18743', status: 'Afbeelding afwachten', shuttercount: 5600, stock: 1, locatie: 'N-C-4', inkoopprijs: 1100, verkoopprijs: 1349, btw: 'Marge', inkoopdatum: '08-03-2026' },
+  { title: 'Hasselblad X2D 100C', conditie: 'Als nieuw', sku: '60125', status: 'Verkoopbaar', shuttercount: 800, stock: 1, locatie: 'C-L-7', inkoopprijs: 5800, verkoopprijs: 6499, btw: 'Marge', inkoopdatum: '02-03-2026' },
 ];
 
 const MOCK_ORDERS = [
-  { ordernummer: 'ORD-2026-0048', factuurnummer: 'INV-2026-0048', prijs: 2199, datum: '09-03-2026', naam: 'Jan de Vries', bedrijf: '—', status: 'Nieuw' },
-  { ordernummer: 'ORD-2026-0047', factuurnummer: 'INV-2026-0047', prijs: 1599, datum: '08-03-2026', naam: 'Maria Jansen', bedrijf: 'Fotostudio Amsterdam', status: 'In behandeling' },
-  { ordernummer: 'ORD-2026-0046', factuurnummer: 'INV-2026-0046', prijs: 4899, datum: '08-03-2026', naam: 'Peter van der Berg', bedrijf: '—', status: 'Verzonden' },
-  { ordernummer: 'ORD-2026-0045', factuurnummer: 'INV-2026-0045', prijs: 599, datum: '07-03-2026', naam: 'Lisa Bakker', bedrijf: '—', status: 'Afgerond' },
-  { ordernummer: 'ORD-2026-0044', factuurnummer: 'INV-2026-0044', prijs: 3598, datum: '07-03-2026', naam: 'Thomas Visser', bedrijf: 'Visser Fotografie', status: 'In behandeling' },
-  { ordernummer: 'ORD-2026-0043', factuurnummer: 'INV-2026-0043', prijs: 1899, datum: '06-03-2026', naam: 'Emma de Groot', bedrijf: '—', status: 'Verzonden' },
-  { ordernummer: 'ORD-2026-0042', factuurnummer: 'INV-2026-0042', prijs: 6499, datum: '06-03-2026', naam: 'Rick Mulder', bedrijf: 'Studio Mulder B.V.', status: 'Nieuw' },
-  { ordernummer: 'ORD-2026-0041', factuurnummer: 'INV-2026-0041', prijs: 1449, datum: '05-03-2026', naam: 'Sophie Hendriks', bedrijf: '—', status: 'Afgerond' },
-  { ordernummer: 'ORD-2026-0040', factuurnummer: 'INV-2026-0040', prijs: 2349, datum: '05-03-2026', naam: 'David Smit', bedrijf: '—', status: 'In behandeling' },
-  { ordernummer: 'ORD-2026-0039', factuurnummer: 'INV-2026-0039', prijs: 1799, datum: '04-03-2026', naam: 'Anna Bos', bedrijf: 'Bos Media', status: 'Afgerond' },
+  { ordernummer: 'CT028945', factuurnummer: 'INV062569', prijs: 2199, datum: '09-03-2026', naam: 'Jan de Vries', email: 'jan@example.nl', tel: '06-12345678', bedrijf: '—', status: 'Nieuw', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Keizersgracht 123\n1015 CJ\nAmsterdam\nNederland', orderregels: [{ variant: 'Canon EOS R5 Body — Als nieuw', type: 'Verkoop', prijs: 2199, btw: 'Marge' }] },
+  { ordernummer: 'CT028944', factuurnummer: 'INV062568', prijs: 1599, datum: '08-03-2026', naam: 'Maria Jansen', email: 'maria@fotostudio.nl', tel: '06-98765432', bedrijf: 'Fotostudio Amsterdam', status: 'In behandeling', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: true, adres: 'Herengracht 45\n1015 BA\nAmsterdam\nNederland', orderregels: [{ variant: 'Sony A7 IV Body — Uitstekend', type: 'Verkoop', prijs: 1449, btw: '21%' }, { variant: 'Sony FE 24-70mm f/2.8 GM', type: 'Inkoop', prijs: 150, btw: '0%' }] },
+  { ordernummer: 'CT028943', factuurnummer: 'INV062567', prijs: 4899, datum: '08-03-2026', naam: 'Peter van der Berg', email: 'peter.berg@gmail.com', tel: '—', bedrijf: '—', status: 'Verzonden', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Meeuwenhof 23\n5103KD\nDongen\nNederland', orderregels: [{ variant: 'Leica Q3 — Als nieuw', type: 'Verkoop', prijs: 4899, btw: 'Marge' }] },
+  { ordernummer: 'CT028942', factuurnummer: 'INV062566', prijs: 599, datum: '07-03-2026', naam: 'Lisa Bakker', email: 'lisa@bakker.nl', tel: '06-11223344', bedrijf: '—', status: 'Afgerond', betaalmethode: 'Bankoverschrijving', herkomst: 'Webshop', nieuwsbrief: true, adres: 'Dorpsstraat 8\n3421 AB\nOudewater\nNederland', orderregels: [{ variant: 'Sigma 35mm f/1.4 DG DN Art — Als nieuw', type: 'Verkoop', prijs: 599, btw: 'Marge' }] },
+  { ordernummer: 'CT028941', factuurnummer: 'INV062565', prijs: 3598, datum: '07-03-2026', naam: 'Thomas Visser', email: 'thomas@visserfotografie.nl', tel: '06-55667788', bedrijf: 'Visser Fotografie', status: 'In behandeling', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: false, adres: 'Industrieweg 12\n2600 AA\nDelft\nNederland', orderregels: [{ variant: 'Canon EOS R5 Body — Uitstekend', type: 'Verkoop', prijs: 1999, btw: '21%' }, { variant: 'Canon RF 50mm f/1.2L USM — Als nieuw', type: 'Verkoop', prijs: 1799, btw: 'Marge' }] },
+  { ordernummer: 'CT028940', factuurnummer: 'INV062564', prijs: 1899, datum: '06-03-2026', naam: 'Emma de Groot', email: 'emma.degroot@mail.nl', tel: '—', bedrijf: '—', status: 'Verzonden', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Plein 1945 nr 7\n5211 EA\nDen Bosch\nNederland', orderregels: [{ variant: 'Nikon Z6 III Body — Als nieuw', type: 'Verkoop', prijs: 1899, btw: '21%' }] },
+  { ordernummer: 'CT028939', factuurnummer: 'INV062563', prijs: 6499, datum: '06-03-2026', naam: 'Rick Mulder', email: 'rick@studiomulder.nl', tel: '06-99887766', bedrijf: 'Studio Mulder B.V.', status: 'Nieuw', betaalmethode: 'Bankoverschrijving', herkomst: 'Webshop', nieuwsbrief: true, adres: 'Lavendelweg 5\n3016 DK\nRotterdam\nNederland', orderregels: [{ variant: 'Hasselblad X2D 100C — Als nieuw', type: 'Verkoop', prijs: 6499, btw: 'Marge' }] },
+  { ordernummer: 'CT028938', factuurnummer: 'INV062562', prijs: 1449, datum: '05-03-2026', naam: 'Sophie Hendriks', email: 'sophie.h@outlook.com', tel: '06-44332211', bedrijf: '—', status: 'Afgerond', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Brinkstraat 19\n7411 HR\nDeventer\nNederland', orderregels: [{ variant: 'Sony A7 IV Body — Uitstekend', type: 'Verkoop', prijs: 1449, btw: '21%' }] },
+  { ordernummer: 'CT028937', factuurnummer: 'INV062561', prijs: 2349, datum: '05-03-2026', naam: 'David Smit', email: 'david.smit@gmail.com', tel: '—', bedrijf: '—', status: 'In behandeling', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: false, adres: 'Markt 3\n6211 CK\nMaastricht\nNederland', orderregels: [{ variant: 'Canon EOS R5 Body — Als nieuw', type: 'Verkoop', prijs: 2349, btw: 'Marge' }] },
+  { ordernummer: 'CT028936', factuurnummer: 'INV062560', prijs: 1799, datum: '04-03-2026', naam: 'Anna Bos', email: 'anna@bosmedia.nl', tel: '06-77889900', bedrijf: 'Bos Media', status: 'Afgerond', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: true, adres: 'Stationsplein 1\n3511 ED\nUtrecht\nNederland', orderregels: [{ variant: 'Canon RF 50mm f/1.2L USM — Als nieuw', type: 'Verkoop', prijs: 1799, btw: 'Marge' }] },
 ];
 
 const MOCK_KASBOEK = [
@@ -108,11 +108,11 @@ const MOCK_CATEGORIES = [
 ];
 
 const MOCK_QUOTES = [
-  { id: 'QTE000005', name: 'Jan de Vries', email: 'jan@example.nl', created: '09-03-2026', status: 'Wacht op prijsvoorstel', sellCount: 3, buyCount: 0 },
-  { id: 'QTE000004', name: 'Maria Jansen', email: 'maria@fotostudio.nl', created: '08-03-2026', status: 'Wacht op akkoord', sellCount: 1, buyCount: 1 },
-  { id: 'QTE000003', name: 'Peter van der Berg', email: 'peter.berg@gmail.com', created: '07-03-2026', status: 'Controleren', sellCount: 2, buyCount: 0 },
-  { id: 'QTE000002', name: 'Test Test', email: 'test@test.nl', created: '09-03-2026', status: 'Wacht op prijsvoorstel', sellCount: 2, buyCount: 0 },
-  { id: 'QTE000001', name: 'Test Test', email: 'admin@camera-tweedehands.nl', created: '09-03-2026', status: 'Wacht op prijsvoorstel', sellCount: 1, buyCount: 0 },
+  { id: 'QTE000005', name: 'Jan de Vries', bedrijf: '—', email: 'jan@example.nl', created: '09-03-2026', status: 'Wacht op prijsvoorstel', sellCount: 3, buyCount: 0 },
+  { id: 'QTE000004', name: 'Maria Jansen', bedrijf: 'Fotostudio Amsterdam', email: 'maria@fotostudio.nl', created: '08-03-2026', status: 'Wacht op akkoord', sellCount: 1, buyCount: 1 },
+  { id: 'QTE000003', name: 'Peter van der Berg', bedrijf: '—', email: 'peter.berg@gmail.com', created: '07-03-2026', status: 'Controleren', sellCount: 2, buyCount: 0 },
+  { id: 'QTE000002', name: 'Test Test', bedrijf: '—', email: 'test@test.nl', created: '09-03-2026', status: 'Wacht op prijsvoorstel', sellCount: 2, buyCount: 0 },
+  { id: 'QTE000001', name: 'Test Test', bedrijf: '—', email: 'admin@camera-tweedehands.nl', created: '09-03-2026', status: 'Wacht op prijsvoorstel', sellCount: 1, buyCount: 0 },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -437,6 +437,7 @@ function ProductenPage() {
               <tr>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Titel</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Brand</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'center' }}>Hardloper</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'center' }}>Multiple stock</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'center' }}>Voorraad</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'center' }}>Active</th>
@@ -447,6 +448,9 @@ function ProductenPage() {
                 <tr key={i} style={{ cursor: 'pointer' }}>
                   <td style={{ ...tableCellStyle, fontWeight: 500, color: ACCENT }}>{p.name}</td>
                   <td style={tableCellStyle}>{p.brand}</td>
+                  <td style={{ ...tableCellStyle, textAlign: 'center' }}>
+                    {p.hardloper && <Badge color={ACCENT} bg={ACCENT_BG}>Hardloper</Badge>}
+                  </td>
                   <td style={{ ...tableCellStyle, textAlign: 'center' }}>
                     <Badge color={p.multipleStock ? GREEN : GREY} bg={p.multipleStock ? '#DCFCE7' : '#F3F4F6'}>
                       {p.multipleStock ? 'Ja' : 'Nee'}
@@ -465,7 +469,7 @@ function ProductenPage() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen producten gevonden.</td></tr>
+                <tr><td colSpan={6} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen producten gevonden.</td></tr>
               )}
             </tbody>
           </table>
@@ -538,8 +542,8 @@ function VariantenPage() {
                   <td style={{ ...tableCellStyle, textAlign: 'right', fontFamily: 'monospace', fontSize: 12 }}>{v.shuttercount > 0 ? v.shuttercount.toLocaleString('nl-NL') : '\u2014'}</td>
                   <td style={{ ...tableCellStyle, textAlign: 'center', fontWeight: 600 }}>{v.stock}</td>
                   <td style={{ ...tableCellStyle, fontFamily: 'monospace', fontSize: 12 }}>{v.locatie}</td>
-                  <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>&euro; {v.inkoopprijs.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</td>
-                  <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>{v.verkoopprijs > 0 ? `\u20AC ${v.verkoopprijs.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}` : '\u2014'}</td>
+                  <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>&euro; {v.inkoopprijs.toLocaleString('nl-NL')}</td>
+                  <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>{v.verkoopprijs > 0 ? `\u20AC ${v.verkoopprijs.toLocaleString('nl-NL')}` : '\u2014'}</td>
                   <td style={{ ...tableCellStyle, textAlign: 'center' }}>
                     <Badge color={v.btw === 'Marge' ? ACCENT : BLUE} bg={v.btw === 'Marge' ? ACCENT_BG : '#DBEAFE'}>{v.btw}</Badge>
                   </td>
@@ -712,7 +716,7 @@ function CategoriesPage() {
 /* ------------------------------------------------------------------ */
 /*  Orders Page                                                        */
 /* ------------------------------------------------------------------ */
-function OrdersPage() {
+function OrdersPage({ onSelectOrder }: { onSelectOrder: (id: string) => void }) {
   const [search, setSearch] = useState('');
   const [sortField, setSortField] = useState<string>('datum');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
@@ -781,10 +785,10 @@ function OrdersPage() {
             </thead>
             <tbody>
               {sorted.map((o, i) => (
-                <tr key={i} style={{ cursor: 'pointer' }}>
+                <tr key={i} style={{ cursor: 'pointer' }} onClick={() => onSelectOrder(o.ordernummer)}>
                   <td style={{ ...tableCellStyle, fontWeight: 600, color: ACCENT }}>{o.ordernummer}</td>
                   <td style={{ ...tableCellStyle, fontSize: 12, color: GREY }}>{o.factuurnummer}</td>
-                  <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>&euro; {o.prijs.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</td>
+                  <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>&euro; {o.prijs.toLocaleString('nl-NL')}</td>
                   <td style={{ ...tableCellStyle, fontSize: 12 }}>{o.datum}</td>
                   <td style={{ ...tableCellStyle, fontWeight: 500 }}>{o.naam}</td>
                   <td style={{ ...tableCellStyle, fontSize: 12, color: GREY }}>{o.bedrijf}</td>
@@ -799,6 +803,164 @@ function OrdersPage() {
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Order Detail Page                                                  */
+/* ------------------------------------------------------------------ */
+function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack: () => void }) {
+  const order = MOCK_ORDERS.find(o => o.ordernummer === ordernummer) || MOCK_ORDERS[0];
+
+  const infoRow = (label: string, value: string | React.ReactNode) => (
+    <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
+      <span style={{ fontSize: 13, fontWeight: 600, color: DARK, minWidth: 140 }}>{label}</span>
+      <span style={{ fontSize: 13, color: GREY }}>{value}</span>
+    </div>
+  );
+
+  const orderStatusColor = (s: string) => {
+    switch (s) {
+      case 'Nieuw': return ACCENT;
+      case 'In behandeling': return BLUE;
+      case 'Verzonden': return '#8B5CF6';
+      case 'Afgerond': return GREEN;
+      default: return GREY;
+    }
+  };
+
+  return (
+    <div>
+      {/* Top bar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 16 }}>
+          <button onClick={onBack} style={{ background: 'none', border: 'none', color: ACCENT, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>&larr; Alle orders</button>
+          {order.herkomst === 'Quote' && (
+            <button style={{ background: 'none', border: 'none', color: ACCENT, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>&larr; Naar quote</button>
+          )}
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button style={buttonAccent}>Factuur versturen</button>
+          <button style={buttonDark}>Credit memo aanmaken</button>
+        </div>
+      </div>
+
+      {/* Order info + klantgegevens */}
+      <div style={cardStyle}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: DARK, marginBottom: 20 }}>Order {order.ordernummer}</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
+          <div>
+            <h3 style={{ fontSize: 13, fontWeight: 700, color: DARK, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Ordergegevens</h3>
+            {infoRow('Ordernummer', order.ordernummer)}
+            {infoRow('Factuurnummer', order.factuurnummer)}
+            {infoRow('Aangemaakt', order.datum)}
+            {infoRow('Prijs totaal', `\u20AC ${order.prijs.toLocaleString('nl-NL')}`)}
+            {infoRow('Betaalmethode', order.betaalmethode)}
+            {infoRow('Status', <Badge color={orderStatusColor(order.status)} bg={orderStatusColor(order.status) + '18'}>{order.status}</Badge>)}
+            {infoRow('Order afkomstig van', order.herkomst)}
+          </div>
+          <div>
+            <h3 style={{ fontSize: 13, fontWeight: 700, color: DARK, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Klantgegevens</h3>
+            {infoRow('Naam', order.naam)}
+            {infoRow('Email', order.email)}
+            {infoRow('Tel.', order.tel)}
+            {infoRow('Ingeschreven voor nieuwsbrief', order.nieuwsbrief ? 'Ja' : 'Nee')}
+            {infoRow('Adres', <span style={{ whiteSpace: 'pre-line' }}>{order.adres}</span>)}
+            {infoRow('Factuur adres', <span style={{ whiteSpace: 'pre-line' }}>{order.adres}</span>)}
+          </div>
+        </div>
+
+        {/* Documenten */}
+        <h3 style={{ fontSize: 13, fontWeight: 700, color: DARK, marginTop: 28, marginBottom: 12 }}>Documenten</h3>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button style={{ ...buttonOutline, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Factuur
+          </button>
+          <button style={{ ...buttonOutline, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Pakbon
+          </button>
+        </div>
+      </div>
+
+      {/* Orderregels */}
+      <div style={{ ...cardStyle, marginTop: 20 }}>
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 16 }}>Orderregels</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Variant</th>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Type</th>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'right' }}>Prijs</th>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>BTW</th>
+            </tr>
+          </thead>
+          <tbody>
+            {order.orderregels.map((r, i) => (
+              <tr key={i}>
+                <td style={{ ...tableCellStyle, fontWeight: 500, color: r.type === 'Inkoop' ? DARK : ACCENT }}>
+                  {r.variant}
+                  {r.type === 'Inkoop' && <span style={{ display: 'block', fontSize: 11, color: RED, fontWeight: 600, textTransform: 'uppercase' }}>GERESERVEERD</span>}
+                </td>
+                <td style={{ ...tableCellStyle, fontSize: 13 }}>{r.type === 'Verkoop' ? 'Verkoop' : 'Inkoop'}</td>
+                <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>&euro; {r.prijs.toLocaleString('nl-NL')}</td>
+                <td style={{ ...tableCellStyle, fontSize: 13 }}>{r.btw}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Verzendingen */}
+      <div style={{ ...cardStyle, marginTop: 20 }}>
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 16 }}>Verzendingen</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              {['Bestemming', 'Verzendoptie', 'Vervoerder', 'Tracking nummer', 'Tracking url', 'Status', 'Externe status', 'Verzendlabel', 'Pakbon', 'Lightspeed verzending'].map(h => (
+                <th key={h} style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left', fontSize: 10 }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan={10} style={{ ...tableCellStyle, textAlign: 'center', padding: 20, color: GREY, fontSize: 13 }}>Geen resultaten</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Credit memo's */}
+      <div style={{ ...cardStyle, marginTop: 20 }}>
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 16 }}>Credit memo&apos;s</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Referentie</th>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'right' }}>Prijs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan={2} style={{ ...tableCellStyle, textAlign: 'center', padding: 20, color: GREY, fontSize: 13 }}>Geen resultaten</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Notities */}
+      <div style={{ ...cardStyle, marginTop: 20 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, margin: 0 }}>Notities</h3>
+          <button style={buttonAccent}>Notitie opslaan</button>
+        </div>
+        <textarea
+          placeholder="Order notitie"
+          style={{ ...inputStyle, width: '100%', boxSizing: 'border-box', minHeight: 100, resize: 'vertical' }}
+        />
       </div>
     </div>
   );
@@ -841,7 +1003,8 @@ function QuotesPage({ onSelectQuote }: { onSelectQuote: (id: string) => void }) 
             <thead>
               <tr>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Quotenummer</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Email</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Naam</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Bedrijf</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Aangemaakt</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Status</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'center' }}>Sell</th>
@@ -851,11 +1014,9 @@ function QuotesPage({ onSelectQuote }: { onSelectQuote: (id: string) => void }) 
             <tbody>
               {filtered.map((q) => (
                 <tr key={q.id} onClick={() => onSelectQuote(q.id)} style={{ cursor: 'pointer' }}>
-                  <td style={tableCellStyle}>
-                    <div style={{ fontWeight: 600, color: ACCENT }}>{q.id}</div>
-                    <div style={{ fontSize: 12, color: GREY }}>{q.name}</div>
-                  </td>
-                  <td style={{ ...tableCellStyle, fontSize: 12 }}>{q.email}</td>
+                  <td style={{ ...tableCellStyle, fontWeight: 600, color: ACCENT }}>{q.id}</td>
+                  <td style={{ ...tableCellStyle, fontWeight: 500 }}>{q.name}</td>
+                  <td style={{ ...tableCellStyle, fontSize: 12, color: GREY }}>{q.bedrijf}</td>
                   <td style={{ ...tableCellStyle, fontSize: 12 }}>{q.created}</td>
                   <td style={tableCellStyle}>
                     <Badge color={quoteStatusColor(q.status)} bg={quoteStatusColor(q.status) + '18'}>{q.status}</Badge>
@@ -865,7 +1026,7 @@ function QuotesPage({ onSelectQuote }: { onSelectQuote: (id: string) => void }) 
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={6} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen quotes gevonden.</td></tr>
+                <tr><td colSpan={7} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen quotes gevonden.</td></tr>
               )}
             </tbody>
           </table>
@@ -1133,11 +1294,13 @@ export default function AdminDashboard() {
 
   const [activeSection, setActiveSection] = useState('dashboard');
   const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleNavClick = (key: string) => {
     setActiveSection(key);
     setSelectedQuote(null);
+    setSelectedOrder(null);
     setSidebarOpen(false);
   };
 
@@ -1147,7 +1310,7 @@ export default function AdminDashboard() {
     { key: 'producten', content: <ProductenPage /> },
     { key: 'varianten', content: <VariantenPage /> },
     { key: 'categories', content: <CategoriesPage /> },
-    { key: 'orders', content: <OrdersPage /> },
+    { key: 'orders', content: <OrdersPage onSelectOrder={(id) => setSelectedOrder(id)} /> },
     { key: 'quotes', content: <QuotesPage onSelectQuote={(id) => setSelectedQuote(id)} /> },
     { key: 'verkoop-rapport', content: <PlaceholderPage title="Verkoop rapport" description="Bekijk verkooprapporten en statistieken." /> },
     { key: 'reparaties', content: <PlaceholderPage title="Reparaties" description="Beheer reparatie-orders en statussen." /> },
@@ -1165,6 +1328,15 @@ export default function AdminDashboard() {
         <QuoteDetailPage
           quoteId={selectedQuote}
           onBack={() => setSelectedQuote(null)}
+        />
+      );
+    }
+
+    if (activeSection === 'orders' && selectedOrder) {
+      return (
+        <OrderDetailPage
+          ordernummer={selectedOrder}
+          onBack={() => setSelectedOrder(null)}
         />
       );
     }
