@@ -79,16 +79,16 @@ const MOCK_VARIANTS = [
 ];
 
 const MOCK_ORDERS = [
-  { ordernummer: 'CT028945', factuurnummer: 'INV062569', prijs: 2199, datum: '09-03-2026', naam: 'Jan de Vries', email: 'jan@example.nl', tel: '06-12345678', bedrijf: '—', status: 'Nieuw', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Keizersgracht 123\n1015 CJ\nAmsterdam\nNederland', orderregels: [{ variant: 'Canon EOS R5 Body — Als nieuw', type: 'Verkoop', prijs: 2199, btw: 'Marge' }] },
-  { ordernummer: 'CT028944', factuurnummer: 'INV062568', prijs: 1599, datum: '08-03-2026', naam: 'Maria Jansen', email: 'maria@fotostudio.nl', tel: '06-98765432', bedrijf: 'Fotostudio Amsterdam', status: 'In behandeling', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: true, adres: 'Herengracht 45\n1015 BA\nAmsterdam\nNederland', orderregels: [{ variant: 'Sony A7 IV Body — Uitstekend', type: 'Verkoop', prijs: 1449, btw: '21%' }, { variant: 'Sony FE 24-70mm f/2.8 GM', type: 'Inkoop', prijs: 150, btw: '0%' }] },
-  { ordernummer: 'CT028943', factuurnummer: 'INV062567', prijs: 4899, datum: '08-03-2026', naam: 'Peter van der Berg', email: 'peter.berg@gmail.com', tel: '—', bedrijf: '—', status: 'Verzonden', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Meeuwenhof 23\n5103KD\nDongen\nNederland', orderregels: [{ variant: 'Leica Q3 — Als nieuw', type: 'Verkoop', prijs: 4899, btw: 'Marge' }] },
-  { ordernummer: 'CT028942', factuurnummer: 'INV062566', prijs: 599, datum: '07-03-2026', naam: 'Lisa Bakker', email: 'lisa@bakker.nl', tel: '06-11223344', bedrijf: '—', status: 'Afgerond', betaalmethode: 'Bankoverschrijving', herkomst: 'Webshop', nieuwsbrief: true, adres: 'Dorpsstraat 8\n3421 AB\nOudewater\nNederland', orderregels: [{ variant: 'Sigma 35mm f/1.4 DG DN Art — Als nieuw', type: 'Verkoop', prijs: 599, btw: 'Marge' }] },
-  { ordernummer: 'CT028941', factuurnummer: 'INV062565', prijs: 3598, datum: '07-03-2026', naam: 'Thomas Visser', email: 'thomas@visserfotografie.nl', tel: '06-55667788', bedrijf: 'Visser Fotografie', status: 'In behandeling', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: false, adres: 'Industrieweg 12\n2600 AA\nDelft\nNederland', orderregels: [{ variant: 'Canon EOS R5 Body — Uitstekend', type: 'Verkoop', prijs: 1999, btw: '21%' }, { variant: 'Canon RF 50mm f/1.2L USM — Als nieuw', type: 'Verkoop', prijs: 1799, btw: 'Marge' }] },
-  { ordernummer: 'CT028940', factuurnummer: 'INV062564', prijs: 1899, datum: '06-03-2026', naam: 'Emma de Groot', email: 'emma.degroot@mail.nl', tel: '—', bedrijf: '—', status: 'Verzonden', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Plein 1945 nr 7\n5211 EA\nDen Bosch\nNederland', orderregels: [{ variant: 'Nikon Z6 III Body — Als nieuw', type: 'Verkoop', prijs: 1899, btw: '21%' }] },
-  { ordernummer: 'CT028939', factuurnummer: 'INV062563', prijs: 6499, datum: '06-03-2026', naam: 'Rick Mulder', email: 'rick@studiomulder.nl', tel: '06-99887766', bedrijf: 'Studio Mulder B.V.', status: 'Nieuw', betaalmethode: 'Bankoverschrijving', herkomst: 'Webshop', nieuwsbrief: true, adres: 'Lavendelweg 5\n3016 DK\nRotterdam\nNederland', orderregels: [{ variant: 'Hasselblad X2D 100C — Als nieuw', type: 'Verkoop', prijs: 6499, btw: 'Marge' }] },
-  { ordernummer: 'CT028938', factuurnummer: 'INV062562', prijs: 1449, datum: '05-03-2026', naam: 'Sophie Hendriks', email: 'sophie.h@outlook.com', tel: '06-44332211', bedrijf: '—', status: 'Afgerond', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Brinkstraat 19\n7411 HR\nDeventer\nNederland', orderregels: [{ variant: 'Sony A7 IV Body — Uitstekend', type: 'Verkoop', prijs: 1449, btw: '21%' }] },
-  { ordernummer: 'CT028937', factuurnummer: 'INV062561', prijs: 2349, datum: '05-03-2026', naam: 'David Smit', email: 'david.smit@gmail.com', tel: '—', bedrijf: '—', status: 'In behandeling', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: false, adres: 'Markt 3\n6211 CK\nMaastricht\nNederland', orderregels: [{ variant: 'Canon EOS R5 Body — Als nieuw', type: 'Verkoop', prijs: 2349, btw: 'Marge' }] },
-  { ordernummer: 'CT028936', factuurnummer: 'INV062560', prijs: 1799, datum: '04-03-2026', naam: 'Anna Bos', email: 'anna@bosmedia.nl', tel: '06-77889900', bedrijf: 'Bos Media', status: 'Afgerond', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: true, adres: 'Stationsplein 1\n3511 ED\nUtrecht\nNederland', orderregels: [{ variant: 'Canon RF 50mm f/1.2L USM — Als nieuw', type: 'Verkoop', prijs: 1799, btw: 'Marge' }] },
+  { ordernummer: 'CT028945', factuurnummer: 'INV062569', prijs: 3448, datum: '09-03-2026', laatsteFactuur: '09-03-2026 14:32', naam: 'Adriaan Raesen', email: 'adriaan@raesen.nl', tel: '06-12345678', bedrijf: 'Raesen Fotografie', isBusiness: true, status: 'Verzonden', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: false, adres: 'Meeuwenhof 23\n5103KD\nDongen\nNederland', orderregels: [{ variant: 'Canon EOS R5 Body — Als nieuw', type: 'Verkoop', prijs: 2199, btw: 'Marge' }, { variant: 'Canon RF 24-70mm f/2.8L IS USM — Uitstekend', type: 'Verkoop', prijs: 1549, btw: '21%' }, { variant: 'Sony A7 III Body — Goed', type: 'Inkoop', prijs: 650, btw: '0%' }] },
+  { ordernummer: 'CT028944', factuurnummer: 'INV062568', prijs: 1599, datum: '08-03-2026', laatsteFactuur: '08-03-2026 10:15', naam: 'Maria Jansen', email: 'maria@fotostudio.nl', tel: '06-98765432', bedrijf: 'Fotostudio Amsterdam', isBusiness: true, status: 'In behandeling', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: true, adres: 'Herengracht 45\n1015 BA\nAmsterdam\nNederland', orderregels: [{ variant: 'Sony A7 IV Body — Uitstekend', type: 'Verkoop', prijs: 1449, btw: '21%' }, { variant: 'Sony FE 24-70mm f/2.8 GM', type: 'Inkoop', prijs: 150, btw: '0%' }] },
+  { ordernummer: 'CT028943', factuurnummer: 'INV062567', prijs: 4899, datum: '08-03-2026', laatsteFactuur: '08-03-2026 09:41', naam: 'Peter van der Berg', email: 'peter.berg@gmail.com', tel: '—', bedrijf: '—', isBusiness: false, status: 'Verzonden', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Meeuwenhof 23\n5103KD\nDongen\nNederland', orderregels: [{ variant: 'Leica Q3 — Als nieuw', type: 'Verkoop', prijs: 4899, btw: 'Marge' }] },
+  { ordernummer: 'CT028942', factuurnummer: 'INV062566', prijs: 599, datum: '07-03-2026', laatsteFactuur: '07-03-2026 16:22', naam: 'Lisa Bakker', email: 'lisa@bakker.nl', tel: '06-11223344', bedrijf: '—', isBusiness: false, status: 'Afgerond', betaalmethode: 'Bankoverschrijving', herkomst: 'Webshop', nieuwsbrief: true, adres: 'Dorpsstraat 8\n3421 AB\nOudewater\nNederland', orderregels: [{ variant: 'Sigma 35mm f/1.4 DG DN Art — Als nieuw', type: 'Verkoop', prijs: 599, btw: 'Marge' }] },
+  { ordernummer: 'CT028941', factuurnummer: 'INV062565', prijs: 3598, datum: '07-03-2026', laatsteFactuur: '', naam: 'Thomas Visser', email: 'thomas@visserfotografie.nl', tel: '06-55667788', bedrijf: 'Visser Fotografie', isBusiness: true, status: 'In behandeling', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: false, adres: 'Industrieweg 12\n2600 AA\nDelft\nNederland', orderregels: [{ variant: 'Canon EOS R5 Body — Uitstekend', type: 'Verkoop', prijs: 1999, btw: '21%' }, { variant: 'Canon RF 50mm f/1.2L USM — Als nieuw', type: 'Verkoop', prijs: 1799, btw: 'Marge' }] },
+  { ordernummer: 'CT028940', factuurnummer: 'INV062564', prijs: 1899, datum: '06-03-2026', laatsteFactuur: '06-03-2026 11:05', naam: 'Emma de Groot', email: 'emma.degroot@mail.nl', tel: '—', bedrijf: '—', isBusiness: false, status: 'Verzonden', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Plein 1945 nr 7\n5211 EA\nDen Bosch\nNederland', orderregels: [{ variant: 'Nikon Z6 III Body — Als nieuw', type: 'Verkoop', prijs: 1899, btw: '21%' }] },
+  { ordernummer: 'CT028939', factuurnummer: 'INV062563', prijs: 6499, datum: '06-03-2026', laatsteFactuur: '', naam: 'Rick Mulder', email: 'rick@studiomulder.nl', tel: '06-99887766', bedrijf: 'Studio Mulder B.V.', isBusiness: true, status: 'Nieuw', betaalmethode: 'Bankoverschrijving', herkomst: 'Webshop', nieuwsbrief: true, adres: 'Lavendelweg 5\n3016 DK\nRotterdam\nNederland', orderregels: [{ variant: 'Hasselblad X2D 100C — Als nieuw', type: 'Verkoop', prijs: 6499, btw: 'Marge' }] },
+  { ordernummer: 'CT028938', factuurnummer: 'INV062562', prijs: 1449, datum: '05-03-2026', laatsteFactuur: '05-03-2026 15:30', naam: 'Sophie Hendriks', email: 'sophie.h@outlook.com', tel: '06-44332211', bedrijf: '—', isBusiness: false, status: 'Afgerond', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: false, adres: 'Brinkstraat 19\n7411 HR\nDeventer\nNederland', orderregels: [{ variant: 'Sony A7 IV Body — Uitstekend', type: 'Verkoop', prijs: 1449, btw: '21%' }] },
+  { ordernummer: 'CT028937', factuurnummer: 'INV062561', prijs: 2349, datum: '05-03-2026', laatsteFactuur: '', naam: 'David Smit', email: 'david.smit@gmail.com', tel: '—', bedrijf: '—', isBusiness: false, status: 'In behandeling', betaalmethode: 'Pin', herkomst: 'Quote', nieuwsbrief: false, adres: 'Markt 3\n6211 CK\nMaastricht\nNederland', orderregels: [{ variant: 'Canon EOS R5 Body — Als nieuw', type: 'Verkoop', prijs: 2349, btw: 'Marge' }] },
+  { ordernummer: 'CT028936', factuurnummer: 'INV062560', prijs: 1799, datum: '04-03-2026', laatsteFactuur: '04-03-2026 09:12', naam: 'Anna Bos', email: 'anna@bosmedia.nl', tel: '06-77889900', bedrijf: 'Bos Media', isBusiness: true, status: 'Afgerond', betaalmethode: 'iDEAL', herkomst: 'Webshop', nieuwsbrief: true, adres: 'Stationsplein 1\n3511 ED\nUtrecht\nNederland', orderregels: [{ variant: 'Canon RF 50mm f/1.2L USM — Als nieuw', type: 'Verkoop', prijs: 1799, btw: 'Marge' }] },
 ];
 
 const MOCK_KASBOEK = [
@@ -813,10 +813,16 @@ function OrdersPage({ onSelectOrder }: { onSelectOrder: (id: string) => void }) 
 /* ------------------------------------------------------------------ */
 function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack: () => void }) {
   const order = MOCK_ORDERS.find(o => o.ordernummer === ordernummer) || MOCK_ORDERS[0];
+  const [showCreditForm, setShowCreditForm] = useState(false);
+  const [creditSelected, setCreditSelected] = useState<Set<number>>(new Set());
+  const [creditVerzendkosten, setCreditVerzendkosten] = useState(false);
+  const [creditBetaalkosten, setCreditBetaalkosten] = useState(false);
+  const [creditNewProduct, setCreditNewProduct] = useState('');
+  const [creditNewPrice, setCreditNewPrice] = useState('');
 
   const infoRow = (label: string, value: string | React.ReactNode) => (
     <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
-      <span style={{ fontSize: 13, fontWeight: 600, color: DARK, minWidth: 140 }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 600, color: DARK, minWidth: 160 }}>{label}</span>
       <span style={{ fontSize: 13, color: GREY }}>{value}</span>
     </div>
   );
@@ -831,6 +837,26 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
     }
   };
 
+  const toggleCreditItem = (idx: number) => {
+    setCreditSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx); else next.add(idx);
+      return next;
+    });
+  };
+
+  const creditTotal = (() => {
+    let total = 0;
+    creditSelected.forEach(idx => {
+      const r = order.orderregels[idx];
+      if (r) total -= r.prijs; // credit = negative
+    });
+    if (creditVerzendkosten) total -= 6.95;
+    if (creditBetaalkosten) total -= 0.29;
+    if (creditNewPrice && parseFloat(creditNewPrice) > 0) total += parseFloat(creditNewPrice);
+    return total;
+  })();
+
   return (
     <div>
       {/* Top bar */}
@@ -841,11 +867,104 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
             <button style={{ background: 'none', border: 'none', color: ACCENT, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>&larr; Naar quote</button>
           )}
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button style={buttonAccent}>Factuur versturen</button>
-          <button style={buttonDark}>Credit memo aanmaken</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginRight: 4 }}>
+            <button style={buttonAccent}>Factuur versturen</button>
+            {order.laatsteFactuur && (
+              <span style={{ fontSize: 10, color: GREY, marginTop: 4 }}>Laatst verstuurd: {order.laatsteFactuur}</span>
+            )}
+          </div>
+          <button style={buttonDark} onClick={() => setShowCreditForm(!showCreditForm)}>Credit factuur</button>
         </div>
       </div>
+
+      {/* Credit factuur form */}
+      {showCreditForm && (
+        <div style={{ ...cardStyle, marginBottom: 20, border: `2px solid ${ACCENT}` }}>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 16 }}>Credit factuur aanmaken</h3>
+          <p style={{ fontSize: 13, color: GREY, marginBottom: 16 }}>Selecteer welke regels je wilt crediteren. Optioneel kun je een vervangend product toevoegen (ruil).</p>
+
+          {/* Selectable order lines */}
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 8 }}>Orderregels crediteren</div>
+            {order.orderregels.map((r, i) => (
+              <label key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: `1px solid ${BORDER}`, cursor: 'pointer', fontSize: 13 }}>
+                <input type="checkbox" checked={creditSelected.has(i)} onChange={() => toggleCreditItem(i)} />
+                <span style={{ flex: 1, fontWeight: 500, color: creditSelected.has(i) ? RED : DARK }}>{r.variant}</span>
+                <Badge color={r.type === 'Verkoop' ? GREEN : BLUE} bg={r.type === 'Verkoop' ? '#DCFCE7' : '#DBEAFE'}>{r.type}</Badge>
+                <span style={{ fontWeight: 600, color: creditSelected.has(i) ? RED : DARK, minWidth: 80, textAlign: 'right' }}>
+                  {creditSelected.has(i) ? '-' : ''}&euro; {r.prijs.toLocaleString('nl-NL')}
+                </span>
+              </label>
+            ))}
+          </div>
+
+          {/* Extra kosten crediteren */}
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 8 }}>Extra kosten crediteren</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', fontSize: 13, cursor: 'pointer' }}>
+              <input type="checkbox" checked={creditVerzendkosten} onChange={() => setCreditVerzendkosten(!creditVerzendkosten)} />
+              <span style={{ flex: 1 }}>Verzendkosten</span>
+              <span style={{ color: creditVerzendkosten ? RED : GREY, fontWeight: 500 }}>{creditVerzendkosten ? '-' : ''}&euro; 6,95</span>
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', fontSize: 13, cursor: 'pointer' }}>
+              <input type="checkbox" checked={creditBetaalkosten} onChange={() => setCreditBetaalkosten(!creditBetaalkosten)} />
+              <span style={{ flex: 1 }}>Betaalkosten</span>
+              <span style={{ color: creditBetaalkosten ? RED : GREY, fontWeight: 500 }}>{creditBetaalkosten ? '-' : ''}&euro; 0,29</span>
+            </label>
+          </div>
+
+          {/* Vervangend product (ruil) */}
+          <div style={{ marginBottom: 16, padding: 16, background: SURFACE, borderRadius: 8 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 8 }}>
+              Vervangend product toevoegen (optioneel)
+            </div>
+            <p style={{ fontSize: 12, color: GREY, marginBottom: 10 }}>
+              Bij een ruil: het gecrediteerde bedrag wordt verrekend met het nieuwe product. Het nettobedrag wordt bijbetaald of teruggestort.
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                type="text"
+                placeholder="Productnaam of SKU..."
+                value={creditNewProduct}
+                onChange={e => setCreditNewProduct(e.target.value)}
+                style={{ ...inputStyle, flex: 1 }}
+              />
+              <input
+                type="text"
+                placeholder="Prijs"
+                value={creditNewPrice}
+                onChange={e => setCreditNewPrice(e.target.value.replace(/[^\d.,]/g, ''))}
+                style={{ ...inputStyle, width: 100 }}
+              />
+            </div>
+            {creditNewProduct && creditNewPrice && (
+              <div style={{ marginTop: 8, fontSize: 13, color: GREEN, fontWeight: 500 }}>
+                + &euro; {parseFloat(creditNewPrice || '0').toLocaleString('nl-NL')} — {creditNewProduct}
+              </div>
+            )}
+          </div>
+
+          {/* Netto bedrag */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderTop: `2px solid ${BORDER}` }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px' }}>Nettobedrag</div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: creditTotal < 0 ? RED : creditTotal > 0 ? GREEN : DARK }}>
+                {creditTotal < 0 ? '-' : '+'}&euro; {Math.abs(creditTotal).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+              <div style={{ fontSize: 12, color: GREY }}>
+                {creditTotal < 0 ? 'Klant ontvangt terug' : creditTotal > 0 ? 'Klant betaalt bij' : 'Verrekend'}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button style={buttonOutline} onClick={() => { setShowCreditForm(false); setCreditSelected(new Set()); setCreditVerzendkosten(false); setCreditBetaalkosten(false); setCreditNewProduct(''); setCreditNewPrice(''); }}>Annuleren</button>
+              <button style={{ ...buttonAccent, background: creditSelected.size > 0 || creditVerzendkosten || creditBetaalkosten ? ACCENT : GREY }} disabled={creditSelected.size === 0 && !creditVerzendkosten && !creditBetaalkosten}>
+                Credit factuur aanmaken
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Order info + klantgegevens */}
       <div style={cardStyle}>
@@ -866,7 +985,9 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
             {infoRow('Naam', order.naam)}
             {infoRow('Email', order.email)}
             {infoRow('Tel.', order.tel)}
-            {infoRow('Ingeschreven voor nieuwsbrief', order.nieuwsbrief ? 'Ja' : 'Nee')}
+            {infoRow('Business', <Badge color={order.isBusiness ? GREEN : GREY} bg={order.isBusiness ? '#DCFCE7' : '#F3F4F6'}>{order.isBusiness ? 'Ja' : 'Nee'}</Badge>)}
+            {order.isBusiness && order.bedrijf !== '—' && infoRow('Bedrijf', order.bedrijf)}
+            {infoRow('Nieuwsbrief', order.nieuwsbrief ? 'Ja' : 'Nee')}
             {infoRow('Adres', <span style={{ whiteSpace: 'pre-line' }}>{order.adres}</span>)}
             {infoRow('Factuur adres', <span style={{ whiteSpace: 'pre-line' }}>{order.adres}</span>)}
           </div>
@@ -905,7 +1026,9 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
                   {r.variant}
                   {r.type === 'Inkoop' && <span style={{ display: 'block', fontSize: 11, color: RED, fontWeight: 600, textTransform: 'uppercase' }}>GERESERVEERD</span>}
                 </td>
-                <td style={{ ...tableCellStyle, fontSize: 13 }}>{r.type === 'Verkoop' ? 'Verkoop' : 'Inkoop'}</td>
+                <td style={tableCellStyle}>
+                  <Badge color={r.type === 'Verkoop' ? GREEN : BLUE} bg={r.type === 'Verkoop' ? '#DCFCE7' : '#DBEAFE'}>{r.type}</Badge>
+                </td>
                 <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>&euro; {r.prijs.toLocaleString('nl-NL')}</td>
                 <td style={{ ...tableCellStyle, fontSize: 13 }}>{r.btw}</td>
               </tr>
@@ -933,19 +1056,20 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
         </table>
       </div>
 
-      {/* Credit memo's */}
+      {/* Credit facturen */}
       <div style={{ ...cardStyle, marginTop: 20 }}>
-        <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 16 }}>Credit memo&apos;s</h3>
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 16 }}>Credit facturen</h3>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
               <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Referentie</th>
-              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'right' }}>Prijs</th>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Datum</th>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'right' }}>Bedrag</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td colSpan={2} style={{ ...tableCellStyle, textAlign: 'center', padding: 20, color: GREY, fontSize: 13 }}>Geen resultaten</td>
+              <td colSpan={3} style={{ ...tableCellStyle, textAlign: 'center', padding: 20, color: GREY, fontSize: 13 }}>Geen resultaten</td>
             </tr>
           </tbody>
         </table>
