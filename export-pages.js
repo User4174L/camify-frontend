@@ -522,6 +522,67 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
   });
 })();
 
+/* ===== DASHBOARD SIDEBAR NAV ===== */
+(function(){
+  var sidebar=document.querySelector('.dashboard-sidebar');
+  if(!sidebar) return;
+  var navBtns=sidebar.querySelectorAll('nav button');
+  var sections=document.querySelectorAll('[data-section]');
+  if(!navBtns.length||!sections.length) return;
+  navBtns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      // Get section key from button text
+      var label=btn.querySelector('span');
+      if(!label) return;
+      var text=label.textContent.trim().toLowerCase();
+      // Map label to key
+      var keyMap={'overzicht':'overzicht','dashboard':'dashboard','producten':'producten','varianten':'varianten','categories':'categories','orders':'orders','quotes':'quotes','verkoop rapport':'verkoop-rapport','reparaties':'reparaties','kasboek':'kasboek','reserveringen':'reserveringen','klanten':'klanten','incomplete varianten':'incomplete-varianten','accountinstellingen':'accountinstellingen','sandbox':'sandbox'};
+      var key=keyMap[text]||text;
+      // Show matching section, hide others
+      sections.forEach(function(s){
+        var sKey=s.getAttribute('data-section');
+        s.style.display=(sKey===key||(key==='overzicht'&&sKey==='dashboard'))?'block':'none';
+      });
+      // Update active state on buttons
+      navBtns.forEach(function(b){
+        var isActive=b===btn;
+        b.style.borderLeft=isActive?'3px solid #E8692A':'3px solid transparent';
+        b.style.background=isActive?'#FFF0E8':'transparent';
+        b.style.color=isActive?'#E8692A':'#1E2133';
+        b.style.fontWeight=isActive?'600':'400';
+      });
+    });
+  });
+  // Dashboard mobile toggle
+  var mobileToggle=document.querySelector('.dashboard-mobile-toggle button');
+  if(mobileToggle&&sidebar){
+    mobileToggle.addEventListener('click',function(){
+      var left=sidebar.style.left;
+      sidebar.style.left=(left==='-280px'||left==='')?'0':'-280px';
+    });
+  }
+  // Dashboard search/filter inputs
+  document.querySelectorAll('input[placeholder*="Zoek"]').forEach(function(input){
+    var table=input.closest('div').parentElement.querySelector('table');
+    if(!table) return;
+    var rows=table.querySelectorAll('tbody tr');
+    input.addEventListener('input',function(){
+      var q=input.value.toLowerCase();
+      rows.forEach(function(row){
+        row.style.display=row.textContent.toLowerCase().indexOf(q)>-1?'':'none';
+      });
+    });
+  });
+  // Dashboard select filters
+  document.querySelectorAll('select').forEach(function(sel){
+    sel.addEventListener('change',function(){
+      // Trigger visual feedback
+      sel.style.borderColor='#E8692A';
+      setTimeout(function(){sel.style.borderColor='#D1D5DB';},300);
+    });
+  });
+})();
+
 /* ===== LANGUAGE / ACCOUNT DROPDOWNS ===== */
 (function(){
   document.querySelectorAll('.lang-selector, .header__action-btn[aria-label="Account"]').forEach(function(btn){

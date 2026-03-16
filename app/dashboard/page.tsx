@@ -1141,6 +1141,24 @@ export default function AdminDashboard() {
     setSidebarOpen(false);
   };
 
+  const sections: { key: string; content: React.ReactNode }[] = [
+    { key: 'overzicht', content: <DashboardPage /> },
+    { key: 'dashboard', content: <DashboardPage /> },
+    { key: 'producten', content: <ProductenPage /> },
+    { key: 'varianten', content: <VariantenPage /> },
+    { key: 'categories', content: <CategoriesPage /> },
+    { key: 'orders', content: <OrdersPage /> },
+    { key: 'quotes', content: <QuotesPage onSelectQuote={(id) => setSelectedQuote(id)} /> },
+    { key: 'verkoop-rapport', content: <PlaceholderPage title="Verkoop rapport" description="Bekijk verkooprapporten en statistieken." /> },
+    { key: 'reparaties', content: <PlaceholderPage title="Reparaties" description="Beheer reparatie-orders en statussen." /> },
+    { key: 'kasboek', content: <PlaceholderPage title="Kasboek" description="Volledig kasboek overzicht." /> },
+    { key: 'reserveringen', content: <PlaceholderPage title="Reserveringen" description="Beheer productreserveringen." /> },
+    { key: 'klanten', content: <PlaceholderPage title="Klanten" description="Klantenoverzicht en -beheer." /> },
+    { key: 'incomplete-varianten', content: <PlaceholderPage title="Incomplete varianten" description="Varianten die nog aangevuld moeten worden." /> },
+    { key: 'accountinstellingen', content: <PlaceholderPage title="Accountinstellingen" description="Beheer je accountinstellingen." /> },
+    { key: 'sandbox', content: <PlaceholderPage title="Sandbox" description="Test- en ontwikkelomgeving." /> },
+  ];
+
   const renderContent = () => {
     if (activeSection === 'quotes' && selectedQuote) {
       return (
@@ -1151,39 +1169,19 @@ export default function AdminDashboard() {
       );
     }
 
-    switch (activeSection) {
-      case 'overzicht':
-      case 'dashboard':
-        return <DashboardPage />;
-      case 'producten':
-        return <ProductenPage />;
-      case 'varianten':
-        return <VariantenPage />;
-      case 'categories':
-        return <CategoriesPage />;
-      case 'orders':
-        return <OrdersPage />;
-      case 'quotes':
-        return <QuotesPage onSelectQuote={(id) => setSelectedQuote(id)} />;
-      case 'verkoop-rapport':
-        return <PlaceholderPage title="Verkoop rapport" description="Bekijk verkooprapporten en statistieken." />;
-      case 'reparaties':
-        return <PlaceholderPage title="Reparaties" description="Beheer reparatie-orders en statussen." />;
-      case 'kasboek':
-        return <PlaceholderPage title="Kasboek" description="Volledig kasboek overzicht." />;
-      case 'reserveringen':
-        return <PlaceholderPage title="Reserveringen" description="Beheer productreserveringen." />;
-      case 'klanten':
-        return <PlaceholderPage title="Klanten" description="Klantenoverzicht en -beheer." />;
-      case 'incomplete-varianten':
-        return <PlaceholderPage title="Incomplete varianten" description="Varianten die nog aangevuld moeten worden." />;
-      case 'accountinstellingen':
-        return <PlaceholderPage title="Accountinstellingen" description="Beheer je accountinstellingen." />;
-      case 'sandbox':
-        return <PlaceholderPage title="Sandbox" description="Test- en ontwikkelomgeving." />;
-      default:
-        return <DashboardPage />;
-    }
+    return (
+      <>
+        {sections.map(s => (
+          <div
+            key={s.key}
+            data-section={s.key}
+            style={{ display: (activeSection === s.key || (activeSection === 'overzicht' && s.key === 'dashboard')) ? 'block' : 'none' }}
+          >
+            {s.content}
+          </div>
+        ))}
+      </>
+    );
   };
 
   return (
