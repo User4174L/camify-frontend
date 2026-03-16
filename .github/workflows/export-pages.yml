@@ -1,0 +1,54 @@
+name: Export Design Pages
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # Dagelijks om 06:00 UTC (07:00 NL / 08:00 zomertijd)
+  push:
+    branches: [main]
+  workflow_dispatch: # Handmatig triggeren via GitHub UI
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout camify-frontend
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Export pages
+        run: EXPORT_OUTPUT_DIR=${{ github.workspace }}/pages-output NEXT_PUBLIC_SKIP_PIN=1 node export-pages.js
+
+      - name: Checkout camify-pages
+        uses: actions/checkout@v4
+        with:
+          repository: User4174L/camify-pages
+          path: camify-pages
+          token: ${{ secrets.PAGES_PAT }}
+
+      - name: Update camify-pages
+        run: |
+          # Remove old HTML files
+          find camify-pages -maxdepth 1 -name '*.html' -delete
+          # Copy new export
+          cp pages-output/*.html camify-pages/
+
+      - name: Push to camify-pages
+        run: |
+          cd camify-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update design pages $(date -u +%Y-%m-%d)"
+            git push
+          fi
