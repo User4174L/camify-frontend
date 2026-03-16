@@ -20,41 +20,62 @@ function conditionColor(condition: string): string {
 interface VariantResult {
   productSlug: string;
   productTitle: string;
+  productImage: string;
   sku: string;
   price: number;
   condition: string;
   conditionLabel: string;
+  shutterCount?: number;
+}
+
+function getPriceRange(slug: string): { min: number; max: number } | null {
+  const product = products.find(p => p.slug === slug);
+  if (!product || product.variants.length === 0) return null;
+  const prices = product.variants.map(v => v.price);
+  return { min: Math.min(...prices), max: Math.max(...prices) };
 }
 
 function useSearch(query: string) {
   const q = query.toLowerCase().trim();
 
-  const filteredProducts = q.length > 0
-    ? searchProducts.filter(p => p.keywords.some(k => k.includes(q))).slice(0, 4)
+  const matchingProducts = q.length > 0
+    ? searchProducts.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        p.keywords.some(k => k.includes(q))
+      )
     : [];
+
+  const filteredProducts = matchingProducts.filter(p => p.stock !== 'Out of stock').slice(0, 4);
+  const filteredOos = matchingProducts.filter(p => p.stock === 'Out of stock').slice(0, 3);
 
   const filteredVariants: VariantResult[] = q.length > 0
     ? products.flatMap(p =>
         p.variants
-          .filter(v => v.sku.includes(q))
+          .filter(v =>
+            v.sku.includes(q) ||
+            p.title.toLowerCase().includes(q) ||
+            p.slug.includes(q)
+          )
           .map(v => ({
             productSlug: p.slug,
             productTitle: p.title,
+            productImage: p.image,
             sku: v.sku,
             price: v.price,
             condition: v.condition,
             conditionLabel: v.conditionLabel,
+            shutterCount: v.shutterCount,
           }))
-      ).slice(0, 3)
+      ).slice(0, 5)
     : [];
 
   const filteredBlog = q.length > 0
     ? searchBlogPosts.filter(b => b.title.toLowerCase().includes(q)).slice(0, 2)
     : [];
 
-  const hasResults = filteredProducts.length > 0 || filteredVariants.length > 0 || filteredBlog.length > 0;
+  const hasResults = filteredProducts.length > 0 || filteredOos.length > 0 || filteredVariants.length > 0 || filteredBlog.length > 0;
 
-  return { filteredProducts, filteredVariants, filteredBlog, hasResults };
+  return { filteredProducts, filteredOos, filteredVariants, filteredBlog, hasResults };
 }
 
 function SearchDropdown({
@@ -62,6 +83,7 @@ function SearchDropdown({
   setQuery,
   setIsOpen,
   filteredProducts,
+  filteredOos,
   filteredVariants,
   filteredBlog,
   hasResults,
@@ -70,6 +92,7 @@ function SearchDropdown({
   setQuery: (q: string) => void;
   setIsOpen: (v: boolean) => void;
   filteredProducts: ReturnType<typeof useSearch>['filteredProducts'];
+  filteredOos: ReturnType<typeof useSearch>['filteredOos'];
   filteredVariants: VariantResult[];
   filteredBlog: ReturnType<typeof useSearch>['filteredBlog'];
   hasResults: boolean;
@@ -89,23 +112,36 @@ function SearchDropdown({
 
   return (
     <>
+      {/* 1. Products (in stock) */}
       {filteredProducts.length > 0 && (
         <div className="search-dd__section">
           <div className="search-dd__section-title">Products</div>
-          {filteredProducts.map(p => (
-            <Link key={p.slug} href={`/product/${p.slug}`} className="search-dd__item" onClick={() => setIsOpen(false)}>
-              <div className="search-dd__thumb">
-                <img src={assetPath("/images/placeholder-camera.svg")} alt={p.title} />
-              </div>
-              <div className="search-dd__info">
-                <div className="search-dd__title">{p.title}</div>
-                <div className="search-dd__meta">{p.stock}</div>
-              </div>
-            </Link>
-          ))}
+          {filteredProducts.map(p => {
+            const range = getPriceRange(p.slug);
+            return (
+              <Link key={p.slug} href={`/product/${p.slug}`} className="search-dd__item" onClick={() => setIsOpen(false)}>
+                <div className="search-dd__thumb">
+                  <img src={assetPath(p.image)} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div className="search-dd__info">
+                  <div className="search-dd__title">{p.title}</div>
+                  <div className="search-dd__meta" style={{ color: '#16a34a' }}>{p.stock}</div>
+                </div>
+                {range && (
+                  <div className="search-dd__price" style={{ textAlign: 'right', lineHeight: 1.3 }}>
+                    {range.min === range.max
+                      ? <>&euro;{range.min.toLocaleString('nl-NL')}</>
+                      : <>&euro;{range.min.toLocaleString('nl-NL')} – &euro;{range.max.toLocaleString('nl-NL')}</>
+                    }
+                  </div>
+                )}
+              </Link>
+            );
+          })}
         </div>
       )}
 
+      {/* 2. Variants */}
       {filteredVariants.length > 0 && (
         <>
           {filteredProducts.length > 0 && <div className="search-dd__divider" />}
@@ -118,28 +154,25 @@ function SearchDropdown({
                 className="search-dd__item"
                 onClick={() => setIsOpen(false)}
               >
-                <div
-                  className="search-dd__thumb"
-                  style={{ background: '#F8F8FA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', fontFamily: 'monospace' }}>
-                    #{v.sku}
-                  </span>
+                <div className="search-dd__thumb">
+                  <img src={assetPath(v.productImage)} alt={v.productTitle} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div className="search-dd__info">
                   <div className="search-dd__title">{v.productTitle}</div>
-                  <div className="search-dd__meta">
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        width: 7,
-                        height: 7,
-                        borderRadius: '50%',
-                        background: conditionColor(v.condition),
-                        flexShrink: 0,
-                      }}
-                    />
-                    {v.conditionLabel}
+                  <div className="search-dd__meta" style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                    <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#6b7280' }}>#{v.sku}</span>
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                    }}>
+                      <span style={{
+                        display: 'inline-block', width: 7, height: 7,
+                        borderRadius: '50%', background: conditionColor(v.condition), flexShrink: 0,
+                      }} />
+                      {v.conditionLabel}
+                    </span>
+                    {v.shutterCount != null && (
+                      <span style={{ color: '#9ca3af' }}>{v.shutterCount.toLocaleString('nl-NL')} clicks</span>
+                    )}
                   </div>
                 </div>
                 <div className="search-dd__price">&euro;{v.price.toLocaleString('nl-NL')}</div>
@@ -149,9 +182,42 @@ function SearchDropdown({
         </>
       )}
 
-      {filteredBlog.length > 0 && (
+      {/* 3. Out of stock */}
+      {filteredOos.length > 0 && (
         <>
           {(filteredProducts.length > 0 || filteredVariants.length > 0) && <div className="search-dd__divider" />}
+          <div className="search-dd__section">
+            <div className="search-dd__section-title" style={{ color: '#9ca3af' }}>Out of stock</div>
+            {filteredOos.map(p => (
+              <Link key={p.slug} href={`/product/${p.slug}`} className="search-dd__item" onClick={() => setIsOpen(false)}>
+                <div className="search-dd__thumb" style={{ opacity: 0.4 }}>
+                  <img src={assetPath(p.image)} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'grayscale(100%)' }} />
+                </div>
+                <div className="search-dd__info" style={{ opacity: 0.5 }}>
+                  <div className="search-dd__title">{p.title}</div>
+                  <div className="search-dd__meta" style={{ color: '#9ca3af' }}>Out of stock</div>
+                </div>
+                <span style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: '#fff',
+                  background: '#E8692A',
+                  padding: '4px 10px',
+                  borderRadius: 4,
+                  whiteSpace: 'nowrap',
+                  alignSelf: 'center',
+                  flexShrink: 0,
+                }}>Notify</span>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* 4. Blog / News */}
+      {filteredBlog.length > 0 && (
+        <>
+          {(filteredProducts.length > 0 || filteredVariants.length > 0 || filteredOos.length > 0) && <div className="search-dd__divider" />}
           <div className="search-dd__section">
             <div className="search-dd__section-title">From the Blog</div>
             {filteredBlog.map(b => (
@@ -199,7 +265,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  const { filteredProducts, filteredVariants, filteredBlog, hasResults } = useSearch(query);
+  const { filteredProducts, filteredOos, filteredVariants, filteredBlog, hasResults } = useSearch(query);
 
   if (mobile) {
     return (
@@ -229,6 +295,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
             setQuery={setQuery}
             setIsOpen={setIsOpen}
             filteredProducts={filteredProducts}
+            filteredOos={filteredOos}
             filteredVariants={filteredVariants}
             filteredBlog={filteredBlog}
             hasResults={hasResults}
@@ -258,6 +325,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
           setQuery={setQuery}
           setIsOpen={setIsOpen}
           filteredProducts={filteredProducts}
+          filteredOos={filteredOos}
           filteredVariants={filteredVariants}
           filteredBlog={filteredBlog}
           hasResults={hasResults}

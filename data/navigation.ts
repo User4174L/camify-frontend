@@ -101,6 +101,7 @@ export const navCategories: NavCategory[] = [
         items: [
           { label: 'Fujifilm GFX', href: '/cameras/medium-format/fujifilm-gfx' },
           { label: 'Hasselblad H', href: '/cameras/medium-format/hasselblad-h' },
+          { label: 'Hasselblad V', href: '/cameras/medium-format/hasselblad-v' },
           { label: 'Hasselblad X', href: '/cameras/medium-format/hasselblad-x' },
           { label: 'Phase One XF', href: '/cameras/medium-format/phase-one-xf' },
           { label: 'Digital Backs', href: '/cameras/medium-format/digital-backs' },
@@ -163,6 +164,7 @@ export const navCategories: NavCategory[] = [
         titleHref: '/lenses/medium-format',
         items: [
           { label: 'Hasselblad H fit', href: '/lenses/medium-format/hasselblad-h' },
+          { label: 'Hasselblad V fit', href: '/lenses/medium-format/hasselblad-v' },
           { label: 'Hasselblad X fit', href: '/lenses/medium-format/hasselblad-x' },
           { label: 'Fujifilm G fit', href: '/lenses/medium-format/fujifilm-g' },
           { label: 'Phase One / Mamiya 645 fit', href: '/lenses/medium-format/phase-one-mamiya-645' },

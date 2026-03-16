@@ -10,35 +10,36 @@ interface UpsellItem {
   name: string;
   description: string;
   price: number;
+  image: string;
 }
 
 function getUpsellItems(brand: string): UpsellItem[] {
   const b = brand.toLowerCase();
   if (b === 'nikon') {
     return [
-      { id: 'upsell-900001', name: 'Nikon EN-EL15c Battery', description: 'Original Nikon rechargeable Li-ion battery', price: 59 },
-      { id: 'upsell-900002', name: 'Sony CFexpress Type B 128GB', description: 'High-speed memory card for 8K video', price: 149 },
-      { id: 'upsell-900003', name: 'Nikon FTZ II Mount Adapter', description: 'Use F-mount lenses on Z-mount bodies', price: 219 },
+      { id: 'upsell-900001', name: 'Nikon EN-EL15c Battery', description: 'Original Nikon rechargeable Li-ion battery', price: 59, image: '/images/upsell-battery.png' },
+      { id: 'upsell-900002', name: 'Sony CFexpress Type B 128GB', description: 'High-speed memory card for 8K video', price: 149, image: '/images/upsell-sd-card.png' },
+      { id: 'upsell-900003', name: 'Nikon FTZ II Mount Adapter', description: 'Use F-mount lenses on Z-mount bodies', price: 219, image: '/images/upsell-adapter.png' },
     ];
   }
   if (b === 'canon') {
     return [
-      { id: 'upsell-900004', name: 'Canon LP-E6NH Battery', description: 'High-capacity rechargeable battery pack', price: 59 },
-      { id: 'upsell-900005', name: 'SanDisk CFexpress Type B 128GB', description: 'Professional-grade memory card', price: 149 },
-      { id: 'upsell-900006', name: 'Canon Mount Adapter EF-EOS R', description: 'Use EF/EF-S lenses on RF-mount bodies', price: 99 },
+      { id: 'upsell-900004', name: 'Canon LP-E6NH Battery', description: 'High-capacity rechargeable battery pack', price: 59, image: '/images/upsell-battery.png' },
+      { id: 'upsell-900005', name: 'SanDisk CFexpress Type B 128GB', description: 'Professional-grade memory card', price: 149, image: '/images/upsell-sd-card.png' },
+      { id: 'upsell-900006', name: 'Canon Mount Adapter EF-EOS R', description: 'Use EF/EF-S lenses on RF-mount bodies', price: 99, image: '/images/upsell-adapter.png' },
     ];
   }
   if (b === 'sony') {
     return [
-      { id: 'upsell-900007', name: 'Sony NP-FZ100 Battery', description: 'Rechargeable battery for Alpha series', price: 59 },
-      { id: 'upsell-900008', name: 'Sony CFexpress Type A 160GB', description: 'Compact high-speed memory card', price: 189 },
-      { id: 'upsell-900009', name: 'Sony LA-EA5 Mount Adapter', description: 'Use A-mount lenses on E-mount bodies', price: 249 },
+      { id: 'upsell-900007', name: 'Sony NP-FZ100 Battery', description: 'Rechargeable battery for Alpha series', price: 59, image: '/images/upsell-battery.png' },
+      { id: 'upsell-900008', name: 'Sony CFexpress Type A 160GB', description: 'Compact high-speed memory card', price: 189, image: '/images/upsell-sd-card.png' },
+      { id: 'upsell-900009', name: 'Sony LA-EA5 Mount Adapter', description: 'Use A-mount lenses on E-mount bodies', price: 249, image: '/images/upsell-adapter.png' },
     ];
   }
   return [
-    { id: 'upsell-900010', name: 'Extra Battery', description: 'Compatible replacement battery', price: 49 },
-    { id: 'upsell-900011', name: 'Memory Card 128GB', description: 'High-speed SD memory card', price: 99 },
-    { id: 'upsell-900012', name: 'Camera Bag', description: 'Padded shoulder bag for your camera', price: 79 },
+    { id: 'upsell-900010', name: 'Extra Battery', description: 'Compatible replacement battery', price: 49, image: '/images/upsell-battery.png' },
+    { id: 'upsell-900011', name: 'Memory Card 128GB', description: 'High-speed SD memory card', price: 99, image: '/images/upsell-sd-card.png' },
+    { id: 'upsell-900012', name: 'Camera Bag', description: 'Padded shoulder bag for your camera', price: 79, image: '/images/upsell-adapter.png' },
   ];
 }
 
@@ -247,26 +248,32 @@ export default function UpsellPopup({
                     borderRadius: 10,
                   }}
                 >
-                  {/* Product type thumbnail */}
-                  {(() => {
-                    const { bg, icon } = getUpsellIcon(upsell.name);
-                    return (
-                      <div
-                        style={{
-                          width: 48,
-                          height: 48,
-                          borderRadius: 8,
-                          background: bg,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                        }}
-                      >
-                        {icon}
-                      </div>
-                    );
-                  })()}
+                  {/* Product thumbnail */}
+                  <div
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 8,
+                      background: '#f9fafb',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      overflow: 'hidden',
+                      border: '1px solid #f3f4f6',
+                    }}
+                  >
+                    <img
+                      src={upsell.image}
+                      alt={upsell.name}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        padding: 4,
+                      }}
+                    />
+                  </div>
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#111' }}>{upsell.name}</div>
@@ -282,8 +289,8 @@ export default function UpsellPopup({
                       disabled={isAdded}
                       style={{
                         background: isAdded ? '#dcfce7' : '#fff',
-                        color: isAdded ? '#16a34a' : '#f97316',
-                        border: isAdded ? '1px solid #16a34a' : '1px solid #f97316',
+                        color: isAdded ? '#16a34a' : '#E8692A',
+                        border: isAdded ? '1px solid #16a34a' : '1px solid #E8692A',
                         borderRadius: 999,
                         padding: '4px 14px',
                         fontSize: 13,
@@ -310,7 +317,7 @@ export default function UpsellPopup({
               padding: '14px 24px',
               borderRadius: 999,
               border: 'none',
-              background: '#f97316',
+              background: '#E8692A',
               color: '#fff',
               fontSize: 15,
               fontWeight: 600,

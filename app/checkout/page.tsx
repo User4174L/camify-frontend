@@ -6,7 +6,7 @@ import { useCart } from '@/context/CartContext';
 import { assetPath } from '@/lib/utils';
 
 /* ───────── constants ───────── */
-const STEPS = ['Details', 'Shipping', 'Protection', 'Payment'] as const;
+const STEPS = ['Details', 'Shipping', 'Protection', 'Payment', 'Review'] as const;
 
 const SHIPPING_OPTIONS = [
   { id: 'postnl', name: 'PostNL', eta: '1-2 business days', price: 6.95, color: '#ff6600', label: 'Post\nNL' },
@@ -143,12 +143,51 @@ const RepeatIcon = () => (
   <svg width="14" height="14" fill="none" stroke={CSS.accent} strokeWidth="2" viewBox="0 0 24 24"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
 );
 
+/* ───────── default demo items (shown when cart is empty) ───────── */
+const DEMO_ITEMS: import('@/context/CartContext').CartItem[] = [
+  {
+    id: '257962',
+    sku: '257962',
+    name: 'Sony A7 IV',
+    price: 1749,
+    condition: 'Excellent',
+    image: '/images/sony-a7-iv.jpg',
+    inclVat: true,
+  },
+  {
+    id: '258130',
+    sku: '258130',
+    name: 'Canon EOS R5',
+    price: 2649,
+    condition: 'Excellent',
+    image: '/images/canon-r5.jpg',
+    inclVat: true,
+  },
+];
+
+function computeTotals(items: import('@/context/CartContext').CartItem[]) {
+  const subtotal = items.reduce((sum, item) => {
+    return sum + (item.inclVat ? item.price / 1.21 : item.price);
+  }, 0);
+  const vatAmount = items.reduce((sum, item) => {
+    return sum + (item.inclVat ? item.price - item.price / 1.21 : 0);
+  }, 0);
+  return { subtotal, vatAmount, total: subtotal + vatAmount };
+}
+
 /* ───────── main component ───────── */
 export default function CheckoutPage() {
-  const { items, subtotal, vatAmount, total, itemCount } = useCart();
+  const cart = useCart();
+  const hasItems = cart.items.length > 0;
+  const items = hasItems ? cart.items : DEMO_ITEMS;
+  const { subtotal, vatAmount, total } = hasItems
+    ? { subtotal: cart.subtotal, vatAmount: cart.vatAmount, total: cart.total }
+    : computeTotals(DEMO_ITEMS);
+  const itemCount = items.length;
 
   /* mode toggle */
   const [mode, setMode] = useState<'steps' | 'onepage'>('steps');
+  const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
 
   /* step-by-step state */
   const [currentStep, setCurrentStep] = useState(0);
@@ -157,6 +196,10 @@ export default function CheckoutPage() {
   /* form state */
   const [email, setEmail] = useState('');
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [isKnownUser, setIsKnownUser] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [prefix, setPrefix] = useState('');
   const [lastName, setLastName] = useState('');
@@ -185,16 +228,25 @@ export default function CheckoutPage() {
   const [selectedShipping, setSelectedShipping] = useState('postnl');
   const shippingCost = SHIPPING_OPTIONS.find(s => s.id === selectedShipping)?.price ?? 6.95;
 
-  /* protection: per item index -> 0=none, 1=+1yr, 2=+2yr */
+  /* protection */
+  const [protectionEnabled, setProtectionEnabled] = useState(false);
+  const [replacementEnabled, setReplacementEnabled] = useState(false);
+  // per item: 0=none, 1=+1yr, 2=+2yr
   const [protectionChoices, setProtectionChoices] = useState<Record<number, number>>({});
+  // per item: true/false for replacement
+  const [replacementChoices, setReplacementChoices] = useState<Record<number, boolean>>({});
+
   const getProtectionPrice = (itemPrice: number, years: number) => {
     if (years === 0) return 0;
-    if (years === 1) return Math.round(itemPrice * 0.12);
-    return Math.round(itemPrice * 0.19);
+    if (years === 1) return Math.round(itemPrice * 0.10);
+    return Math.round(itemPrice * 0.15);
   };
+  const getReplacementPrice = (itemPrice: number) => Math.round(itemPrice * 0.02);
+
   const protectionTotal = items.reduce((sum, item, idx) => {
     const years = protectionChoices[idx] ?? 0;
-    return sum + getProtectionPrice(item.price, years);
+    const repl = replacementChoices[idx] ? getReplacementPrice(item.price) : 0;
+    return sum + getProtectionPrice(item.price, years) + repl;
   }, 0);
 
   /* payment */
@@ -256,9 +308,14 @@ export default function CheckoutPage() {
       case 0: return `${firstName || 'Jan'} ${prefix ? prefix + ' ' : ''}${lastName || 'de Vries'}, ${city || 'Amsterdam'}`;
       case 1: return SHIPPING_OPTIONS.find(s => s.id === selectedShipping)?.name ?? 'PostNL';
       case 2: {
-        const anyProtection = items.some((_, idx) => (protectionChoices[idx] ?? 0) > 0);
-        return anyProtection ? 'Extended protection' : 'No extra protection';
+        const anyProt = items.some((_, idx) => (protectionChoices[idx] ?? 0) > 0);
+        const anyRepl = items.some((_, idx) => replacementChoices[idx]);
+        if (anyProt && anyRepl) return 'Extra garantie + vervangend model';
+        if (anyProt) return 'Extra garantie';
+        if (anyRepl) return 'Vervangend model bij reparatie';
+        return 'Geen extra bescherming';
       }
+      case 3: return PAYMENT_METHODS.find(m => m.id === selectedPayment)?.name ?? 'iDEAL';
       default: return '';
     }
   };
@@ -319,26 +376,134 @@ export default function CheckoutPage() {
                   placeholder="jan@example.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && email.includes('@')) setEmailSubmitted(true); }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && email.includes('@')) {
+                      if (email.toLowerCase().trim() === 'bekend@hotmail.com') {
+                        setIsKnownUser(true);
+                        setShowLogin(true);
+                      } else {
+                        setIsKnownUser(false);
+                        setShowLogin(false);
+                        setEmailSubmitted(true);
+                      }
+                    }
+                  }}
                   onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; (e.target as HTMLInputElement).style.boxShadow = '0 0 0 3px rgba(232,105,42,.08)'; }}
                   onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; (e.target as HTMLInputElement).style.boxShadow = 'none'; }}
                 />
                 <button
                   style={{ ...btnPrimary, padding: '12px 20px', whiteSpace: 'nowrap' }}
-                  onClick={() => { if (email.includes('@')) setEmailSubmitted(true); }}
+                  onClick={() => {
+                    if (email.includes('@')) {
+                      if (email.toLowerCase().trim() === 'bekend@hotmail.com') {
+                        setIsKnownUser(true);
+                        setShowLogin(true);
+                      } else {
+                        setIsKnownUser(false);
+                        setShowLogin(false);
+                        setEmailSubmitted(true);
+                      }
+                    }
+                  }}
                 >Continue &rarr;</button>
               </div>
             </div>
           </div>
 
+          {/* Known user login prompt */}
+          {showLogin && !loggedIn && (
+            <div style={{
+              margin: '16px 0',
+              padding: 20,
+              background: '#EEF6FF',
+              border: '1px solid #BFDBFE',
+              borderRadius: CSS.rl,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                <div style={{
+                  width: 32, height: 32, borderRadius: '50%', background: '#BFDBFE',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}>
+                  <svg width="16" height="16" fill="none" stroke="#1e40af" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: '.9rem', fontWeight: 700, color: '#1e40af' }}>Welkom terug!</div>
+                  <div style={{ fontSize: '.8rem', color: '#1e40af', opacity: 0.8 }}>
+                    We herkennen dit e-mailadres. Log in om je gegevens automatisch in te vullen.
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  style={{ ...inputStyle, flex: 1, borderColor: '#BFDBFE' }}
+                  type="password"
+                  placeholder="Wachtwoord"
+                  value={loginPassword}
+                  onChange={e => setLoginPassword(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && loginPassword.length > 0) {
+                      setLoggedIn(true);
+                      setShowLogin(false);
+                      setEmailSubmitted(true);
+                      setFirstName('Jan');
+                      setLastName('de Vries');
+                      setPhone('06 12345678');
+                      setPostalCode('1015 CJ');
+                      setHouseNumber('123');
+                      setStreet('Keizersgracht');
+                      setCity('Amsterdam');
+                    }
+                  }}
+                  onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; (e.target as HTMLInputElement).style.boxShadow = '0 0 0 3px rgba(232,105,42,.08)'; }}
+                  onBlur={e => { (e.target as HTMLInputElement).style.borderColor = '#BFDBFE'; (e.target as HTMLInputElement).style.boxShadow = 'none'; }}
+                />
+                <button
+                  style={{ ...btnPrimary, padding: '12px 20px', whiteSpace: 'nowrap' }}
+                  onClick={() => {
+                    if (loginPassword.length > 0) {
+                      setLoggedIn(true);
+                      setShowLogin(false);
+                      setEmailSubmitted(true);
+                      setFirstName('Jan');
+                      setLastName('de Vries');
+                      setPhone('06 12345678');
+                      setPostalCode('1015 CJ');
+                      setHouseNumber('123');
+                      setStreet('Keizersgracht');
+                      setCity('Amsterdam');
+                    }
+                  }}
+                >Inloggen</button>
+              </div>
+
+              <button
+                onClick={() => { setShowLogin(false); setEmailSubmitted(true); }}
+                style={{
+                  background: 'none', border: 'none', padding: '8px 0 0',
+                  fontSize: '.8rem', color: '#1e40af', cursor: 'pointer',
+                  textDecoration: 'underline', fontFamily: 'inherit',
+                }}
+              >
+                Doorgaan zonder inloggen
+              </button>
+            </div>
+          )}
+
           {/* Divider */}
+          {!showLogin && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '16px 0' }}>
             <div style={{ flex: 1, height: 1, background: CSS.border }} />
             <span style={{ fontSize: '.75rem', color: CSS.textMuted }}>or express checkout</span>
             <div style={{ flex: 1, height: 1, background: CSS.border }} />
           </div>
+          )}
 
           {/* Express checkout buttons */}
+          {!showLogin && (
           <div className="express-btns" style={{ display: 'flex', gap: 8, marginBottom: 0 }}>
             <button style={{
               flex: 1, padding: 12, border: '1.5px solid #000', borderRadius: CSS.r,
@@ -367,6 +532,7 @@ export default function CheckoutPage() {
               PayPal
             </button>
           </div>
+          )}
         </>
       )}
 
@@ -381,19 +547,30 @@ export default function CheckoutPage() {
           }}>
             <MailIcon />
             <span>{email}</span>
-            <a href="#" onClick={e => { e.preventDefault(); setEmailSubmitted(false); }}
-              style={{ fontSize: '.75rem', marginLeft: 'auto', color: CSS.accent, textDecoration: 'none' }}>Change</a>
+            <a href="#" onClick={e => { e.preventDefault(); setEmailSubmitted(false); setShowLogin(false); setLoggedIn(false); setLoginPassword(''); setIsKnownUser(false); }}
+              style={{ fontSize: '.75rem', marginLeft: 'auto', color: CSS.accent, textDecoration: 'none' }}>Wijzigen</a>
           </div>
 
-          {/* Account creation notice */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16,
-            padding: '10px 14px', background: '#EEF6FF', border: '1px solid #BFDBFE',
-            borderRadius: CSS.r, fontSize: '.8rem', color: '#1e40af',
-          }}>
-            <InfoIcon />
-            After completing your order, you can create an account.
-          </div>
+          {/* Account creation notice / logged in notice */}
+          {loggedIn ? (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16,
+              padding: '10px 14px', background: CSS.greenLight, border: '1px solid #bbf7d0',
+              borderRadius: CSS.r, fontSize: '.8rem', color: '#166534',
+            }}>
+              <CheckIcon size={14} stroke="#166534" strokeWidth={2.5} />
+              Welkom terug, Jan! Je gegevens zijn automatisch ingevuld.
+            </div>
+          ) : (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16,
+              padding: '10px 14px', background: '#EEF6FF', border: '1px solid #BFDBFE',
+              borderRadius: CSS.r, fontSize: '.8rem', color: '#1e40af',
+            }}>
+              <InfoIcon />
+              Na het afronden van je bestelling kun je een account aanmaken.
+            </div>
+          )}
 
           {/* Name row */}
           <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 2fr', gap: 12, marginBottom: 12 }}>
@@ -631,63 +808,223 @@ export default function CheckoutPage() {
   const renderProtectionContent = () => (
     <div>
       <p style={{ fontSize: '.8rem', color: CSS.textSec, marginBottom: 16, lineHeight: 1.5 }}>
-        All products come with a minimum <strong>12-month warranty</strong>. With extended product protection you extend this coverage and receive a replacement product during repairs.
+        Alle producten worden geleverd met minimaal <strong>12 maanden garantie</strong>. Kies hieronder of je extra bescherming wilt toevoegen.
       </p>
 
-      {items.map((item, idx) => {
-        const choice = protectionChoices[idx] ?? 0;
-        return (
-          <div key={item.id} style={{ border: `1.5px solid ${CSS.border}`, borderRadius: CSS.r, padding: 16, marginBottom: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-              <div style={{ fontSize: '.85rem', fontWeight: 600, color: CSS.text }}>{item.name}</div>
-              <div style={{ fontSize: '.75rem', color: CSS.textMuted, marginLeft: 'auto' }}>
-                Value: &euro; {item.price.toLocaleString('nl-NL')}
+      {/* Two main option cards */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+
+        {/* ── Option 1: Extended Warranty ── */}
+        <div style={{
+          border: `1.5px solid ${protectionEnabled ? CSS.accent : CSS.border}`,
+          borderRadius: CSS.rl,
+          overflow: 'hidden',
+          transition: 'border-color .2s',
+        }}>
+          <button
+            onClick={() => {
+              setProtectionEnabled(!protectionEnabled);
+              if (protectionEnabled) {
+                // reset all protection choices
+                setProtectionChoices({});
+              }
+            }}
+            style={{
+              width: '100%', padding: '16px 18px',
+              display: 'flex', alignItems: 'center', gap: 14,
+              background: protectionEnabled ? CSS.accentLight : '#fff',
+              border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+              transition: 'background .2s',
+            }}
+          >
+            <div style={{
+              width: 36, height: 36, borderRadius: '50%',
+              background: protectionEnabled ? CSS.accent : CSS.surface,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, transition: 'background .2s',
+            }}>
+              <ShieldIcon size={18} stroke={protectionEnabled ? '#fff' : CSS.textMuted} />
+            </div>
+            <div style={{ textAlign: 'left', flex: 1 }}>
+              <div style={{ fontSize: '.9rem', fontWeight: 700, color: CSS.text }}>Extra garantie</div>
+              <div style={{ fontSize: '.75rem', color: CSS.textSec, marginTop: 2, lineHeight: 1.4 }}>
+                Verleng je garantie met 1 of 2 jaar bovenop de standaard 12 maanden.
               </div>
             </div>
-            <div className="prot-options" style={{ display: 'flex', gap: 8 }}>
-              {[0, 1, 2].map(years => {
-                const isActive = choice === years;
-                const price = getProtectionPrice(item.price, years);
+            <div style={{
+              width: 22, height: 22, borderRadius: 6,
+              border: `2px solid ${protectionEnabled ? CSS.accent : CSS.border}`,
+              background: protectionEnabled ? CSS.accent : '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, transition: 'all .2s',
+            }}>
+              {protectionEnabled && <CheckIcon size={12} stroke="#fff" strokeWidth={3} />}
+            </div>
+          </button>
+
+          {/* Expanded: per-product year selection */}
+          {protectionEnabled && (
+            <div style={{ padding: '0 18px 18px', background: CSS.accentLight }}>
+              <div style={{
+                fontSize: '.7rem', fontWeight: 600, color: CSS.textMuted,
+                textTransform: 'uppercase', letterSpacing: '.04em',
+                marginBottom: 10, paddingTop: 4,
+              }}>
+                Kies per product
+              </div>
+              {items.map((item, idx) => {
+                const choice = protectionChoices[idx] ?? 0;
                 return (
-                  <button
-                    key={years}
-                    onClick={() => setProtectionChoices(prev => ({ ...prev, [idx]: years }))}
-                    style={{
-                      flex: 1, padding: '12px 8px',
-                      border: `1.5px solid ${isActive ? CSS.accent : CSS.border}`,
-                      borderRadius: CSS.r,
-                      background: isActive ? CSS.accentLight : '#fff',
-                      cursor: 'pointer', textAlign: 'center', fontFamily: 'inherit',
-                    }}
-                  >
-                    <div style={{ fontSize: '.75rem', fontWeight: 600, color: isActive ? CSS.accent : CSS.text }}>
-                      {years === 0 ? 'No extra' : `+ ${years} year`}
+                  <div key={item.id} style={{
+                    background: '#fff', borderRadius: CSS.r, padding: 14, marginBottom: 8,
+                    border: `1px solid ${CSS.border}`,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                      <span style={{ fontSize: '.8rem', fontWeight: 600, color: CSS.text }}>{item.name}</span>
+                      <span style={{ fontSize: '.7rem', color: CSS.textMuted, marginLeft: 'auto' }}>&euro; {item.price.toLocaleString('nl-NL')}</span>
                     </div>
-                    {years === 0 ? (
-                      <div style={{ fontSize: '.7rem', color: CSS.textMuted, marginTop: 2 }}>12-month warranty</div>
-                    ) : (
-                      <>
-                        <div style={{ fontSize: '.8rem', fontWeight: 700, color: CSS.accent, marginTop: 2 }}>&euro; {price}</div>
-                        <div style={{ fontSize: '.65rem', color: CSS.textMuted, marginTop: 1 }}>{12 + years * 12} months total</div>
-                      </>
-                    )}
-                  </button>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      {[1, 2].map(years => {
+                        const isActive = choice === years;
+                        const price = getProtectionPrice(item.price, years);
+                        const pct = years === 1 ? '10%' : '15%';
+                        return (
+                          <button
+                            key={years}
+                            onClick={() => setProtectionChoices(prev => ({ ...prev, [idx]: isActive ? 0 : years }))}
+                            style={{
+                              flex: 1, padding: '10px 8px',
+                              border: `1.5px solid ${isActive ? CSS.accent : CSS.border}`,
+                              borderRadius: CSS.r,
+                              background: isActive ? '#fff' : '#fff',
+                              cursor: 'pointer', textAlign: 'center', fontFamily: 'inherit',
+                              transition: 'border-color .15s',
+                            }}
+                          >
+                            <div style={{ fontSize: '.75rem', fontWeight: 600, color: isActive ? CSS.accent : CSS.text }}>
+                              + {years} jaar
+                            </div>
+                            <div style={{ fontSize: '.85rem', fontWeight: 700, color: isActive ? CSS.accent : CSS.text, marginTop: 2 }}>
+                              &euro; {price.toLocaleString('nl-NL')}
+                            </div>
+                            <div style={{ fontSize: '.65rem', color: CSS.textMuted, marginTop: 2 }}>
+                              {pct} &middot; {12 + years * 12} mnd totaal
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 );
               })}
             </div>
-          </div>
-        );
-      })}
-
-      {/* Breakdown info */}
-      <div style={{ background: CSS.surface, borderRadius: CSS.r, padding: '12px 16px', fontSize: '.75rem', color: CSS.textSec, lineHeight: 1.6 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-          <ShieldIcon stroke={CSS.accent} />
-          <strong style={{ color: CSS.text }}>Protection against loss &amp; theft</strong> — 10% (1 year) or 15% (2 years) of the product value
+          )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+
+        {/* ── Option 2: Replacement during repair ── */}
+        <div style={{
+          border: `1.5px solid ${replacementEnabled ? CSS.accent : CSS.border}`,
+          borderRadius: CSS.rl,
+          overflow: 'hidden',
+          transition: 'border-color .2s',
+        }}>
+          <button
+            onClick={() => {
+              setReplacementEnabled(!replacementEnabled);
+              if (replacementEnabled) {
+                setReplacementChoices({});
+              }
+            }}
+            style={{
+              width: '100%', padding: '16px 18px',
+              display: 'flex', alignItems: 'center', gap: 14,
+              background: replacementEnabled ? CSS.accentLight : '#fff',
+              border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+              transition: 'background .2s',
+            }}
+          >
+            <div style={{
+              width: 36, height: 36, borderRadius: '50%',
+              background: replacementEnabled ? CSS.accent : CSS.surface,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, transition: 'background .2s',
+            }}>
+              <RepeatIcon />
+            </div>
+            <div style={{ textAlign: 'left', flex: 1 }}>
+              <div style={{ fontSize: '.9rem', fontWeight: 700, color: CSS.text }}>Vervangend model bij reparatie</div>
+              <div style={{ fontSize: '.75rem', color: CSS.textSec, marginTop: 2, lineHeight: 1.4 }}>
+                Ontvang een vervangend toestel als jouw product in reparatie is, zodat je altijd kunt blijven fotograferen.
+              </div>
+            </div>
+            <div style={{
+              width: 22, height: 22, borderRadius: 6,
+              border: `2px solid ${replacementEnabled ? CSS.accent : CSS.border}`,
+              background: replacementEnabled ? CSS.accent : '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, transition: 'all .2s',
+            }}>
+              {replacementEnabled && <CheckIcon size={12} stroke="#fff" strokeWidth={3} />}
+            </div>
+          </button>
+
+          {/* Expanded: per-product toggle */}
+          {replacementEnabled && (
+            <div style={{ padding: '0 18px 18px', background: CSS.accentLight }}>
+              <div style={{
+                fontSize: '.7rem', fontWeight: 600, color: CSS.textMuted,
+                textTransform: 'uppercase', letterSpacing: '.04em',
+                marginBottom: 10, paddingTop: 4,
+              }}>
+                Kies per product
+              </div>
+              {items.map((item, idx) => {
+                const isActive = replacementChoices[idx] ?? false;
+                const price = getReplacementPrice(item.price);
+                return (
+                  <div key={item.id} style={{
+                    background: '#fff', borderRadius: CSS.r, padding: 14, marginBottom: 8,
+                    border: `1px solid ${isActive ? CSS.accent : CSS.border}`,
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    cursor: 'pointer', transition: 'border-color .15s',
+                  }}
+                    onClick={() => setReplacementChoices(prev => ({ ...prev, [idx]: !isActive }))}
+                  >
+                    <div style={{
+                      width: 20, height: 20, borderRadius: 4,
+                      border: `2px solid ${isActive ? CSS.accent : CSS.border}`,
+                      background: isActive ? CSS.accent : '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0, transition: 'all .15s',
+                    }}>
+                      {isActive && <CheckIcon size={10} stroke="#fff" strokeWidth={3} />}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: '.8rem', fontWeight: 600, color: CSS.text }}>{item.name}</span>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontSize: '.85rem', fontWeight: 700, color: isActive ? CSS.accent : CSS.text }}>
+                        &euro; {price.toLocaleString('nl-NL')}
+                      </div>
+                      <div style={{ fontSize: '.65rem', color: CSS.textMuted }}>2% van &euro; {item.price.toLocaleString('nl-NL')}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Info box */}
+      <div style={{ background: CSS.surface, borderRadius: CSS.r, padding: '12px 16px', fontSize: '.75rem', color: CSS.textSec, lineHeight: 1.6 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 4 }}>
+          <ShieldIcon stroke={CSS.accent} />
+          <span><strong style={{ color: CSS.text }}>Extra garantie</strong> — 10% (1 jaar) of 15% (2 jaar) bovenop de standaard 12 maanden garantie</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
           <RepeatIcon />
-          <strong style={{ color: CSS.text }}>Replacement product during repairs</strong> — 2% per year for the duration of the protection
+          <span><strong style={{ color: CSS.text }}>Vervangend model</strong> — 2% van de productwaarde, ontvang een vervangend toestel tijdens reparatie</span>
         </div>
       </div>
     </div>
@@ -748,6 +1085,191 @@ export default function CheckoutPage() {
     </div>
   );
 
+  /* ─── Step 5: Review ─── */
+  const renderReviewContent = () => {
+    const finalTotal = grandTotal - (promoApplied ? 50 : 0);
+    const shippingOption = SHIPPING_OPTIONS.find(s => s.id === selectedShipping);
+    const paymentMethod = PAYMENT_METHODS.find(m => m.id === selectedPayment);
+
+    const sectionStyle: React.CSSProperties = {
+      background: CSS.surface, borderRadius: CSS.r, padding: '14px 16px', marginBottom: 12,
+    };
+    const sectionTitle: React.CSSProperties = {
+      fontSize: '.7rem', fontWeight: 700, color: CSS.textMuted,
+      textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 8,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    };
+    const editLink: React.CSSProperties = {
+      fontSize: '.75rem', fontWeight: 600, color: CSS.accent,
+      cursor: 'pointer', textTransform: 'none', letterSpacing: 0,
+    };
+
+    return (
+      <div>
+        <p style={{ fontSize: '.8rem', color: CSS.textSec, marginBottom: 16, lineHeight: 1.5 }}>
+          Controleer je bestelling voordat je deze plaatst.
+        </p>
+
+        {/* Products */}
+        <div style={sectionStyle}>
+          <div style={sectionTitle}>
+            <span>Producten ({itemCount})</span>
+          </div>
+          {items.map(item => (
+            <div key={item.id} style={{ display: 'flex', gap: 12, padding: '8px 0', borderBottom: `1px solid ${CSS.border}` }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 6, background: '#fff',
+                overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: `1px solid ${CSS.border}`,
+              }}>
+                <img src={assetPath(item.image)} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '.8rem', fontWeight: 600, color: CSS.text }}>{item.name}</div>
+                <div style={{ fontSize: '.7rem', color: CSS.textMuted }}>SKU: {item.sku} &middot; {item.condition}</div>
+              </div>
+              <div style={{ fontSize: '.85rem', fontWeight: 700, color: CSS.text, alignSelf: 'center' }}>
+                &euro; {item.price.toLocaleString('nl-NL')}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Address */}
+        <div style={sectionStyle}>
+          <div style={sectionTitle}>
+            <span>Bezorgadres</span>
+            <span style={editLink} onClick={() => goToStep(0)}>Wijzigen</span>
+          </div>
+          <div style={{ fontSize: '.8rem', color: CSS.text, lineHeight: 1.6 }}>
+            {firstName || 'Jan'} {prefix ? prefix + ' ' : ''}{lastName || 'de Vries'}<br />
+            {street || 'Keizersgracht'} {houseNumber || '123'}{suffix ? ` ${suffix}` : ''}<br />
+            {postalCode || '1015 CJ'} {city || 'Amsterdam'}<br />
+            {email}
+          </div>
+        </div>
+
+        {/* Shipping */}
+        <div style={sectionStyle}>
+          <div style={sectionTitle}>
+            <span>Verzending</span>
+            <span style={editLink} onClick={() => goToStep(1)}>Wijzigen</span>
+          </div>
+          <div style={{ fontSize: '.8rem', color: CSS.text, display: 'flex', justifyContent: 'space-between' }}>
+            <span>{shippingOption?.name} &middot; {shippingOption?.eta}</span>
+            <span style={{ fontWeight: 600 }}>&euro; {shippingCost.toFixed(2).replace('.', ',')}</span>
+          </div>
+        </div>
+
+        {/* Protection */}
+        <div style={sectionStyle}>
+          <div style={sectionTitle}>
+            <span>Bescherming</span>
+            <span style={editLink} onClick={() => goToStep(2)}>Wijzigen</span>
+          </div>
+          {protectionTotal > 0 ? (
+            <div style={{ fontSize: '.8rem', color: CSS.text }}>
+              {items.map((item, idx) => {
+                const years = protectionChoices[idx] ?? 0;
+                const repl = replacementChoices[idx];
+                if (!years && !repl) return null;
+                return (
+                  <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                    <span>{item.name}: {years > 0 ? `+${years} jaar garantie` : ''}{years > 0 && repl ? ' + ' : ''}{repl ? 'vervangend model' : ''}</span>
+                    <span style={{ fontWeight: 600 }}>&euro; {(getProtectionPrice(item.price, years) + (repl ? getReplacementPrice(item.price) : 0)).toLocaleString('nl-NL')}</span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ fontSize: '.8rem', color: CSS.textMuted }}>Geen extra bescherming gekozen</div>
+          )}
+        </div>
+
+        {/* Payment */}
+        <div style={sectionStyle}>
+          <div style={sectionTitle}>
+            <span>Betaalmethode</span>
+            <span style={editLink} onClick={() => goToStep(3)}>Wijzigen</span>
+          </div>
+          <div style={{ fontSize: '.8rem', color: CSS.text }}>
+            {paymentMethod?.name}{selectedPayment === 'ideal' && selectedBank ? ` — ${selectedBank}` : ''}
+          </div>
+        </div>
+
+        {/* Promo & Remarks (inline in review) */}
+        <div style={sectionStyle}>
+          <div style={sectionTitle}><span>Kortingscode &amp; opmerkingen</span></div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: remarks ? 10 : 0 }}>
+            <TagIcon />
+            <input
+              style={{ ...inputStyle, flex: 1, fontSize: '.8rem', padding: '9px 12px', background: '#fff' }}
+              type="text"
+              placeholder="Kortingscode"
+              value={promoCode}
+              onChange={e => setPromoCode(e.target.value)}
+            />
+            {promoCode && !promoApplied && (
+              <button
+                onClick={() => setPromoApplied(true)}
+                style={{
+                  background: CSS.dark, color: '#fff', border: 'none', borderRadius: CSS.r,
+                  padding: '9px 14px', fontSize: '.75rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >Toepassen</button>
+            )}
+            {promoApplied && (
+              <span style={{ fontSize: '.8rem', fontWeight: 600, color: CSS.green }}>- &euro; 50</span>
+            )}
+          </div>
+          {remarks && (
+            <div style={{ fontSize: '.8rem', color: CSS.textSec, fontStyle: 'italic' }}>&ldquo;{remarks}&rdquo;</div>
+          )}
+        </div>
+
+        {/* Total breakdown */}
+        <div style={{
+          background: '#fff', borderRadius: CSS.rl, border: `1.5px solid ${CSS.dark}`,
+          padding: 18, marginTop: 16,
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: '.8rem' }}>
+            <span style={{ color: CSS.textSec }}>Subtotaal excl. BTW</span>
+            <span style={{ fontWeight: 600, color: CSS.text }}>&euro; {subtotal.toFixed(2).replace('.', ',')}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: '.8rem' }}>
+            <span style={{ color: CSS.textSec }}>BTW (21%)</span>
+            <span style={{ fontWeight: 600, color: CSS.text }}>&euro; {vatAmount.toFixed(2).replace('.', ',')}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: '.8rem' }}>
+            <span style={{ color: CSS.textSec }}>Verzendkosten</span>
+            <span style={{ fontWeight: 600, color: CSS.text }}>&euro; {shippingCost.toFixed(2).replace('.', ',')}</span>
+          </div>
+          {protectionTotal > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: '.8rem' }}>
+              <span style={{ color: CSS.textSec }}>Productbescherming</span>
+              <span style={{ fontWeight: 600, color: CSS.text }}>&euro; {protectionTotal.toLocaleString('nl-NL')}</span>
+            </div>
+          )}
+          {promoApplied && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: '.8rem' }}>
+              <span style={{ color: CSS.textSec }}>Korting</span>
+              <span style={{ fontWeight: 600, color: CSS.accent }}>- &euro; 50</span>
+            </div>
+          )}
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            marginTop: 12, paddingTop: 12, borderTop: `2px solid ${CSS.dark}`,
+          }}>
+            <span style={{ fontSize: '1rem', fontWeight: 700, color: CSS.text }}>Totaal incl. BTW</span>
+            <span style={{ fontSize: '1.2rem', fontWeight: 700, color: CSS.text }}>
+              &euro; {finalTotal.toFixed(2).replace('.', ',')}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   /* ─── Step card wrapper (step-by-step mode) ─── */
   const renderStepCard = (stepIndex: number, title: string, content: React.ReactNode) => {
     const isActive = currentStep === stepIndex;
@@ -787,7 +1309,7 @@ export default function CheckoutPage() {
             <div style={{ fontSize: '.8rem', color: CSS.accent, fontWeight: 600, marginLeft: summary ? 12 : 'auto' }}>Change</div>
           )}
           {!isCompleted && !isActive && stepIndex === 2 && (
-            <div style={{ fontSize: '.8rem', color: CSS.textMuted, marginLeft: 'auto' }}>(optional)</div>
+            <div style={{ fontSize: '.8rem', color: CSS.textMuted, marginLeft: 'auto' }}>(optioneel)</div>
           )}
         </div>
 
@@ -799,16 +1321,16 @@ export default function CheckoutPage() {
             {/* Navigation buttons */}
             <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
               {stepIndex > 0 && (
-                <button style={btnSecondary} onClick={prevStep}>&larr; Back</button>
+                <button style={btnSecondary} onClick={prevStep}>&larr; Terug</button>
               )}
-              {stepIndex < 3 ? (
+              {stepIndex < 4 ? (
                 <button style={{ ...btnPrimary, marginLeft: 'auto' }} onClick={nextStep}>
-                  Continue to {STEPS[stepIndex + 1].toLowerCase()} &rarr;
+                  {stepIndex === 3 ? 'Controleer bestelling' : `Ga naar ${STEPS[stepIndex + 1].toLowerCase()}`} &rarr;
                 </button>
               ) : (
-                <button style={{ ...btnPrimary, marginLeft: 'auto', width: stepIndex === 0 ? undefined : '100%' }} onClick={() => alert('Order placed! (demo)')}>
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" /><path d="m1 10h22" /></svg>
-                  Place order
+                <button style={{ ...btnPrimary, marginLeft: 'auto', width: '100%', padding: '16px 32px', fontSize: '1rem' }} onClick={() => alert('Bestelling geplaatst! (demo)')}>
+                  <LockIcon />
+                  Bestelling plaatsen &middot; &euro; {(grandTotal - (promoApplied ? 50 : 0)).toFixed(2).replace('.', ',')}
                 </button>
               )}
             </div>
@@ -998,9 +1520,11 @@ export default function CheckoutPage() {
     <div style={{ background: CSS.surface, minHeight: '100vh', fontFamily: 'inherit' }}>
       {/* Responsive styles */}
       <style>{`
+        .mobile-summary-bar{display:none}
         @media(max-width:768px){
           .checkout-layout{grid-template-columns:1fr !important;padding:16px !important}
-          .checkout-summary{position:static !important;order:-1 !important}
+          .checkout-summary{display:none !important}
+          .mobile-summary-bar{display:flex !important}
           .form-row{grid-template-columns:1fr !important}
           .form-row--3{grid-template-columns:1fr !important}
           .progress-label{font-size:.7rem !important}
@@ -1074,6 +1598,74 @@ export default function CheckoutPage() {
       {/* ─── Progress bar (step-by-step only) ─── */}
       {mode === 'steps' && renderProgressBar()}
 
+      {/* ─── Mobile collapsible order summary ─── */}
+      <div className="mobile-summary-bar" style={{
+        display: 'none', /* overridden by media query */
+        flexDirection: 'column',
+        background: '#fff', borderBottom: `1px solid ${CSS.border}`,
+      }}>
+        <button
+          onClick={() => setMobileSummaryOpen(!mobileSummaryOpen)}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '14px 20px', background: 'none', border: 'none',
+            cursor: 'pointer', fontFamily: 'inherit', width: '100%',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <svg width="18" height="18" fill="none" stroke={CSS.accent} strokeWidth="2" viewBox="0 0 24 24">
+              <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+            <span style={{ fontSize: '.85rem', fontWeight: 600, color: CSS.text }}>
+              {mobileSummaryOpen ? 'Verberg' : 'Toon'} overzicht ({itemCount} artikel{itemCount !== 1 ? 'en' : ''})
+            </span>
+            <svg width="12" height="12" fill="none" stroke={CSS.textMuted} strokeWidth="2" viewBox="0 0 24 24"
+              style={{ transform: mobileSummaryOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+          <span style={{ fontSize: '1rem', fontWeight: 700, color: CSS.text }}>
+            &euro; {(grandTotal - (promoApplied ? 50 : 0)).toFixed(2).replace('.', ',')}
+          </span>
+        </button>
+        {mobileSummaryOpen && (
+          <div style={{ padding: '0 20px 16px' }}>
+            {items.map(item => (
+              <div key={item.id} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: `1px solid ${CSS.border}` }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 6, background: CSS.surface,
+                  overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <img src={assetPath(item.image)} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '.78rem', fontWeight: 600, color: CSS.text }}>{item.name}</div>
+                  <div style={{ fontSize: '.68rem', color: CSS.textMuted }}>{item.condition}</div>
+                </div>
+                <div style={{ fontSize: '.82rem', fontWeight: 700, color: CSS.text, alignSelf: 'center' }}>
+                  &euro; {item.price.toLocaleString('nl-NL')}
+                </div>
+              </div>
+            ))}
+            <div style={{ marginTop: 10, fontSize: '.8rem', color: CSS.textSec }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span>Subtotaal excl. BTW</span>
+                <span style={{ fontWeight: 600, color: CSS.text }}>&euro; {subtotal.toFixed(2).replace('.', ',')}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span>BTW (21%)</span>
+                <span style={{ fontWeight: 600, color: CSS.text }}>&euro; {vatAmount.toFixed(2).replace('.', ',')}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Verzending</span>
+                <span style={{ fontWeight: 600, color: CSS.text }}>&euro; {shippingCost.toFixed(2).replace('.', ',')}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* ─── Main layout ─── */}
       <div className="checkout-layout" style={{
         maxWidth: 960, margin: '0 auto', padding: 24,
@@ -1083,24 +1675,25 @@ export default function CheckoutPage() {
         <div>
           {mode === 'steps' ? (
             <>
-              {renderStepCard(0, 'Details & address', renderDetailsContent())}
-              {renderStepCard(1, 'Shipping method', renderShippingContent())}
-              {renderStepCard(2, 'Product protection', renderProtectionContent())}
-              {renderStepCard(3, 'Payment', renderPaymentContent())}
+              {renderStepCard(0, 'Gegevens & adres', renderDetailsContent())}
+              {renderStepCard(1, 'Verzendmethode', renderShippingContent())}
+              {renderStepCard(2, 'Productbescherming', renderProtectionContent())}
+              {renderStepCard(3, 'Betaalmethode', renderPaymentContent())}
+              {renderStepCard(4, 'Besteloverzicht', renderReviewContent())}
             </>
           ) : (
             <>
-              {renderOnePageSection(0, 'Details & address', renderDetailsContent())}
-              {renderOnePageSection(1, 'Shipping method', renderShippingContent())}
-              {renderOnePageSection(2, 'Product protection', renderProtectionContent())}
-              {renderOnePageSection(3, 'Payment', renderPaymentContent())}
+              {renderOnePageSection(0, 'Gegevens & adres', renderDetailsContent())}
+              {renderOnePageSection(1, 'Verzendmethode', renderShippingContent())}
+              {renderOnePageSection(2, 'Productbescherming', renderProtectionContent())}
+              {renderOnePageSection(3, 'Betaalmethode', renderPaymentContent())}
               {/* Place order button */}
               <button
-                style={{ ...btnPrimary, width: '100%', marginTop: 4, marginBottom: 24 }}
-                onClick={() => alert('Order placed! (demo)')}
+                style={{ ...btnPrimary, width: '100%', marginTop: 4, marginBottom: 24, padding: '16px 32px', fontSize: '1rem' }}
+                onClick={() => alert('Bestelling geplaatst! (demo)')}
               >
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" /><path d="m1 10h22" /></svg>
-                Place order
+                <LockIcon />
+                Bestelling plaatsen &middot; &euro; {(grandTotal - (promoApplied ? 50 : 0)).toFixed(2).replace('.', ',')}
               </button>
             </>
           )}

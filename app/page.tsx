@@ -193,26 +193,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="how__header">
-            <h3>How it works</h3>
-            <h2>Four simple steps</h2>
-          </div>
-          <div className="how__steps" style={{ position: 'relative' }}>
-            <div className="how__line" />
-            {[
-              { num: 1, title: 'Browse', text: 'Explore our catalog of 10,000+ products' },
-              { num: 2, title: 'Choose', text: 'Pick the condition and price that suits you' },
-              { num: 3, title: 'Order', text: 'Secure checkout with multiple payment options' },
-              { num: 4, title: 'Enjoy', text: 'Fast shipping with full warranty coverage' },
-            ].map(step => (
-              <div key={step.num} className="how__step">
-                <div className="how__step-num">{step.num}</div>
-                <div className="how__step-title">{step.title}</div>
-                <div className="how__step-text">{step.text}</div>
-              </div>
-            ))}
-          </div>
-
           <div className="why__stats">
             <div><div className="why__stat-number">10,000+</div><div className="why__stat-label">Products</div></div>
             <div><div className="why__stat-number">15,000+</div><div className="why__stat-label">Items Sold</div></div>

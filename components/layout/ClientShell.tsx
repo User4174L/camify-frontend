@@ -34,7 +34,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
           onClose={clearLastAdded}
           onViewCart={() => {
             clearLastAdded();
-            openDrawer();
+            setTimeout(() => openDrawer(), 50);
           }}
         />
       )}

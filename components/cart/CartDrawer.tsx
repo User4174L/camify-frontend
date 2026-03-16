@@ -10,7 +10,7 @@ export default function CartDrawer() {
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 1001,
+      position: 'fixed', inset: 0, zIndex: 10001,
     }}>
       <div
         style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.4)', backdropFilter: 'blur(2px)' }}

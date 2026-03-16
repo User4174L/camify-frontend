@@ -354,23 +354,27 @@ export const categories = [
 export interface SearchProduct {
   slug: string;
   title: string;
+  image: string;
   stock: string;
   keywords: string[];
 }
 
 export const searchProducts: SearchProduct[] = [
-  { slug: 'sony-a7-iv', title: 'Sony A7 IV', stock: '6 in stock', keywords: ['sony', 'a7', 'a7iv', 'a7 iv', 'full frame', 'mirrorless'] },
-  { slug: 'canon-eos-r5', title: 'Canon EOS R5', stock: '4 in stock', keywords: ['canon', 'r5', 'eos r5', 'eos', 'full frame', 'mirrorless', '8k'] },
-  { slug: 'nikon-z8', title: 'Nikon Z8', stock: '3 in stock', keywords: ['nikon', 'z8', 'z 8', 'flagship', 'full frame'] },
-  { slug: 'fujifilm-x-t4', title: 'Fujifilm X-T4', stock: '5 in stock', keywords: ['fujifilm', 'fuji', 'xt4', 'x-t4', 'aps-c'] },
-  { slug: 'sony-fe-24-70mm-f28-gm', title: 'Sony FE 24-70mm f/2.8 GM', stock: '5 in stock', keywords: ['sony', '24-70', '24-70mm', 'gm', 'zoom', 'lens'] },
-  { slug: 'canon-rf-24-70mm-f28-l-is-usm', title: 'Canon RF 24-70mm f/2.8L IS USM', stock: '3 in stock', keywords: ['canon', '24-70', '24-70mm', 'rf', 'zoom', 'lens'] },
-  { slug: 'sony-a7r-v', title: 'Sony A7R V', stock: '2 in stock', keywords: ['sony', 'a7r', 'a7rv', 'a7r v', '61mp', 'high-res'] },
-  { slug: 'sony-a1', title: 'Sony A1', stock: '2 in stock', keywords: ['sony', 'a1', 'flagship', '50mp'] },
-  { slug: 'hasselblad-x2d-100c', title: 'Hasselblad X2D 100C', stock: '1 in stock', keywords: ['hasselblad', 'x2d', 'medium format', '100mp'] },
-  { slug: 'dji-mavic-2-pro', title: 'DJI Mavic 2 Pro', stock: 'Out of stock', keywords: ['dji', 'mavic', 'drone', 'mavic 2'] },
-  { slug: 'nikon-zf', title: 'Nikon Zf', stock: '3 in stock', keywords: ['nikon', 'zf', 'retro', 'full frame'] },
-  { slug: 'sony-fe-70-200mm-f28-gm-oss-ii', title: 'Sony FE 70-200mm f/2.8 GM OSS II', stock: '3 in stock', keywords: ['sony', '70-200', '70-200mm', 'gm', 'telephoto', 'lens'] },
+  { slug: 'sony-a7-iv', title: 'Sony A7 IV', image: '/images/sony-a7-iv.jpg', stock: '6 in stock', keywords: ['sony', 'a7', 'a7iv', 'a7 iv', 'full frame', 'mirrorless'] },
+  { slug: 'canon-eos-r5', title: 'Canon EOS R5', image: '/images/canon-r5.jpg', stock: '4 in stock', keywords: ['canon', 'r5', 'eos r5', 'eos', 'full frame', 'mirrorless', '8k'] },
+  { slug: 'nikon-z8', title: 'Nikon Z8', image: '/images/nikon-z8.jpg', stock: '3 in stock', keywords: ['nikon', 'z8', 'z 8', 'flagship', 'full frame'] },
+  { slug: 'fujifilm-x-t4', title: 'Fujifilm X-T4', image: '/images/fujifilm-x-t4.jpg', stock: '5 in stock', keywords: ['fujifilm', 'fuji', 'xt4', 'x-t4', 'aps-c'] },
+  { slug: 'sony-fe-24-70mm-f28-gm', title: 'Sony FE 24-70mm f/2.8 GM', image: '/images/sony-24-70-gm.jpg', stock: '5 in stock', keywords: ['sony', '24-70', '24-70mm', 'gm', 'zoom', 'lens'] },
+  { slug: 'canon-rf-24-70mm-f28-l-is-usm', title: 'Canon RF 24-70mm f/2.8L IS USM', image: '/images/canon-rf-24-70.jpg', stock: '3 in stock', keywords: ['canon', '24-70', '24-70mm', 'rf', 'zoom', 'lens'] },
+  { slug: 'sony-a7r-v', title: 'Sony A7R V', image: '/images/sony-a7r-v.jpg', stock: '2 in stock', keywords: ['sony', 'a7r', 'a7rv', 'a7r v', '61mp', 'high-res'] },
+  { slug: 'sony-a1', title: 'Sony A1', image: '/images/sony-a1.jpg', stock: '2 in stock', keywords: ['sony', 'a1', 'flagship', '50mp'] },
+  { slug: 'hasselblad-x2d-100c', title: 'Hasselblad X2D 100C', image: '/images/hasselblad-x2d.jpg', stock: '1 in stock', keywords: ['hasselblad', 'x2d', 'medium format', '100mp'] },
+  { slug: 'dji-mavic-2-pro', title: 'DJI Mavic 2 Pro', image: '/images/dji-mavic-2.jpg', stock: 'Out of stock', keywords: ['dji', 'mavic', 'drone', 'mavic 2'] },
+  { slug: 'nikon-zf', title: 'Nikon Zf', image: '/images/nikon-zf.jpg', stock: '3 in stock', keywords: ['nikon', 'zf', 'retro', 'full frame'] },
+  { slug: 'sony-fe-70-200mm-f28-gm-oss-ii', title: 'Sony FE 70-200mm f/2.8 GM OSS II', image: '/images/sony-70-200-gm-ii.jpg', stock: '3 in stock', keywords: ['sony', '70-200', '70-200mm', 'gm', 'telephoto', 'lens'] },
+  { slug: 'canon-eos-r6-ii', title: 'Canon EOS R6 II', image: '/images/canon-r6-ii.jpg', stock: 'Out of stock', keywords: ['canon', 'r6', 'r6 ii', 'eos r6', 'full frame', 'mirrorless'] },
+  { slug: 'sony-fe-135mm-f18-gm', title: 'Sony FE 135mm f/1.8 GM', image: '/images/sony-135-gm.jpg', stock: 'Out of stock', keywords: ['sony', '135mm', '135', 'gm', 'portrait', 'lens', 'prime', 'fe 135mm', 'f/1.8', 'sony fe 135mm f/1.8 gm'] },
+  { slug: 'leica-m11', title: 'Leica M11', image: '/images/leica-m11.jpg', stock: 'Out of stock', keywords: ['leica', 'm11', 'm 11', 'rangefinder', 'full frame'] },
 ];
 
 export interface BlogPost {

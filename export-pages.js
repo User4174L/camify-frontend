@@ -158,7 +158,7 @@ function navHighlightScript(currentName) {
 async function main() {
   // 1. Build
   console.log('Building...');
-  execSync(path.join(__dirname, 'node_modules/.bin/next') + ' build', { cwd: __dirname, stdio: 'inherit' });
+  execSync('"' + path.join(__dirname, 'node_modules/.bin/next') + '" build', { cwd: __dirname, stdio: 'inherit' });
   console.log('Build done.\n');
 
   // 2. Read CSS from build output
