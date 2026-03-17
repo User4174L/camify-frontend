@@ -818,10 +818,17 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
   const [creditSelected, setCreditSelected] = useState<Set<number>>(new Set());
   const [creditVerzendkosten, setCreditVerzendkosten] = useState(false);
   const [creditBetaalkosten, setCreditBetaalkosten] = useState(false);
-  const [creditNewProduct, setCreditNewProduct] = useState('');
-  const [creditNewPrice, setCreditNewPrice] = useState('');
+  const [creditNewProducts, setCreditNewProducts] = useState<{ name: string; price: string }[]>([]);
 
-  const hasExchange = !!(creditNewProduct && creditNewPrice && parseFloat(creditNewPrice) > 0);
+  const addNewProduct = () => setCreditNewProducts(prev => [...prev, { name: '', price: '' }]);
+  const updateNewProduct = (idx: number, field: 'name' | 'price', value: string) => {
+    setCreditNewProducts(prev => prev.map((p, i) => i === idx ? { ...p, [field]: field === 'price' ? value.replace(/[^\d.,]/g, '') : value } : p));
+  };
+  const removeNewProduct = (idx: number) => setCreditNewProducts(prev => prev.filter((_, i) => i !== idx));
+
+  const validNewProducts = creditNewProducts.filter(p => p.name && p.price && parseFloat(p.price) > 0);
+  const hasExchange = validNewProducts.length > 0;
+  const newProductsTotal = validNewProducts.reduce((sum, p) => sum + parseFloat(p.price || '0'), 0);
   const credNr = 'CRED-00012';
   const excNr = 'EXC-00003';
   const newOrdNr = 'CT028946';
@@ -861,8 +868,7 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
     setCreditSelected(new Set());
     setCreditVerzendkosten(false);
     setCreditBetaalkosten(false);
-    setCreditNewProduct('');
-    setCreditNewPrice('');
+    setCreditNewProducts([]);
   };
 
   const creditTotal = (() => {
@@ -873,25 +879,29 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
     });
     if (creditVerzendkosten) total -= 6.95;
     if (creditBetaalkosten) total -= 0.29;
-    if (hasExchange) total += parseFloat(creditNewPrice);
+    total += newProductsTotal;
     return total;
   })();
 
   return (
     <div>
-      {/* Top bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+      {/* Top bar — 3 columns */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'start', marginBottom: 24, gap: 12 }}>
         <div style={{ display: 'flex', gap: 16 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', color: ACCENT, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>&larr; Alle orders</button>
           {order.herkomst === 'Quote' && (
             <button style={{ background: 'none', border: 'none', color: ACCENT, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>&larr; Naar quote</button>
           )}
         </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginRight: 4 }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 12, color: GREY, fontWeight: 500 }}>{order.naam}</div>
+          {order.isBusiness && order.bedrijf !== '—' && <div style={{ fontSize: 11, color: GREY }}>{order.bedrijf}</div>}
+        </div>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <button style={buttonAccent}>Factuur versturen</button>
             {order.laatsteFactuur && (
-              <span style={{ fontSize: 10, color: GREY, marginTop: 4 }}>Laatst verstuurd: {order.laatsteFactuur}</span>
+              <span style={{ fontSize: 10, color: GREY, marginTop: 3 }}>Verstuurd: {order.laatsteFactuur}</span>
             )}
           </div>
           <button style={buttonDark} onClick={() => { if (creditConfirmed) resetCreditForm(); else setShowCreditForm(!showCreditForm); }}>Credit factuur</button>
@@ -991,37 +1001,50 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
             </label>
           </div>
 
-          {/* Vervangend product (exchange) */}
+          {/* Vervangende producten (exchange) */}
           <div style={{ marginBottom: 16, padding: 16, background: SURFACE, borderRadius: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-              <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px' }}>
-                Vervangend product (exchange)
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px' }}>
+                  Vervangende producten (exchange)
+                </div>
+                {hasExchange && <Badge color={ACCENT} bg={ACCENT_BG}>EXC wordt aangemaakt</Badge>}
               </div>
-              {hasExchange && <Badge color={ACCENT} bg={ACCENT_BG}>EXC wordt aangemaakt</Badge>}
+              <button style={{ ...buttonOutline, padding: '5px 12px', fontSize: 12 }} onClick={addNewProduct}>+ Product toevoegen</button>
             </div>
             <p style={{ fontSize: 12, color: GREY, marginBottom: 10 }}>
               Bij een exchange wordt een EXC-nummer aangemaakt dat de credit factuur ({credNr}) koppelt aan een nieuwe order ({newOrdNr}). Het nettobedrag wordt verrekend.
             </p>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <input
-                type="text"
-                placeholder="Productnaam of SKU..."
-                value={creditNewProduct}
-                onChange={e => setCreditNewProduct(e.target.value)}
-                style={{ ...inputStyle, flex: 1 }}
-              />
-              <input
-                type="text"
-                placeholder="Prijs"
-                value={creditNewPrice}
-                onChange={e => setCreditNewPrice(e.target.value.replace(/[^\d.,]/g, ''))}
-                style={{ ...inputStyle, width: 100 }}
-              />
-            </div>
+            {creditNewProducts.map((p, i) => (
+              <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="Productnaam of SKU..."
+                  value={p.name}
+                  onChange={e => updateNewProduct(i, 'name', e.target.value)}
+                  style={{ ...inputStyle, flex: 1 }}
+                />
+                <input
+                  type="text"
+                  placeholder="Prijs"
+                  value={p.price}
+                  onChange={e => updateNewProduct(i, 'price', e.target.value)}
+                  style={{ ...inputStyle, width: 100 }}
+                />
+                <button onClick={() => removeNewProduct(i)} style={{ background: 'none', border: 'none', color: RED, cursor: 'pointer', fontSize: 16, padding: '0 4px' }}>&times;</button>
+              </div>
+            ))}
+            {creditNewProducts.length === 0 && (
+              <div style={{ fontSize: 12, color: GREY, fontStyle: 'italic', padding: '8px 0' }}>Geen vervangende producten. Klik &ldquo;+ Product toevoegen&rdquo; voor een exchange.</div>
+            )}
             {hasExchange && (
               <div style={{ marginTop: 10, padding: 10, background: WHITE, borderRadius: 6, border: `1px solid ${BORDER}`, fontSize: 12 }}>
-                <div style={{ color: GREEN, fontWeight: 600 }}>+ &euro; {parseFloat(creditNewPrice || '0').toLocaleString('nl-NL')} &mdash; {creditNewProduct}</div>
-                <div style={{ color: GREY, marginTop: 4 }}>Nieuwe order {newOrdNr} wordt aangemaakt na afronden. Verwijzing: {excNr}</div>
+                {validNewProducts.map((p, i) => (
+                  <div key={i} style={{ color: GREEN, fontWeight: 600, marginBottom: i < validNewProducts.length - 1 ? 4 : 0 }}>
+                    + &euro; {parseFloat(p.price).toLocaleString('nl-NL')} &mdash; {p.name}
+                  </div>
+                ))}
+                <div style={{ color: GREY, marginTop: 6 }}>Nieuwe order {newOrdNr} met {validNewProducts.length} product{validNewProducts.length > 1 ? 'en' : ''} wordt aangemaakt na afronden. Verwijzing: {excNr}</div>
               </div>
             )}
           </div>
@@ -1595,31 +1618,32 @@ export default function AdminDashboard() {
   ];
 
   const renderContent = () => {
-    if (activeSection === 'quotes' && selectedQuote) {
-      return (
-        <QuoteDetailPage
-          quoteId={selectedQuote}
-          onBack={() => setSelectedQuote(null)}
-        />
-      );
-    }
-
-    if (activeSection === 'orders' && selectedOrder) {
-      return (
-        <OrderDetailPage
-          ordernummer={selectedOrder}
-          onBack={() => setSelectedOrder(null)}
-        />
-      );
-    }
-
     return (
       <>
+        {/* Detail pages */}
+        <div style={{ display: activeSection === 'quotes' && selectedQuote ? 'block' : 'none' }}>
+          {selectedQuote && (
+            <QuoteDetailPage
+              quoteId={selectedQuote}
+              onBack={() => setSelectedQuote(null)}
+            />
+          )}
+        </div>
+        <div style={{ display: activeSection === 'orders' && selectedOrder ? 'block' : 'none' }}>
+          {selectedOrder && (
+            <OrderDetailPage
+              ordernummer={selectedOrder}
+              onBack={() => setSelectedOrder(null)}
+            />
+          )}
+        </div>
+
+        {/* Section pages */}
         {sections.map(s => (
           <div
             key={s.key}
             data-section={s.key}
-            style={{ display: (activeSection === s.key || (activeSection === 'overzicht' && s.key === 'dashboard')) ? 'block' : 'none' }}
+            style={{ display: (activeSection === s.key || (activeSection === 'overzicht' && s.key === 'dashboard')) && !selectedOrder && !selectedQuote ? 'block' : 'none' }}
           >
             {s.content}
           </div>

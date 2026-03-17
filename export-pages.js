@@ -561,6 +561,23 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
       sidebar.style.left=(left==='-280px'||left==='')?'0':'-280px';
     });
   }
+  // Dashboard table row clicks (orders, quotes → detail views)
+  // The detail views are rendered but hidden. We need to find them and show/hide.
+  // Orders and quotes tables have clickable rows with cursor:pointer
+  var ordersSection=document.querySelector('[data-section="orders"]');
+  if(ordersSection){
+    var orderRows=ordersSection.querySelectorAll('tbody tr[style*="cursor"]');
+    orderRows.forEach(function(row){
+      row.addEventListener('click',function(){
+        // The order detail is not in a data-section, it's a sibling div
+        // In the rendered HTML, there should be a div that contains the order detail
+        // For static export, we can't navigate to detail - just highlight the row
+        row.style.background='#FFF0E8';
+        setTimeout(function(){row.style.background='';},300);
+      });
+    });
+  }
+
   // Dashboard search/filter inputs
   document.querySelectorAll('input[placeholder*="Zoek"]').forEach(function(input){
     var table=input.closest('div').parentElement.querySelector('table');
