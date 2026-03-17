@@ -814,17 +814,27 @@ function OrdersPage({ onSelectOrder }: { onSelectOrder: (id: string) => void }) 
 function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack: () => void }) {
   const order = MOCK_ORDERS.find(o => o.ordernummer === ordernummer) || MOCK_ORDERS[0];
   const [showCreditForm, setShowCreditForm] = useState(false);
+  const [creditConfirmed, setCreditConfirmed] = useState(false);
   const [creditSelected, setCreditSelected] = useState<Set<number>>(new Set());
   const [creditVerzendkosten, setCreditVerzendkosten] = useState(false);
   const [creditBetaalkosten, setCreditBetaalkosten] = useState(false);
   const [creditNewProduct, setCreditNewProduct] = useState('');
   const [creditNewPrice, setCreditNewPrice] = useState('');
 
+  const hasExchange = !!(creditNewProduct && creditNewPrice && parseFloat(creditNewPrice) > 0);
+  const credNr = 'CRED-00012';
+  const excNr = 'EXC-00003';
+  const newOrdNr = 'CT028946';
+
   const infoRow = (label: string, value: string | React.ReactNode) => (
     <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
       <span style={{ fontSize: 13, fontWeight: 600, color: DARK, minWidth: 160 }}>{label}</span>
       <span style={{ fontSize: 13, color: GREY }}>{value}</span>
     </div>
+  );
+
+  const refLink = (ref: string, color: string = ACCENT) => (
+    <span style={{ color, fontWeight: 600, cursor: 'pointer', fontSize: 13 }}>{ref}</span>
   );
 
   const orderStatusColor = (s: string) => {
@@ -845,15 +855,25 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
     });
   };
 
+  const resetCreditForm = () => {
+    setShowCreditForm(false);
+    setCreditConfirmed(false);
+    setCreditSelected(new Set());
+    setCreditVerzendkosten(false);
+    setCreditBetaalkosten(false);
+    setCreditNewProduct('');
+    setCreditNewPrice('');
+  };
+
   const creditTotal = (() => {
     let total = 0;
     creditSelected.forEach(idx => {
       const r = order.orderregels[idx];
-      if (r) total -= r.prijs; // credit = negative
+      if (r) total -= r.prijs;
     });
     if (creditVerzendkosten) total -= 6.95;
     if (creditBetaalkosten) total -= 0.29;
-    if (creditNewPrice && parseFloat(creditNewPrice) > 0) total += parseFloat(creditNewPrice);
+    if (hasExchange) total += parseFloat(creditNewPrice);
     return total;
   })();
 
@@ -874,15 +894,72 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
               <span style={{ fontSize: 10, color: GREY, marginTop: 4 }}>Laatst verstuurd: {order.laatsteFactuur}</span>
             )}
           </div>
-          <button style={buttonDark} onClick={() => setShowCreditForm(!showCreditForm)}>Credit factuur</button>
+          <button style={buttonDark} onClick={() => { if (creditConfirmed) resetCreditForm(); else setShowCreditForm(!showCreditForm); }}>Credit factuur</button>
         </div>
       </div>
 
+      {/* Credit factuur bevestiging */}
+      {creditConfirmed && (
+        <div style={{ ...cardStyle, marginBottom: 20, border: `2px solid ${GREEN}`, background: '#F0FDF4' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="16" height="16" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, margin: 0 }}>Credit factuur aangemaakt</h3>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: hasExchange ? '1fr 1fr 1fr' : '1fr 1fr', gap: 20, marginBottom: 16 }}>
+            <div style={{ padding: 16, background: WHITE, borderRadius: 8, border: `1px solid ${BORDER}` }}>
+              <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 6 }}>Credit factuur</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: RED }}>{credNr}</div>
+              <div style={{ fontSize: 12, color: GREY, marginTop: 4 }}>Op order {order.ordernummer}</div>
+            </div>
+            {hasExchange && (
+              <>
+                <div style={{ padding: 16, background: WHITE, borderRadius: 8, border: `1px solid ${BORDER}` }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 6 }}>Exchange</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: ACCENT }}>{excNr}</div>
+                  <div style={{ fontSize: 12, color: GREY, marginTop: 4 }}>Koppelt credit + nieuwe order</div>
+                </div>
+                <div style={{ padding: 16, background: WHITE, borderRadius: 8, border: `1px solid ${BORDER}` }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 6 }}>Nieuwe order</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: GREEN }}>{newOrdNr}</div>
+                  <div style={{ fontSize: 12, color: GREY, marginTop: 4 }}>Wordt aangemaakt na betaling</div>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div style={{ padding: 16, background: WHITE, borderRadius: 8, border: `1px solid ${BORDER}`, marginBottom: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 8 }}>Betaalreferentie voor terminal</div>
+            <div style={{ fontFamily: 'monospace', fontSize: 16, fontWeight: 700, color: DARK, padding: '8px 12px', background: SURFACE, borderRadius: 6, display: 'inline-block' }}>
+              {credNr}{hasExchange ? ` / ${excNr}` : ''}
+            </div>
+            <div style={{ fontSize: 12, color: GREY, marginTop: 6 }}>
+              Nettobedrag: <span style={{ fontWeight: 700, color: creditTotal < 0 ? RED : GREEN }}>
+                {creditTotal < 0 ? '-' : '+'}&euro; {Math.abs(creditTotal).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+              {' '}&mdash; {creditTotal < 0 ? 'Terug naar klant' : creditTotal > 0 ? 'Klant betaalt bij' : 'Verrekend, geen betaling nodig'}
+            </div>
+          </div>
+
+          {hasExchange && (
+            <div style={{ padding: 12, background: '#FFF7ED', borderRadius: 8, border: `1px solid #FED7AA`, fontSize: 13, color: '#9A3412' }}>
+              <strong>Na betaling:</strong> Nieuwe order {newOrdNr} wordt aangemaakt met verwijzing {excNr}. In Exact Online komt {excNr} in het &ldquo;Uw ref.&rdquo; veld van de nieuwe verkoopfactuur.
+            </div>
+          )}
+
+          <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
+            <button style={buttonOutline} onClick={resetCreditForm}>Sluiten</button>
+          </div>
+        </div>
+      )}
+
       {/* Credit factuur form */}
-      {showCreditForm && (
+      {showCreditForm && !creditConfirmed && (
         <div style={{ ...cardStyle, marginBottom: 20, border: `2px solid ${ACCENT}` }}>
-          <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 16 }}>Credit factuur aanmaken</h3>
-          <p style={{ fontSize: 13, color: GREY, marginBottom: 16 }}>Selecteer welke regels je wilt crediteren. Optioneel kun je een vervangend product toevoegen (ruil).</p>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 4 }}>Credit factuur aanmaken</h3>
+          <p style={{ fontSize: 13, color: GREY, marginBottom: 16 }}>Selecteer welke regels je wilt crediteren. Optioneel kun je een vervangend product toevoegen (exchange).</p>
 
           {/* Selectable order lines */}
           <div style={{ marginBottom: 16 }}>
@@ -914,13 +991,16 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
             </label>
           </div>
 
-          {/* Vervangend product (ruil) */}
+          {/* Vervangend product (exchange) */}
           <div style={{ marginBottom: 16, padding: 16, background: SURFACE, borderRadius: 8 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 8 }}>
-              Vervangend product toevoegen (optioneel)
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px' }}>
+                Vervangend product (exchange)
+              </div>
+              {hasExchange && <Badge color={ACCENT} bg={ACCENT_BG}>EXC wordt aangemaakt</Badge>}
             </div>
             <p style={{ fontSize: 12, color: GREY, marginBottom: 10 }}>
-              Bij een ruil: het gecrediteerde bedrag wordt verrekend met het nieuwe product. Het nettobedrag wordt bijbetaald of teruggestort.
+              Bij een exchange wordt een EXC-nummer aangemaakt dat de credit factuur ({credNr}) koppelt aan een nieuwe order ({newOrdNr}). Het nettobedrag wordt verrekend.
             </p>
             <div style={{ display: 'flex', gap: 8 }}>
               <input
@@ -938,28 +1018,45 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
                 style={{ ...inputStyle, width: 100 }}
               />
             </div>
-            {creditNewProduct && creditNewPrice && (
-              <div style={{ marginTop: 8, fontSize: 13, color: GREEN, fontWeight: 500 }}>
-                + &euro; {parseFloat(creditNewPrice || '0').toLocaleString('nl-NL')} — {creditNewProduct}
+            {hasExchange && (
+              <div style={{ marginTop: 10, padding: 10, background: WHITE, borderRadius: 6, border: `1px solid ${BORDER}`, fontSize: 12 }}>
+                <div style={{ color: GREEN, fontWeight: 600 }}>+ &euro; {parseFloat(creditNewPrice || '0').toLocaleString('nl-NL')} &mdash; {creditNewProduct}</div>
+                <div style={{ color: GREY, marginTop: 4 }}>Nieuwe order {newOrdNr} wordt aangemaakt na afronden. Verwijzing: {excNr}</div>
               </div>
             )}
           </div>
+
+          {/* Samenvatting documenten die worden aangemaakt */}
+          {(creditSelected.size > 0 || creditVerzendkosten || creditBetaalkosten) && (
+            <div style={{ marginBottom: 16, padding: 12, background: '#FFFBEB', borderRadius: 8, border: '1px solid #FDE68A', fontSize: 12 }}>
+              <strong style={{ color: '#92400E' }}>Wordt aangemaakt:</strong>
+              <div style={{ display: 'flex', gap: 16, marginTop: 6 }}>
+                <span style={{ color: RED }}>&#9679; {credNr} (credit factuur)</span>
+                {hasExchange && <span style={{ color: ACCENT }}>&#9679; {excNr} (exchange)</span>}
+                {hasExchange && <span style={{ color: GREEN }}>&#9679; {newOrdNr} (nieuwe order, na betaling)</span>}
+              </div>
+            </div>
+          )}
 
           {/* Netto bedrag */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderTop: `2px solid ${BORDER}` }}>
             <div>
               <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px' }}>Nettobedrag</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: creditTotal < 0 ? RED : creditTotal > 0 ? GREEN : DARK }}>
-                {creditTotal < 0 ? '-' : '+'}&euro; {Math.abs(creditTotal).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {creditTotal < 0 ? '-' : creditTotal > 0 ? '+' : ''}&euro; {Math.abs(creditTotal).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div style={{ fontSize: 12, color: GREY }}>
-                {creditTotal < 0 ? 'Klant ontvangt terug' : creditTotal > 0 ? 'Klant betaalt bij' : 'Verrekend'}
+                {creditTotal < 0 ? 'Klant ontvangt terug' : creditTotal > 0 ? 'Klant betaalt bij' : 'Verrekend, geen betaling nodig'}
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button style={buttonOutline} onClick={() => { setShowCreditForm(false); setCreditSelected(new Set()); setCreditVerzendkosten(false); setCreditBetaalkosten(false); setCreditNewProduct(''); setCreditNewPrice(''); }}>Annuleren</button>
-              <button style={{ ...buttonAccent, background: creditSelected.size > 0 || creditVerzendkosten || creditBetaalkosten ? ACCENT : GREY }} disabled={creditSelected.size === 0 && !creditVerzendkosten && !creditBetaalkosten}>
-                Credit factuur aanmaken
+              <button style={buttonOutline} onClick={resetCreditForm}>Annuleren</button>
+              <button
+                style={{ ...buttonAccent, background: creditSelected.size > 0 || creditVerzendkosten || creditBetaalkosten ? ACCENT : GREY }}
+                disabled={creditSelected.size === 0 && !creditVerzendkosten && !creditBetaalkosten}
+                onClick={() => { setShowCreditForm(false); setCreditConfirmed(true); }}
+              >
+                {hasExchange ? 'Credit + Exchange aanmaken' : 'Credit factuur aanmaken'}
               </button>
             </div>
           </div>
@@ -1004,6 +1101,43 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Pakbon
           </button>
+        </div>
+      </div>
+
+      {/* Referenties */}
+      <div style={{ ...cardStyle, marginTop: 20 }}>
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 16 }}>Referenties</h3>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          {order.herkomst === 'Quote' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 12, color: GREY }}>Quote:</span>
+              {refLink('QUE-00001')}
+            </div>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 12, color: GREY }}>Order:</span>
+            {refLink(order.ordernummer)}
+          </div>
+          {creditConfirmed && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 12, color: GREY }}>Credit:</span>
+                {refLink(credNr, RED)}
+              </div>
+              {hasExchange && (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 12, color: GREY }}>Exchange:</span>
+                    {refLink(excNr)}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 12, color: GREY }}>Nieuwe order:</span>
+                    {refLink(newOrdNr, GREEN)}
+                  </div>
+                </>
+              )}
+            </>
+          )}
         </div>
       </div>
 
@@ -1063,14 +1197,28 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
           <thead>
             <tr>
               <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Referentie</th>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Exchange</th>
               <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Datum</th>
               <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'right' }}>Bedrag</th>
+              <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Nieuwe order</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td colSpan={3} style={{ ...tableCellStyle, textAlign: 'center', padding: 20, color: GREY, fontSize: 13 }}>Geen resultaten</td>
-            </tr>
+            {creditConfirmed ? (
+              <tr>
+                <td style={{ ...tableCellStyle, fontWeight: 600, color: RED }}>{credNr}</td>
+                <td style={tableCellStyle}>{hasExchange ? refLink(excNr) : <span style={{ color: GREY }}>&mdash;</span>}</td>
+                <td style={{ ...tableCellStyle, fontSize: 12 }}>17-03-2026</td>
+                <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 600, color: RED }}>
+                  -&euro; {Math.abs(creditTotal).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </td>
+                <td style={tableCellStyle}>{hasExchange ? refLink(newOrdNr, GREEN) : <span style={{ color: GREY }}>&mdash;</span>}</td>
+              </tr>
+            ) : (
+              <tr>
+                <td colSpan={5} style={{ ...tableCellStyle, textAlign: 'center', padding: 20, color: GREY, fontSize: 13 }}>Geen resultaten</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
