@@ -436,68 +436,53 @@ function DashboardPage() {
 /* ------------------------------------------------------------------ */
 function ProductenPage() {
   const [search, setSearch] = useState('');
-  const filtered = MOCK_PRODUCTS.filter(p =>
-    !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.brand.toLowerCase().includes(search.toLowerCase())
-  );
+  const [merkFilter, setMerkFilter] = useState('');
+  const brands = [...new Set(MOCK_PRODUCTS.map(p => p.brand))].sort();
+  const filtered = MOCK_PRODUCTS.filter(p => {
+    if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.brand.toLowerCase().includes(search.toLowerCase())) return false;
+    if (merkFilter && p.brand.toLowerCase() !== merkFilter.toLowerCase()) return false;
+    return true;
+  });
 
   return (
     <div>
-      <SectionHeader title="Producten" description={`${MOCK_PRODUCTS.length} producten totaal`} />
-      {/* Full-width search bar */}
-      <input
-        type="text"
-        placeholder="Zoek op titel, merk, SKU..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        style={{ ...inputStyle, width: '100%', padding: '14px 18px', fontSize: 15, boxSizing: 'border-box', marginBottom: 20, borderRadius: 10 }}
-      />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, color: DARK, margin: 0 }}>Producten</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button style={{ ...buttonOutline, borderColor: ACCENT, color: ACCENT }}>Product toevoegen</button>
+          <select value={merkFilter} onChange={e => setMerkFilter(e.target.value)} style={selectStyle}>
+            <option value="">Merk</option>
+            {brands.map(b => <option key={b} value={b}>{b}</option>)}
+          </select>
+          <input type="text" placeholder="Zoeken..." value={search} onChange={e => setSearch(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+        </div>
+      </div>
       <div style={cardStyle}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Titel</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Type</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Brand</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'center' }}>Hardloper</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'center' }}>Multiple stock</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'center' }}>Voorraad</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'center' }}>Active</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Merk</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Hardloper</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Meervoudige voorraad</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Verkoopbare voorraad</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, width: 40 }} />
               </tr>
             </thead>
             <tbody>
               {filtered.map((p, i) => (
                 <tr key={i} style={{ cursor: 'pointer' }}>
-                  <td style={tableCellStyle}>
-                    <div style={{ fontWeight: 500, color: ACCENT }}>{p.name}</div>
-                    <div style={{ fontSize: 11, color: GREY, marginTop: 2 }}>{p.category}</div>
-                  </td>
-                  <td style={tableCellStyle}>
-                    <Badge color={p.type === 'Camera' ? GREEN : p.type === 'Lens' ? BLUE : p.type === 'Cinema' ? '#8B5CF6' : GREY} bg={p.type === 'Camera' ? '#DCFCE7' : p.type === 'Lens' ? '#DBEAFE' : p.type === 'Cinema' ? '#EDE9FE' : '#F3F4F6'}>{p.type}</Badge>
-                  </td>
-                  <td style={tableCellStyle}>{p.brand}</td>
-                  <td style={{ ...tableCellStyle, textAlign: 'center' }}>
-                    {p.hardloper && <Badge color={ACCENT} bg={ACCENT_BG}>Hardloper</Badge>}
-                  </td>
-                  <td style={{ ...tableCellStyle, textAlign: 'center' }}>
-                    <Badge color={p.multipleStock ? GREEN : GREY} bg={p.multipleStock ? '#DCFCE7' : '#F3F4F6'}>
-                      {p.multipleStock ? 'Ja' : 'Nee'}
-                    </Badge>
-                  </td>
-                  <td style={{ ...tableCellStyle, textAlign: 'center', fontWeight: 600 }}>{p.stock}</td>
-                  <td style={{ ...tableCellStyle, textAlign: 'center' }}>
-                    <span style={{
-                      display: 'inline-block',
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                      background: p.active ? GREEN : RED,
-                    }} />
-                  </td>
+                  <td style={{ ...tableCellStyle, fontWeight: 500 }}>{p.name}</td>
+                  <td style={{ ...tableCellStyle, color: p.brand ? undefined : GREY }}>{p.brand || '\u2014'}</td>
+                  <td style={tableCellStyle}>{p.hardloper ? 'Ja' : 'Nee'}</td>
+                  <td style={tableCellStyle}>{p.multipleStock ? 'Ja' : 'Nee'}</td>
+                  <td style={tableCellStyle}>{p.stock}</td>
+                  <td style={{ ...tableCellStyle, color: GREY, cursor: 'pointer', textAlign: 'center' }}>&bull;&bull;&bull;</td>
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={7} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen producten gevonden.</td></tr>
+                <tr><td colSpan={6} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen producten gevonden.</td></tr>
               )}
             </tbody>
           </table>
@@ -766,12 +751,16 @@ function CategoriesPage() {
 /* ------------------------------------------------------------------ */
 function OrdersPage({ onSelectOrder }: { onSelectOrder: (id: string) => void }) {
   const [search, setSearch] = useState('');
+  const [selected, setSelected] = useState<string[]>([]);
+  const [activeFilter, setActiveFilter] = useState('');
   const [sortField, setSortField] = useState<string>('datum');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
-  const filtered = MOCK_ORDERS.filter(o =>
-    !search || o.ordernummer.toLowerCase().includes(search.toLowerCase()) || o.factuurnummer.toLowerCase().includes(search.toLowerCase()) || o.naam.toLowerCase().includes(search.toLowerCase()) || o.bedrijf.toLowerCase().includes(search.toLowerCase()) || o.status.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = MOCK_ORDERS.filter(o => {
+    if (search && !o.ordernummer.toLowerCase().includes(search.toLowerCase()) && !o.factuurnummer.toLowerCase().includes(search.toLowerCase()) && !o.naam.toLowerCase().includes(search.toLowerCase()) && !o.bedrijf.toLowerCase().includes(search.toLowerCase())) return false;
+    if (activeFilter && o.status !== activeFilter) return false;
+    return true;
+  });
 
   const sorted = [...filtered].sort((a, b) => {
     const dir = sortDir === 'asc' ? 1 : -1;
@@ -795,66 +784,79 @@ function OrdersPage({ onSelectOrder }: { onSelectOrder: (id: string) => void }) 
     }
   };
 
+  const toggleSelect = (id: string) => {
+    setSelected(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
+  };
+  const toggleAll = () => {
+    if (selected.length === sorted.length) setSelected([]);
+    else setSelected(sorted.map(o => o.ordernummer));
+  };
+
   const SortIcon = ({ field }: { field: string }) => (
     <span style={{ marginLeft: 4, fontSize: 10, opacity: sortField === field ? 1 : 0.3 }}>
-      {sortField === field ? (sortDir === 'asc' ? '\u25B2' : '\u25BC') : '\u25BC'}
+      {sortField === field ? (sortDir === 'asc' ? '\u25B2' : '\u25BC') : '\u2195'}
     </span>
   );
 
   return (
     <div>
-      <SectionHeader title="Orders" description={`${MOCK_ORDERS.length} orders totaal`} />
-      <input
-        type="text"
-        placeholder="Zoek op ordernummer, factuurnummer, naam, bedrijf..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        style={{ ...inputStyle, width: '100%', padding: '14px 18px', fontSize: 15, boxSizing: 'border-box', marginBottom: 20, borderRadius: 10 }}
-      />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: DARK, margin: 0 }}>Orders</h2>
+          {activeFilter && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', background: ACCENT_BG, color: ACCENT, fontSize: 12, borderRadius: 999 }}>
+              {activeFilter}
+              <button onClick={() => setActiveFilter('')} style={{ background: 'none', border: 'none', color: ACCENT, cursor: 'pointer', fontFamily: 'inherit', fontSize: 12, padding: 0 }}>&times;</button>
+            </span>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 12, color: GREY }}>{selected.length} geselecteerd</span>
+          <button style={{ ...buttonOutline, opacity: selected.length > 0 ? 1 : 0.5, fontSize: 12, padding: '8px 14px' }} disabled={selected.length === 0}>Pakbonnen downloaden</button>
+          <button style={{ ...buttonOutline, opacity: selected.length > 0 ? 1 : 0.5, fontSize: 12, padding: '8px 14px' }} disabled={selected.length === 0}>Verzendlabels aanmaken</button>
+          <input type="text" placeholder="Zoeken..." value={search} onChange={e => setSearch(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+        </div>
+      </div>
       <div style={cardStyle}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, width: 40 }}>
+                  <input type="checkbox" checked={selected.length === sorted.length && sorted.length > 0} onChange={toggleAll} style={{ cursor: 'pointer' }} />
+                </th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left', cursor: 'pointer' }} onClick={() => toggleSort('ordernummer')}>
                   Ordernummer <SortIcon field="ordernummer" />
                 </th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Factuurnummer</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'right', cursor: 'pointer' }} onClick={() => toggleSort('prijs')}>
-                  Prijs <SortIcon field="prijs" />
-                </th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Prijs</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left', cursor: 'pointer' }} onClick={() => toggleSort('datum')}>
                   Datum <SortIcon field="datum" />
                 </th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Naam</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Source</th>
-                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Betaalstatus</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Bedrijf</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Orderstatus</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, width: 40 }} />
               </tr>
             </thead>
             <tbody>
-              {sorted.map((o, i) => {
-                const sourceColor = o.herkomst === 'Store' ? '#8B5CF6' : o.herkomst === 'Quote' ? ACCENT : GREEN;
-                const betaalColor = o.betaalstatus === 'Betaald' ? GREEN : o.betaalstatus === 'Openstaand' ? '#F59E0B' : RED;
-                return (
+              {sorted.map((o, i) => (
                 <tr key={i} style={{ cursor: 'pointer' }} onClick={() => onSelectOrder(o.ordernummer)}>
+                  <td style={tableCellStyle} onClick={e => e.stopPropagation()}>
+                    <input type="checkbox" checked={selected.includes(o.ordernummer)} onChange={() => toggleSelect(o.ordernummer)} style={{ cursor: 'pointer' }} />
+                  </td>
                   <td style={{ ...tableCellStyle, fontWeight: 600, color: ACCENT }}>{o.ordernummer}</td>
                   <td style={{ ...tableCellStyle, fontSize: 12, color: GREY }}>{o.factuurnummer}</td>
-                  <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>&euro; {o.prijs.toLocaleString('nl-NL')}</td>
+                  <td style={tableCellStyle}>&euro; {o.prijs.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</td>
                   <td style={{ ...tableCellStyle, fontSize: 12 }}>{o.datum}</td>
                   <td style={{ ...tableCellStyle, fontWeight: 500 }}>{o.naam}</td>
-                  <td style={tableCellStyle}>
-                    <Badge color={sourceColor} bg={sourceColor + '18'}>{o.herkomst}</Badge>
-                  </td>
-                  <td style={tableCellStyle}>
-                    <Badge color={betaalColor} bg={betaalColor + '18'}>{o.betaalstatus}</Badge>
-                  </td>
+                  <td style={{ ...tableCellStyle, fontSize: 12, color: o.bedrijf === '\u2014' ? GREY : undefined }}>{o.bedrijf}</td>
                   <td style={tableCellStyle}>
                     <Badge color={orderStatusColor(o.status)} bg={orderStatusColor(o.status) + '18'}>{o.status}</Badge>
                   </td>
+                  <td style={{ ...tableCellStyle, color: GREY, cursor: 'pointer', textAlign: 'center' }} onClick={e => e.stopPropagation()}>&bull;&bull;&bull;</td>
                 </tr>
-                );
-              })}
+              ))}
               {sorted.length === 0 && (
                 <tr><td colSpan={9} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen orders gevonden.</td></tr>
               )}
@@ -1346,9 +1348,14 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
 /* ------------------------------------------------------------------ */
 function QuotesPage({ onSelectQuote }: { onSelectQuote: (id: string) => void }) {
   const [search, setSearch] = useState('');
-  const filtered = MOCK_QUOTES.filter(q =>
-    !search || q.id.toLowerCase().includes(search.toLowerCase()) || q.name.toLowerCase().includes(search.toLowerCase()) || q.email.toLowerCase().includes(search.toLowerCase()) || q.status.toLowerCase().includes(search.toLowerCase())
-  );
+  const [statusFilter, setStatusFilter] = useState('');
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const filtered = MOCK_QUOTES.filter(q => {
+    if (search && !q.id.toLowerCase().includes(search.toLowerCase()) && !q.name.toLowerCase().includes(search.toLowerCase()) && !q.status.toLowerCase().includes(search.toLowerCase())) return false;
+    if (statusFilter && q.status !== statusFilter) return false;
+    return true;
+  });
 
   const quoteStatusColor = (s: string) => {
     switch (s) {
@@ -1362,21 +1369,41 @@ function QuotesPage({ onSelectQuote }: { onSelectQuote: (id: string) => void }) 
     }
   };
 
+  const toggleSelect = (id: string) => {
+    setSelected(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
+  };
+  const toggleAll = () => {
+    if (selected.length === filtered.length) setSelected([]);
+    else setSelected(filtered.map(q => q.id));
+  };
+
   return (
     <div>
-      <SectionHeader title="Quotes" description={`${MOCK_QUOTES.length} quotes totaal`} />
-      <input
-        type="text"
-        placeholder="Zoek op quotenummer, naam, email, status..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        style={{ ...inputStyle, width: '100%', padding: '14px 18px', fontSize: 15, boxSizing: 'border-box', marginBottom: 20, borderRadius: 10 }}
-      />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, color: DARK, margin: 0 }}>Quotes</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 12, color: GREY }}>{selected.length} geselecteerd</span>
+          <button style={{ ...buttonOutline, opacity: selected.length > 0 ? 1 : 0.5, fontSize: 12, padding: '8px 14px' }} disabled={selected.length === 0}>Labels aanmaken</button>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={selectStyle}>
+            <option value="">Status</option>
+            <option value="Wacht op prijsvoorstel">Wacht op prijsvoorstel</option>
+            <option value="Wacht op akkoord">Wacht op akkoord</option>
+            <option value="Controleren">Controleren</option>
+            <option value="Uitbetalen">Uitbetalen</option>
+            <option value="Afgekeurd">Afgekeurd</option>
+            <option value="Afgerond">Afgerond</option>
+          </select>
+          <input type="text" placeholder="Zoeken..." value={search} onChange={e => setSearch(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+        </div>
+      </div>
       <div style={cardStyle}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, width: 40 }}>
+                  <input type="checkbox" checked={selected.length === filtered.length && filtered.length > 0} onChange={toggleAll} style={{ cursor: 'pointer' }} />
+                </th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Quotenummer</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Naam</th>
                 <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Bedrijf</th>
@@ -1389,6 +1416,9 @@ function QuotesPage({ onSelectQuote }: { onSelectQuote: (id: string) => void }) 
             <tbody>
               {filtered.map((q) => (
                 <tr key={q.id} onClick={() => onSelectQuote(q.id)} style={{ cursor: 'pointer' }}>
+                  <td style={tableCellStyle} onClick={e => e.stopPropagation()}>
+                    <input type="checkbox" checked={selected.includes(q.id)} onChange={() => toggleSelect(q.id)} style={{ cursor: 'pointer' }} />
+                  </td>
                   <td style={{ ...tableCellStyle, fontWeight: 600, color: ACCENT }}>{q.id}</td>
                   <td style={{ ...tableCellStyle, fontWeight: 500 }}>{q.name}</td>
                   <td style={{ ...tableCellStyle, fontSize: 12, color: GREY }}>{q.bedrijf}</td>
@@ -1401,7 +1431,7 @@ function QuotesPage({ onSelectQuote }: { onSelectQuote: (id: string) => void }) 
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={7} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen quotes gevonden.</td></tr>
+                <tr><td colSpan={8} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen quotes gevonden.</td></tr>
               )}
             </tbody>
           </table>
