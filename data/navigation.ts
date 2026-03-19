@@ -266,6 +266,7 @@ export const navCategories: NavCategory[] = [
           { label: 'Continuous Lighting', href: '/studio/lighting/continuous' },
           { label: 'Softboxes & Accessories', href: '/studio/lighting/softboxes' },
           { label: 'Generators', href: '/studio/lighting/generators' },
+          { label: 'Backgrounds', href: '/studio/lighting/backgrounds' },
         ],
       },
       {
@@ -277,13 +278,6 @@ export const navCategories: NavCategory[] = [
         title: 'Monitors & Displays',
         titleHref: '/studio/monitors',
         items: [],
-      },
-      {
-        title: 'Other Studio',
-        titleHref: '/studio/other',
-        items: [
-          { label: 'Backgrounds', href: '/studio/other/backgrounds' },
-        ],
       },
     ],
   },
