@@ -201,72 +201,89 @@ export const navCategories: NavCategory[] = [
 
   // ── VIDEO & CINEMA ──
   {
-    label: 'Video',
-    href: '/cinema',
-    menuCols: 4,
+    label: 'Video & Cinema',
+    href: '/video-cinema',
+    menuCols: 5,
     columns: [
       {
         title: 'Digital Cine Cameras',
-        titleHref: '/cinema/cameras',
+        titleHref: '/video-cinema/cine-cameras',
         items: [
-          { label: 'Canon EOS Cinema', href: '/cinema/cameras/canon' },
-          { label: 'RED Digital Cinema', href: '/cinema/cameras/red' },
-          { label: 'ARRI Cinema', href: '/cinema/cameras/arri' },
-          { label: 'Blackmagic Design', href: '/cinema/cameras/blackmagic' },
-          { label: 'Sony Cinema', href: '/cinema/cameras/sony' },
-          { label: 'Panasonic Cinema', href: '/cinema/cameras/panasonic' },
-          { label: 'Other', href: '/cinema/cameras/other' },
+          { label: 'Canon EOS Cinema', href: '/video-cinema/cine-cameras/canon' },
+          { label: 'RED Digital Cinema', href: '/video-cinema/cine-cameras/red' },
+          { label: 'ARRI Cinema', href: '/video-cinema/cine-cameras/arri' },
+          { label: 'Blackmagic Design', href: '/video-cinema/cine-cameras/blackmagic' },
+          { label: 'Sony Cinema', href: '/video-cinema/cine-cameras/sony' },
+          { label: 'Panasonic Cinema', href: '/video-cinema/cine-cameras/panasonic' },
+          { label: 'Other', href: '/video-cinema/cine-cameras/other' },
         ],
       },
       {
         title: 'Camcorders',
-        titleHref: '/cinema/camcorders',
+        titleHref: '/video-cinema/camcorders',
         items: [
-          { label: 'Canon', href: '/cinema/camcorders/canon' },
-          { label: 'Sony', href: '/cinema/camcorders/sony' },
-          { label: 'Panasonic', href: '/cinema/camcorders/panasonic' },
-          { label: 'JVC', href: '/cinema/camcorders/jvc' },
-          { label: 'Other', href: '/cinema/camcorders/other' },
+          { label: 'Canon', href: '/video-cinema/camcorders/canon' },
+          { label: 'Sony', href: '/video-cinema/camcorders/sony' },
+          { label: 'Panasonic', href: '/video-cinema/camcorders/panasonic' },
+          { label: 'JVC', href: '/video-cinema/camcorders/jvc' },
+          { label: 'Other', href: '/video-cinema/camcorders/other' },
         ],
       },
       {
-        title: 'Cine Lenses',
-        titleHref: '/lenses/cine',
+        title: 'Cine Accessories',
+        titleHref: '/video-cinema/cine-accessories',
         items: [],
       },
       {
-        title: 'Cine Accessories',
-        titleHref: '/accessories/cine',
+        title: 'Drones & Aerial',
+        titleHref: '/video-cinema/drones',
+        items: [],
+      },
+      {
+        title: 'Action Cameras',
+        titleHref: '/video-cinema/action-cameras',
+        items: [],
+      },
+      {
+        title: 'VR & 360',
+        titleHref: '/video-cinema/vr-360',
         items: [],
       },
     ],
   },
 
-  // ── ACTION & DRONES ──
+  // ── STUDIO ──
   {
-    label: 'Action & Drones',
-    href: '/action-drones',
+    label: 'Studio',
+    href: '/studio',
     menuCols: 4,
     columns: [
       {
-        title: 'Drones & Aerial',
-        titleHref: '/action-drones/drones',
+        title: 'Lighting',
+        titleHref: '/studio/lighting',
+        items: [
+          { label: 'Studio Strobes', href: '/studio/lighting/studio-strobes' },
+          { label: 'Continuous Lighting', href: '/studio/lighting/continuous' },
+          { label: 'Softboxes & Accessories', href: '/studio/lighting/softboxes' },
+          { label: 'Generators', href: '/studio/lighting/generators' },
+        ],
+      },
+      {
+        title: 'Audio',
+        titleHref: '/studio/audio',
         items: [],
       },
       {
-        title: 'VR & 360',
-        titleHref: '/action-drones/vr-360',
+        title: 'Monitors & Displays',
+        titleHref: '/studio/monitors',
         items: [],
       },
       {
-        title: 'Action Cameras',
-        titleHref: '/action-drones/action-cameras',
-        items: [],
-      },
-      {
-        title: 'Accessories',
-        titleHref: '/action-drones/accessories',
-        items: [],
+        title: 'Other Studio',
+        titleHref: '/studio/other',
+        items: [
+          { label: 'Backgrounds', href: '/studio/other/backgrounds' },
+        ],
       },
     ],
   },
@@ -402,24 +419,6 @@ export const navCategories: NavCategory[] = [
           { label: 'Tripod Accessories', href: '/accessories/tripods-supports-rigs/accessories' },
           { label: 'Other', href: '/accessories/tripods-supports-rigs/other' },
         ],
-      },
-      {
-        title: 'Studio Equipment',
-        titleHref: '/accessories/studio-equipment',
-        items: [
-          { label: 'Continuous Lighting', href: '/accessories/studio-equipment/continuous-lighting' },
-          { label: 'Studio Strobes', href: '/accessories/studio-equipment/studio-strobes' },
-          { label: 'Backgrounds', href: '/accessories/studio-equipment/backgrounds' },
-          { label: 'Softboxes & Accessories', href: '/accessories/studio-equipment/softboxes' },
-          { label: 'Generators', href: '/accessories/studio-equipment/generators' },
-          { label: 'Monitors', href: '/accessories/studio-equipment/monitors' },
-          { label: 'Other Studio', href: '/accessories/studio-equipment/other' },
-        ],
-      },
-      {
-        title: 'Audio Equipment',
-        titleHref: '/accessories/audio-equipment',
-        items: [],
       },
       {
         title: 'Other Accessories',

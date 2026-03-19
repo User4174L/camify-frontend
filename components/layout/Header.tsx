@@ -103,7 +103,7 @@ export default function Header() {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" />
                   </svg>
-                  {btwMode ? 'BTW only' : 'Incl. marge'}
+                  {btwMode ? 'VAT only ✓' : 'Show only VAT'}
                 </button>
 
                 {/* Tooltip */}
@@ -123,15 +123,15 @@ export default function Header() {
                     boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
                   }}>
                     <div style={{ fontWeight: 700, marginBottom: 4 }}>
-                      {btwMode ? '✓ BTW modus actief' : 'Alle producten (incl. marge)'}
+                      {btwMode ? '✓ VAT filter active' : 'Filter by VAT reclaimable products'}
                     </div>
                     <div style={{ color: '#a1a1aa' }}>
                       {btwMode
-                        ? 'Je ziet alleen producten met 21% BTW. Prijzen worden excl. BTW getoond. Ideaal voor zakelijke kopers die BTW kunnen aftrekken.'
-                        : 'Je ziet alle producten — zowel met 21% BTW als margeregeling. Zet "BTW only" aan om alleen BTW-aftrekbare producten te zien.'}
+                        ? 'You\'re only seeing products with 21% VAT — prices shown excl. VAT. Business buyers can reclaim VAT on these products.'
+                        : 'Show only products with 21% VAT that are reclaimable for business buyers. Products sold under margin scheme (no VAT) are hidden — though these can still be great value for business use.'}
                     </div>
                     <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid #333', color: '#a1a1aa', fontSize: 11 }}>
-                      Producten met het <span style={{ background: '#3b82f6', color: '#fff', padding: '1px 6px', borderRadius: 4, fontSize: 10, fontWeight: 600 }}>21% BTW</span> label zijn aftrekbaar voor zakelijke kopers.
+                      Products with the <span style={{ background: '#3b82f6', color: '#fff', padding: '1px 6px', borderRadius: 4, fontSize: 10, fontWeight: 600 }}>21% VAT</span> label are reclaimable. Margin scheme products can still offer excellent value.
                     </div>
                   </div>
                 )}
