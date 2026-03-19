@@ -19,6 +19,10 @@ export default function Header() {
   const [selectedLang, setSelectedLang] = useState('EN');
   const langRef = useRef<HTMLDivElement>(null);
 
+  const [btwMode, setBtwMode] = useState(false);
+  const [btwTooltip, setBtwTooltip] = useState(false);
+  const btwRef = useRef<HTMLDivElement>(null);
+
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +33,9 @@ export default function Header() {
       }
       if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
         setAccountOpen(false);
+      }
+      if (btwRef.current && !btwRef.current.contains(e.target as Node)) {
+        setBtwTooltip(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -70,6 +77,66 @@ export default function Header() {
             <SearchBar />
 
             <div className="header__actions">
+              {/* BTW / Zakelijk toggle */}
+              <div ref={btwRef} style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setBtwMode(!btwMode)}
+                  onMouseEnter={() => setBtwTooltip(true)}
+                  onMouseLeave={() => setBtwTooltip(false)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 14px',
+                    borderRadius: 999,
+                    border: btwMode ? '1.5px solid #E8692A' : '1.5px solid #e5e7eb',
+                    background: btwMode ? 'rgba(232,105,42,0.08)' : 'transparent',
+                    color: btwMode ? '#E8692A' : '#6b7280',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    transition: 'all 0.2s',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" />
+                  </svg>
+                  {btwMode ? 'BTW only' : 'Incl. marge'}
+                </button>
+
+                {/* Tooltip */}
+                {btwTooltip && (
+                  <div style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    background: '#1E2133',
+                    color: '#fff',
+                    padding: '12px 16px',
+                    borderRadius: 10,
+                    fontSize: 12,
+                    lineHeight: 1.6,
+                    width: 280,
+                    zIndex: 200,
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+                  }}>
+                    <div style={{ fontWeight: 700, marginBottom: 4 }}>
+                      {btwMode ? '✓ BTW modus actief' : 'Alle producten (incl. marge)'}
+                    </div>
+                    <div style={{ color: '#a1a1aa' }}>
+                      {btwMode
+                        ? 'Je ziet alleen producten met 21% BTW. Prijzen worden excl. BTW getoond. Ideaal voor zakelijke kopers die BTW kunnen aftrekken.'
+                        : 'Je ziet alle producten — zowel met 21% BTW als margeregeling. Zet "BTW only" aan om alleen BTW-aftrekbare producten te zien.'}
+                    </div>
+                    <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid #333', color: '#a1a1aa', fontSize: 11 }}>
+                      Producten met het <span style={{ background: '#3b82f6', color: '#fff', padding: '1px 6px', borderRadius: 4, fontSize: 10, fontWeight: 600 }}>21% BTW</span> label zijn aftrekbaar voor zakelijke kopers.
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div ref={langRef} style={{ position: 'relative' }}>
                 <button className="lang-selector" onClick={() => setLangOpen(prev => !prev)}>
                   <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>

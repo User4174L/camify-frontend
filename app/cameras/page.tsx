@@ -57,7 +57,7 @@ const subcategories = [
    In production these come from the backend based on actual product data.
    Filters only show if products in the current view have that attribute.
    Counts update dynamically (faceted search). */
-const allFilters = ['Brand', 'Price', 'Camera type', 'Sensor', 'Mount', 'Megapixels', 'IBIS', 'Shuttercount', 'Use case', 'Level', 'In stock'];
+const allFilters = ['Brand', 'Price', 'Camera type', 'Sensor', 'Mount', 'Megapixels', 'Video resolution', 'IBIS', 'Shuttercount', 'Use case', 'Level', 'In stock'];
 
 const brandFilters = ['Canon', 'Nikon', 'Sony', 'Fujifilm', 'Leica', 'Hasselblad', 'Panasonic', 'Olympus'];
 const priceFilters = ['Under €500', '€500 – €1,000', '€1,000 – €2,000', '€2,000 – €5,000', '€5,000+'];
@@ -77,6 +77,7 @@ const filterOptions: Record<string, string[]> = {
   Sensor: sensorFilters,
   Megapixels: megapixelFilters,
   Mount: ['Canon RF', 'Canon EF', 'Nikon Z', 'Nikon F', 'Sony E/FE', 'Fujifilm X', 'Micro Four Thirds', 'Leica M', 'L-Mount'],
+  'Video resolution': ['4K', '6K', '8K'],
   IBIS: ibisFilters,
   Shuttercount: shuttercountFilters,
   'Use case': useCaseFilters,
