@@ -27,6 +27,12 @@ const pages = [
   ['/checkout', 'camify-checkout'],
   ['/dashboard', 'camify-dashboard'],
 
+  // Lens pages
+  ['/lenses', 'camify-lenses'],
+  ['/lenses/mirrorless', 'camify-lenses-mirrorless'],
+  ['/lenses/mirrorless/canon-rf-fit', 'camify-lenses-canon-rf'],
+  ['/lenses/mirrorless/canon-rf-fit/canon-rf-24-70-f28', 'camify-lens-variant'],
+
   // Browse pages
   ['/brands', 'camify-brands'],
   ['/brands/canon', 'camify-brand-detail'],
