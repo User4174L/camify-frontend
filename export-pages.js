@@ -26,10 +26,6 @@ const pages = [
   ['/account', 'camify-account'],
   ['/checkout', 'camify-checkout'],
   ['/dashboard', 'camify-dashboard'],
-  ['/dashboard?view=orders', 'camify-dashboard-orders'],
-  ['/dashboard?view=order-detail', 'camify-dashboard-order-detail'],
-  ['/dashboard?view=quotes', 'camify-dashboard-quotes'],
-  ['/dashboard?view=quote-detail', 'camify-dashboard-quote-detail'],
 
   // Lens pages
   ['/lenses', 'camify-lenses'],
@@ -541,26 +537,12 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
   if(!navBtns.length||!sections.length) return;
   navBtns.forEach(function(btn){
     btn.addEventListener('click',function(){
-      // Get section key from button text
       var label=btn.querySelector('span');
       if(!label) return;
       var text=label.textContent.trim().toLowerCase();
-      // Map label to key
       var keyMap={'overzicht':'overzicht','dashboard':'dashboard','producten':'producten','varianten':'varianten','categories':'categories','orders':'orders','quotes':'quotes','verkoop rapport':'verkoop-rapport','reparaties':'reparaties','kasboek':'kasboek','reserveringen':'reserveringen','klanten':'klanten','incomplete varianten':'incomplete-varianten','accountinstellingen':'accountinstellingen','sandbox':'sandbox'};
       var key=keyMap[text]||text;
-      // Show matching section, hide others
-      sections.forEach(function(s){
-        var sKey=s.getAttribute('data-section');
-        s.style.display=(sKey===key||(key==='overzicht'&&sKey==='dashboard'))?'block':'none';
-      });
-      // Update active state on buttons
-      navBtns.forEach(function(b){
-        var isActive=b===btn;
-        b.style.borderLeft=isActive?'3px solid #E8692A':'3px solid transparent';
-        b.style.background=isActive?'#FFF0E8':'transparent';
-        b.style.color=isActive?'#E8692A':'#1E2133';
-        b.style.fontWeight=isActive?'600':'400';
-      });
+      showDashSection(key);
     });
   });
   // Dashboard mobile toggle
@@ -574,37 +556,56 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
   // Dashboard table row clicks (orders, quotes → detail views)
   // The detail views are rendered but hidden. We need to find them and show/hide.
   // Orders and quotes tables have clickable rows with cursor:pointer
-  // Orders table rows → link to order detail page
+  // Helper: show one data-section, hide all others (including details)
+  function showDashSection(key){
+    document.querySelectorAll('[data-section]').forEach(function(s){
+      var sKey=s.getAttribute('data-section');
+      s.style.display=(sKey===key||(key==='overzicht'&&sKey==='dashboard'))?'block':'none';
+    });
+    // Update sidebar active state
+    navBtns.forEach(function(b){
+      var label=b.querySelector('span');
+      if(!label) return;
+      var text=label.textContent.trim().toLowerCase();
+      var keyMap={'overzicht':'overzicht','dashboard':'dashboard','producten':'producten','varianten':'varianten','categories':'categories','orders':'orders','quotes':'quotes','verkoop rapport':'verkoop-rapport','reparaties':'reparaties','kasboek':'kasboek','reserveringen':'reserveringen','klanten':'klanten','incomplete varianten':'incomplete-varianten','accountinstellingen':'accountinstellingen','sandbox':'sandbox'};
+      var bKey=keyMap[text]||text;
+      var isActive=(bKey===key||(key==='order-detail'&&bKey==='orders')||(key==='quote-detail'&&bKey==='quotes'));
+      b.style.borderLeft=isActive?'3px solid #E8692A':'3px solid transparent';
+      b.style.background=isActive?'#FFF0E8':'transparent';
+      b.style.color=isActive?'#E8692A':'#1E2133';
+      b.style.fontWeight=isActive?'600':'400';
+    });
+  }
+
+  // Orders table rows → show order-detail section
   var ordersSection=document.querySelector('[data-section="orders"]');
   if(ordersSection){
-    var orderRows=ordersSection.querySelectorAll('tbody tr[style*="cursor"]');
-    orderRows.forEach(function(row){
+    ordersSection.querySelectorAll('tbody tr[style*="cursor"]').forEach(function(row){
       row.addEventListener('click',function(e){
         if(e.target.type==='checkbox') return;
-        window.location.href='camify-dashboard-order-detail.html';
+        showDashSection('order-detail');
       });
     });
   }
-  // Quotes table rows → link to quote detail page
+  // Quotes table rows → show quote-detail section
   var quotesSection=document.querySelector('[data-section="quotes"]');
   if(quotesSection){
-    var quoteRows=quotesSection.querySelectorAll('tbody tr[style*="cursor"]');
-    quoteRows.forEach(function(row){
+    quotesSection.querySelectorAll('tbody tr[style*="cursor"]').forEach(function(row){
       row.addEventListener('click',function(e){
         if(e.target.type==='checkbox') return;
-        window.location.href='camify-dashboard-quote-detail.html';
+        showDashSection('quote-detail');
       });
     });
   }
 
-  // Back links in detail views → link to list pages
+  // Back links in detail views → back to list
   document.querySelectorAll('button').forEach(function(btn){
     var text=btn.textContent.trim();
-    if(text==='← All quotes'||text==='← Alle quotes'){
-      btn.addEventListener('click',function(e){e.preventDefault();window.location.href='camify-dashboard-quotes.html';});
+    if(text==='← All quotes'||text==='\u2190 All quotes'){
+      btn.addEventListener('click',function(e){e.preventDefault();showDashSection('quotes');});
     }
-    if(text==='← Alle orders'||text==='← All orders'){
-      btn.addEventListener('click',function(e){e.preventDefault();window.location.href='camify-dashboard-orders.html';});
+    if(text==='← Alle orders'||text==='\u2190 Alle orders'||text==='← All orders'||text==='\u2190 All orders'){
+      btn.addEventListener('click',function(e){e.preventDefault();showDashSection('orders');});
     }
   });
 

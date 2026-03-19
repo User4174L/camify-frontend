@@ -1713,22 +1713,18 @@ export default function AdminDashboard() {
   const renderContent = () => {
     return (
       <>
-        {/* Detail pages */}
-        <div style={{ display: activeSection === 'quotes' && selectedQuote ? 'block' : 'none' }}>
-          {selectedQuote && (
-            <QuoteDetailPage
-              quoteId={selectedQuote}
-              onBack={() => setSelectedQuote(null)}
-            />
-          )}
+        {/* Detail pages — always in DOM for static export, shown/hidden via display */}
+        <div data-section="quote-detail" style={{ display: activeSection === 'quotes' && selectedQuote ? 'block' : 'none' }}>
+          <QuoteDetailPage
+            quoteId={selectedQuote || MOCK_QUOTES[0]?.id}
+            onBack={() => setSelectedQuote(null)}
+          />
         </div>
-        <div style={{ display: activeSection === 'orders' && selectedOrder ? 'block' : 'none' }}>
-          {selectedOrder && (
-            <OrderDetailPage
-              ordernummer={selectedOrder}
-              onBack={() => setSelectedOrder(null)}
-            />
-          )}
+        <div data-section="order-detail" style={{ display: activeSection === 'orders' && selectedOrder ? 'block' : 'none' }}>
+          <OrderDetailPage
+            ordernummer={selectedOrder || MOCK_ORDERS[0]?.ordernummer}
+            onBack={() => setSelectedOrder(null)}
+          />
         </div>
 
         {/* Section pages */}
