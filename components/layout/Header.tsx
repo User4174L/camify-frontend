@@ -23,6 +23,19 @@ export default function Header() {
   const [btwTooltip, setBtwTooltip] = useState(false);
   const btwRef = useRef<HTMLDivElement>(null);
 
+  // Sync BTW mode with sessionStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('btw_only') === '1') setBtwMode(true);
+  }, []);
+  const toggleBtw = () => {
+    const next = !btwMode;
+    setBtwMode(next);
+    if (typeof window !== 'undefined') {
+      if (next) sessionStorage.setItem('btw_only', '1');
+      else sessionStorage.removeItem('btw_only');
+    }
+  };
+
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
 
@@ -80,7 +93,7 @@ export default function Header() {
               {/* BTW / Zakelijk toggle */}
               <div ref={btwRef} style={{ position: 'relative' }}>
                 <button
-                  onClick={() => setBtwMode(!btwMode)}
+                  onClick={toggleBtw}
                   onMouseEnter={() => setBtwTooltip(true)}
                   onMouseLeave={() => setBtwTooltip(false)}
                   style={{

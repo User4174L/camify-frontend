@@ -431,6 +431,23 @@ export default function CamerasPage() {
         })}
       </div>
 
+      {/* VAT-only badge (shown when toggle is active — reads from sessionStorage) */}
+      {typeof window !== 'undefined' && sessionStorage.getItem('btw_only') === '1' && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', marginBottom: 12,
+          background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 8,
+          fontSize: 13, color: '#3b82f6',
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></svg>
+          <span style={{ fontWeight: 600 }}>Showing VAT reclaimable products only</span>
+          <span style={{ color: '#6b7280', fontWeight: 400 }}>— margin scheme products are hidden</span>
+          <button
+            onClick={() => { sessionStorage.removeItem('btw_only'); window.location.reload(); }}
+            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontSize: 14, fontWeight: 600, padding: 0 }}
+          >×</button>
+        </div>
+      )}
+
       {/* Results bar + sort (separate line like MPB) */}
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
