@@ -53,22 +53,35 @@ const subcategories = [
   { label: 'Bridge', href: '/cameras/bridge', count: '28+', active: false, image: '/images/fujifilm-x-t4.jpg' },
 ];
 
-const filterButtons = ['Brand', 'Price', 'Condition', 'Sensor Size', 'Mount', 'Video'];
+/* ── Filter config per category type ──
+   In production these come from the backend based on actual product data.
+   Filters only show if products in the current view have that attribute.
+   Counts update dynamically (faceted search). */
+const allFilters = ['Brand', 'Price', 'Camera type', 'Sensor', 'Mount', 'Megapixels', 'IBIS', 'Shuttercount', 'Use case', 'Level', 'In stock'];
 
 const brandFilters = ['Canon', 'Nikon', 'Sony', 'Fujifilm', 'Leica', 'Hasselblad', 'Panasonic', 'Olympus'];
 const priceFilters = ['Under €500', '€500 – €1,000', '€1,000 – €2,000', '€2,000 – €5,000', '€5,000+'];
-const conditionFilters = ['As New', 'Excellent', 'Good', 'Used', 'Heavily Used'];
+const cameraTypeFilters = ['Mirrorless', 'DSLR', 'Compact', 'Medium Format', 'Rangefinder', 'Bridge'];
 const sensorFilters = ['Full Frame', 'APS-C / DX', 'Micro Four Thirds', 'Medium Format', '1-inch'];
-const mountFilters = ['Sony E', 'Canon RF', 'Nikon Z', 'Fujifilm X', 'Leica M', 'Micro Four Thirds'];
-const videoFilters = ['4K', '6K', '8K', '4K 120fps', 'RAW Video'];
+const megapixelFilters = ['< 20 MP', '20 – 30 MP', '30 – 40 MP', '40+ MP'];
+const ibisFilters = ['With IBIS', 'Without IBIS'];
+const shuttercountFilters = ['< 10,000', '10,000 – 50,000', '50,000 – 100,000', '100,000+'];
+const useCaseFilters = ['Wildlife', 'Portrait', 'Landscape', 'Street', 'Travel', 'Wedding', 'Sports', 'Video', 'Vlogging', 'Astro', 'Macro', 'Allround'];
+const levelFilters = ['Entry', 'Enthusiast', 'Pro'];
+const inStockFilters = ['In stock only'];
 
 const filterOptions: Record<string, string[]> = {
   Brand: brandFilters,
   Price: priceFilters,
-  Condition: conditionFilters,
-  'Sensor Size': sensorFilters,
-  Mount: mountFilters,
-  Video: videoFilters,
+  'Camera type': cameraTypeFilters,
+  Sensor: sensorFilters,
+  Megapixels: megapixelFilters,
+  Mount: ['Canon RF', 'Canon EF', 'Nikon Z', 'Nikon F', 'Sony E/FE', 'Fujifilm X', 'Micro Four Thirds', 'Leica M', 'L-Mount'],
+  IBIS: ibisFilters,
+  Shuttercount: shuttercountFilters,
+  'Use case': useCaseFilters,
+  Level: levelFilters,
+  'In stock': inStockFilters,
 };
 
 const orangeLink: React.CSSProperties = {
@@ -122,63 +135,56 @@ export default function CamerasPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   /* ── Filter & sort state ── */
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [selectedPrices, setSelectedPrices] = useState<string[]>([]);
-  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
-  const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
-  const [selectedMounts, setSelectedMounts] = useState<string[]>([]);
-  const [selectedVideos, setSelectedVideos] = useState<string[]>([]);
+  /* Generic filter state for all filter types */
+  const [filterSelections, setFilterSelections] = useState<Record<string, string[]>>({});
   const [sortBy, setSortBy] = useState('relevance');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filterStateMap: Record<string, { selected: string[]; toggle: (v: string) => void }> = {
-    Brand: { selected: selectedBrands, toggle: (v) => setSelectedBrands(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
-    Price: { selected: selectedPrices, toggle: (v) => setSelectedPrices(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
-    Condition: { selected: selectedConditions, toggle: (v) => setSelectedConditions(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
-    'Sensor Size': { selected: selectedSensors, toggle: (v) => setSelectedSensors(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
-    Mount: { selected: selectedMounts, toggle: (v) => setSelectedMounts(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
-    Video: { selected: selectedVideos, toggle: (v) => setSelectedVideos(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]) },
+  const getSelected = (f: string) => filterSelections[f] || [];
+  const toggleFilter = (f: string, v: string) => {
+    setFilterSelections(prev => {
+      const current = prev[f] || [];
+      return { ...prev, [f]: current.includes(v) ? current.filter(x => x !== v) : [...current, v] };
+    });
+    setCurrentPage(1);
   };
+
+  const filterStateMap: Record<string, { selected: string[]; toggle: (v: string) => void }> = {};
+  for (const f of allFilters) {
+    filterStateMap[f] = { selected: getSelected(f), toggle: (v) => toggleFilter(f, v) };
+  }
+
+  const totalActiveFilters = Object.values(filterSelections).reduce((sum, arr) => sum + arr.length, 0);
+  const allActiveFilters = Object.entries(filterSelections).flatMap(([group, selected]) => selected.map(v => ({ group, value: v })));
+
+  const clearAllFilters = () => {
+    setFilterSelections({});
+    setCurrentPage(1);
+  };
+
+  // Shortcuts for filter logic
+  const selectedBrands = getSelected('Brand');
+  const selectedPrices = getSelected('Price');
+  const selectedSensors = getSelected('Sensor');
 
   /* ── Derived filtered + sorted list ── */
   const filteredSortedCameras = useMemo(() => {
     let result = [...inStockCameras];
 
-    // Brand filter
     if (selectedBrands.length > 0) {
       result = result.filter(p => selectedBrands.includes(p.brand));
     }
-    // Price filter
     if (selectedPrices.length > 0) {
       result = result.filter(p => selectedPrices.some(range => matchesPriceRange(p.price, range)));
     }
-    // Condition filter — match if any variant has a matching conditionLabel
-    if (selectedConditions.length > 0) {
-      result = result.filter(p =>
-        p.variants.some(v => selectedConditions.includes(v.conditionLabel))
-      );
-    }
-    // Sensor Size filter
     if (selectedSensors.length > 0) {
       result = result.filter(p =>
         selectedSensors.some(f => matchesSensor(p.specs?.['Sensor'], f))
       );
     }
-    // Mount filter
-    if (selectedMounts.length > 0) {
-      result = result.filter(p => {
-        const mount = p.specs?.['Mount'];
-        return mount ? selectedMounts.includes(mount) : false;
-      });
-    }
-    // Video filter
-    if (selectedVideos.length > 0) {
-      result = result.filter(p =>
-        selectedVideos.some(f => matchesVideo(p.specs?.['Video'], f))
-      );
-    }
+    // Camera type is visual only for now (no data field yet)
+    // Use case, Level, In stock are visual only for now
 
-    // Sorting
     if (sortBy === 'price-low') {
       result.sort((a, b) => a.price - b.price);
     } else if (sortBy === 'price-high') {
@@ -188,7 +194,7 @@ export default function CamerasPage() {
     }
 
     return result;
-  }, [selectedBrands, selectedPrices, selectedConditions, selectedSensors, selectedMounts, selectedVideos, sortBy]);
+  }, [selectedBrands, selectedPrices, selectedSensors, sortBy]);
 
   const ITEMS_PER_PAGE = 16;
   const totalPages = Math.max(1, Math.ceil(filteredSortedCameras.length / ITEMS_PER_PAGE));
@@ -371,9 +377,9 @@ export default function CamerasPage() {
         </button>
       </div>
 
-      {/* Filter bar */}
-      <div ref={filterBarRef} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-        {filterButtons.map(f => {
+      {/* Filter grid (MPB-style: equal width, grid rows) */}
+      <div ref={filterBarRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8, marginBottom: 12 }}>
+        {allFilters.map(f => {
           const activeCount = filterStateMap[f].selected.length;
           const hasActive = activeCount > 0;
           return (
@@ -381,59 +387,38 @@ export default function CamerasPage() {
               <button
                 onClick={() => setOpenFilter(openFilter === f ? null : f)}
                 style={{
-                  display: 'inline-flex',
+                  display: 'flex',
                   alignItems: 'center',
-                  padding: '8px 16px',
-                  borderRadius: 999,
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: 8,
                   border: hasActive ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
-                  background: openFilter === f ? 'var(--accent)' : hasActive ? 'rgba(249,115,22,0.1)' : 'transparent',
-                  color: openFilter === f ? '#fff' : 'var(--text)',
+                  background: hasActive ? 'rgba(249,115,22,0.04)' : 'transparent',
+                  color: 'var(--text)',
                   fontSize: 13,
                   fontWeight: 500,
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
                   whiteSpace: 'nowrap',
                 }}
               >
-                {f}{hasActive ? ` (${activeCount})` : ''}
+                <span>{f}{hasActive ? ` (${activeCount})` : ''}</span>
                 <ChevronDown />
               </button>
 
               {openFilter === f && filterOptions[f] && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 'calc(100% + 6px)',
-                    left: 0,
-                    background: 'var(--bg)',
-                    border: '1.5px solid var(--border)',
-                    borderRadius: 12,
-                    padding: '8px 0',
-                    minWidth: 180,
-                    zIndex: 10,
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                  }}
-                >
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+                  background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 10,
+                  padding: '6px 0', minWidth: 220, maxHeight: 320, overflowY: 'auto', zIndex: 10,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                }}>
                   {filterOptions[f].map(option => (
-                    <label
-                      key={option}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        padding: '8px 16px',
-                        fontSize: 13,
-                        cursor: 'pointer',
-                        color: 'var(--text)',
-                      }}
-                    >
+                    <label key={option} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', fontSize: 13, cursor: 'pointer', color: 'var(--text)' }}>
                       <input
                         type="checkbox"
                         checked={filterStateMap[f].selected.includes(option)}
-                        onChange={() => {
-                          filterStateMap[f].toggle(option);
-                          setCurrentPage(1);
-                        }}
+                        onChange={() => { filterStateMap[f].toggle(option); setCurrentPage(1); }}
                         style={{ accentColor: 'var(--accent)' }}
                       /> {option}
                     </label>
@@ -445,36 +430,29 @@ export default function CamerasPage() {
         })}
       </div>
 
-      {/* Results bar */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 20,
-          fontSize: 14,
-          color: 'var(--text-secondary)',
-        }}
-      >
-        <span>Showing {filteredSortedCameras.length} result{filteredSortedCameras.length !== 1 ? 's' : ''}</span>
-        <select
-          value={sortBy}
-          onChange={(e) => { setSortBy(e.target.value); setCurrentPage(1); }}
-          style={{
-            padding: '6px 12px',
-            borderRadius: 8,
-            border: '1.5px solid var(--border)',
-            background: 'var(--bg)',
-            color: 'var(--text)',
-            fontSize: 13,
-            cursor: 'pointer',
-          }}
-        >
-          <option value="relevance">Sort by: Relevance</option>
-          <option value="price-low">Price: low → high</option>
-          <option value="price-high">Price: high → low</option>
-          <option value="newest">Newest first</option>
-        </select>
+      {/* Results bar + sort (separate line like MPB) */}
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '12px 0', marginBottom: 16,
+        borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
+          <span>Showing <strong style={{ color: 'var(--text)' }}>{filteredSortedCameras.length}</strong> of {inStockCameras.length} results</span>
+          {totalActiveFilters > 0 && (
+            <button onClick={() => { clearAllFilters(); setCurrentPage(1); }} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: 13, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+              Clear all filters
+            </button>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+          <span style={{ color: 'var(--text-secondary)' }}>Sort by:</span>
+          <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setCurrentPage(1); }} style={{ padding: '4px 8px', border: 'none', background: 'transparent', color: 'var(--text)', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+            <option value="relevance">relevance</option>
+            <option value="price-low">price low to high</option>
+            <option value="price-high">price high to low</option>
+            <option value="newest">newest first</option>
+          </select>
+        </div>
       </div>
 
       {/* Product grid */}
