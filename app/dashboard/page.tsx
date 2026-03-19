@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 /* ------------------------------------------------------------------ */
@@ -1658,7 +1658,7 @@ function PlaceholderPage({ title, description }: { title: string; description: s
 /* ------------------------------------------------------------------ */
 /*  MAIN DASHBOARD COMPONENT                                           */
 /* ------------------------------------------------------------------ */
-function AdminDashboardInner() {
+export default function AdminDashboard() {
   const { isLoggedIn, isAdmin, hydrated } = useAuth();
   const dashboardRouter = useRouter();
 
@@ -1669,21 +1669,21 @@ function AdminDashboardInner() {
   //   }
   // }, [hydrated, isLoggedIn, isAdmin, dashboardRouter]);
 
-  const searchParams = useSearchParams();
-  const viewParam = searchParams?.get('view');
-
-  const [activeSection, setActiveSection] = useState(() => {
-    if (viewParam === 'orders' || viewParam === 'order-detail') return 'orders';
-    if (viewParam === 'quotes' || viewParam === 'quote-detail') return 'quotes';
-    return 'dashboard';
-  });
-  const [selectedQuote, setSelectedQuote] = useState<string | null>(() => {
-    return viewParam === 'quote-detail' ? (MOCK_QUOTES[0]?.id || null) : null;
-  });
-  const [selectedOrder, setSelectedOrder] = useState<string | null>(() => {
-    return viewParam === 'order-detail' ? (MOCK_ORDERS[0]?.ordernummer || null) : null;
-  });
+  const [activeSection, setActiveSection] = useState('dashboard');
+  const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Read ?view= param on mount for Pages export
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('view');
+    if (view === 'orders') setActiveSection('orders');
+    if (view === 'quotes') setActiveSection('quotes');
+    if (view === 'order-detail') { setActiveSection('orders'); setSelectedOrder(MOCK_ORDERS[0]?.ordernummer || null); }
+    if (view === 'quote-detail') { setActiveSection('quotes'); setSelectedQuote(MOCK_QUOTES[0]?.id || null); }
+  }, []);
 
   const handleNavClick = (key: string) => {
     setActiveSection(key);
@@ -1895,10 +1895,3 @@ function AdminDashboardInner() {
   );
 }
 
-export default function AdminDashboard() {
-  return (
-    <Suspense fallback={<div style={{ padding: 40, textAlign: 'center' }}>Loading...</div>}>
-      <AdminDashboardInner />
-    </Suspense>
-  );
-}
