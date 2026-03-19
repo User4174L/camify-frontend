@@ -189,7 +189,7 @@ const buttonOutline: React.CSSProperties = {
 /* ------------------------------------------------------------------ */
 /*  Badge component                                                    */
 /* ------------------------------------------------------------------ */
-function Badge({ children, color = ACCENT, bg }: { children: React.ReactNode; color?: string; bg?: string }) {
+function Badge({ children, color = ACCENT, bg, solid }: { children: React.ReactNode; color?: string; bg?: string; solid?: boolean }) {
   return (
     <span style={{
       display: 'inline-block',
@@ -197,8 +197,8 @@ function Badge({ children, color = ACCENT, bg }: { children: React.ReactNode; co
       borderRadius: 999,
       fontSize: 11,
       fontWeight: 600,
-      color: color,
-      background: bg || (color === ACCENT ? ACCENT_BG : color === GREEN ? '#DCFCE7' : color === BLUE ? '#DBEAFE' : '#F3F4F6'),
+      color: solid ? WHITE : color,
+      background: bg || (solid ? color : (color === ACCENT ? ACCENT_BG : color === GREEN ? '#DCFCE7' : color === BLUE ? '#DBEAFE' : color === RED ? '#FEE2E2' : '#F3F4F6')),
     }}>
       {children}
     </span>
@@ -1446,222 +1446,194 @@ function QuotesPage({ onSelectQuote }: { onSelectQuote: (id: string) => void }) 
 /* ------------------------------------------------------------------ */
 function QuoteDetailPage({ quoteId, onBack }: { quoteId: string; onBack: () => void }) {
   const quote = MOCK_QUOTES.find((q) => q.id === quoteId) || MOCK_QUOTES[0];
-  const isQTE2 = quoteId === 'QTE000002';
+  const [notesOpen, setNotesOpen] = useState(true);
 
-  const priceInputWrapper: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'stretch',
-    border: `1px solid ${BORDER}`,
-    borderRadius: 8,
-    overflow: 'hidden',
-    height: 34,
-  };
+  const priceInputWrapper: React.CSSProperties = { display: 'inline-flex', alignItems: 'stretch', border: `1px solid ${BORDER}`, borderRadius: 6, overflow: 'hidden', height: 32 };
+  const euroPrefix: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', background: SURFACE, color: GREY, fontSize: 13, borderRight: `1px solid ${BORDER}`, fontWeight: 500 };
+  const priceInput: React.CSSProperties = { border: 'none', outline: 'none', padding: '0 8px', fontSize: 13, width: 80, fontFamily: 'inherit' };
+  const denyBtn: React.CSSProperties = { padding: '4px 12px', border: `1px solid ${BORDER}`, borderRadius: 6, background: WHITE, color: DARK, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' };
+  const deleteIcon = <span style={{ color: GREY, cursor: 'pointer', fontSize: 14 }}>&#128465;</span>;
 
-  const euroPrefix: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '0 8px',
-    background: SURFACE,
-    color: GREY,
-    fontSize: 13,
-    borderRight: `1px solid ${BORDER}`,
-    fontWeight: 500,
-  };
+  const tradeInRows = [
+    { variant: '7Artisans 10mm f/2.8 – Canon RF', conditie: 'Excellent', purchase: '300.00', sell: '599.00', btw: '21%', changed: '16/03/26, 09:59', user: 'admin' },
+    { variant: 'Sony A7 VI', conditie: 'Excellent', purchase: '2000.00', sell: '2999.00', btw: '21%', changed: '16/03/26, 09:51', user: 'admin' },
+    { variant: '7Artisans 10mm f/2.8 – Fujifilm X', conditie: 'Excellent', purchase: '300.00', sell: '499.00', btw: '21%', changed: '16/03/26, 09:56', user: 'admin' },
+    { variant: 'AstrHori 40mm f/5.6 – Leica M', conditie: 'Excellent', purchase: '500.00', sell: '699.00', btw: '21%', changed: '16/03/26, 09:53', user: 'admin' },
+  ];
+  const saleRows = [
+    { variant: 'Sony A7 IV', conditie: 'Excellent', quantity: 'x 1', purchasePrice: '300.00', sellPrice: '499.00', btw: '0%', changed: '16/03/26, 09:44', user: 'admin' },
+  ];
 
-  const priceInput: React.CSSProperties = {
-    border: 'none',
-    outline: 'none',
-    padding: '0 8px',
-    fontSize: 13,
-    width: 80,
-    fontFamily: 'inherit',
-  };
+  const sellTotal = 2561.98;
+  const buyTotal = 499.00;
 
-  const inruilRows = isQTE2
-    ? [
-        { variant: 'Canon EOS R5 Body', conditie: 'A', inkoopprijs: '1850.00', verkoopprijs: '2199.00', btw: '21%' },
-        { variant: 'Canon RF 50mm f/1.2L USM', conditie: 'B+', inkoopprijs: '1450.00', verkoopprijs: '1699.00', btw: '21%' },
-      ]
-    : [
-        { variant: 'Sony A7 IV Body', conditie: 'A', inkoopprijs: '1350.00', verkoopprijs: '1599.00', btw: '21%' },
-      ];
+  const DetailRow = ({ label, value, valueColor, valueWeight }: { label: string; value: React.ReactNode; valueColor?: string; valueWeight?: number }) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: 13 }}>
+      <span style={{ color: GREY }}>{label}</span>
+      <span style={{ color: valueColor || DARK, fontWeight: valueWeight || 400 }}>{value}</span>
+    </div>
+  );
 
   return (
     <div>
       {/* Back link */}
-      <button
-        onClick={onBack}
-        style={{
-          background: 'none',
-          border: 'none',
-          color: ACCENT,
-          fontSize: 13,
-          fontWeight: 500,
-          cursor: 'pointer',
-          padding: 0,
-          marginBottom: 16,
-          fontFamily: 'inherit',
-        }}
-      >
-        &larr; Alle quotes
-      </button>
+      <button onClick={onBack} style={{ background: 'none', border: 'none', color: ACCENT, fontSize: 13, fontWeight: 500, cursor: 'pointer', padding: 0, marginBottom: 20, fontFamily: 'inherit' }}>&larr; All quotes</button>
 
-      {/* Header with cognito toggle */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <h2 style={{ fontSize: 20, fontWeight: 700, color: DARK, margin: 0 }}>{quote.id}</h2>
-        <button style={buttonOutline}>Cognito modus</button>
-      </div>
-
-      {/* 3-column top section */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, marginBottom: 24 }}>
-        {/* Quotegegevens */}
+      {/* 3-column top: Quote details | Customer details | Quote panel */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 240px', gap: 16, marginBottom: 24, alignItems: 'start' }}>
+        {/* Quote details */}
         <div style={cardStyle}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Quotegegevens</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Quotenummer</span><span style={{ fontWeight: 500 }}>{quote.id}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Aangemaakt</span><span>{quote.created}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Prijs totaal</span><span style={{ fontWeight: 600 }}>&euro; 0,00</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Status</span><Badge color={ACCENT}>{quote.status}</Badge></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Betaalstatus</span><Badge color={BLUE}>Openstaand</Badge></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Verzendstatus</span><Badge color={GREY}>Niet verzonden</Badge></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Ordernummer</span><span>\u2014</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Actieve gebruiker</span><span>\u2014</span></div>
-          </div>
+          <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Quote details</h3>
+          <DetailRow label="Quote number" value={quote.id} valueWeight={500} />
+          <DetailRow label="Created" value={quote.created} />
+          <DetailRow label="Total price" value={`-\u20AC2,601.00`} valueColor={RED} valueWeight={600} />
+          <DetailRow label="Status" value={<Badge color={GREEN} solid>Completed</Badge>} />
+          <DetailRow label="Payment status" value={<Badge color={GREEN} solid>Paid</Badge>} />
+          <DetailRow label="Shipping status" value={<Badge color={GREY} solid>Not shipped</Badge>} />
+          <DetailRow label="Order number" value={<span style={{ color: ACCENT, fontWeight: 500, cursor: 'pointer' }}>ORD000004</span>} />
+          <DetailRow label="Active user" value="\u2014" />
         </div>
 
-        {/* Klantgegevens */}
+        {/* Customer details */}
         <div style={cardStyle}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: 0 }}>Klantgegevens</h3>
-            <button style={{ background: 'none', border: 'none', color: ACCENT, fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}>Aanpassen</button>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: 0 }}>Customer details</h3>
+            <button style={{ background: 'none', border: 'none', color: ACCENT, fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}>Edit</button>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Naam</span><span>{quote.name}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Email</span><span style={{ fontSize: 12 }}>{quote.email}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Tel</span><span>\u2014</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>QTE Business</span><span>Nee</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Adres</span><span>\u2014</span></div>
-          </div>
+          <DetailRow label="Name" value="Joop de Vries" />
+          <DetailRow label="Email" value="joopdevries@gmail.com" />
+          <DetailRow label="Phone" value="+31612345678" />
+          <DetailRow label="QTE Business" value={<span style={{ color: GREEN }}>&#10003;</span>} />
+          <DetailRow label="Business country" value="Australia" />
+          <DetailRow label="KVK number" value="\u2014" />
+          <DetailRow label="VAT number" value="PL7272445205" />
+          <DetailRow label="Address" value="\u2014" />
         </div>
 
-        {/* Offerte panel */}
+        {/* Quote panel (right sidebar) */}
         <div style={cardStyle}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Offerte</h3>
-          <div style={{ fontSize: 13, color: GREY, marginBottom: 16 }}>Status: <Badge color={ACCENT}>{quote.status}</Badge></div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <button style={buttonAccent}>Offerte verzenden</button>
-            <button style={buttonOutline}>Download offerte</button>
-            <button style={buttonOutline}>Labels afdrukken</button>
-            <button style={{ ...buttonOutline, color: RED, borderColor: RED }}>Offerte afwijzen</button>
+          <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: '0 0 8px' }}>Quote</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: GREY, marginBottom: 12 }}>
+            <span style={{ color: GREEN }}>&#10003;</span> Sent: \u2014
+            <span style={{ marginLeft: 'auto', cursor: 'pointer' }}>&#9881;</span>
           </div>
+          <button style={{ ...buttonAccent, width: '100%', marginBottom: 8, padding: '10px 16px' }}>Send Quote</button>
+          <button style={{ ...buttonOutline, width: '100%', marginBottom: 6, padding: '8px 16px', fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <span style={{ fontSize: 14 }}>&#8595;</span> Download quote
+          </button>
+          <button style={{ ...buttonOutline, width: '100%', marginBottom: 12, padding: '8px 16px', fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <span style={{ fontSize: 14 }}>&#9113;</span> Print labels
+          </button>
+          <button style={{ ...buttonOutline, width: '100%', padding: '8px 16px', fontSize: 12, borderColor: BORDER }}>View order</button>
         </div>
       </div>
 
-      {/* Inruil section */}
-      <div style={{ ...cardStyle, marginBottom: 20 }}>
-        <h3 style={{ fontSize: 15, fontWeight: 600, color: DARK, margin: '0 0 14px' }}>Inruil</h3>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 700 }}>
-            <thead>
-              <tr>
-                {['Variant', 'Conditie', 'Inkoopprijs', 'Verkoopprijs', 'BTW', 'Afwijzen', 'Gewijzigd'].map((h) => (
-                  <th key={h} style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {inruilRows.map((row, i) => (
-                <tr key={i}>
-                  <td style={tableCellStyle}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: GREEN, flexShrink: 0 }} />
-                      <span style={{ color: ACCENT, fontWeight: 500, cursor: 'pointer' }}>{row.variant}</span>
-                    </div>
-                  </td>
-                  <td style={tableCellStyle}>{row.conditie}</td>
-                  <td style={tableCellStyle}>
-                    <div style={priceInputWrapper}>
-                      <span style={euroPrefix}>&euro;</span>
-                      <input type="text" defaultValue={row.inkoopprijs} style={priceInput} />
-                    </div>
-                  </td>
-                  <td style={tableCellStyle}>
-                    <div style={priceInputWrapper}>
-                      <span style={euroPrefix}>&euro;</span>
-                      <input type="text" defaultValue={row.verkoopprijs} style={priceInput} />
-                    </div>
-                  </td>
-                  <td style={tableCellStyle}>{row.btw}</td>
-                  <td style={tableCellStyle}>
-                    <button style={{ background: 'none', border: 'none', color: RED, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}>Afwijzen</button>
-                  </td>
-                  <td style={{ ...tableCellStyle, color: GREY, fontSize: 12 }}>\u2014</td>
-                </tr>
+      {/* Cognito mode button */}
+      <div style={{ position: 'absolute', top: 0, right: 0 }}>
+        <button style={{ background: 'none', border: 'none', color: GREY, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span>&#9881;</span> Cognito mode
+        </button>
+      </div>
+
+      {/* Trade-in section */}
+      <h3 style={{ fontSize: 15, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Trade-in</h3>
+      <div style={{ overflowX: 'auto', marginBottom: 24 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
+          <thead>
+            <tr>
+              {['VARIANT', 'CONDITION', 'PURCHASE PRICE', 'SELL PRICE', 'VAT', 'DENY', 'CHANGED', ''].map((h) => (
+                <th key={h} style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left', fontSize: 10, letterSpacing: '0.8px' }}>{h}</th>
               ))}
-              <tr>
-                <td colSpan={7} style={{ ...tableCellStyle, color: ACCENT, fontWeight: 500, cursor: 'pointer', fontSize: 13 }}>+ Product toevoegen</td>
+            </tr>
+          </thead>
+          <tbody>
+            {tradeInRows.map((row, i) => (
+              <tr key={i}>
+                <td style={tableCellStyle}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: GREEN, flexShrink: 0 }} />
+                    <span style={{ color: ACCENT, fontWeight: 500, cursor: 'pointer' }}>{row.variant}</span>
+                  </div>
+                </td>
+                <td style={tableCellStyle}><Badge color={GREEN}>{row.conditie}</Badge></td>
+                <td style={tableCellStyle}><div style={priceInputWrapper}><span style={euroPrefix}>&euro;</span><input type="text" defaultValue={row.purchase} style={priceInput} /></div></td>
+                <td style={tableCellStyle}><div style={priceInputWrapper}><span style={euroPrefix}>&euro;</span><input type="text" defaultValue={row.sell} style={priceInput} /></div></td>
+                <td style={tableCellStyle}>{row.btw}</td>
+                <td style={tableCellStyle}><button style={denyBtn}>Deny</button></td>
+                <td style={{ ...tableCellStyle, fontSize: 11, color: GREY, lineHeight: 1.4 }}>{row.changed}<br />{row.user}</td>
+                <td style={{ ...tableCellStyle, textAlign: 'center' }}>{deleteIcon}</td>
               </tr>
-            </tbody>
-          </table>
-        </div>
+            ))}
+            <tr><td colSpan={8} style={{ padding: '12px 14px', textAlign: 'center', color: ACCENT, fontWeight: 500, cursor: 'pointer', fontSize: 13 }}>+ Add product</td></tr>
+          </tbody>
+        </table>
       </div>
 
-      {/* Verkoop section */}
-      <div style={{ ...cardStyle, marginBottom: 20 }}>
-        <h3 style={{ fontSize: 15, fontWeight: 600, color: DARK, margin: '0 0 14px' }}>Verkoop</h3>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 700 }}>
-            <thead>
-              <tr>
-                {['Variant', 'Conditie', 'Inkoopprijs', 'Verkoopprijs', 'BTW', 'Afwijzen', 'Gewijzigd'].map((h) => (
-                  <th key={h} style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>{h}</th>
-                ))}
+      {/* Sale section */}
+      <h3 style={{ fontSize: 15, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Sale</h3>
+      <div style={{ overflowX: 'auto', marginBottom: 24 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
+          <thead>
+            <tr>
+              {['VARIANT', 'CONDITION', 'QUANTITY', 'PURCHASE PRICE', 'SELL PRICE', 'VAT', 'DENY', 'CHANGED', ''].map((h) => (
+                <th key={h} style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left', fontSize: 10, letterSpacing: '0.8px' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {saleRows.map((row, i) => (
+              <tr key={i}>
+                <td style={tableCellStyle}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: GREEN, flexShrink: 0 }} />
+                    <span style={{ color: ACCENT, fontWeight: 500, cursor: 'pointer' }}>{row.variant}</span>
+                  </div>
+                </td>
+                <td style={tableCellStyle}><Badge color={GREEN}>{row.conditie}</Badge></td>
+                <td style={tableCellStyle}>{row.quantity}</td>
+                <td style={tableCellStyle}>&euro;{row.purchasePrice}</td>
+                <td style={tableCellStyle}><div style={priceInputWrapper}><span style={euroPrefix}>&euro;</span><input type="text" defaultValue={row.sellPrice} style={priceInput} /></div></td>
+                <td style={tableCellStyle}>{row.btw}</td>
+                <td style={tableCellStyle}><button style={denyBtn}>Deny</button></td>
+                <td style={{ ...tableCellStyle, fontSize: 11, color: GREY, lineHeight: 1.4 }}>{row.changed}<br />{row.user}</td>
+                <td style={{ ...tableCellStyle, textAlign: 'center' }}>{deleteIcon}</td>
               </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colSpan={7} style={{ ...tableCellStyle, color: ACCENT, fontWeight: 500, cursor: 'pointer', fontSize: 13 }}>+ Product toevoegen</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            ))}
+            <tr><td colSpan={9} style={{ padding: '12px 14px', textAlign: 'center', color: ACCENT, fontWeight: 500, cursor: 'pointer', fontSize: 13 }}>+ Add product</td></tr>
+          </tbody>
+        </table>
       </div>
 
-      {/* Overzicht summary */}
+      {/* Overview */}
       <div style={{ ...cardStyle, marginBottom: 20 }}>
-        <h3 style={{ fontSize: 15, fontWeight: 600, color: DARK, margin: '0 0 14px' }}>OVERZICHT</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13, maxWidth: 340 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Subtotaal inkoop</span><span>&euro; 0,00</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}><span>Totaal inkoop</span><span>&euro; 0,00</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: GREY }}>Subtotaal aankoop</span><span>&euro; 0,00</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}><span>Totaal aankoop</span><span>&euro; 0,00</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, padding: '8px 0', borderTop: `1px solid ${BORDER}` }}>
-            <span style={{ color: ACCENT, fontWeight: 700 }}>Gratis ruil</span>
-            <span style={{ color: ACCENT, fontWeight: 700 }}>&euro; 0,00</span>
+        <h3 style={{ fontSize: 13, fontWeight: 600, color: DARK, margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>OVERVIEW</h3>
+        <div style={{ display: 'flex', flexDirection: 'column', fontSize: 13 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${BORDER}` }}><span style={{ color: GREY }}>Sell subtotal</span><span>&euro;{sellTotal.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${BORDER}`, fontWeight: 600 }}><span>Sell total</span><span>&euro;{sellTotal.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${BORDER}` }}><span style={{ color: GREY }}>Buy subtotal</span><span>&euro;{buyTotal.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${BORDER}`, fontWeight: 600 }}><span>Buy total</span><span>&euro;{buyTotal.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', marginTop: 4 }}>
+            <span style={{ color: ACCENT, fontWeight: 700 }}>Customer receives</span>
+            <span style={{ color: ACCENT, fontWeight: 700 }}>&euro;{(sellTotal - buyTotal).toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span>
           </div>
         </div>
       </div>
 
       {/* Action buttons */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-        <button style={buttonDark}>Opslaan</button>
-        <button style={buttonAccent}>Betaling</button>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+        <button style={{ ...buttonDark, padding: '10px 24px' }}>Save</button>
+        <button style={{ ...buttonAccent, padding: '10px 24px' }}>View order</button>
       </div>
 
       {/* Quote notes */}
-      <div style={cardStyle}>
-        <h3 style={{ fontSize: 15, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Quote notes</h3>
-        <textarea
-          placeholder="Notities toevoegen..."
-          style={{
-            ...inputStyle,
-            width: '100%',
-            boxSizing: 'border-box',
-            minHeight: 100,
-            resize: 'vertical',
-          }}
-        />
+      <div>
+        <button onClick={() => setNotesOpen(!notesOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6, padding: 0, marginBottom: notesOpen ? 8 : 0 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: 0 }}>Quote notes</h3>
+          <span style={{ fontSize: 10, color: GREY, transform: notesOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>&#9660;</span>
+        </button>
+        {notesOpen && (
+          <textarea placeholder="Add a note.." style={{ ...inputStyle, width: '100%', boxSizing: 'border-box', minHeight: 80, resize: 'vertical' }} />
+        )}
       </div>
     </div>
   );
