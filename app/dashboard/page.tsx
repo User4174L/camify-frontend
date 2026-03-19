@@ -329,7 +329,7 @@ function DashboardPage() {
         <KPICard label="Openstaande orders" value={12} />
         <KPICard label="Te verzenden" value={7} />
         <KPICard label="Open quotes" value={0} />
-        <KPICard label="Kas saldo" value="\u20AC1.245,50" />
+        <KPICard label="Kas saldo" value="€1.245,50" />
       </div>
 
       {/* Orders */}
@@ -563,7 +563,7 @@ function VariantenPage() {
                   <td style={{ ...tableCellStyle, textAlign: 'center', fontWeight: 600 }}>{v.stock}</td>
                   <td style={{ ...tableCellStyle, fontFamily: 'monospace', fontSize: 12 }}>{v.locatie}</td>
                   <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>&euro; {v.inkoopprijs.toLocaleString('nl-NL')}</td>
-                  <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>{v.verkoopprijs > 0 ? `\u20AC ${v.verkoopprijs.toLocaleString('nl-NL')}` : '\u2014'}</td>
+                  <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>{v.verkoopprijs > 0 ? `€ ${v.verkoopprijs.toLocaleString('nl-NL')}` : '\u2014'}</td>
                   <td style={{ ...tableCellStyle, textAlign: 'center' }}>
                     <Badge color={v.btw === 'Marge' ? ACCENT : BLUE} bg={v.btw === 'Marge' ? ACCENT_BG : '#DBEAFE'}>{v.btw}</Badge>
                   </td>
@@ -1162,7 +1162,7 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
             {infoRow('Ordernummer', order.ordernummer)}
             {infoRow('Factuurnummer', order.factuurnummer)}
             {infoRow('Aangemaakt', order.datum)}
-            {infoRow('Prijs totaal', `\u20AC ${order.prijs.toLocaleString('nl-NL')}`)}
+            {infoRow('Prijs totaal', `€ ${order.prijs.toLocaleString('nl-NL')}`)}
             {infoRow('Betaalmethode', order.betaalmethode)}
             {infoRow('Status', <Badge color={orderStatusColor(order.status)} bg={orderStatusColor(order.status) + '18'}>{order.status}</Badge>)}
             {infoRow('Betaalstatus', <Badge color={order.betaalstatus === 'Betaald' ? GREEN : '#F59E0B'} bg={order.betaalstatus === 'Betaald' ? '#DCFCE7' : '#FEF3C7'}>{order.betaalstatus}</Badge>)}
@@ -1259,9 +1259,9 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
                   <Badge color={r.type === 'Verkoop' ? GREEN : BLUE} bg={r.type === 'Verkoop' ? '#DCFCE7' : '#DBEAFE'}>{r.type}</Badge>
                 </td>
                 <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>&euro; {r.inkoopprijs.toLocaleString('nl-NL')}</td>
-                <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>{r.verkoopprijs > 0 ? `\u20AC ${r.verkoopprijs.toLocaleString('nl-NL')}` : '\u2014'}</td>
+                <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 500 }}>{r.verkoopprijs > 0 ? `€ ${r.verkoopprijs.toLocaleString('nl-NL')}` : '\u2014'}</td>
                 <td style={{ ...tableCellStyle, fontSize: 13 }}>{r.btw}</td>
-                <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 600, color: marge > 0 ? GREEN : GREY }}>{marge > 0 ? `\u20AC ${marge.toLocaleString('nl-NL')}` : '\u2014'}</td>
+                <td style={{ ...tableCellStyle, textAlign: 'right', fontWeight: 600, color: marge > 0 ? GREEN : GREY }}>{marge > 0 ? `€ ${marge.toLocaleString('nl-NL')}` : '\u2014'}</td>
               </tr>
               );
             })}
@@ -1486,7 +1486,7 @@ function QuoteDetailPage({ quoteId, onBack }: { quoteId: string; onBack: () => v
           <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Quote details</h3>
           <DetailRow label="Quote number" value={quote.id} valueWeight={500} />
           <DetailRow label="Created" value={quote.created} />
-          <DetailRow label="Total price" value={`-\u20AC2,601.00`} valueColor={RED} valueWeight={600} />
+          <DetailRow label="Total price" value={`-€2,601.00`} valueColor={RED} valueWeight={600} />
           <DetailRow label="Status" value={<Badge color={GREEN} solid>Completed</Badge>} />
           <DetailRow label="Payment status" value={<Badge color={GREEN} solid>Paid</Badge>} />
           <DetailRow label="Shipping status" value={<Badge color={GREY} solid>Not shipped</Badge>} />
