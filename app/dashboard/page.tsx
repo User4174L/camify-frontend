@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 /* ------------------------------------------------------------------ */
@@ -1658,7 +1658,7 @@ function PlaceholderPage({ title, description }: { title: string; description: s
 /* ------------------------------------------------------------------ */
 /*  MAIN DASHBOARD COMPONENT                                           */
 /* ------------------------------------------------------------------ */
-export default function AdminDashboard() {
+function AdminDashboardInner() {
   const { isLoggedIn, isAdmin, hydrated } = useAuth();
   const dashboardRouter = useRouter();
 
@@ -1669,9 +1669,20 @@ export default function AdminDashboard() {
   //   }
   // }, [hydrated, isLoggedIn, isAdmin, dashboardRouter]);
 
-  const [activeSection, setActiveSection] = useState('dashboard');
-  const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
-  const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const viewParam = searchParams?.get('view');
+
+  const [activeSection, setActiveSection] = useState(() => {
+    if (viewParam === 'orders' || viewParam === 'order-detail') return 'orders';
+    if (viewParam === 'quotes' || viewParam === 'quote-detail') return 'quotes';
+    return 'dashboard';
+  });
+  const [selectedQuote, setSelectedQuote] = useState<string | null>(() => {
+    return viewParam === 'quote-detail' ? (MOCK_QUOTES[0]?.id || null) : null;
+  });
+  const [selectedOrder, setSelectedOrder] = useState<string | null>(() => {
+    return viewParam === 'order-detail' ? (MOCK_ORDERS[0]?.ordernummer || null) : null;
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleNavClick = (key: string) => {
@@ -1881,5 +1892,13 @@ export default function AdminDashboard() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function AdminDashboard() {
+  return (
+    <Suspense fallback={<div style={{ padding: 40, textAlign: 'center' }}>Loading...</div>}>
+      <AdminDashboardInner />
+    </Suspense>
   );
 }

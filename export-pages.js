@@ -26,6 +26,10 @@ const pages = [
   ['/account', 'camify-account'],
   ['/checkout', 'camify-checkout'],
   ['/dashboard', 'camify-dashboard'],
+  ['/dashboard?view=orders', 'camify-dashboard-orders'],
+  ['/dashboard?view=order-detail', 'camify-dashboard-order-detail'],
+  ['/dashboard?view=quotes', 'camify-dashboard-quotes'],
+  ['/dashboard?view=quote-detail', 'camify-dashboard-quote-detail'],
 
   // Lens pages
   ['/lenses', 'camify-lenses'],
@@ -570,19 +574,39 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
   // Dashboard table row clicks (orders, quotes → detail views)
   // The detail views are rendered but hidden. We need to find them and show/hide.
   // Orders and quotes tables have clickable rows with cursor:pointer
+  // Orders table rows → link to order detail page
   var ordersSection=document.querySelector('[data-section="orders"]');
   if(ordersSection){
     var orderRows=ordersSection.querySelectorAll('tbody tr[style*="cursor"]');
     orderRows.forEach(function(row){
-      row.addEventListener('click',function(){
-        // The order detail is not in a data-section, it's a sibling div
-        // In the rendered HTML, there should be a div that contains the order detail
-        // For static export, we can't navigate to detail - just highlight the row
-        row.style.background='#FFF0E8';
-        setTimeout(function(){row.style.background='';},300);
+      row.addEventListener('click',function(e){
+        if(e.target.type==='checkbox') return;
+        window.location.href='camify-dashboard-order-detail.html';
       });
     });
   }
+  // Quotes table rows → link to quote detail page
+  var quotesSection=document.querySelector('[data-section="quotes"]');
+  if(quotesSection){
+    var quoteRows=quotesSection.querySelectorAll('tbody tr[style*="cursor"]');
+    quoteRows.forEach(function(row){
+      row.addEventListener('click',function(e){
+        if(e.target.type==='checkbox') return;
+        window.location.href='camify-dashboard-quote-detail.html';
+      });
+    });
+  }
+
+  // Back links in detail views → link to list pages
+  document.querySelectorAll('button').forEach(function(btn){
+    var text=btn.textContent.trim();
+    if(text==='← All quotes'||text==='← Alle quotes'){
+      btn.addEventListener('click',function(e){e.preventDefault();window.location.href='camify-dashboard-quotes.html';});
+    }
+    if(text==='← Alle orders'||text==='← All orders'){
+      btn.addEventListener('click',function(e){e.preventDefault();window.location.href='camify-dashboard-orders.html';});
+    }
+  });
 
   // Dashboard search/filter inputs
   document.querySelectorAll('input[placeholder*="Zoek"]').forEach(function(input){
