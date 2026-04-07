@@ -1085,7 +1085,7 @@ export default function CheckoutPage() {
           <div style={{ padding: '24px 20px' }}>
             {content}
 
-            <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+            <div style={{ display: 'flex', gap: 12, marginTop: 20, ...((stepIndex === 0 && !emailSubmitted) ? { display: 'none' } : {}) }}>
               {stepIndex > 0 && <button style={btnSecondary} onClick={prevStep}>&larr; Terug</button>}
               {stepIndex < 2 ? (
                 <button style={{ ...btnPrimary, marginLeft: 'auto' }} onClick={nextStep}>
