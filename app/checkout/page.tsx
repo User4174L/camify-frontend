@@ -358,7 +358,7 @@ export default function CheckoutPage() {
    *
    * Set hasActivePromotion to true when a campaign is running.
    * When false AND no URL param: nothing shown at all. */
-  const hasActivePromotion = false; // TODO: koppel aan CMS/API voor actieve campagnes
+  const hasActivePromotion = true; // TODO: koppel aan CMS/API voor actieve campagnes
   const searchParams = useSearchParams();
   const [showPromoField, setShowPromoField] = useState(false);
   const [promoCode, setPromoCode] = useState('');
