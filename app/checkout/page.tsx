@@ -1123,7 +1123,7 @@ export default function CheckoutPage() {
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: '.78rem', fontWeight: 600, color: CSS.text, lineHeight: 1.3 }}>{item.name}</div>
             <div style={{ fontSize: '.7rem', color: CSS.textMuted, marginTop: 2 }}>
-              {item.condition}{!item.inclVat && <span style={{ fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 3, background: '#fef3c7', color: '#92400e', marginLeft: 4 }}>MARGE</span>}
+              {item.condition}
             </div>
           </div>
           <div style={{ fontSize: '.85rem', fontWeight: 700, color: CSS.text, whiteSpace: 'nowrap', alignSelf: 'center' }}>
