@@ -1131,23 +1131,25 @@ export default function CheckoutPage() {
           <div style={{ padding: '24px 20px' }}>
             {content}
 
-            <div style={{ display: 'flex', gap: 12, marginTop: 20, ...((stepIndex === 0 && !emailSubmitted) ? { display: 'none' } : {}) }}>
-              {stepIndex > 0 && <button style={btnSecondary} onClick={prevStep}>&larr; Terug</button>}
-              {stepIndex < 2 ? (
-                <button style={{ ...btnPrimary, marginLeft: 'auto' }} onClick={nextStep}>
-                  Volgende stap &rarr;
-                </button>
-              ) : (
-                <button style={{
-                  ...btnPrimary, marginLeft: 'auto', width: '100%',
-                  padding: '18px 32px', fontSize: '1.05rem', fontWeight: 700,
-                  background: '#16a34a', borderRadius: CSS.rl,
-                }} onClick={() => alert('Bestelling geplaatst! (demo)')}>
-                  <LockIcon />
-                  Bestelling plaatsen &middot; &euro; {finalTotal.toFixed(2).replace('.', ',')}
-                </button>
-              )}
-            </div>
+            {(stepIndex > 0 || emailSubmitted) && (
+              <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+                {stepIndex > 0 && <button style={btnSecondary} onClick={prevStep}>&larr; Terug</button>}
+                {stepIndex < 2 ? (
+                  <button style={{ ...btnPrimary, marginLeft: 'auto' }} onClick={nextStep}>
+                    Volgende stap &rarr;
+                  </button>
+                ) : (
+                  <button style={{
+                    ...btnPrimary, marginLeft: 'auto', width: '100%',
+                    padding: '18px 32px', fontSize: '1.05rem', fontWeight: 700,
+                    background: '#16a34a', borderRadius: CSS.rl,
+                  }} onClick={() => alert('Bestelling geplaatst! (demo)')}>
+                    <LockIcon />
+                    Bestelling plaatsen &middot; &euro; {finalTotal.toFixed(2).replace('.', ',')}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
