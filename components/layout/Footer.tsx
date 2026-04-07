@@ -2,81 +2,105 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Mail, Phone, MapPin, ArrowRight, Star } from 'lucide-react';
 
 export default function Footer() {
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
 
   return (
-    <footer className="footer">
+    <footer className="border-t border-gray-100 pt-16 pb-8">
       <div className="container">
-        <div className="footer__grid">
-          <div className="footer__brand">
-            <Link href="/" className="logo">
-              <div className="logo__icon">C</div>Camify
+        <div className="mb-12 grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+          {/* Brand */}
+          <div>
+            <Link href="/" className="mb-5 flex items-center gap-2.5 text-xl font-bold">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E8692A] text-xs font-bold text-white">C</div>
+              Camify
             </Link>
-            <div className="footer__contact">
-              <div className="footer__contact-item">
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-start gap-2.5 text-sm text-gray-500">
+                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-[#E8692A]" />
                 support@camera-tweedehands.nl
               </div>
-              <div className="footer__contact-item">
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <div className="flex items-start gap-2.5 text-sm text-gray-500">
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[#E8692A]" />
                 085 301 83 32
               </div>
-              <div className="footer__contact-item">
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <div className="flex items-start gap-2.5 text-sm text-gray-500">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#E8692A]" />
                 Kerkstraat 47 Bis, 4191AA Geldermalsen
               </div>
             </div>
           </div>
 
+          {/* Shop */}
           <div>
-            <div className="footer__heading">Shop</div>
-            <div className="footer__links">
-              <Link href="/cameras" className="footer__link">Cameras</Link>
-              <Link href="/lenses" className="footer__link">Lenses</Link>
-              <Link href="/video-and-cinema" className="footer__link">Video</Link>
-              <Link href="/action-and-drones" className="footer__link">Action & Drones</Link>
-              <Link href="/accessories" className="footer__link">Accessories</Link>
-              <Link href="/brands" className="footer__link">All Brands</Link>
-              <Link href="/sale" className="footer__link">Sale</Link>
-              <Link href="/new" className="footer__link">New Arrivals</Link>
+            <div className="mb-5 text-sm font-bold uppercase tracking-wider text-[#E8692A]">Shop</div>
+            <div className="flex flex-col gap-3">
+              {[
+                { label: 'Cameras', href: '/cameras' },
+                { label: 'Lenses', href: '/lenses' },
+                { label: 'Video', href: '/video-and-cinema' },
+                { label: 'Action & Drones', href: '/action-and-drones' },
+                { label: 'Accessories', href: '/accessories' },
+                { label: 'All Brands', href: '/brands' },
+                { label: 'Sale', href: '/sale' },
+                { label: 'New Arrivals', href: '/new' },
+              ].map(link => (
+                <Link key={link.href} href={link.href} className="text-sm text-gray-500 transition-colors hover:text-[#E8692A]">
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
 
+          {/* Help */}
           <div>
-            <div className="footer__heading">Help</div>
-            <div className="footer__links">
-              <Link href="/faq" className="footer__link">FAQ</Link>
-              <Link href="/knowledge-base" className="footer__link">Knowledge Base</Link>
-              <Link href="/about" className="footer__link">About Us</Link>
-              <Link href="/sell" className="footer__link">Sell Your Gear</Link>
-              <Link href="/about" className="footer__link">Contact</Link>
+            <div className="mb-5 text-sm font-bold uppercase tracking-wider text-[#E8692A]">Help</div>
+            <div className="flex flex-col gap-3">
+              {[
+                { label: 'FAQ', href: '/faq' },
+                { label: 'Knowledge Base', href: '/knowledge-base' },
+                { label: 'About Us', href: '/about' },
+                { label: 'Sell Your Gear', href: '/sell' },
+                { label: 'Contact', href: '/about' },
+              ].map(link => (
+                <Link key={link.label} href={link.href} className="text-sm text-gray-500 transition-colors hover:text-[#E8692A]">
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
 
+          {/* Newsletter */}
           <div>
-            <div className="footer__heading">Newsletter</div>
+            <div className="mb-5 text-sm font-bold uppercase tracking-wider text-[#E8692A]">Newsletter</div>
             {newsletterSubmitted ? (
-              <p style={{ fontSize: 14, color: '#22c55e', fontWeight: 600 }}>Bedankt! Je bent aangemeld.</p>
+              <p className="text-sm font-semibold text-emerald-500">Bedankt! Je bent aangemeld.</p>
             ) : (
               <form
-                className="footer__subscribe"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setNewsletterSubmitted(true);
-                }}
+                className="mb-5 flex gap-2"
+                onSubmit={(e) => { e.preventDefault(); setNewsletterSubmitted(true); }}
               >
-                <input type="email" placeholder="Your email" required />
-                <button type="submit" aria-label="Subscribe">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m5 12h14m-7-7 7 7-7 7"/></svg>
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  required
+                  className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition-colors focus:border-[#E8692A]"
+                />
+                <button
+                  type="submit"
+                  aria-label="Subscribe"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#E8692A] text-white transition-colors hover:bg-[#D15A20]"
+                >
+                  <ArrowRight className="h-4 w-4" />
                 </button>
               </form>
             )}
-            <div className="footer__tp">
-              <span style={{ color: 'var(--tp)' }}>&#9733;</span>
+            <div className="flex items-center gap-2 text-[13px] font-semibold">
+              <Star className="h-4 w-4 text-[#00b67a]" fill="#00b67a" />
               <span>Trustpilot — 4.9</span>
-              <div className="trustpilot-stars" style={{ marginLeft: 4 }}>
+              <div className="ml-1 flex gap-0.5">
                 {[1,2,3,4,5].map(i => (
                   <span key={i} className="trustpilot-star" style={{ width: 16, height: 16, fontSize: 9 }}>&#9733;</span>
                 ))}
@@ -85,16 +109,19 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="footer__bottom">
+        {/* Bottom */}
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-100 pt-6 text-[13px] text-gray-400 md:flex-row">
           <div>
             <span>&copy; 2026 Camera-tweedehands.nl B.V. All rights reserved.</span>
-            <span style={{ display: 'block', fontSize: 11, color: 'rgba(255,255,255,.35)', marginTop: 4 }}>
-              KVK: 80564674 · BTW: NL861717971B01
+            <span className="mt-1 block text-[11px] text-gray-300">
+              KVK: 80564674 &middot; BTW: NL861717971B01
             </span>
           </div>
-          <div className="footer__payment">
+          <div className="flex flex-wrap justify-center gap-2">
             {['iDEAL', 'Visa', 'MC', 'AMEX', 'PayPal', 'Apple', 'Klarna'].map(m => (
-              <div key={m} className="footer__payment-icon">{m}</div>
+              <div key={m} className="flex h-7 w-10 items-center justify-center rounded border border-gray-200 bg-gray-50 text-[9px] font-semibold text-gray-400">
+                {m}
+              </div>
             ))}
           </div>
         </div>

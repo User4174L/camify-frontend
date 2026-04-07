@@ -2,9 +2,18 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import ProductGrid from '@/components/product/ProductGrid';
 import QuickView from '@/components/product/QuickView';
 import { products } from '@/data/products';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import {
+  Shield, CheckCircle2, Truck, RotateCcw, ChevronRight,
+  Star, ArrowRight, Sparkles, TrendingUp, Camera,
+} from 'lucide-react';
 
 const topBrands = [
   { name: 'Canon', count: 2450, slug: 'canon' },
@@ -17,217 +26,299 @@ const topBrands = [
   { name: 'Panasonic', count: 540, slug: 'panasonic' },
 ];
 
+const categories = [
+  { name: 'Cameras', count: '850+', href: '/cameras', image: '/images/sony-a7-iv.jpg' },
+  { name: 'Lenses', count: '1200+', href: '/lenses', image: '/images/sony-fe-24-70mm-f28-gm.jpg' },
+  { name: 'Video', count: '340+', href: '/video-and-cinema', image: '/images/sony-a1.jpg' },
+  { name: 'Accessories', count: '2400+', href: '/accessories', image: '/images/canon-r5.jpg' },
+];
+
 const justAddedProducts = products.filter(p => p.stock > 0).slice(0, 4);
 const bestsellerProducts = products.filter(p => p.stock > 0).slice(2, 6);
 
+
 export default function HomePage() {
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('All');
   const quickViewProduct = quickViewId ? products.find(p => p.id === quickViewId) ?? null : null;
 
   return (
     <>
-      {/* HERO */}
-      <section className="hero">
-        <div className="hero__bg-text">Buy, sell or trade</div>
-        <div className="container">
-          <h1 className="hero__title"><span>Buy, sell</span> or trade</h1>
-          <p className="hero__subtitle">
-            The trusted marketplace for second-hand camera equipment.<br />
+      {/* ─── HERO ─── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50">
+        {/* Background text watermark */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap text-[clamp(60px,12vw,160px)] font-bold tracking-tight text-[#E8692A]/[0.04]">
+          Buy, sell or trade
+        </div>
+
+        <div className="container relative z-10 py-16 text-center md:py-24">
+          <h1 className="mb-4 text-[clamp(32px,5vw,56px)] font-bold leading-[1.1] tracking-tight">
+            <span className="text-[#E8692A]">Buy, sell</span> or trade
+          </h1>
+          <p className="mx-auto mb-8 max-w-lg text-lg text-gray-500">
+            The trusted marketplace for second-hand camera equipment.<br className="hidden md:block" />
             Professionally checked, with minimum 12 months warranty.
           </p>
-          <div className="hero__buttons">
-            <Link href="/trade-in" className="btn btn--primary">Start Selling →</Link>
+          <div className="mb-8 flex justify-center gap-4">
+            <Link
+              href="/cameras"
+              className="inline-flex items-center gap-2 rounded-full bg-[#1E2133] px-8 py-4 text-[15px] font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-gray-900/20"
+            >
+              Shop Now <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/trade-in"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-[#1E2133] px-8 py-4 text-[15px] font-semibold text-[#1E2133] transition-all hover:-translate-y-0.5 hover:bg-[#1E2133] hover:text-white"
+            >
+              Start Selling
+            </Link>
           </div>
-          <div className="hero__trustpilot" style={{ justifyContent: 'center' }}>
-            <span className="trustpilot-label">Excellent</span>
-            <div className="trustpilot-stars">
-              {[1,2,3,4,5].map(i => <span key={i} className="trustpilot-star">&#9733;</span>)}
+          <div className="flex items-center justify-center gap-2.5 text-sm font-medium">
+            <span className="font-semibold">Excellent</span>
+            <div className="flex gap-0.5">
+              {[1,2,3,4,5].map(i => (
+                <span key={i} className="trustpilot-star" style={{ width: 20, height: 20, fontSize: 11 }}>&#9733;</span>
+              ))}
             </div>
-            <span className="trustpilot-logo"><span className="tp-star">&#9733;</span> Trustpilot</span>
+            <span className="font-bold">
+              <Star className="mr-0.5 inline h-4 w-4 text-[#00b67a]" fill="#00b67a" />
+              Trustpilot
+            </span>
           </div>
         </div>
       </section>
 
-      {/* JUST ADDED — right after hero */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      {/* ─── JUST ADDED ─── */}
+      <section className="py-16">
         <div className="container">
-          <div className="section__header">
+          <div className="mb-2 flex items-end justify-between">
             <div>
-              <h2 className="section__title">Just <span>Added</span></h2>
-              <p className="section__subtitle">Fresh arrivals added this week</p>
+              <div className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#E8692A]">
+                <Sparkles className="h-4 w-4" /> Fresh Arrivals
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight">
+                Just <span className="italic text-[#E8692A]">Added</span>
+              </h2>
             </div>
-            <Link href="/new" className="section__link">View all →</Link>
+            <Link href="/new" className="hidden text-sm font-semibold text-gray-900 underline underline-offset-4 transition-colors hover:text-[#E8692A] md:inline">
+              View all &rarr;
+            </Link>
           </div>
-          <div className="filter-tabs">
-            <button className="filter-tab filter-tab--active">All</button>
-            <button className="filter-tab">Cameras</button>
-            <button className="filter-tab">Lenses</button>
-            <button className="filter-tab">Accessories</button>
+          <p className="mb-6 text-sm text-gray-500">Fresh arrivals added this week</p>
+
+          {/* Tabs */}
+          <div className="mb-8 flex gap-2">
+            {['All', 'Cameras', 'Lenses', 'Accessories'].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={cn(
+                  'rounded-full border px-5 py-2 text-[13px] font-medium transition-all',
+                  activeTab === tab
+                    ? 'border-[#1E2133] bg-[#1E2133] text-white'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                )}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
-          {/* Desktop: grid, Mobile: horizontal scroll */}
-          <div className="just-added-scroll">
-            <ProductGrid products={justAddedProducts} onQuickView={setQuickViewId} />
-          </div>
+
+          <ProductGrid products={justAddedProducts} onQuickView={setQuickViewId} />
+
+          <Link href="/new" className="mt-6 block text-center text-sm font-semibold text-gray-900 underline underline-offset-4 md:hidden">
+            View all &rarr;
+          </Link>
         </div>
       </section>
 
-      {/* TRUST BADGES */}
-      <section className="trust-bar">
+      {/* ─── TRUST BADGES ─── */}
+      <section className="border-y border-gray-100 py-10">
         <div className="container">
-          <div className="trust-bar__grid">
-            <div className="trust-badge">
-              <div className="trust-badge__icon">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              </div>
-              <div className="trust-badge__title">Secure Checkout</div>
-              <div className="trust-badge__text">SSL encrypted payments via Pay.nl</div>
-            </div>
-            <div className="trust-badge">
-              <div className="trust-badge__icon">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-              </div>
-              <div className="trust-badge__title">Professionally Checked</div>
-              <div className="trust-badge__text">Every item inspected &amp; tested</div>
-            </div>
-            <div className="trust-badge">
-              <div className="trust-badge__icon">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              </div>
-              <div className="trust-badge__title">Free Shipping</div>
-              <div className="trust-badge__text">On orders above &euro;50 in NL/BE</div>
-            </div>
-            <div className="trust-badge">
-              <div className="trust-badge__icon">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9"/><polyline points="3 3 3 12 9 12"/></svg>
-              </div>
-              <div className="trust-badge__title">14-Day Returns</div>
-              <div className="trust-badge__text">For online purchases, no questions asked</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SHOP BY BRAND */}
-      <section className="section">
-        <div className="container">
-          <div className="section__header">
-            <div>
-              <h2 className="section__title">Shop by <span>Brand</span></h2>
-            </div>
-            <Link href="/brands" className="section__link">All brands →</Link>
-          </div>
-          <style>{`
-            .home-brands-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-            .home-brand-card{display:flex;align-items:center;gap:14px;padding:18px 20px;background:#1E2133;border-radius:12px;text-decoration:none;color:#fff;transition:transform .2s,box-shadow .2s;overflow:hidden;position:relative}
-            .home-brand-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(30,33,51,.25)}
-            .home-brand-card__icon{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#E8692A;flex-shrink:0;letter-spacing:-.5px}
-            .home-brand-card__name{font-size:15px;font-weight:700;line-height:1.2}
-            .home-brand-card__count{font-size:12px;color:rgba(255,255,255,.5);font-weight:400}
-            .home-brand-card__arrow{margin-left:auto;opacity:.3;transition:opacity .2s}
-            .home-brand-card:hover .home-brand-card__arrow{opacity:.7}
-            @media(max-width:1024px){.home-brands-grid{grid-template-columns:repeat(2,1fr)}}
-            @media(max-width:540px){.home-brands-grid{grid-template-columns:repeat(2,1fr);gap:8px}.home-brand-card{padding:14px 14px}}
-          `}</style>
-          <div className="home-brands-grid">
-            {topBrands.map(brand => (
-              <Link key={brand.slug} href={`/brands/${brand.slug}`} className="home-brand-card">
-                <div className="home-brand-card__icon">{brand.name.charAt(0)}</div>
-                <div>
-                  <div className="home-brand-card__name">{brand.name}</div>
-                  <div className="home-brand-card__count">{brand.count.toLocaleString()} items</div>
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+            {[
+              { icon: Shield, title: 'Secure Checkout', text: 'SSL encrypted payments via Pay.nl' },
+              { icon: CheckCircle2, title: 'Professionally Checked', text: 'Every item inspected & tested' },
+              { icon: Truck, title: 'Free Shipping', text: 'On orders above \u20AC50 in NL/BE' },
+              { icon: RotateCcw, title: '14-Day Returns', text: 'For online purchases, no questions asked' },
+            ].map(badge => (
+              <div key={badge.title} className="flex flex-col items-center gap-3 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-50 text-[#E8692A]">
+                  <badge.icon className="h-6 w-6" />
                 </div>
-                <svg className="home-brand-card__arrow" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                <div className="text-sm font-semibold text-gray-900">{badge.title}</div>
+                <div className="text-xs text-gray-500 leading-relaxed">{badge.text}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SHOP BY CATEGORY ─── */}
+      <section className="py-16">
+        <div className="container">
+          <h2 className="mb-8 text-3xl font-bold tracking-tight">
+            Shop by <span className="italic text-[#E8692A]">Category</span>
+          </h2>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {categories.map(cat => (
+              <Link
+                key={cat.href}
+                href={cat.href}
+                className="group relative flex h-48 flex-col justify-end overflow-hidden rounded-2xl bg-gray-900 p-5 md:h-56"
+              >
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  fill
+                  className="object-cover opacity-40 transition-all duration-500 group-hover:scale-105 group-hover:opacity-50"
+                />
+                <div className="relative z-10">
+                  <div className="text-lg font-bold text-white">{cat.name}</div>
+                  <div className="text-xs text-white/60">{cat.count} products</div>
+                </div>
+                <ChevronRight className="absolute right-4 top-4 z-10 h-5 w-5 text-white/40 transition-all group-hover:translate-x-1 group-hover:text-white/80" />
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* BESTSELLERS */}
-      <section className="bestsellers">
+      {/* ─── SHOP BY BRAND ─── */}
+      <section className="bg-gray-50 py-16">
         <div className="container">
-          <div className="section__header">
+          <div className="mb-2 flex items-end justify-between">
+            <h2 className="text-3xl font-bold tracking-tight">
+              Shop by <span className="italic text-[#E8692A]">Brand</span>
+            </h2>
+            <Link href="/brands" className="text-sm font-semibold text-gray-900 underline underline-offset-4 transition-colors hover:text-[#E8692A]">
+              All brands &rarr;
+            </Link>
+          </div>
+          <p className="mb-8 text-sm text-gray-500">Browse our most popular brands</p>
+
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            {topBrands.map(brand => (
+              <Link
+                key={brand.slug}
+                href={`/brands/${brand.slug}`}
+                className="group flex items-center gap-3.5 rounded-xl bg-[#1E2133] p-4 text-white transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-gray-900/20"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] bg-white/10 text-lg font-extrabold text-[#E8692A]">
+                  {brand.name.charAt(0)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[15px] font-bold">{brand.name}</div>
+                  <div className="text-xs text-white/50">{brand.count.toLocaleString()} items</div>
+                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-white/30 transition-all group-hover:translate-x-0.5 group-hover:text-white/60" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── BESTSELLERS ─── */}
+      <section className="py-16">
+        <div className="container">
+          <div className="mb-2 flex items-end justify-between">
             <div>
-              <h2 className="section__title">Best<span>sellers</span></h2>
-              <p className="section__subtitle">Our most popular items</p>
+              <div className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#E8692A]">
+                <TrendingUp className="h-4 w-4" /> Most Popular
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight">
+                Best<span className="italic text-[#E8692A]">sellers</span>
+              </h2>
             </div>
-            <Link href="/cameras" className="section__link">View all →</Link>
+            <Link href="/cameras" className="text-sm font-semibold text-gray-900 underline underline-offset-4 transition-colors hover:text-[#E8692A]">
+              View all &rarr;
+            </Link>
           </div>
-          <div className="filter-tabs">
-            <button className="filter-tab filter-tab--active">All</button>
-            <button className="filter-tab">Cameras</button>
-            <button className="filter-tab">Lenses</button>
-          </div>
+          <p className="mb-8 text-sm text-gray-500">Our most popular items</p>
+
           <ProductGrid products={bestsellerProducts} onQuickView={setQuickViewId} />
         </div>
       </section>
 
-      {/* WHY CAMIFY */}
-      <section className="why">
+      {/* ─── WHY CAMIFY ─── */}
+      <section className="py-20">
         <div className="container">
-          <div className="why__header">
-            <h2>Why <span>Camify</span>?</h2>
-            <p>We make buying and selling used camera gear simple, safe, and affordable.</p>
-          </div>
-          <div className="why__grid">
-            <div className="why-card">
-              <div className="why-card__icon">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              </div>
-              <div className="why-card__title">12-Month Warranty</div>
-              <div className="why-card__text">Every item comes with a minimum 12-month warranty for peace of mind.</div>
-            </div>
-            <div className="why-card">
-              <div className="why-card__icon">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-              </div>
-              <div className="why-card__title">Expert Inspection</div>
-              <div className="why-card__text">Our team of professionals checks every item before it goes on sale.</div>
-            </div>
-            <div className="why-card">
-              <div className="why-card__icon">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-              </div>
-              <div className="why-card__title">Best Prices</div>
-              <div className="why-card__text">Competitive pricing based on real-time market data across Europe.</div>
-            </div>
+          <div className="mx-auto mb-12 max-w-xl text-center">
+            <h2 className="mb-3 text-[clamp(28px,4vw,40px)] font-bold tracking-tight">
+              Why <span className="text-[#E8692A]">Camify</span>?
+            </h2>
+            <p className="text-base text-gray-500 leading-relaxed">
+              We make buying and selling used camera gear simple, safe, and affordable.
+            </p>
           </div>
 
-          <div className="why__stats">
-            <div><div className="why__stat-number">10,000+</div><div className="why__stat-label">Products</div></div>
-            <div><div className="why__stat-number">15,000+</div><div className="why__stat-label">Items Sold</div></div>
-            <div><div className="why__stat-number">100+</div><div className="why__stat-label">Brands</div></div>
-            <div><div className="why__stat-number">4.9</div><div className="why__stat-label">Trustpilot Rating</div></div>
+          <div className="mb-16 grid gap-5 md:grid-cols-3">
+            {[
+              { icon: Shield, title: '12-Month Warranty', text: 'Every item comes with a minimum 12-month warranty for peace of mind.' },
+              { icon: CheckCircle2, title: 'Expert Inspection', text: 'Our team of professionals checks every item before it goes on sale.' },
+              { icon: Sparkles, title: 'Best Prices', text: 'Competitive pricing based on real-time market data across Europe.' },
+            ].map(card => (
+              <div
+                key={card.title}
+                className="group rounded-2xl border border-gray-100 bg-gray-50 p-8 transition-all hover:-translate-y-0.5 hover:border-[#E8692A]/20 hover:shadow-lg hover:shadow-orange-100/50"
+              >
+                <div className="mb-5 flex h-13 w-13 items-center justify-center rounded-xl bg-orange-50 text-[#E8692A] transition-colors group-hover:bg-[#E8692A] group-hover:text-white">
+                  <card.icon className="h-6 w-6" />
+                </div>
+                <div className="mb-2 text-[17px] font-bold text-gray-900">{card.title}</div>
+                <div className="text-sm leading-relaxed text-gray-500">{card.text}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 gap-6 border-t border-gray-100 pt-12 text-center md:grid-cols-4">
+            {[
+              { number: '10,000+', label: 'Products' },
+              { number: '15,000+', label: 'Items Sold' },
+              { number: '100+', label: 'Brands' },
+              { number: '4.9', label: 'Trustpilot Rating' },
+            ].map(stat => (
+              <div key={stat.label}>
+                <div className="text-4xl font-bold tracking-tight text-[#E8692A]">{stat.number}</div>
+                <div className="mt-1 text-sm font-medium text-gray-500">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* REVIEWS */}
-      <section className="reviews">
+      {/* ─── REVIEWS ─── */}
+      <section className="bg-gray-50 py-16">
         <div className="container">
-          <div className="reviews__header">
-            <div className="reviews__tp-logo">
-              <span style={{ color: 'var(--tp)', fontSize: 24 }}>&#9733;</span>
-              <span>Trustpilot</span>
+          <div className="mb-10 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Star className="h-6 w-6 text-[#00b67a]" fill="#00b67a" />
+              <span className="text-xl font-bold">Trustpilot</span>
             </div>
           </div>
-          <div className="reviews__grid">
+
+          <div className="grid gap-5 md:grid-cols-3">
             {[
               { title: 'Fantastic service!', text: 'Ordered a Nikon Z8 in excellent condition. Arrived within 2 days, perfectly packaged. Camera was exactly as described. Will definitely buy again!', author: 'M.V.', date: 'Feb 2026' },
               { title: 'Best prices in Europe', text: 'Compared prices across 5 different used camera shops. Camify had the best price for the Canon RF 70-200mm f/2.8 and the condition was better than expected.', author: 'J.K.', date: 'Jan 2026' },
               { title: 'Easy trade-in process', text: 'Sold my old Sony A7III and bought a Fujifilm X-T5. The trade-in quote was fair and the whole process took less than a week. Great experience!', author: 'S.D.', date: 'Feb 2026' },
             ].map((review, i) => (
-              <div key={i} className="review-card">
-                <div className="review-card__stars">
-                  {[1,2,3,4,5].map(s => <span key={s} className="trustpilot-star">&#9733;</span>)}
+              <div key={i} className="rounded-2xl border border-gray-100 bg-white p-7 transition-shadow hover:shadow-md">
+                <div className="mb-4 flex gap-0.5">
+                  {[1,2,3,4,5].map(s => (
+                    <span key={s} className="trustpilot-star" style={{ width: 20, height: 20, fontSize: 11 }}>&#9733;</span>
+                  ))}
                 </div>
-                <div className="review-card__title">{review.title}</div>
-                <div className="review-card__text">{review.text}</div>
-                <div className="review-card__author">
-                  <div className="review-card__avatar">{review.author}</div>
+                <div className="mb-2.5 text-[15px] font-bold text-gray-900">{review.title}</div>
+                <p className="mb-5 line-clamp-3 text-sm leading-relaxed text-gray-500">{review.text}</p>
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-500">
+                    {review.author}
+                  </div>
                   <div>
-                    <div className="review-card__name">{review.author}</div>
-                    <div className="review-card__date">{review.date}</div>
+                    <div className="text-[13px] font-semibold">{review.author}</div>
+                    <div className="text-xs text-gray-400">{review.date}</div>
                   </div>
                 </div>
               </div>
@@ -236,17 +327,30 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* NEWSLETTER */}
-      <section className="newsletter">
-        <div className="container">
-          <div className="newsletter__badge">Get &euro;10 off your first order</div>
-          <h2 className="newsletter__title">Stay in the loop</h2>
-          <p className="newsletter__subtitle">New arrivals, deals, and camera tips straight to your inbox.</p>
-          <form className="newsletter__form" onSubmit={e => e.preventDefault()}>
-            <input type="email" placeholder="Your email address" />
-            <button type="submit">Subscribe</button>
+      {/* ─── NEWSLETTER ─── */}
+      <section className="bg-[#1E2133] py-16 text-white">
+        <div className="container text-center">
+          <Badge className="mb-5 rounded-full bg-[#E8692A] px-4 py-1.5 text-[13px] font-semibold text-white hover:bg-[#E8692A]">
+            Get &euro;10 off your first order
+          </Badge>
+          <h2 className="mb-2 text-[28px] font-bold tracking-tight">Stay in the loop</h2>
+          <p className="mb-7 text-[15px] text-white/60">
+            New arrivals, deals, and camera tips straight to your inbox.
+          </p>
+          <form className="mx-auto flex max-w-md gap-2" onSubmit={e => e.preventDefault()}>
+            <input
+              type="email"
+              placeholder="Your email address"
+              className="flex-1 rounded-full border border-white/15 bg-white/10 px-5 py-3.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8692A]"
+            />
+            <button
+              type="submit"
+              className="rounded-full bg-[#E8692A] px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#D15A20]"
+            >
+              Subscribe
+            </button>
           </form>
-          <p className="newsletter__privacy">No spam. Unsubscribe anytime.</p>
+          <p className="mt-3 text-[11px] text-white/30">No spam. Unsubscribe anytime.</p>
         </div>
       </section>
 

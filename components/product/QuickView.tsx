@@ -3,7 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import type { Product } from '@/data/products';
-import { assetPath } from '@/lib/utils';
+import { assetPath, cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { ChevronLeft, ChevronRight, X, Shield, RotateCcw, CheckCircle2, ShoppingBag } from 'lucide-react';
 
 function getConditionDescription(conditionLabel: string, shutterCount?: number): string {
   let base = '';
@@ -29,20 +33,12 @@ function getConditionDescription(conditionLabel: string, shutterCount?: number):
   return base;
 }
 
-function getConditionColor(condition: string): string {
-  switch (condition) {
-    case 'as-new':
-      return '#059669';
-    case 'excellent':
-      return '#16a34a';
-    case 'good':
-      return '#65a30d';
-    case 'used':
-      return '#ca8a04';
-    default:
-      return '#6b7280';
-  }
-}
+const conditionStyles: Record<string, string> = {
+  'as-new': 'bg-emerald-100 text-emerald-700',
+  excellent: 'bg-emerald-100 text-emerald-600',
+  good: 'bg-yellow-100 text-yellow-700',
+  used: 'bg-amber-100 text-amber-700',
+};
 
 function formatPrice(price: number): string {
   return price.toLocaleString('nl-NL', {
@@ -81,149 +77,60 @@ export default function QuickView({ product, onClose }: { product: Product | nul
 
   return (
     <div
-      className="qv-modal-bg is-open"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm"
       onClick={onClose}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'rgba(0,0,0,0.5)',
-        backdropFilter: 'blur(4px)',
-      }}
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          background: '#fff',
-          borderRadius: 16,
-          overflow: 'hidden',
-          maxWidth: 960,
-          width: '95vw',
-          maxHeight: '90vh',
-          boxShadow: '0 24px 64px rgba(0,0,0,0.2)',
-          position: 'relative',
-        }}
+        className="relative grid max-h-[90vh] w-[95vw] max-w-[960px] grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-2xl md:grid-cols-2"
       >
         {/* Left column - Gallery */}
-        <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-3 p-6">
           {/* Main image */}
-          <div
-            style={{
-              position: 'relative',
-              background: '#fff',
-              borderRadius: 12,
-              aspectRatio: '1 / 1',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-            }}
-          >
+          <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-white">
             <img
               src={thumbnails[currentImage]}
               alt={product.title}
-              style={{ maxWidth: '80%', maxHeight: '80%', objectFit: 'contain' }}
+              className="max-h-[80%] max-w-[80%] object-contain"
             />
 
-            {/* Prev button */}
             <button
               onClick={prevImage}
               aria-label="Previous image"
-              style={{
-                position: 'absolute',
-                left: 10,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: 36,
-                height: 36,
-                borderRadius: '50%',
-                border: '1px solid #ddd',
-                background: '#fff',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 16,
-                color: '#333',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-              }}
+              className="absolute left-2.5 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              <ChevronLeft className="h-4 w-4 text-gray-700" />
             </button>
 
-            {/* Next button */}
             <button
               onClick={nextImage}
               aria-label="Next image"
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: 36,
-                height: 36,
-                borderRadius: '50%',
-                border: '1px solid #ddd',
-                background: '#fff',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 16,
-                color: '#333',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-              }}
+              className="absolute right-2.5 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              <ChevronRight className="h-4 w-4 text-gray-700" />
             </button>
 
-            {/* Image counter */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 10,
-                right: 10,
-                background: 'rgba(0,0,0,0.55)',
-                color: '#fff',
-                fontSize: 12,
-                fontWeight: 500,
-                padding: '3px 10px',
-                borderRadius: 12,
-              }}
-            >
+            <div className="absolute bottom-2.5 right-2.5 rounded-full bg-black/55 px-2.5 py-0.5 text-xs font-medium text-white">
               {currentImage + 1} / {THUMB_COUNT}
             </div>
           </div>
 
-          {/* Thumbnails row */}
-          <div style={{ display: 'flex', gap: 8 }}>
+          {/* Thumbnails */}
+          <div className="flex gap-2">
             {thumbnails.map((src, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentImage(idx)}
-                style={{
-                  flex: 1,
-                  aspectRatio: '1 / 1',
-                  borderRadius: 8,
-                  border: idx === currentImage ? '2px solid #f97316' : '2px solid #e5e7eb',
-                  background: '#fff',
-                  cursor: 'pointer',
-                  padding: 4,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                }}
+                className={cn(
+                  'flex flex-1 items-center justify-center overflow-hidden rounded-lg border-2 bg-white p-1 transition-colors',
+                  idx === currentImage ? 'border-[#E8692A]' : 'border-gray-200 hover:border-gray-300'
+                )}
+                style={{ aspectRatio: '1 / 1' }}
               >
                 <img
                   src={src}
                   alt={`${product.title} thumbnail ${idx + 1}`}
-                  style={{ maxWidth: '80%', maxHeight: '80%', objectFit: 'contain' }}
+                  className="max-h-[80%] max-w-[80%] object-contain"
                 />
               </button>
             ))}
@@ -231,153 +138,85 @@ export default function QuickView({ product, onClose }: { product: Product | nul
         </div>
 
         {/* Right column - Details */}
-        <div
-          style={{
-            padding: '32px 28px 24px',
-            display: 'flex',
-            flexDirection: 'column',
-            overflowY: 'auto',
-            position: 'relative',
-          }}
-        >
-          {/* Close button */}
+        <div className="relative flex flex-col overflow-y-auto px-7 pb-6 pt-8">
+          {/* Close */}
           <button
             onClick={onClose}
             aria-label="Close"
-            style={{
-              position: 'absolute',
-              top: 16,
-              right: 16,
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              border: 'none',
-              background: '#f3f4f6',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#6b7280',
-            }}
+            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-700"
           >
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            <X className="h-4 w-4" />
           </button>
 
-          {/* SKU */}
-          <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 4 }}>SKU: {variant.sku}</div>
+          <div className="mb-1 text-xs text-gray-400">SKU: {variant.sku}</div>
+          <h2 className="mb-2 text-2xl font-bold leading-tight text-gray-900">{product.title}</h2>
+          <div className="mb-4 text-[26px] font-bold text-gray-900">&euro;{formatPrice(variant.price)}</div>
 
-          {/* Title */}
-          <h2 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 8px', lineHeight: 1.2, color: '#111' }}>
-            {product.title}
-          </h2>
-
-          {/* Price */}
-          <div style={{ fontSize: 26, fontWeight: 700, color: '#111', marginBottom: 16 }}>
-            &euro;{formatPrice(variant.price)}
-          </div>
-
-          {/* Divider */}
-          <div style={{ height: 1, background: '#e5e7eb', marginBottom: 16 }} />
+          <Separator className="mb-4" />
 
           {/* Variant selector */}
           {product.variants.length > 1 && (
             <>
-              <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9ca3af', marginBottom: 10 }}>
+              <div className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
                 Choose Variant
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+              <div className="mb-4 flex flex-wrap gap-2">
                 {product.variants.map((v, idx) => (
                   <button
                     key={v.sku}
                     onClick={() => setSelectedVariantIndex(idx)}
-                    style={{
-                      padding: '8px 14px',
-                      borderRadius: 10,
-                      border: idx === selectedVariantIndex ? '2px solid #f97316' : '1px solid #d1d5db',
-                      background: idx === selectedVariantIndex ? '#fff7ed' : '#fff',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                      gap: 2,
-                      minWidth: 0,
-                    }}
+                    className={cn(
+                      'flex flex-col items-start gap-0.5 rounded-[10px] px-3.5 py-2 transition-colors',
+                      idx === selectedVariantIndex
+                        ? 'border-2 border-[#E8692A] bg-orange-50'
+                        : 'border border-gray-300 bg-white hover:border-gray-400'
+                    )}
                   >
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>{v.conditionLabel}</span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: '#f97316' }}>&euro;{formatPrice(v.price)}</span>
+                    <span className="text-[13px] font-semibold text-gray-900">{v.conditionLabel}</span>
+                    <span className="text-[13px] font-bold text-[#E8692A]">&euro;{formatPrice(v.price)}</span>
                   </button>
                 ))}
               </div>
-              {/* Divider */}
-              <div style={{ height: 1, background: '#e5e7eb', marginBottom: 16 }} />
+              <Separator className="mb-4" />
             </>
           )}
 
-          {/* Condition section */}
-          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9ca3af', marginBottom: 10 }}>
+          {/* Condition */}
+          <div className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
             Condition
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-            {/* Condition badge */}
-            <span
-              style={{
-                display: 'inline-block',
-                padding: '4px 12px',
-                borderRadius: 999,
-                fontSize: 13,
-                fontWeight: 600,
-                color: getConditionColor(variant.condition),
-                background: (() => {
-                  const c = variant.condition;
-                  if (c === 'as-new' || c === 'excellent') return '#dcfce7';
-                  if (c === 'good') return '#fef9c3';
-                  if (c === 'used') return '#fefce8';
-                  return '#f3f4f6';
-                })(),
-              }}
-            >
+          <div className="mb-2 flex items-center gap-2.5">
+            <Badge className={cn('rounded-full text-[13px] font-semibold', conditionStyles[variant.condition] || 'bg-gray-100 text-gray-500')}>
               {variant.conditionLabel}
-            </span>
+            </Badge>
           </div>
-          <p style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.5, margin: '0 0 16px' }}>
+          <p className="mb-4 text-[13px] leading-relaxed text-gray-500">
             {getConditionDescription(variant.conditionLabel, variant.shutterCount)}
           </p>
 
-          {/* Divider */}
-          <div style={{ height: 1, background: '#e5e7eb', marginBottom: 16 }} />
+          <Separator className="mb-4" />
 
-          {/* Included Accessories */}
-          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9ca3af', marginBottom: 10 }}>
+          {/* Accessories */}
+          <div className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
             Included Accessories
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
+          <div className="mb-6 flex flex-wrap gap-2">
             {variant.accessories && variant.accessories.length > 0 ? (
               variant.accessories.map(a => (
-                <span
-                  key={a}
-                  style={{
-                    display: 'inline-block',
-                    padding: '5px 14px',
-                    borderRadius: 999,
-                    fontSize: 13,
-                    border: '1px solid #d1d5db',
-                    color: '#374151',
-                    background: '#fff',
-                  }}
-                >
+                <span key={a} className="inline-block rounded-full border border-gray-300 bg-white px-3.5 py-1 text-[13px] text-gray-700">
                   {a}
                 </span>
               ))
             ) : (
-              <span style={{ fontSize: 13, color: '#9ca3af' }}>No accessories included</span>
+              <span className="text-[13px] text-gray-400">No accessories included</span>
             )}
           </div>
 
-          {/* Spacer to push actions to bottom */}
-          <div style={{ flex: 1 }} />
+          {/* Spacer */}
+          <div className="flex-1" />
 
-          {/* Add to Cart button */}
-          <button
+          {/* Add to Cart */}
+          <Button
             onClick={() => {
               addItem({
                 id: variant.sku,
@@ -390,70 +229,36 @@ export default function QuickView({ product, onClose }: { product: Product | nul
               }, product);
               onClose();
             }}
-            style={{
-              width: '100%',
-              padding: '14px 24px',
-              borderRadius: 999,
-              border: 'none',
-              background: '#f97316',
-              color: '#fff',
-              fontSize: 16,
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              transition: 'background 0.15s',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#ea580c')}
-            onMouseLeave={e => (e.currentTarget.style.background = '#f97316')}
+            className="w-full rounded-full bg-[#E8692A] py-6 text-base font-semibold text-white transition-colors hover:bg-[#D15A20]"
           >
-            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <ShoppingBag className="mr-2 h-[18px] w-[18px]" />
             Add to Cart
-          </button>
+          </Button>
 
-          {/* View full product page link */}
-          <div style={{ textAlign: 'center', marginTop: 12 }}>
+          {/* View full page link */}
+          <div className="mt-3 text-center">
             <a
               href={`/product/${product.slug}/${variant.sku}`}
-              style={{
-                fontSize: 14,
-                color: '#6b7280',
-                textDecoration: 'none',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#f97316')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}
+              className="text-sm text-gray-500 transition-colors hover:text-[#E8692A]"
             >
               View full product page &rarr;
             </a>
           </div>
 
           {/* USP strip */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: 16,
-              marginTop: 20,
-              paddingTop: 16,
-              borderTop: '1px solid #e5e7eb',
-              fontSize: 12,
-              color: '#6b7280',
-            }}
-          >
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div className="mt-5 flex justify-center gap-4 border-t border-gray-200 pt-4 text-xs text-gray-500">
+            <span className="flex items-center gap-1">
+              <Shield className="h-3.5 w-3.5" />
               12 Mo. Warranty
             </span>
-            <span style={{ color: '#d1d5db' }}>&middot;</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9"/><polyline points="3 3 3 12 9 12"/></svg>
-              14-Day Returns (online)
+            <span className="text-gray-300">&middot;</span>
+            <span className="flex items-center gap-1">
+              <RotateCcw className="h-3.5 w-3.5" />
+              14-Day Returns
             </span>
-            <span style={{ color: '#d1d5db' }}>&middot;</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+            <span className="text-gray-300">&middot;</span>
+            <span className="flex items-center gap-1">
+              <CheckCircle2 className="h-3.5 w-3.5" />
               Checked
             </span>
           </div>

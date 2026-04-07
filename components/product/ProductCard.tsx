@@ -5,10 +5,17 @@ import Link from 'next/link';
 import type { Product } from '@/data/products';
 import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
 import { assetPath } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 function formatPrice(price: number): string {
   return price.toLocaleString('nl-NL');
 }
+
+const badgeConfig: Record<string, { label: string; className: string }> = {
+  sale: { label: 'Sale', className: 'bg-red-500 text-white hover:bg-red-500' },
+  new: { label: 'New', className: 'bg-emerald-500 text-white hover:bg-emerald-500' },
+  outlet: { label: 'Outlet', className: 'bg-orange-500 text-white hover:bg-orange-500' },
+};
 
 export default function ProductCard({
   product,
@@ -21,135 +28,66 @@ export default function ProductCard({
   const { isProductViewed } = useRecentlyViewed();
   const recentlyViewed = isProductViewed(product.slug);
 
-  /* Price range from variants */
   const prices = product.variants.map(v => v.price);
   const minPrice = prices.length > 0 ? Math.min(...prices) : product.price;
   const maxPrice = prices.length > 0 ? Math.max(...prices) : product.price;
   const hasRange = minPrice !== maxPrice;
 
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: 'hidden',
-        background: '#fff',
-        border: '1px solid #e5e7eb',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-      }}
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
       {/* Image Area */}
       <div
-        style={{
-          position: 'relative',
-          background: '#fff',
-          aspectRatio: '1',
-          overflow: 'hidden',
-          cursor: 'pointer',
-          borderRadius: '11px 11px 0 0',
-          isolation: 'isolate',
-        }}
+        className="relative aspect-square cursor-pointer overflow-hidden rounded-t-[11px] bg-white isolate"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
         <img
           src={assetPath(product.image)}
           alt={product.title}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            display: 'block',
-            padding: '12%',
-          }}
+          className="block h-full w-full object-contain p-[12%]"
         />
 
-        {/* Recently viewed label — top-left, behind orange lines */}
+        {/* Recently viewed label */}
         {recentlyViewed && (
-          <div style={{ position: 'absolute', top: 0, left: 0, background: '#fff7ed', padding: '3px 10px 3px 6px', fontSize: 11, fontWeight: 600, color: '#f97316', zIndex: 2 }}>Recently viewed</div>
+          <div className="absolute left-0 top-0 z-2 bg-orange-50 px-2.5 py-0.5 text-[11px] font-semibold text-orange-500">
+            Recently viewed
+          </div>
         )}
 
-        {/* Orange border — continuous curve through corner, fades out */}
+        {/* Orange border for recently viewed */}
         {recentlyViewed && (
-          <div style={{
-            position: 'absolute', top: 0, left: 0, width: '65%', height: '55%',
-            borderTop: '2px solid #f97316', borderLeft: '2px solid #f97316',
-            borderBottom: 'none', borderRight: 'none',
-            borderTopLeftRadius: 11, zIndex: 4, pointerEvents: 'none',
-            WebkitMaskImage: 'linear-gradient(to right, black 60%, transparent), linear-gradient(to bottom, black 60%, transparent)',
-            WebkitMaskComposite: 'intersect',
-            maskImage: 'linear-gradient(to right, black 60%, transparent), linear-gradient(to bottom, black 60%, transparent)',
-            maskComposite: 'intersect',
-          }} />
-        )}
-
-        {/* Badge top-left */}
-        {product.badge && product.badge !== 'vat' && (
-          <span
+          <div
+            className="pointer-events-none absolute left-0 top-0 z-4 h-[55%] w-[65%] rounded-tl-[11px] border-l-2 border-t-2 border-orange-500"
             style={{
-              position: 'absolute',
-              top: 10,
-              left: 10,
-              zIndex: 2,
-              background: product.badge === 'sale' ? '#ef4444' : product.badge === 'new' ? '#22c55e' : product.badge === 'outlet' ? '#f97316' : '#6b7280',
-              color: '#fff',
-              borderRadius: 999,
-              padding: '3px 12px',
-              fontSize: 11,
-              fontWeight: 600,
+              WebkitMaskImage: 'linear-gradient(to right, black 60%, transparent), linear-gradient(to bottom, black 60%, transparent)',
+              WebkitMaskComposite: 'intersect',
+              maskImage: 'linear-gradient(to right, black 60%, transparent), linear-gradient(to bottom, black 60%, transparent)',
+              maskComposite: 'intersect',
             }}
-          >
-            {product.badge === 'sale' ? 'Sale' : product.badge === 'new' ? 'New' : product.badge === 'outlet' ? 'OUTLET' : product.badge}
-          </span>
+          />
         )}
 
-        {/* Hover overlay — links to product page */}
+        {/* Badge */}
+        {product.badge && product.badge !== 'vat' && badgeConfig[product.badge] && (
+          <Badge className={`absolute left-2.5 top-2.5 z-2 rounded-full text-[11px] font-semibold ${badgeConfig[product.badge].className}`}>
+            {badgeConfig[product.badge].label}
+          </Badge>
+        )}
+
+        {/* Hover overlay */}
         <Link
           href={`/product/${product.slug}`}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'rgba(0,0,0,0.55)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: hovered ? 1 : 0,
-            transition: 'opacity 0.2s ease',
-            pointerEvents: hovered ? 'auto' : 'none',
-            textDecoration: 'none',
-            zIndex: 5,
-          }}
+          className={`absolute inset-0 z-5 flex items-center justify-center bg-black/55 transition-opacity duration-200 ${
+            hovered ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
         >
-          <span
-            style={{
-              background: '#f97316',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 999,
-              padding: '10px 32px',
-              fontSize: 14,
-              fontWeight: 600,
-              display: 'inline-block',
-            }}
-          >
+          <span className="inline-block rounded-full bg-[#E8692A] px-8 py-2.5 text-sm font-semibold text-white">
             View
           </span>
         </Link>
 
-        {/* Top-right: wishlist heart */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 8,
-            right: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-            gap: 6,
-            zIndex: 2,
-          }}
-        >
+        {/* Wishlist heart */}
+        <div className="absolute right-2 top-2 z-2 flex flex-col items-end gap-1.5">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -157,71 +95,50 @@ export default function ProductCard({
               setWishlisted(prev => !prev);
             }}
             aria-label="Wishlist"
-            style={{
-              background: '#fff',
-              border: 'none',
-              borderRadius: '50%',
-              width: 32,
-              height: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-            }}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm transition-transform hover:scale-110"
           >
             <svg width="16" height="16" fill={wishlisted ? '#ef4444' : 'none'} stroke={wishlisted ? '#ef4444' : '#888'} strokeWidth="1.8" viewBox="0 0 24 24">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
           </button>
-
         </div>
       </div>
 
       {/* Info Area */}
       <Link
         href={`/product/${product.slug}`}
-        style={{ textDecoration: 'none', color: 'inherit', padding: '12px 14px 14px', display: 'flex', flexDirection: 'column', gap: 4 }}
+        className="flex flex-col gap-1 p-3 pb-3.5 no-underline text-inherit"
       >
-        {/* Title */}
-        <div style={{ fontSize: 15, fontWeight: 600, color: '#111', lineHeight: 1.3 }}>
+        <div className="text-[15px] font-semibold leading-tight text-gray-900">
           {product.title}
         </div>
 
-        {/* Price range */}
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>
-          <span style={{ fontSize: 13, fontWeight: 400, color: '#6b7280', marginRight: 4 }}>
-            From
-          </span>
-          &euro;{formatPrice(minPrice)}
-          {hasRange && (
-            <>
-              {' '}&ndash; &euro;{formatPrice(maxPrice)}
-            </>
-          )}
+        <div className="flex items-baseline gap-1 text-base font-bold text-gray-900">
+          <span className="text-[13px] font-normal text-gray-500">From</span>
+          <span>&euro;{formatPrice(minPrice)}{hasRange && <>{' '}&ndash; &euro;{formatPrice(maxPrice)}</>}</span>
         </div>
 
         {/* Stock indicator */}
         {product.stock > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+          <div className="mt-0.5 flex items-center gap-1.5">
             {product.stock <= 2 ? (
               <>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block', flexShrink: 0 }} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#ef4444' }}>
+                <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-red-500" />
+                <span className="text-[13px] font-semibold text-red-500">
                   Last {product.stock} in stock!
                 </span>
               </>
             ) : product.stock <= 5 ? (
               <>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#f59e0b' }}>
+                <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+                <span className="text-[13px] font-semibold text-amber-500">
                   Only {product.stock} left
                 </span>
               </>
             ) : (
               <>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', display: 'inline-block', flexShrink: 0 }} />
-                <span style={{ fontSize: 13, color: '#6b7280' }}>
+                <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+                <span className="text-[13px] text-gray-500">
                   {product.stock} in stock
                 </span>
               </>
