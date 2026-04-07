@@ -1271,11 +1271,8 @@ export default function CheckoutPage() {
       {/* ─── Top bar ─── */}
       <div style={{ background: '#fff', borderBottom: `1px solid ${CSS.border}`, padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: CSS.dark, fontSize: '1.25rem', fontWeight: 700 }}>
-            <div style={{ width: 32, height: 32, background: CSS.accent, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CameraIcon />
-            </div>
-            Camify
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <img src={assetPath('/images/logo.png')} alt="Camify" style={{ height: 36, width: 36, objectFit: 'contain' }} />
           </Link>
           <Link href="/" style={{ fontSize: '.8rem', color: CSS.textMuted, textDecoration: 'none', marginLeft: 16 }}>
             &larr; Terug naar winkel
