@@ -287,6 +287,44 @@ export default function CheckoutPage() {
   const [shipCity, setShipCity] = useState('');
   const [shipCountry, setShipCountry] = useState('NL');
 
+  /* validation */
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateStep = (step: number): boolean => {
+    const errs: Record<string, string> = {};
+    if (step === 0) {
+      if (!email || !email.includes('@')) errs.email = 'Vul een geldig e-mailadres in';
+      if (emailSubmitted) {
+        if (!firstName.trim()) errs.firstName = 'Verplicht';
+        if (!lastName.trim()) errs.lastName = 'Verplicht';
+        if (!phone.trim()) errs.phone = 'Verplicht';
+        if (!postalCode.trim()) errs.postalCode = 'Verplicht';
+        if (!houseNumber.trim()) errs.houseNumber = 'Verplicht';
+        if (!street.trim()) errs.street = 'Vul postcode + huisnummer in';
+        if (customerType === 'business') {
+          if (!companyName.trim()) errs.companyName = 'Verplicht';
+          if (!kvkNumber.trim()) errs.kvkNumber = 'Verplicht';
+        }
+        if (shipOption === 'different') {
+          if (!shipAttn.trim()) errs.shipAttn = 'Verplicht';
+          if (!shipPostal.trim()) errs.shipPostal = 'Verplicht';
+          if (!shipHouseNum.trim()) errs.shipHouseNum = 'Verplicht';
+        }
+      }
+    }
+    if (step === 2) {
+      if (selectedPayment === 'ideal' && !selectedBank) errs.bank = 'Kies je bank';
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const errorBorder = (field: string): React.CSSProperties =>
+    errors[field] ? { borderColor: '#ef4444', boxShadow: '0 0 0 3px rgba(239,68,68,.08)' } : {};
+
+  const ErrorMsg = ({ field }: { field: string }) =>
+    errors[field] ? <span style={{ fontSize: '.7rem', color: '#ef4444', marginTop: 2 }}>{errors[field]}</span> : null;
+
   /* shipping */
   const [selectedShipping, setSelectedShipping] = useState('postnl');
   const freeShipping = total >= 100;
@@ -347,6 +385,8 @@ export default function CheckoutPage() {
   };
 
   const nextStep = () => {
+    if (!validateStep(currentStep)) return;
+    setErrors({});
     const newCompleted = new Set(completedSteps);
     newCompleted.add(currentStep);
     setCompletedSteps(newCompleted);
@@ -547,9 +587,10 @@ export default function CheckoutPage() {
           <div className="form-row-name" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <label style={labelStyle}>Voornaam <span style={{ color: '#ef4444' }}>*</span></label>
-              <input style={inputStyle} type="text" placeholder="Jan" value={firstName} onChange={e => setFirstName(e.target.value)}
+              <input style={{ ...inputStyle, ...errorBorder('firstName') }} type="text" placeholder="Jan" value={firstName} onChange={e => { setFirstName(e.target.value); setErrors(prev => { const n = {...prev}; delete n.firstName; return n; }); }}
                 onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
-                onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; }} />
+                onBlur={e => { (e.target as HTMLInputElement).style.borderColor = errors.firstName ? '#ef4444' : CSS.border; }} />
+              <ErrorMsg field="firstName" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <label style={labelStyle}>Achternaam <span style={{ color: '#ef4444' }}>*</span></label>
@@ -557,9 +598,9 @@ export default function CheckoutPage() {
                 <input style={{ ...inputStyle, width: 70, flex: '0 0 70px', textAlign: 'center' }} type="text" placeholder="van" value={prefix} onChange={e => setPrefix(e.target.value)}
                   onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
                   onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; }} />
-                <input style={{ ...inputStyle, flex: 1 }} type="text" placeholder="de Vries" value={lastName} onChange={e => setLastName(e.target.value)}
+                <input style={{ ...inputStyle, flex: 1, ...errorBorder('lastName') }} type="text" placeholder="de Vries" value={lastName} onChange={e => { setLastName(e.target.value); setErrors(prev => { const n = {...prev}; delete n.lastName; return n; }); }}
                   onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
-                  onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; }} />
+                  onBlur={e => { (e.target as HTMLInputElement).style.borderColor = errors.lastName ? '#ef4444' : CSS.border; }} />
               </div>
             </div>
           </div>
@@ -568,9 +609,10 @@ export default function CheckoutPage() {
           <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <label style={labelStyle}>Telefoonnummer <span style={{ color: '#ef4444' }}>*</span></label>
-              <input style={inputStyle} type="tel" placeholder="+31 6 12345678" value={phone} onChange={e => setPhone(e.target.value)}
+              <input style={{ ...inputStyle, ...errorBorder('phone') }} type="tel" placeholder="+31 6 12345678" value={phone} onChange={e => { setPhone(e.target.value); setErrors(prev => { const n = {...prev}; delete n.phone; return n; }); }}
                 onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
-                onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; }} />
+                onBlur={e => { (e.target as HTMLInputElement).style.borderColor = errors.phone ? '#ef4444' : CSS.border; }} />
+              <ErrorMsg field="phone" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <label style={labelStyle}>Klanttype <span style={{ color: '#ef4444' }}>*</span></label>
@@ -587,17 +629,19 @@ export default function CheckoutPage() {
               <div style={{ marginBottom: 12 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <label style={labelStyle}>Bedrijfsnaam <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input style={inputStyle} type="text" placeholder="Bedrijf B.V." value={companyName} onChange={e => setCompanyName(e.target.value)}
+                  <input style={{ ...inputStyle, ...errorBorder('companyName') }} type="text" placeholder="Bedrijf B.V." value={companyName} onChange={e => { setCompanyName(e.target.value); setErrors(prev => { const n = {...prev}; delete n.companyName; return n; }); }}
                     onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
-                    onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; }} />
+                    onBlur={e => { (e.target as HTMLInputElement).style.borderColor = errors.companyName ? '#ef4444' : CSS.border; }} />
+                  <ErrorMsg field="companyName" />
                 </div>
               </div>
               <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <label style={labelStyle}>KVK-nummer <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input style={inputStyle} type="text" placeholder="12345678" value={kvkNumber} onChange={e => setKvkNumber(e.target.value)}
+                  <input style={{ ...inputStyle, ...errorBorder('kvkNumber') }} type="text" placeholder="12345678" value={kvkNumber} onChange={e => { setKvkNumber(e.target.value); setErrors(prev => { const n = {...prev}; delete n.kvkNumber; return n; }); }}
                     onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
-                    onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; }} />
+                    onBlur={e => { (e.target as HTMLInputElement).style.borderColor = errors.kvkNumber ? '#ef4444' : CSS.border; }} />
+                  <ErrorMsg field="kvkNumber" />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <label style={labelStyle}>BTW-nummer</label>
@@ -616,17 +660,19 @@ export default function CheckoutPage() {
           <div className="form-row form-row--3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <label style={labelStyle}>Postcode <span style={{ color: '#ef4444' }}>*</span></label>
-              <input style={inputStyle} type="text" placeholder="1234 AB" value={postalCode}
-                onChange={e => { setPostalCode(e.target.value); handlePostcodeChange(e.target.value, houseNumber); }}
+              <input style={{ ...inputStyle, ...errorBorder('postalCode') }} type="text" placeholder="1234 AB" value={postalCode}
+                onChange={e => { setPostalCode(e.target.value); handlePostcodeChange(e.target.value, houseNumber); setErrors(prev => { const n = {...prev}; delete n.postalCode; delete n.street; return n; }); }}
                 onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
-                onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; }} />
+                onBlur={e => { (e.target as HTMLInputElement).style.borderColor = errors.postalCode ? '#ef4444' : CSS.border; }} />
+              <ErrorMsg field="postalCode" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <label style={labelStyle}>Nr. <span style={{ color: '#ef4444' }}>*</span></label>
-              <input style={inputStyle} type="text" placeholder="12" value={houseNumber}
-                onChange={e => { setHouseNumber(e.target.value); handlePostcodeChange(postalCode, e.target.value); }}
+              <input style={{ ...inputStyle, ...errorBorder('houseNumber') }} type="text" placeholder="12" value={houseNumber}
+                onChange={e => { setHouseNumber(e.target.value); handlePostcodeChange(postalCode, e.target.value); setErrors(prev => { const n = {...prev}; delete n.houseNumber; delete n.street; return n; }); }}
                 onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
-                onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; }} />
+                onBlur={e => { (e.target as HTMLInputElement).style.borderColor = errors.houseNumber ? '#ef4444' : CSS.border; }} />
+              <ErrorMsg field="houseNumber" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <label style={labelStyle}>Toev.</label>
