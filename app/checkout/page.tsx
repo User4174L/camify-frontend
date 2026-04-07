@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useCart, type CartItem } from '@/context/CartContext';
 import { assetPath } from '@/lib/utils';
@@ -351,13 +352,28 @@ export default function CheckoutPage() {
   const [selectedPayment, setSelectedPayment] = useState('ideal');
   const [selectedBank, setSelectedBank] = useState('');
 
-  /* promo — only show when there are active promotions running
-   * Set this to true when a campaign is active (e.g. via CMS, env var, or API)
-   * When false: no promo field is shown at all — prevents coupon-hunting abandonment */
+  /* promo — two ways to apply:
+   * 1. Auto-apply via URL: /checkout?discount=WINTER10
+   * 2. Manual: small link "Heb je een kortingscode?" (only if hasActivePromotion=true)
+   *
+   * Set hasActivePromotion to true when a campaign is running.
+   * When false AND no URL param: nothing shown at all. */
   const hasActivePromotion = false; // TODO: koppel aan CMS/API voor actieve campagnes
+  const searchParams = useSearchParams();
   const [showPromoField, setShowPromoField] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
+  const [promoAutoApplied, setPromoAutoApplied] = useState(false);
+
+  // Auto-apply discount from URL param: /checkout?discount=CODE
+  useEffect(() => {
+    const urlCode = searchParams.get('discount') || searchParams.get('code') || searchParams.get('promo');
+    if (urlCode && !promoApplied) {
+      setPromoCode(urlCode.toUpperCase());
+      setPromoApplied(true);
+      setPromoAutoApplied(true);
+    }
+  }, [searchParams, promoApplied]);
 
   /* computed */
   const grandTotal = total + shippingCost + protectionTotal;
@@ -946,33 +962,51 @@ export default function CheckoutPage() {
           );
         })}
 
-        {/* Promo code — only visible when hasActivePromotion is true */}
-        {hasActivePromotion && <div style={{ marginTop: 16, paddingTop: 12, borderTop: `1px solid ${CSS.border}` }}>
-          {!showPromoField && !promoApplied ? (
-            <button
-              onClick={() => setShowPromoField(true)}
-              style={{ background: 'none', border: 'none', padding: 0, fontSize: '.78rem', color: CSS.textMuted, cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}>
-              Heb je een kortingscode?
-            </button>
-          ) : (
-            <div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <TagIcon />
-                <input style={{ ...inputStyle, flex: 1, fontSize: '.8rem', padding: '9px 12px' }} type="text" placeholder="Kortingscode" value={promoCode} onChange={e => setPromoCode(e.target.value)} autoFocus={showPromoField && !promoApplied} />
-                {promoCode && !promoApplied && (
-                  <button onClick={() => setPromoApplied(true)} style={{ background: CSS.dark, color: '#fff', border: 'none', borderRadius: CSS.r, padding: '9px 14px', fontSize: '.75rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>Toepassen</button>
-                )}
-                {promoApplied && <span style={{ fontSize: '.8rem', fontWeight: 600, color: CSS.green }}>- &euro; 50</span>}
+        {/* Promo code — auto-applied via URL or manual via link */}
+        {(promoApplied || hasActivePromotion) && (
+          <div style={{ marginTop: 16, paddingTop: 12, borderTop: `1px solid ${CSS.border}` }}>
+            {promoApplied ? (
+              /* Korting toegepast — groene banner */
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                background: CSS.greenLight, border: '1px solid #bbf7d0', borderRadius: CSS.r,
+              }}>
+                <CheckIcon size={14} stroke="#166534" strokeWidth={2.5} />
+                <div style={{ flex: 1 }}>
+                  <span style={{ fontSize: '.8rem', fontWeight: 600, color: '#166534' }}>
+                    Korting {promoCode} toegepast
+                  </span>
+                </div>
+                <span style={{ fontSize: '.85rem', fontWeight: 700, color: '#166534' }}>- &euro; 50</span>
+                <button onClick={() => { setPromoApplied(false); setPromoAutoApplied(false); setPromoCode(''); setShowPromoField(false); }}
+                  style={{ background: 'none', border: 'none', padding: 0, fontSize: '.7rem', color: '#166534', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline', marginLeft: 4 }}>
+                  Verwijderen
+                </button>
               </div>
-              {!promoApplied && (
+            ) : !showPromoField ? (
+              /* Link om veld te openen */
+              <button onClick={() => setShowPromoField(true)}
+                style={{ background: 'none', border: 'none', padding: 0, fontSize: '.78rem', color: CSS.textMuted, cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}>
+                Heb je een kortingscode?
+              </button>
+            ) : (
+              /* Invoerveld */
+              <div>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <TagIcon />
+                  <input style={{ ...inputStyle, flex: 1, fontSize: '.8rem', padding: '9px 12px' }} type="text" placeholder="Kortingscode" value={promoCode} onChange={e => setPromoCode(e.target.value.toUpperCase())} autoFocus />
+                  {promoCode && (
+                    <button onClick={() => setPromoApplied(true)} style={{ background: CSS.dark, color: '#fff', border: 'none', borderRadius: CSS.r, padding: '9px 14px', fontSize: '.75rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>Toepassen</button>
+                  )}
+                </div>
                 <button onClick={() => { setShowPromoField(false); setPromoCode(''); }}
                   style={{ background: 'none', border: 'none', padding: '6px 0 0', fontSize: '.72rem', color: CSS.textMuted, cursor: 'pointer', fontFamily: 'inherit' }}>
                   Annuleren
                 </button>
-              )}
-            </div>
-          )}
-        </div>}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Total breakdown */}
         <div style={{ background: '#fff', borderRadius: CSS.rl, border: `1.5px solid ${CSS.dark}`, padding: 18, marginTop: 20 }}>
