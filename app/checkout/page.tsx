@@ -770,7 +770,7 @@ export default function CheckoutPage() {
           <span style={{ fontSize: '.7rem', color: CSS.textMuted, fontStyle: 'italic' }}>(verlenging optioneel)</span>
         </div>
         <p style={{ fontSize: '.78rem', color: CSS.textSec, marginBottom: 14, lineHeight: 1.5 }}>
-          Elk product wordt geleverd met garantie. Verleng deze optioneel met 1 of 2 jaar, of kies een vervangend toestel tijdens reparatie.
+          Elk product wordt geleverd met garantie. Verleng deze optioneel met 1 of 2 jaar. Je kunt ook kiezen voor een vervangend toestel tijdens een eventuele reparatie.
         </p>
 
         {items.map((item, idx) => {
