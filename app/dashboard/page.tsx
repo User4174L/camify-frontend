@@ -115,6 +115,27 @@ const MOCK_QUOTES = [
   { id: 'QTE000001', name: 'Test Test', bedrijf: '—', email: 'admin@camera-tweedehands.nl', created: '09-03-2026', status: 'Wacht op prijsvoorstel', sellCount: 1, buyCount: 0 },
 ];
 
+const MOCK_REPARATEURS = [
+  'Canon Nederland Service',
+  'Nikon Service Center',
+  'Sony Professional Service',
+  'Fujifilm Reparatie',
+  'Camera Service Heerhugowaard',
+  'Photo Repair Centre Amsterdam',
+  'Intern (eigen werkplaats)',
+];
+
+const MOCK_REPARATIES: Reparatie[] = [
+  { id: 'REP000128', klant: 'Maria Jansen', email: 'maria@fotostudio.nl', tel: '06-98765432', apparaat: 'Canon EOS R5 Body', serienr: '021034000789', sku: '21304', customProduct: false, klacht: 'Sensor stof, AF werkt onregelmatig op f/8+', accessoires: 'Body, 2x accu, lader, originele doos', opmerkingen: 'Klant wil graag snel terug i.v.m. shoot eind maart.', documenten: ['intake_REP000128.pdf'], reparateur: 'Canon Nederland Service', created: '09-03-2026', updated: '11-03-2026', status: 'Bij reparateur', kostenRaming: 145, kostenWerkelijk: null, garantie: false, fabrieksgarantie: false, fabrieksgarantieNotitie: '', herkomst: 'Klant' },
+  { id: 'REP000127', klant: 'Eigen voorraad', email: '—', tel: '—', apparaat: 'Sony A7 IV Body', serienr: '4327891', sku: '04400', customProduct: false, klacht: 'Shutter blokkeert, foutmelding E61:00', accessoires: 'Body only', opmerkingen: 'Uit webshop gehaald tot reparatie afgerond.', documenten: [], reparateur: 'Sony Professional Service', created: '07-03-2026', updated: '10-03-2026', status: 'Wacht op offerte', kostenRaming: null, kostenWerkelijk: null, garantie: false, fabrieksgarantie: false, fabrieksgarantieNotitie: '', herkomst: 'Voorraad' },
+  { id: 'REP000126', klant: 'Eigen voorraad', email: '—', tel: '—', apparaat: 'Nikon Z6 III Body', serienr: '7820112', sku: '15201', customProduct: false, klacht: 'EVF beeldstoring intermitterend', accessoires: 'Body, accu', opmerkingen: '', documenten: ['garantiebewijs_nikon.pdf'], reparateur: 'Nikon Service Center', created: '05-03-2026', updated: '09-03-2026', status: 'In behandeling', kostenRaming: 220, kostenWerkelijk: null, garantie: true, fabrieksgarantie: true, fabrieksgarantieNotitie: 'Fabrieksgarantie Nikon NL t/m 12-2027 — aankoop via officieel kanaal, kosteloze reparatie via Nikon Service Center.', herkomst: 'Voorraad' },
+  { id: 'REP000125', klant: 'Peter van der Berg', email: 'peter.berg@gmail.com', tel: '—', apparaat: 'Fujifilm X-T5 Body', serienr: '2K11A03291', sku: '18743', customProduct: false, klacht: 'Knop "Q" werkt niet, behuizing los', accessoires: 'Body, lader, riem', opmerkingen: 'Klant akkoord met kostenraming per mail (08-03).', documenten: ['offerte_REP000125.pdf'], reparateur: 'Fujifilm Reparatie', created: '04-03-2026', updated: '08-03-2026', status: 'Klaar voor afhaling', kostenRaming: 95, kostenWerkelijk: 110, garantie: false, fabrieksgarantie: false, fabrieksgarantieNotitie: '', herkomst: 'Klant' },
+  { id: 'REP000124', klant: 'Anna Bos', email: 'anna@bosmedia.nl', tel: '06-77889900', apparaat: 'Canon RF 50mm f/1.2L USM', serienr: 'CR50L-44782', sku: '21480', customProduct: false, klacht: 'AF-motor maakt geluid, focus traag', accessoires: 'Lens, voor- en achterdop, zonnekap', opmerkingen: 'Afgehandeld, factuur verstuurd.', documenten: ['factuur_REP000124.pdf'], reparateur: 'Canon Nederland Service', created: '02-03-2026', updated: '07-03-2026', status: 'Afgerond', kostenRaming: 180, kostenWerkelijk: 165, garantie: false, fabrieksgarantie: false, fabrieksgarantieNotitie: '', herkomst: 'Klant' },
+  { id: 'REP000123', klant: 'Eigen voorraad', email: '—', tel: '—', apparaat: 'Sony FE 70-200mm f/2.8 GM OSS II', serienr: '1849221', sku: '—', customProduct: false, klacht: 'Zoom-ring stug, geringe lensspeling', accessoires: 'Lens, statiefvoet, koffer', opmerkingen: 'Interne werkplaats, geen externe kosten.', documenten: [], reparateur: 'Intern (eigen werkplaats)', created: '01-03-2026', updated: '06-03-2026', status: 'In behandeling', kostenRaming: 0, kostenWerkelijk: 0, garantie: false, fabrieksgarantie: false, fabrieksgarantieNotitie: '', herkomst: 'Voorraad' },
+  { id: 'REP000122', klant: 'Sophie Hendriks', email: 'sophie.h@outlook.com', tel: '06-44332211', apparaat: 'Canon EOS R6 II (import JP)', serienr: '093124871', sku: '—', customProduct: true, klacht: 'Waterschade, body reageert niet', accessoires: 'Body, accu', opmerkingen: 'Geannuleerd: reparatie niet rendabel (waterschade totaal).', documenten: ['schaderapport_REP000122.pdf'], reparateur: 'Photo Repair Centre Amsterdam', created: '26-02-2026', updated: '04-03-2026', status: 'Geannuleerd', kostenRaming: 850, kostenWerkelijk: null, garantie: false, fabrieksgarantie: false, fabrieksgarantieNotitie: '', herkomst: 'Klant' },
+  { id: 'REP000121', klant: 'Rick Mulder', email: 'rick@studiomulder.nl', tel: '06-99887766', apparaat: 'Hasselblad X2D 100C', serienr: 'VR54123', sku: '60125', customProduct: false, klacht: 'IBIS-kalibratie, klant meldt micro-shake', accessoires: 'Body, accu, lader', opmerkingen: '', documenten: [], reparateur: 'Photo Repair Centre Amsterdam', created: '24-02-2026', updated: '03-03-2026', status: 'Nieuw', kostenRaming: null, kostenWerkelijk: null, garantie: false, fabrieksgarantie: false, fabrieksgarantieNotitie: '', herkomst: 'Klant' },
+];
+
 /* ------------------------------------------------------------------ */
 /*  Shared style helpers                                               */
 /* ------------------------------------------------------------------ */
@@ -1640,6 +1661,680 @@ function QuoteDetailPage({ quoteId, onBack }: { quoteId: string; onBack: () => v
 }
 
 /* ------------------------------------------------------------------ */
+/*  Reparaties Page                                                    */
+/* ------------------------------------------------------------------ */
+/*
+ * ===========================================================================
+ * DEVELOPER-NOTITIE — STATUS-LOGICA REPARATIE vs. PRODUCT
+ * ===========================================================================
+ * Het PRODUCT-veld zoekt op bestaande producten/varianten (datalist). Staat
+ * het apparaat NIET in de catalogus, dan mag je een vrije titel intypen →
+ * dit wordt een "custom product" (customProduct = true, geen SKU-koppeling).
+ *
+ * Gevolg voor de productstatus bij het aanmaken van een reparatie:
+ *
+ *   • EIGEN VOORRAAD-product (herkomst = 'Voorraad', SKU gekoppeld):
+ *       → zet de gekoppelde variant op status "In reparatie"
+ *       → haal de variant UIT de webshop (niet meer zichtbaar/koopbaar)
+ *       → bij afronden reparatie: variant weer terug naar "Verkoopbaar"
+ *
+ *   • KLANT-product OF CUSTOM product (geen voorraad-record):
+ *       → er is GEEN variant om te muteren; het product krijgt GEEN status.
+ *       → de reparatie-record zelf is leidend (status leeft op de reparatie).
+ *
+ * Backend moet dus bij create:  if (herkomst==='Voorraad' && sku) -> variant
+ * status patchen + uit feed/webshop halen; anders niets met productstatus doen.
+ * ===========================================================================
+ */
+type Reparatie = {
+  id: string;
+  klant: string;
+  email: string;
+  tel: string;
+  apparaat: string;
+  serienr: string;
+  sku: string;
+  customProduct: boolean;
+  klacht: string;
+  accessoires: string;
+  reparateur: string;
+  created: string;
+  updated: string;
+  status: string;
+  kostenRaming: number | null;
+  kostenWerkelijk: number | null;
+  garantie: boolean;
+  fabrieksgarantie: boolean;
+  fabrieksgarantieNotitie: string;
+  opmerkingen: string;
+  documenten: string[];
+  herkomst: 'Klant' | 'Voorraad';
+};
+
+// Bekende klanten — afgeleid uit orders + quotes. Zoekbaar op naam óf e-mail.
+const REPARATIE_KLANTEN = Array.from(
+  new Map(
+    [
+      ...MOCK_ORDERS.map(o => ({ naam: o.naam, email: o.email, tel: o.tel })),
+      ...MOCK_QUOTES.map(q => ({ naam: q.name, email: q.email, tel: '' })),
+    ]
+      .filter(c => c.email && c.email !== '—')
+      .map(c => [c.email, c] as const),
+  ).values(),
+);
+
+const REPARATIE_STATUSSEN = ['Nieuw', 'Wacht op offerte', 'In behandeling', 'Bij reparateur', 'Klaar voor afhaling', 'Afgerond', 'Geannuleerd'] as const;
+
+function reparatieStatusColor(s: string) {
+  switch (s) {
+    case 'Nieuw': return ACCENT;
+    case 'Wacht op offerte': return '#F59E0B';
+    case 'In behandeling': return BLUE;
+    case 'Bij reparateur': return '#8B5CF6';
+    case 'Klaar voor afhaling': return GREEN;
+    case 'Afgerond': return GREEN;
+    case 'Geannuleerd': return RED;
+    default: return GREY;
+  }
+}
+
+function ModalShell({ title, onClose, width, children }: { title: string; onClose: () => void; width?: number; children: React.ReactNode }) {
+  return (
+    <div
+      onClick={onClose}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(30,33,51,0.45)', zIndex: 2000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '48px 16px', overflowY: 'auto' }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{ background: WHITE, borderRadius: 12, width: width || 560, maxWidth: '100%', boxShadow: '0 12px 40px rgba(0,0,0,0.18)' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 22px', borderBottom: `1px solid ${BORDER}` }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: DARK, margin: 0 }}>{title}</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: GREY, fontSize: 20, lineHeight: 1, cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>&times;</button>
+        </div>
+        <div style={{ padding: 22 }}>{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function ReparatieFormField({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
+  return (
+    <div style={{ gridColumn: full ? '1 / -1' : undefined }}>
+      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: DARK, marginBottom: 5 }}>{label}</label>
+      {children}
+    </div>
+  );
+}
+
+// Zoekt op producttitel ÓF SKU. Resultaat = lijst van product + SKU eronder.
+// Zoeken op SKU geeft (vrijwel) één resultaat. Vrije tekst zonder match = custom product.
+function ProductVariantPicker({
+  apparaat,
+  onSelectVariant,
+  onTypeCustom,
+}: {
+  apparaat: string;
+  onSelectVariant: (title: string, sku: string) => void;
+  onTypeCustom: (title: string) => void;
+}) {
+  const [query, setQuery] = useState(apparaat);
+  const [open, setOpen] = useState(false);
+  const q = query.trim().toLowerCase();
+  const results = q
+    ? MOCK_VARIANTS.filter(v => v.title.toLowerCase().includes(q) || v.sku.toLowerCase().includes(q)).slice(0, 8)
+    : [];
+  const fieldInput = { ...inputStyle, width: '100%', boxSizing: 'border-box' as const };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <input
+        type="text"
+        value={query}
+        onChange={e => { setQuery(e.target.value); onTypeCustom(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        placeholder="Zoek op producttitel of SKU — of typ een vrije titel"
+        style={fieldInput}
+        autoComplete="off"
+      />
+      {open && q !== '' && (
+        <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50, marginTop: 4, background: WHITE, border: `1px solid ${BORDER}`, borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', maxHeight: 240, overflowY: 'auto' }}>
+          {results.map(v => (
+            <button
+              key={v.sku}
+              type="button"
+              onMouseDown={e => e.preventDefault()}
+              onClick={() => { setQuery(v.title); onSelectVariant(v.title, v.sku); setOpen(false); }}
+              style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 12px', border: 'none', borderBottom: `1px solid ${BORDER}`, background: WHITE, cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              <div style={{ fontSize: 13, fontWeight: 600, color: DARK }}>{v.title}</div>
+              <div style={{ fontSize: 11, color: GREY, marginTop: 2 }}>SKU: {v.sku} &middot; {v.conditie}</div>
+            </button>
+          ))}
+          {results.length === 0 && (
+            <div style={{ padding: '10px 12px', fontSize: 12, color: ACCENT }}>
+              Geen catalogusproduct gevonden — &laquo;{query}&raquo; wordt een <strong>custom product</strong>.
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ReparatieCreateModal({ onClose, onCreate }: { onClose: () => void; onCreate: (r: Reparatie) => void }) {
+  const [herkomst, setHerkomst] = useState<'Klant' | 'Voorraad'>('Klant');
+  const [klant, setKlant] = useState('');
+  const [email, setEmail] = useState('');
+  const [tel, setTel] = useState('');
+  const [apparaat, setApparaat] = useState('');
+  const [serienr, setSerienr] = useState('');
+  const [sku, setSku] = useState('');
+  const [selectedFromCatalog, setSelectedFromCatalog] = useState(false);
+  const [klacht, setKlacht] = useState('');
+  const [accessoires, setAccessoires] = useState('');
+  const [opmerkingen, setOpmerkingen] = useState('');
+  const [documenten, setDocumenten] = useState<string[]>([]);
+  const [reparateur, setReparateur] = useState(''); // leeg = nog niet toegewezen
+  const [kostenRaming, setKostenRaming] = useState('');
+  const [status, setStatus] = useState<string>('Nieuw');
+  const [garantie, setGarantie] = useState(false);
+  const [fabrieksgarantie, setFabrieksgarantie] = useState(false);
+  const [fabrieksgarantieNotitie, setFabrieksgarantieNotitie] = useState('');
+
+  const fieldInput = { ...inputStyle, width: '100%', boxSizing: 'border-box' as const };
+  const fieldSelect = { ...selectStyle, width: '100%', boxSizing: 'border-box' as const };
+  const isVoorraad = herkomst === 'Voorraad';
+
+  // Custom product = vrije titel ingetypt, niet uit de catalogus gekozen.
+  const isCustomProduct = apparaat.trim() !== '' && !selectedFromCatalog;
+  const skuKoppeling = isVoorraad && selectedFromCatalog; // alleen dan variant-status muteren
+
+  // Klant kiezen op naam óf e-mail → vult de overige velden automatisch in.
+  const pickKlant = (val: string) => {
+    setKlant(val);
+    const hit = REPARATIE_KLANTEN.find(
+      k => k.naam.toLowerCase() === val.trim().toLowerCase() || k.email.toLowerCase() === val.trim().toLowerCase(),
+    );
+    if (hit) {
+      setKlant(hit.naam);
+      setEmail(hit.email);
+      if (hit.tel) setTel(hit.tel);
+    }
+  };
+
+  const addDocs = (files: FileList | null) => {
+    if (!files) return;
+    setDocumenten(prev => [...prev, ...Array.from(files).map(f => f.name)]);
+  };
+
+  const submit = () => {
+    const today = new Date().toLocaleDateString('nl-NL');
+    const nextId = 'REP' + String(129 + Math.floor(Math.random() * 9000)).padStart(6, '0');
+    onCreate({
+      id: nextId,
+      klant: isVoorraad ? 'Eigen voorraad' : (klant || '—'),
+      email: isVoorraad ? '—' : (email || '—'),
+      tel: isVoorraad ? '—' : (tel || '—'),
+      apparaat: apparaat || '—',
+      serienr: serienr || '—',
+      sku: skuKoppeling ? (sku || '—') : '—', // custom/klant-product → geen SKU-koppeling
+      customProduct: isCustomProduct,
+      klacht: klacht || '—',
+      accessoires: accessoires || '—',
+      opmerkingen: opmerkingen || '—',
+      documenten,
+      reparateur: reparateur || '—',
+      created: today,
+      updated: today,
+      status,
+      kostenRaming: kostenRaming ? Number(kostenRaming) : null,
+      kostenWerkelijk: null,
+      garantie,
+      fabrieksgarantie,
+      fabrieksgarantieNotitie: fabrieksgarantie ? fabrieksgarantieNotitie : '',
+      herkomst,
+    });
+    onClose();
+  };
+
+  const noteStyle: React.CSSProperties = { fontSize: 11, color: GREY, marginTop: 4, lineHeight: 1.4 };
+
+  return (
+    <ModalShell title="Reparatie aanmelden" onClose={onClose} width={640}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <ReparatieFormField label="Herkomst">
+          <select value={herkomst} onChange={e => setHerkomst(e.target.value as 'Klant' | 'Voorraad')} style={fieldSelect}>
+            <option value="Klant">Klant</option>
+            <option value="Voorraad">Eigen voorraad</option>
+          </select>
+        </ReparatieFormField>
+        <ReparatieFormField label="Reparatiestatus">
+          <select value={status} onChange={e => setStatus(e.target.value)} style={fieldSelect}>
+            {REPARATIE_STATUSSEN.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </ReparatieFormField>
+
+        {!isVoorraad && (
+          <>
+            <ReparatieFormField label="Klant (zoek op naam of e-mail)" full>
+              <input
+                list="rep-klanten"
+                type="text"
+                value={klant}
+                onChange={e => pickKlant(e.target.value)}
+                placeholder="Begin te typen — bestaande klant of nieuw"
+                style={fieldInput}
+              />
+              <datalist id="rep-klanten">
+                {REPARATIE_KLANTEN.map(k => (
+                  <option key={k.email} value={k.naam}>{k.email}</option>
+                ))}
+              </datalist>
+              <div style={noteStyle}>Bestaande klant? Kies uit de lijst en de gegevens worden ingevuld. Nieuwe klant? Vul hieronder zelf in.</div>
+            </ReparatieFormField>
+            <ReparatieFormField label="E-mail">
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="naam@voorbeeld.nl" style={fieldInput} />
+            </ReparatieFormField>
+            <ReparatieFormField label="Telefoon">
+              <input type="text" value={tel} onChange={e => setTel(e.target.value)} placeholder="06-12345678" style={fieldInput} />
+            </ReparatieFormField>
+          </>
+        )}
+
+        <ReparatieFormField label="Product (zoek op titel of SKU)" full>
+          {/* DEV: zoekt op producttitel OF SKU in MOCK_VARIANTS. Geen match / vrije titel = custom product (geen SKU-koppeling, geen productstatus). Zie kop-comment. */}
+          <ProductVariantPicker
+            apparaat={apparaat}
+            onSelectVariant={(title, vSku) => { setApparaat(title); setSku(vSku); setSelectedFromCatalog(true); }}
+            onTypeCustom={(text) => { setApparaat(text); setSelectedFromCatalog(false); setSku(''); }}
+          />
+          {isCustomProduct
+            ? <div style={{ ...noteStyle, color: ACCENT }}>Vrije titel → wordt aangemaakt als <strong>custom product</strong> (geen voorraad-koppeling, geen productstatus).</div>
+            : selectedFromCatalog
+              ? <div style={{ ...noteStyle, color: GREEN }}>&#10003; Gekoppeld aan catalogusvariant — SKU {sku}.</div>
+              : <div style={noteStyle}>Zoek op titel (alle SKU&apos;s) of op SKU (één resultaat). Niet gevonden? Typ de volledige titel.</div>}
+        </ReparatieFormField>
+
+        <ReparatieFormField label="Serienummer">
+          <input type="text" value={serienr} onChange={e => setSerienr(e.target.value)} placeholder="Serienr." style={fieldInput} />
+        </ReparatieFormField>
+        <ReparatieFormField label="SKU / voorraad-koppeling">
+          <input
+            type="text"
+            value={skuKoppeling ? sku : ''}
+            disabled
+            placeholder={isVoorraad ? (selectedFromCatalog ? '' : 'Kies eerst een catalogusvariant') : 'n.v.t. (klant- of custom product)'}
+            style={{ ...fieldInput, background: SURFACE, color: GREY }}
+          />
+        </ReparatieFormField>
+
+        <ReparatieFormField label="Klacht / omschrijving" full>
+          <textarea value={klacht} onChange={e => setKlacht(e.target.value)} placeholder="Beschrijf het defect of de klacht..." style={{ ...fieldInput, minHeight: 70, resize: 'vertical' }} />
+        </ReparatieFormField>
+        <ReparatieFormField label="Meegeleverde accessoires" full>
+          <textarea value={accessoires} onChange={e => setAccessoires(e.target.value)} placeholder="Bijv. body, 2x accu, lader, originele doos" style={{ ...fieldInput, minHeight: 56, resize: 'vertical' }} />
+        </ReparatieFormField>
+        <ReparatieFormField label="Opmerkingen (algemeen)" full>
+          <textarea value={opmerkingen} onChange={e => setOpmerkingen(e.target.value)} placeholder="Algemene opmerkingen bij deze reparatie..." style={{ ...fieldInput, minHeight: 56, resize: 'vertical' }} />
+        </ReparatieFormField>
+
+        <ReparatieFormField label="Reparateur">
+          <select value={reparateur} onChange={e => setReparateur(e.target.value)} style={fieldSelect}>
+            <option value="">— Nog niet toegewezen —</option>
+            {MOCK_REPARATEURS.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+        </ReparatieFormField>
+        <ReparatieFormField label="Kostenraming">
+          <div style={{ display: 'flex', alignItems: 'stretch', border: '1px solid #D1D5DB', borderRadius: 8, overflow: 'hidden' }}>
+            <span style={{ display: 'flex', alignItems: 'center', padding: '0 10px', background: SURFACE, color: GREY, fontSize: 13, borderRight: `1px solid ${BORDER}` }}>&euro;</span>
+            <input type="number" value={kostenRaming} onChange={e => setKostenRaming(e.target.value)} placeholder="0" style={{ ...inputStyle, border: 'none', width: '100%', boxSizing: 'border-box' }} />
+          </div>
+        </ReparatieFormField>
+
+        <ReparatieFormField label="Garantie" full>
+          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: DARK, cursor: 'pointer' }}>
+              <input type="checkbox" checked={garantie} onChange={e => setGarantie(e.target.checked)} style={{ cursor: 'pointer' }} />
+              Onder garantie
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: DARK, cursor: 'pointer' }}>
+              <input type="checkbox" checked={fabrieksgarantie} onChange={e => setFabrieksgarantie(e.target.checked)} style={{ cursor: 'pointer' }} />
+              Fabrieksgarantie
+            </label>
+          </div>
+          {fabrieksgarantie && (
+            <textarea
+              value={fabrieksgarantieNotitie}
+              onChange={e => setFabrieksgarantieNotitie(e.target.value)}
+              placeholder="Garantie geldig tot welke datum en waar de originele garantie geldt (merk, kanaal, servicepunt)..."
+              style={{ ...fieldInput, minHeight: 56, resize: 'vertical', marginTop: 8 }}
+            />
+          )}
+        </ReparatieFormField>
+
+        <ReparatieFormField label="Documenten" full>
+          <label style={{ ...buttonOutline, display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+            <span style={{ fontSize: 14 }}>&#128206;</span> Document toevoegen
+            <input type="file" multiple onChange={e => addDocs(e.target.files)} style={{ display: 'none' }} />
+          </label>
+          {documenten.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+              {documenten.map((d, i) => (
+                <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 999, fontSize: 12, color: DARK }}>
+                  &#128196; {d}
+                  <button type="button" onClick={() => setDocumenten(prev => prev.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: GREY, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, padding: 0 }}>&times;</button>
+                </span>
+              ))}
+            </div>
+          )}
+        </ReparatieFormField>
+      </div>
+
+      {isVoorraad && (
+        <div style={{ marginTop: 16, padding: '10px 14px', background: ACCENT_BG, borderRadius: 8, fontSize: 12, color: DARK, lineHeight: 1.5 }}>
+          <strong>Eigen voorraad:</strong> de gekoppelde variant wordt op status <em>&laquo;In reparatie&raquo;</em> gezet en uit de webshop gehaald totdat de reparatie is afgerond.
+        </div>
+      )}
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+        <button onClick={onClose} style={buttonOutline}>Annuleren</button>
+        <button onClick={submit} style={buttonAccent}>Reparatie aanmelden</button>
+      </div>
+    </ModalShell>
+  );
+}
+
+function ReparatieDetailPage({ rep, onBack, onSave }: { rep: Reparatie; onBack: () => void; onSave: (r: Reparatie) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState<Reparatie>(rep);
+
+  // Sync wanneer een andere reparatie geselecteerd wordt.
+  useEffect(() => { setDraft(rep); setEditing(false); }, [rep]);
+
+  const set = <K extends keyof Reparatie>(k: K, v: Reparatie[K]) => setDraft(d => ({ ...d, [k]: v }));
+
+  const startEdit = () => { setDraft(rep); setEditing(true); };
+  const cancelEdit = () => { setDraft(rep); setEditing(false); };
+  const save = () => {
+    onSave({ ...draft, updated: new Date().toLocaleDateString('nl-NL') });
+    setEditing(false);
+  };
+
+  const fieldInput = { ...inputStyle, width: '100%', boxSizing: 'border-box' as const };
+  const fieldSelect = { ...selectStyle, width: '100%', boxSizing: 'border-box' as const };
+
+  // Activiteitenlog — afgeleid uit de reparatie (mock; backend levert echte historie).
+  const log: { date: string; user: string; action: string }[] = [
+    { date: rep.updated, user: 'admin', action: `Status: ${rep.status}` },
+    ...(rep.kostenWerkelijk != null ? [{ date: rep.updated, user: rep.reparateur !== '—' ? rep.reparateur : 'admin', action: `Werkelijke kosten geregistreerd: € ${rep.kostenWerkelijk.toLocaleString('nl-NL')}` }] : []),
+    ...(rep.reparateur !== '—' ? [{ date: rep.created, user: 'admin', action: `Toegewezen aan reparateur: ${rep.reparateur}` }] : []),
+    { date: rep.created, user: 'admin', action: `Reparatie aangemeld (${rep.herkomst === 'Voorraad' ? 'eigen voorraad' : rep.customProduct ? 'custom product' : 'klantproduct'})` },
+  ];
+
+  const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '8px 0', borderBottom: `1px solid ${BORDER}`, fontSize: 13, alignItems: editing ? 'center' : 'flex-start' }}>
+      <span style={{ color: GREY, flexShrink: 0, paddingTop: editing ? 0 : 1 }}>{label}</span>
+      <span style={{ color: DARK, textAlign: 'right', maxWidth: editing ? 260 : 300, width: editing ? 260 : undefined }}>{children}</span>
+    </div>
+  );
+
+  return (
+    <div>
+      <button onClick={onBack} style={{ background: 'none', border: 'none', color: ACCENT, fontSize: 13, fontWeight: 500, cursor: 'pointer', padding: 0, marginBottom: 20, fontFamily: 'inherit' }}>&larr; Alle reparaties</button>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, gap: 16, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: DARK, margin: 0 }}>Reparatie {rep.id}</h2>
+          <Badge color={reparatieStatusColor(rep.status)} bg={reparatieStatusColor(rep.status) + '18'}>{rep.status}</Badge>
+          {rep.customProduct && <Badge color={GREY}>custom product</Badge>}
+          {rep.garantie && <Badge color={GREEN}>garantie</Badge>}
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          {editing ? (
+            <>
+              <button onClick={cancelEdit} style={buttonOutline}>Annuleren</button>
+              <button onClick={save} style={buttonAccent}>Opslaan</button>
+            </>
+          ) : (
+            <button onClick={startEdit} style={buttonDark}>Bewerken</button>
+          )}
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20, alignItems: 'start' }}>
+        {/* Reparatie */}
+        <div style={cardStyle}>
+          <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Reparatie</h3>
+          <Row label="Status">
+            {editing
+              ? <select value={draft.status} onChange={e => set('status', e.target.value)} style={fieldSelect}>{REPARATIE_STATUSSEN.map(s => <option key={s} value={s}>{s}</option>)}</select>
+              : rep.status}
+          </Row>
+          <Row label="Reparateur">
+            {editing
+              ? <select value={draft.reparateur === '—' ? '' : draft.reparateur} onChange={e => set('reparateur', e.target.value || '—')} style={fieldSelect}><option value="">— Nog niet toegewezen —</option>{MOCK_REPARATEURS.map(r => <option key={r} value={r}>{r}</option>)}</select>
+              : rep.reparateur}
+          </Row>
+          <Row label="Kostenraming">
+            {editing
+              ? <input type="number" value={draft.kostenRaming ?? ''} onChange={e => set('kostenRaming', e.target.value ? Number(e.target.value) : null)} style={fieldInput} />
+              : (rep.kostenRaming != null ? `€ ${rep.kostenRaming.toLocaleString('nl-NL')}` : '—')}
+          </Row>
+          <Row label="Werkelijke kosten">
+            {editing
+              ? <input type="number" value={draft.kostenWerkelijk ?? ''} onChange={e => set('kostenWerkelijk', e.target.value ? Number(e.target.value) : null)} style={fieldInput} />
+              : (rep.kostenWerkelijk != null ? `€ ${rep.kostenWerkelijk.toLocaleString('nl-NL')}` : '—')}
+          </Row>
+          <Row label="Garantie">
+            {editing
+              ? <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}><input type="checkbox" checked={draft.garantie} onChange={e => set('garantie', e.target.checked)} /> Onder garantie</label>
+              : (rep.garantie ? <span style={{ color: GREEN }}>&#10003; Ja</span> : 'Nee')}
+          </Row>
+          <Row label="Fabrieksgarantie">
+            {editing
+              ? <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}><input type="checkbox" checked={draft.fabrieksgarantie} onChange={e => set('fabrieksgarantie', e.target.checked)} /> Ja</label>
+              : (rep.fabrieksgarantie ? <span style={{ color: GREEN }}>&#10003; Ja</span> : 'Nee')}
+          </Row>
+          {(editing ? draft.fabrieksgarantie : rep.fabrieksgarantie) && (
+            <Row label="Garantie t/m / waar">
+              {editing
+                ? <textarea value={draft.fabrieksgarantieNotitie} onChange={e => set('fabrieksgarantieNotitie', e.target.value)} placeholder="Geldig tot + waar de originele garantie geldt" style={{ ...fieldInput, minHeight: 52, resize: 'vertical' }} />
+                : <span style={{ display: 'inline-block', textAlign: 'right' }}>{rep.fabrieksgarantieNotitie || '—'}</span>}
+            </Row>
+          )}
+          <Row label="Aangemaakt">{rep.created}</Row>
+          <Row label="Laatst gewijzigd">{rep.updated}</Row>
+        </div>
+
+        {/* Klant & product */}
+        <div style={cardStyle}>
+          <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Klant &amp; product</h3>
+          <Row label="Herkomst">{rep.herkomst === 'Voorraad' ? 'Eigen voorraad' : 'Klant'}</Row>
+          <Row label="Klant">
+            {editing && rep.herkomst === 'Klant'
+              ? <input type="text" value={draft.klant} onChange={e => set('klant', e.target.value)} style={fieldInput} />
+              : rep.klant}
+          </Row>
+          <Row label="E-mail">
+            {editing && rep.herkomst === 'Klant'
+              ? <input type="email" value={draft.email} onChange={e => set('email', e.target.value)} style={fieldInput} />
+              : rep.email}
+          </Row>
+          <Row label="Telefoon">
+            {editing && rep.herkomst === 'Klant'
+              ? <input type="text" value={draft.tel} onChange={e => set('tel', e.target.value)} style={fieldInput} />
+              : rep.tel}
+          </Row>
+          <Row label="Product">
+            {editing
+              ? <input type="text" value={draft.apparaat} onChange={e => set('apparaat', e.target.value)} style={fieldInput} />
+              : <span style={{ fontWeight: 600 }}>{rep.apparaat}</span>}
+          </Row>
+          <Row label="Serienummer">
+            {editing
+              ? <input type="text" value={draft.serienr} onChange={e => set('serienr', e.target.value)} style={fieldInput} />
+              : rep.serienr}
+          </Row>
+          <Row label="SKU / koppeling">{rep.sku}{rep.customProduct ? ' (custom)' : ''}</Row>
+        </div>
+      </div>
+
+      <div style={{ ...cardStyle, marginBottom: 20 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: '0 0 12px' }}>Klacht, accessoires &amp; opmerkingen</h3>
+        <div style={{ fontSize: 12, fontWeight: 600, color: GREY, marginBottom: 4 }}>KLACHT / OMSCHRIJVING</div>
+        {editing
+          ? <textarea value={draft.klacht} onChange={e => set('klacht', e.target.value)} style={{ ...fieldInput, minHeight: 70, resize: 'vertical', marginBottom: 14 }} />
+          : <p style={{ fontSize: 13, color: DARK, margin: '0 0 14px', lineHeight: 1.5 }}>{rep.klacht}</p>}
+        <div style={{ fontSize: 12, fontWeight: 600, color: GREY, marginBottom: 4 }}>MEEGELEVERDE ACCESSOIRES</div>
+        {editing
+          ? <textarea value={draft.accessoires} onChange={e => set('accessoires', e.target.value)} style={{ ...fieldInput, minHeight: 56, resize: 'vertical', marginBottom: 14 }} />
+          : <p style={{ fontSize: 13, color: DARK, margin: '0 0 14px', lineHeight: 1.5 }}>{rep.accessoires}</p>}
+        <div style={{ fontSize: 12, fontWeight: 600, color: GREY, marginBottom: 4 }}>OPMERKINGEN (ALGEMEEN)</div>
+        {editing
+          ? <textarea value={draft.opmerkingen} onChange={e => set('opmerkingen', e.target.value)} style={{ ...fieldInput, minHeight: 56, resize: 'vertical' }} />
+          : <p style={{ fontSize: 13, color: DARK, margin: 0, lineHeight: 1.5 }}>{rep.opmerkingen}</p>}
+      </div>
+
+      <div style={{ ...cardStyle, marginBottom: 20 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 600, color: DARK, margin: 0 }}>Documenten</h3>
+          {editing && (
+            <label style={{ ...buttonOutline, display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '6px 14px', fontSize: 12 }}>
+              <span style={{ fontSize: 14 }}>&#128206;</span> Toevoegen
+              <input type="file" multiple onChange={e => { const f = e.target.files; if (f) set('documenten', [...draft.documenten, ...Array.from(f).map(x => x.name)]); }} style={{ display: 'none' }} />
+            </label>
+          )}
+        </div>
+        {(editing ? draft.documenten : rep.documenten).length === 0 ? (
+          <div style={{ fontSize: 13, color: GREY }}>Geen documenten toegevoegd.</div>
+        ) : (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {(editing ? draft.documenten : rep.documenten).map((d, i) => (
+              <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 999, fontSize: 12, color: DARK }}>
+                <span>&#128196;</span>
+                <span style={{ color: ACCENT, cursor: 'pointer' }}>{d}</span>
+                {editing && (
+                  <button type="button" onClick={() => set('documenten', draft.documenten.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: GREY, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, padding: 0 }}>&times;</button>
+                )}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <ActivityLog entries={log} />
+    </div>
+  );
+}
+
+function ReparatiesPage({ reparaties, onSelect, onCreate }: { reparaties: Reparatie[]; onSelect: (id: string) => void; onCreate: (r: Reparatie) => void }) {
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [selected, setSelected] = useState<string[]>([]);
+  const [createOpen, setCreateOpen] = useState(false);
+
+  const filtered = reparaties.filter(r => {
+    if (search) {
+      const q = search.toLowerCase();
+      if (![r.id, r.klant, r.apparaat, r.serienr, r.sku, r.reparateur].some(v => v.toLowerCase().includes(q))) return false;
+    }
+    if (statusFilter && r.status !== statusFilter) return false;
+    return true;
+  });
+
+  const toggleSelect = (id: string) => setSelected(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
+  const toggleAll = () => setSelected(selected.length === filtered.length ? [] : filtered.map(r => r.id));
+
+  const counts = REPARATIE_STATUSSEN.map(s => ({ s, n: reparaties.filter(r => r.status === s).length }));
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 16, flexWrap: 'wrap' }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, color: DARK, margin: 0 }}>Reparaties</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 12, color: GREY }}>{selected.length} geselecteerd</span>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={selectStyle}>
+            <option value="">Alle statussen</option>
+            {REPARATIE_STATUSSEN.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <input type="text" placeholder="Zoeken..." value={search} onChange={e => setSearch(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+          <button onClick={() => setCreateOpen(true)} style={buttonAccent}>+ Reparatie aanmelden</button>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+        <FilterPill label="Alle" count={reparaties.length} active={statusFilter === ''} onClick={() => setStatusFilter('')} />
+        {counts.filter(c => c.n > 0).map(c => (
+          <FilterPill key={c.s} label={c.s} count={c.n} active={statusFilter === c.s} onClick={() => setStatusFilter(statusFilter === c.s ? '' : c.s)} />
+        ))}
+      </div>
+
+      <div style={cardStyle}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, width: 40 }}>
+                  <input type="checkbox" checked={selected.length === filtered.length && filtered.length > 0} onChange={toggleAll} style={{ cursor: 'pointer' }} />
+                </th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Reparatienr</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Apparaat</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Klant</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Reparateur</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Status</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Aangemaakt</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'right' }}>Kosten</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, width: 40 }} />
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(r => (
+                <tr key={r.id} onClick={() => onSelect(r.id)} style={{ cursor: 'pointer' }}>
+                  <td style={tableCellStyle} onClick={e => e.stopPropagation()}>
+                    <input type="checkbox" checked={selected.includes(r.id)} onChange={() => toggleSelect(r.id)} style={{ cursor: 'pointer' }} />
+                  </td>
+                  <td style={{ ...tableCellStyle, fontWeight: 600, color: ACCENT }}>{r.id}</td>
+                  <td style={{ ...tableCellStyle, fontWeight: 500 }}>
+                    {r.apparaat}
+                    {r.garantie && <span style={{ marginLeft: 6, fontSize: 10, color: GREEN, fontWeight: 600 }}>&#10003; garantie</span>}
+                  </td>
+                  <td style={{ ...tableCellStyle, fontSize: 12, color: r.herkomst === 'Voorraad' ? GREY : undefined }}>{r.klant}</td>
+                  <td style={{ ...tableCellStyle, fontSize: 12 }}>{r.reparateur}</td>
+                  <td style={tableCellStyle}>
+                    <Badge color={reparatieStatusColor(r.status)} bg={reparatieStatusColor(r.status) + '18'}>{r.status}</Badge>
+                  </td>
+                  <td style={{ ...tableCellStyle, fontSize: 12 }}>{r.created}</td>
+                  <td style={{ ...tableCellStyle, textAlign: 'right', fontSize: 12 }}>
+                    {r.kostenWerkelijk != null
+                      ? <span style={{ fontWeight: 600 }}>&euro; {r.kostenWerkelijk.toLocaleString('nl-NL')}</span>
+                      : r.kostenRaming != null
+                        ? <span style={{ color: GREY }}>~ &euro; {r.kostenRaming.toLocaleString('nl-NL')}</span>
+                        : <span style={{ color: GREY }}>&mdash;</span>}
+                  </td>
+                  <td style={{ ...tableCellStyle, color: GREY, cursor: 'pointer', textAlign: 'center' }} onClick={e => e.stopPropagation()}>&bull;&bull;&bull;</td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr><td colSpan={9} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen reparaties gevonden.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {createOpen && (
+        <ReparatieCreateModal
+          onClose={() => setCreateOpen(false)}
+          onCreate={(r) => { onCreate(r); setCreateOpen(false); }}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Placeholder Page                                                   */
 /* ------------------------------------------------------------------ */
 function PlaceholderPage({ title, description }: { title: string; description: string }) {
@@ -1672,6 +2367,8 @@ export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
+  const [reparaties, setReparaties] = useState<Reparatie[]>(MOCK_REPARATIES);
+  const [selectedReparatie, setSelectedReparatie] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Read ?view= param on mount for Pages export
@@ -1689,6 +2386,7 @@ export default function AdminDashboard() {
     setActiveSection(key);
     setSelectedQuote(null);
     setSelectedOrder(null);
+    setSelectedReparatie(null);
     setSidebarOpen(false);
   };
 
@@ -1701,7 +2399,7 @@ export default function AdminDashboard() {
     { key: 'orders', content: <OrdersPage onSelectOrder={(id) => setSelectedOrder(id)} /> },
     { key: 'quotes', content: <QuotesPage onSelectQuote={(id) => setSelectedQuote(id)} /> },
     { key: 'verkoop-rapport', content: <PlaceholderPage title="Verkoop rapport" description="Bekijk verkooprapporten en statistieken." /> },
-    { key: 'reparaties', content: <PlaceholderPage title="Reparaties" description="Beheer reparatie-orders en statussen." /> },
+    { key: 'reparaties', content: <ReparatiesPage reparaties={reparaties} onSelect={(id) => setSelectedReparatie(id)} onCreate={(r) => { setReparaties(prev => [r, ...prev]); setSelectedReparatie(r.id); }} /> },
     { key: 'kasboek', content: <PlaceholderPage title="Kasboek" description="Volledig kasboek overzicht." /> },
     { key: 'reserveringen', content: <PlaceholderPage title="Reserveringen" description="Beheer productreserveringen." /> },
     { key: 'klanten', content: <PlaceholderPage title="Klanten" description="Klantenoverzicht en -beheer." /> },
@@ -1726,13 +2424,20 @@ export default function AdminDashboard() {
             onBack={() => setSelectedOrder(null)}
           />
         </div>
+        <div data-section="reparatie-detail" style={{ display: activeSection === 'reparaties' && selectedReparatie ? 'block' : 'none' }}>
+          <ReparatieDetailPage
+            rep={reparaties.find(r => r.id === selectedReparatie) || reparaties[0]}
+            onBack={() => setSelectedReparatie(null)}
+            onSave={(updated) => setReparaties(prev => prev.map(r => r.id === updated.id ? updated : r))}
+          />
+        </div>
 
         {/* Section pages */}
         {sections.map(s => (
           <div
             key={s.key}
             data-section={s.key}
-            style={{ display: (activeSection === s.key || (activeSection === 'overzicht' && s.key === 'dashboard')) && !selectedOrder && !selectedQuote ? 'block' : 'none' }}
+            style={{ display: (activeSection === s.key || (activeSection === 'overzicht' && s.key === 'dashboard')) && !selectedOrder && !selectedQuote && !selectedReparatie ? 'block' : 'none' }}
           >
             {s.content}
           </div>
