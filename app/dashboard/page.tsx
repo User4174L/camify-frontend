@@ -2324,12 +2324,14 @@ function ReparatiesPage({ reparaties, onSelect, onCreate }: { reparaties: Repara
         </div>
       </div>
 
-      {createOpen && (
+      {/* Altijd gemount (display-toggle) zodat de static Pages-export de modal
+          bevat; live/SSR gedraagt zich identiek via createOpen. */}
+      <div data-rep-create-modal style={{ display: createOpen ? 'block' : 'none' }}>
         <ReparatieCreateModal
           onClose={() => setCreateOpen(false)}
           onCreate={(r) => { onCreate(r); setCreateOpen(false); }}
         />
-      )}
+      </div>
     </div>
   );
 }

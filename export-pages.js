@@ -569,7 +569,7 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
       var text=label.textContent.trim().toLowerCase();
       var keyMap={'overzicht':'overzicht','dashboard':'dashboard','producten':'producten','varianten':'varianten','categories':'categories','orders':'orders','quotes':'quotes','verkoop rapport':'verkoop-rapport','reparaties':'reparaties','kasboek':'kasboek','reserveringen':'reserveringen','klanten':'klanten','incomplete varianten':'incomplete-varianten','accountinstellingen':'accountinstellingen','sandbox':'sandbox'};
       var bKey=keyMap[text]||text;
-      var isActive=(bKey===key||(key==='order-detail'&&bKey==='orders')||(key==='quote-detail'&&bKey==='quotes'));
+      var isActive=(bKey===key||(key==='order-detail'&&bKey==='orders')||(key==='quote-detail'&&bKey==='quotes')||(key==='reparatie-detail'&&bKey==='reparaties'));
       b.style.borderLeft=isActive?'3px solid #E8692A':'3px solid transparent';
       b.style.background=isActive?'#FFF0E8':'transparent';
       b.style.color=isActive?'#E8692A':'#1E2133';
@@ -597,6 +597,38 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
       });
     });
   }
+  // Reparaties table rows → show reparatie-detail section
+  var repSection=document.querySelector('[data-section="reparaties"]');
+  if(repSection){
+    repSection.querySelectorAll('tbody tr[style*="cursor"]').forEach(function(row){
+      row.addEventListener('click',function(e){
+        if(e.target.type==='checkbox') return;
+        showDashSection('reparatie-detail');
+      });
+    });
+  }
+  // Reparatie aanmelden modal (altijd gemount via [data-rep-create-modal])
+  var repModalWrap=document.querySelector('[data-rep-create-modal]');
+  if(repModalWrap){
+    var openRepModal=function(){repModalWrap.style.display='block';};
+    var closeRepModal=function(){repModalWrap.style.display='none';};
+    // Openknop in de Reparaties-lijst (tekst bevat "+ Reparatie aanmelden")
+    document.querySelectorAll('button').forEach(function(b){
+      var t=b.textContent.trim();
+      if(t==='+ Reparatie aanmelden'){ b.addEventListener('click',openRepModal); }
+    });
+    // Sluiten: overlay-klik, × en Annuleren binnen de modal
+    var overlay=repModalWrap.firstElementChild;
+    if(overlay){
+      overlay.addEventListener('click',function(e){ if(e.target===overlay) closeRepModal(); });
+    }
+    repModalWrap.querySelectorAll('button').forEach(function(b){
+      var t=b.textContent.trim();
+      if(t==='×'||t==='×'||t==='Annuleren'){ b.addEventListener('click',closeRepModal); }
+      // Submit → demo: sluit modal en spring naar reparatie-detail
+      if(t==='Reparatie aanmelden'){ b.addEventListener('click',function(){ closeRepModal(); showDashSection('reparatie-detail'); }); }
+    });
+  }
 
   // Back links in detail views → back to list
   document.querySelectorAll('button').forEach(function(btn){
@@ -606,6 +638,9 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
     }
     if(text==='← Alle orders'||text==='\u2190 Alle orders'||text==='← All orders'||text==='\u2190 All orders'){
       btn.addEventListener('click',function(e){e.preventDefault();showDashSection('orders');});
+    }
+    if(text==='← Alle reparaties'){
+      btn.addEventListener('click',function(e){e.preventDefault();showDashSection('reparaties');});
     }
   });
 
