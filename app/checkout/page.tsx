@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useCart, type CartItem } from '@/context/CartContext';
@@ -240,7 +240,7 @@ function computeVatBreakdown(items: CartItem[]) {
  * ────────────────────────────────────────────────────────────────── */
 
 /* ───────── main component ───────── */
-export default function CheckoutPage() {
+function CheckoutPageInner() {
   const cart = useCart();
   const hasItems = cart.items.length > 0;
   const items: CheckoutItem[] = hasItems ? cart.items : DEMO_ITEMS;
@@ -1455,5 +1455,15 @@ export default function CheckoutPage() {
       </div>
 
     </div>
+  );
+}
+
+// useSearchParams() vereist een Suspense-boundary voor static prerender
+// (export-pages.js). Vercel/SSR werkt zonder, maar de static export niet.
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={null}>
+      <CheckoutPageInner />
+    </Suspense>
   );
 }
