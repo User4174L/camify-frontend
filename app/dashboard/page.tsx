@@ -1691,6 +1691,7 @@ type Reparatie = {
   klant: string;
   email: string;
   tel: string;
+  adres?: string;
   apparaat: string;
   serienr: string;
   sku: string;
@@ -1823,11 +1824,57 @@ function ProductVariantPicker({
   );
 }
 
+// Klantgegevens: optioneel zoekveld (vult onder in) + altijd zichtbare,
+// vrij invulbare velden. Gebruiker kan zoeken óf alles zelf intypen.
+function KlantGegevens({ idPrefix, klant, setKlant, email, setEmail, tel, setTel, adres, setAdres }: {
+  idPrefix: string;
+  klant: string; setKlant: (v: string) => void;
+  email: string; setEmail: (v: string) => void;
+  tel: string; setTel: (v: string) => void;
+  adres: string; setAdres: (v: string) => void;
+}) {
+  const [zoek, setZoek] = useState('');
+  const fi: React.CSSProperties = { ...inputStyle, width: '100%', boxSizing: 'border-box' };
+  const note: React.CSSProperties = { fontSize: 11, color: GREY, marginTop: 4, lineHeight: 1.4 };
+  const listId = `klant-zoek-${idPrefix}`;
+  const pick = (val: string) => {
+    setZoek(val);
+    const hit = REPARATIE_KLANTEN.find(
+      k => k.naam.toLowerCase() === val.trim().toLowerCase() || k.email.toLowerCase() === val.trim().toLowerCase(),
+    );
+    if (hit) { setKlant(hit.naam); setEmail(hit.email); if (hit.tel) setTel(hit.tel); }
+  };
+  return (
+    <>
+      <ReparatieFormField label="Klant zoeken (optioneel — op naam of e-mail)" full>
+        <input list={listId} type="text" value={zoek} onChange={e => pick(e.target.value)} placeholder="Bestaande klant zoeken — of vul hieronder zelf in" style={fi} autoComplete="off" />
+        <datalist id={listId}>
+          {REPARATIE_KLANTEN.map(k => <option key={k.email} value={k.naam}>{k.email}</option>)}
+        </datalist>
+        <div style={note}>Kies een bestaande klant óf vul de velden hieronder handmatig in.</div>
+      </ReparatieFormField>
+      <ReparatieFormField label="Naam">
+        <input type="text" value={klant} onChange={e => setKlant(e.target.value)} placeholder="Voor- en achternaam" style={fi} />
+      </ReparatieFormField>
+      <ReparatieFormField label="E-mail">
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="naam@voorbeeld.nl" style={fi} />
+      </ReparatieFormField>
+      <ReparatieFormField label="Telefoon">
+        <input type="text" value={tel} onChange={e => setTel(e.target.value)} placeholder="06-12345678" style={fi} />
+      </ReparatieFormField>
+      <ReparatieFormField label="Adres" full>
+        <textarea value={adres} onChange={e => setAdres(e.target.value)} placeholder="Straat + nr, postcode, plaats, land" style={{ ...fi, minHeight: 52, resize: 'vertical' }} />
+      </ReparatieFormField>
+    </>
+  );
+}
+
 function ReparatieCreateModal({ onClose, onCreate }: { onClose: () => void; onCreate: (r: Reparatie) => void }) {
   const [herkomst, setHerkomst] = useState<'Klant' | 'Voorraad'>('Klant');
   const [klant, setKlant] = useState('');
   const [email, setEmail] = useState('');
   const [tel, setTel] = useState('');
+  const [adres, setAdres] = useState('');
   const [apparaat, setApparaat] = useState('');
   const [serienr, setSerienr] = useState('');
   const [sku, setSku] = useState('');
@@ -1851,19 +1898,6 @@ function ReparatieCreateModal({ onClose, onCreate }: { onClose: () => void; onCr
   const isCustomProduct = apparaat.trim() !== '' && !selectedFromCatalog;
   const skuKoppeling = isVoorraad && selectedFromCatalog; // alleen dan variant-status muteren
 
-  // Klant kiezen op naam óf e-mail → vult de overige velden automatisch in.
-  const pickKlant = (val: string) => {
-    setKlant(val);
-    const hit = REPARATIE_KLANTEN.find(
-      k => k.naam.toLowerCase() === val.trim().toLowerCase() || k.email.toLowerCase() === val.trim().toLowerCase(),
-    );
-    if (hit) {
-      setKlant(hit.naam);
-      setEmail(hit.email);
-      if (hit.tel) setTel(hit.tel);
-    }
-  };
-
   const addDocs = (files: FileList | null) => {
     if (!files) return;
     setDocumenten(prev => [...prev, ...Array.from(files).map(f => f.name)]);
@@ -1877,6 +1911,7 @@ function ReparatieCreateModal({ onClose, onCreate }: { onClose: () => void; onCr
       klant: isVoorraad ? 'Eigen voorraad' : (klant || '—'),
       email: isVoorraad ? '—' : (email || '—'),
       tel: isVoorraad ? '—' : (tel || '—'),
+      adres: isVoorraad ? '' : adres,
       apparaat: apparaat || '—',
       serienr: serienr || '—',
       sku: skuKoppeling ? (sku || '—') : '—', // custom/klant-product → geen SKU-koppeling
@@ -1918,28 +1953,7 @@ function ReparatieCreateModal({ onClose, onCreate }: { onClose: () => void; onCr
 
         {!isVoorraad && (
           <>
-            <ReparatieFormField label="Klant (zoek op naam of e-mail)" full>
-              <input
-                list="rep-klanten"
-                type="text"
-                value={klant}
-                onChange={e => pickKlant(e.target.value)}
-                placeholder="Begin te typen — bestaande klant of nieuw"
-                style={fieldInput}
-              />
-              <datalist id="rep-klanten">
-                {REPARATIE_KLANTEN.map(k => (
-                  <option key={k.email} value={k.naam}>{k.email}</option>
-                ))}
-              </datalist>
-              <div style={noteStyle}>Bestaande klant? Kies uit de lijst en de gegevens worden ingevuld. Nieuwe klant? Vul hieronder zelf in.</div>
-            </ReparatieFormField>
-            <ReparatieFormField label="E-mail">
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="naam@voorbeeld.nl" style={fieldInput} />
-            </ReparatieFormField>
-            <ReparatieFormField label="Telefoon">
-              <input type="text" value={tel} onChange={e => setTel(e.target.value)} placeholder="06-12345678" style={fieldInput} />
-            </ReparatieFormField>
+            <KlantGegevens idPrefix="rep" klant={klant} setKlant={setKlant} email={email} setEmail={setEmail} tel={tel} setTel={setTel} adres={adres} setAdres={setAdres} />
           </>
         )}
 
@@ -2167,6 +2181,13 @@ function ReparatieDetailPage({ rep, onBack, onSave }: { rep: Reparatie; onBack: 
               ? <input type="text" value={draft.tel} onChange={e => set('tel', e.target.value)} style={fieldInput} />
               : rep.tel}
           </Row>
+          {rep.herkomst === 'Klant' && (
+            <Row label="Adres">
+              {editing
+                ? <textarea value={draft.adres || ''} onChange={e => set('adres', e.target.value)} style={{ ...fieldInput, minHeight: 48, resize: 'vertical' }} />
+                : (rep.adres ? rep.adres : '—')}
+            </Row>
+          )}
           <Row label="Product">
             {editing
               ? <input type="text" value={draft.apparaat} onChange={e => set('apparaat', e.target.value)} style={fieldInput} />
@@ -2345,9 +2366,14 @@ function ReparatiesPage({ reparaties, onSelect, onCreate }: { reparaties: Repara
  * ===========================================================================
  * Twee soorten records in deze tab:
  *   • Reservering — een variant wordt vastgehouden voor een klant tot
- *     `verlooptOp`. Daarna vervalt de reservering en komt de variant weer
- *     vrij (status terug naar Verkoopbaar, terug in de webshop/feed).
+ *     `verlooptOp`. Daarna vervalt de reservering en komt de variant
+ *     AUTOMATISCH weer vrij (status → Verkoopbaar, terug in webshop/feed).
  *   • Bruikleen / uitleen — variant tijdelijk uitgeleend (pers/demo/klant).
+ *     `verlooptOp` is hier GEEN verkoop-/vervaldatum maar hooguit een
+ *     VERWACHTE RETOURDATUM (mag leeg = open bruikleen). Een bruikleen
+ *     zet het product NIET automatisch terug online: ook na (verwacht)
+ *     retour blijft de variant offline tot iemand hem handmatig na
+ *     controle weer vrijgeeft. Dus: geen auto-online bij bruikleen.
  *
  * AUTOMATISCH bij quote-akkoord:
  *   Zodra een klant akkoord gaat met een quote, krijgt elke VERKOOP-regel
@@ -2370,6 +2396,8 @@ type Reservering = {
   quotenummer: string; // '—' bij handmatig / bruikleen
   klant: string;
   email: string;
+  tel?: string;
+  adres?: string;
   bron: 'Quote' | 'Handmatig';
   aangemaakt: string; // dd-mm-yyyy
   verlooptOp: string; // 'yyyy-mm-ddTHH:MM' of '' (open bruikleen)
@@ -2401,20 +2429,14 @@ function ReserveringCreateModal({ onClose, onCreate }: { onClose: () => void; on
   const [selectedFromCatalog, setSelectedFromCatalog] = useState(false);
   const [klant, setKlant] = useState('');
   const [email, setEmail] = useState('');
+  const [tel, setTel] = useState('');
+  const [adres, setAdres] = useState('');
   const [verlooptOp, setVerlooptOp] = useState('');
   const [opmerkingen, setOpmerkingen] = useState('');
 
   const fieldInput = { ...inputStyle, width: '100%', boxSizing: 'border-box' as const };
   const fieldSelect = { ...selectStyle, width: '100%', boxSizing: 'border-box' as const };
   const isCustomProduct = titel.trim() !== '' && !selectedFromCatalog;
-
-  const pickKlant = (val: string) => {
-    setKlant(val);
-    const hit = REPARATIE_KLANTEN.find(
-      k => k.naam.toLowerCase() === val.trim().toLowerCase() || k.email.toLowerCase() === val.trim().toLowerCase(),
-    );
-    if (hit) { setKlant(hit.naam); setEmail(hit.email); }
-  };
 
   const submit = () => {
     const today = new Date().toLocaleDateString('nl-NL');
@@ -2428,6 +2450,8 @@ function ReserveringCreateModal({ onClose, onCreate }: { onClose: () => void; on
       quotenummer: '—',
       klant: klant || '—',
       email: email || '—',
+      tel,
+      adres,
       bron: 'Handmatig',
       aangemaakt: today,
       verlooptOp,
@@ -2462,27 +2486,13 @@ function ReserveringCreateModal({ onClose, onCreate }: { onClose: () => void; on
               : <div style={noteStyle}>Zoek op titel of SKU; niet gevonden? Typ een vrije titel.</div>}
         </ReparatieFormField>
 
-        <ReparatieFormField label="Klant (zoek op naam of e-mail)" full>
-          <input
-            list="res-klanten"
-            type="text"
-            value={klant}
-            onChange={e => pickKlant(e.target.value)}
-            placeholder="Bestaande klant of nieuw"
-            style={fieldInput}
-          />
-          <datalist id="res-klanten">
-            {REPARATIE_KLANTEN.map(k => (
-              <option key={k.email} value={k.naam}>{k.email}</option>
-            ))}
-          </datalist>
-        </ReparatieFormField>
-        <ReparatieFormField label="E-mail">
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="naam@voorbeeld.nl" style={fieldInput} />
-        </ReparatieFormField>
-        <ReparatieFormField label={type === 'Bruikleen' ? 'Verloopt / terug op' : 'Verloopt op'}>
-          <input type="datetime-local" value={verlooptOp} onChange={e => setVerlooptOp(e.target.value)} style={fieldInput} />
-          {type === 'Bruikleen' && <div style={noteStyle}>Optioneel — leeg = open bruikleen zonder vaste retourdatum.</div>}
+        <KlantGegevens idPrefix="res" klant={klant} setKlant={setKlant} email={email} setEmail={setEmail} tel={tel} setTel={setTel} adres={adres} setAdres={setAdres} />
+
+        <ReparatieFormField label={type === 'Bruikleen' ? 'Verwacht retour (optioneel)' : 'Verloopt op'} full>
+          <input type="datetime-local" value={verlooptOp} onChange={e => setVerlooptOp(e.target.value)} style={{ ...fieldInput, maxWidth: 280 }} />
+          {type === 'Bruikleen'
+            ? <div style={noteStyle}>Geen verkoop-/vervaldatum — hooguit de verwachte retourdatum. Leeg = open bruikleen. Het product komt <strong>niet</strong> automatisch terug online; dat is een handmatige stap na controle bij retour.</div>
+            : <div style={noteStyle}>Na deze datum vervalt de reservering en komt de variant automatisch weer vrij/online.</div>}
         </ReparatieFormField>
 
         <ReparatieFormField label="Opmerkingen" full>
