@@ -2337,6 +2337,264 @@ function ReparatiesPage({ reparaties, onSelect, onCreate }: { reparaties: Repara
 }
 
 /* ------------------------------------------------------------------ */
+/*  Reserveringen Page                                                 */
+/* ------------------------------------------------------------------ */
+/*
+ * ===========================================================================
+ * DEVELOPER-NOTITIE — RESERVERING vs. BRUIKLEEN + AUTO-RESERVERING UIT QUOTE
+ * ===========================================================================
+ * Twee soorten records in deze tab:
+ *   • Reservering — een variant wordt vastgehouden voor een klant tot
+ *     `verlooptOp`. Daarna vervalt de reservering en komt de variant weer
+ *     vrij (status terug naar Verkoopbaar, terug in de webshop/feed).
+ *   • Bruikleen / uitleen — variant tijdelijk uitgeleend (pers/demo/klant).
+ *
+ * AUTOMATISCH bij quote-akkoord:
+ *   Zodra een klant akkoord gaat met een quote, krijgt elke VERKOOP-regel
+ *   (sale, geen trade-in) automatisch een Reservering: bron = 'Quote',
+ *   quotenummer ingevuld, variant-status → Gereserveerd, default vervaltermijn
+ *   (bv. 7 dagen). Backend maakt dit record dus zelf aan; handmatige toevoeging
+ *   (deze modal) zet bron = 'Handmatig', quotenummer = '—'.
+ *
+ * Lijst toont standaard alleen status = 'Actief'; filter 'Verlopen' / 'Alle'
+ * voor de rest. Status is een expliciet veld (backend berekent vervallen op
+ * basis van verlooptOp; in deze design-mock expliciet voor determinisme).
+ * ===========================================================================
+ */
+type Reservering = {
+  id: string;
+  type: 'Reservering' | 'Bruikleen';
+  titel: string;
+  sku: string;
+  customProduct: boolean;
+  quotenummer: string; // '—' bij handmatig / bruikleen
+  klant: string;
+  email: string;
+  bron: 'Quote' | 'Handmatig';
+  aangemaakt: string; // dd-mm-yyyy
+  verlooptOp: string; // 'yyyy-mm-ddTHH:MM' of '' (open bruikleen)
+  opmerkingen: string;
+  status: 'Actief' | 'Verlopen';
+};
+
+const MOCK_RESERVERINGEN: Reservering[] = [
+  { id: 'RSV000042', type: 'Reservering', titel: 'Sony A7 IV Body', sku: '04399', customProduct: false, quotenummer: 'QTE000004', klant: 'Maria Jansen', email: 'maria@fotostudio.nl', bron: 'Quote', aangemaakt: '17-05-2026', verlooptOp: '2026-05-26T17:00', opmerkingen: 'Automatisch aangemaakt bij quote-akkoord (verkoopregel).', status: 'Actief' },
+  { id: 'RSV000041', type: 'Reservering', titel: 'Canon EOS R5 Body', sku: '21304', customProduct: false, quotenummer: 'QTE000003', klant: 'Peter van der Berg', email: 'peter.berg@gmail.com', bron: 'Quote', aangemaakt: '16-05-2026', verlooptOp: '2026-05-22T12:00', opmerkingen: 'Wacht op aanbetaling klant.', status: 'Actief' },
+  { id: 'RSV000040', type: 'Reservering', titel: 'Leica Q3', sku: '50891', customProduct: false, quotenummer: '—', klant: 'David Smit', email: 'david.smit@gmail.com', bron: 'Handmatig', aangemaakt: '18-05-2026', verlooptOp: '2026-05-21T16:30', opmerkingen: 'Klant komt vrijdag langs in de showroom.', status: 'Actief' },
+  { id: 'RSV000039', type: 'Bruikleen', titel: 'Fujifilm X-T5 Body', sku: '18743', customProduct: false, quotenummer: '—', klant: 'Anna Bos', email: 'anna@bosmedia.nl', bron: 'Handmatig', aangemaakt: '15-05-2026', verlooptOp: '2026-05-23T10:00', opmerkingen: 'Demo voor bedrijfsopdracht — retour uiterlijk za.', status: 'Actief' },
+  { id: 'RSV000038', type: 'Bruikleen', titel: 'Canon EOS R1 (pers-demo)', sku: '—', customProduct: true, quotenummer: '—', klant: 'Rick Mulder', email: 'rick@studiomulder.nl', bron: 'Handmatig', aangemaakt: '14-05-2026', verlooptOp: '', opmerkingen: 'Open bruikleen pers/review, geen vaste retourdatum.', status: 'Actief' },
+  { id: 'RSV000037', type: 'Reservering', titel: 'Canon RF 50mm f/1.2L USM', sku: '21480', customProduct: false, quotenummer: 'QTE000002', klant: 'Lisa Bakker', email: 'lisa@bakker.nl', bron: 'Quote', aangemaakt: '05-05-2026', verlooptOp: '2026-05-12T12:00', opmerkingen: 'Klant niet gereageerd — vervallen, variant vrijgegeven.', status: 'Verlopen' },
+  { id: 'RSV000036', type: 'Reservering', titel: 'Sigma 35mm f/1.4 DG DN Art', sku: '30712', customProduct: false, quotenummer: '—', klant: 'Sophie Hendriks', email: 'sophie.h@outlook.com', bron: 'Handmatig', aangemaakt: '03-05-2026', verlooptOp: '2026-05-10T09:00', opmerkingen: 'Showroom-reservering verlopen.', status: 'Verlopen' },
+];
+
+function formatVerloopt(s: string) {
+  if (!s) return '—';
+  const [d, t] = s.split('T');
+  const [y, m, day] = d.split('-');
+  return `${day}-${m}-${y}${t ? ' ' + t : ''}`;
+}
+
+function ReserveringCreateModal({ onClose, onCreate }: { onClose: () => void; onCreate: (r: Reservering) => void }) {
+  const [type, setType] = useState<'Reservering' | 'Bruikleen'>('Reservering');
+  const [titel, setTitel] = useState('');
+  const [sku, setSku] = useState('');
+  const [selectedFromCatalog, setSelectedFromCatalog] = useState(false);
+  const [klant, setKlant] = useState('');
+  const [email, setEmail] = useState('');
+  const [verlooptOp, setVerlooptOp] = useState('');
+  const [opmerkingen, setOpmerkingen] = useState('');
+
+  const fieldInput = { ...inputStyle, width: '100%', boxSizing: 'border-box' as const };
+  const fieldSelect = { ...selectStyle, width: '100%', boxSizing: 'border-box' as const };
+  const isCustomProduct = titel.trim() !== '' && !selectedFromCatalog;
+
+  const pickKlant = (val: string) => {
+    setKlant(val);
+    const hit = REPARATIE_KLANTEN.find(
+      k => k.naam.toLowerCase() === val.trim().toLowerCase() || k.email.toLowerCase() === val.trim().toLowerCase(),
+    );
+    if (hit) { setKlant(hit.naam); setEmail(hit.email); }
+  };
+
+  const submit = () => {
+    const today = new Date().toLocaleDateString('nl-NL');
+    const nextId = 'RSV' + String(43 + Math.floor(Math.random() * 9000)).padStart(6, '0');
+    onCreate({
+      id: nextId,
+      type,
+      titel: titel || '—',
+      sku: selectedFromCatalog ? (sku || '—') : '—',
+      customProduct: isCustomProduct,
+      quotenummer: '—',
+      klant: klant || '—',
+      email: email || '—',
+      bron: 'Handmatig',
+      aangemaakt: today,
+      verlooptOp,
+      opmerkingen: opmerkingen || '—',
+      status: 'Actief',
+    });
+    onClose();
+  };
+
+  const noteStyle: React.CSSProperties = { fontSize: 11, color: GREY, marginTop: 4, lineHeight: 1.4 };
+
+  return (
+    <ModalShell title={type === 'Bruikleen' ? 'Bruikleen toevoegen' : 'Reservering toevoegen'} onClose={onClose} width={600}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <ReparatieFormField label="Type" full>
+          <select value={type} onChange={e => setType(e.target.value as 'Reservering' | 'Bruikleen')} style={fieldSelect}>
+            <option value="Reservering">Reservering</option>
+            <option value="Bruikleen">Bruikleen / uitleen</option>
+          </select>
+        </ReparatieFormField>
+
+        <ReparatieFormField label="Product (zoek op titel of SKU)" full>
+          <ProductVariantPicker
+            apparaat={titel}
+            onSelectVariant={(t, vSku) => { setTitel(t); setSku(vSku); setSelectedFromCatalog(true); }}
+            onTypeCustom={(t) => { setTitel(t); setSelectedFromCatalog(false); setSku(''); }}
+          />
+          {isCustomProduct
+            ? <div style={{ ...noteStyle, color: ACCENT }}>Vrije titel → handmatig product (geen SKU-koppeling).</div>
+            : selectedFromCatalog
+              ? <div style={{ ...noteStyle, color: GREEN }}>&#10003; Gekoppeld aan variant — SKU {sku}.</div>
+              : <div style={noteStyle}>Zoek op titel of SKU; niet gevonden? Typ een vrije titel.</div>}
+        </ReparatieFormField>
+
+        <ReparatieFormField label="Klant (zoek op naam of e-mail)" full>
+          <input
+            list="res-klanten"
+            type="text"
+            value={klant}
+            onChange={e => pickKlant(e.target.value)}
+            placeholder="Bestaande klant of nieuw"
+            style={fieldInput}
+          />
+          <datalist id="res-klanten">
+            {REPARATIE_KLANTEN.map(k => (
+              <option key={k.email} value={k.naam}>{k.email}</option>
+            ))}
+          </datalist>
+        </ReparatieFormField>
+        <ReparatieFormField label="E-mail">
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="naam@voorbeeld.nl" style={fieldInput} />
+        </ReparatieFormField>
+        <ReparatieFormField label={type === 'Bruikleen' ? 'Verloopt / terug op' : 'Verloopt op'}>
+          <input type="datetime-local" value={verlooptOp} onChange={e => setVerlooptOp(e.target.value)} style={fieldInput} />
+          {type === 'Bruikleen' && <div style={noteStyle}>Optioneel — leeg = open bruikleen zonder vaste retourdatum.</div>}
+        </ReparatieFormField>
+
+        <ReparatieFormField label="Opmerkingen" full>
+          <textarea value={opmerkingen} onChange={e => setOpmerkingen(e.target.value)} placeholder="Opmerkingen bij deze reservering / bruikleen..." style={{ ...fieldInput, minHeight: 64, resize: 'vertical' }} />
+        </ReparatieFormField>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+        <button onClick={onClose} style={buttonOutline}>Annuleren</button>
+        <button onClick={submit} style={buttonAccent}>{type === 'Bruikleen' ? 'Bruikleen toevoegen' : 'Reservering toevoegen'}</button>
+      </div>
+    </ModalShell>
+  );
+}
+
+function ReserveringenPage() {
+  const [reserveringen, setReserveringen] = useState<Reservering[]>(MOCK_RESERVERINGEN);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'Actief' | 'Verlopen' | 'Alle'>('Actief');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [createOpen, setCreateOpen] = useState(false);
+
+  const filtered = reserveringen.filter(r => {
+    if (statusFilter !== 'Alle' && r.status !== statusFilter) return false;
+    if (typeFilter && r.type !== typeFilter) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      if (![r.id, r.titel, r.sku, r.quotenummer, r.klant, r.email].some(v => v.toLowerCase().includes(q))) return false;
+    }
+    return true;
+  });
+
+  const cnt = (s: 'Actief' | 'Verlopen') => reserveringen.filter(r => r.status === s).length;
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 16, flexWrap: 'wrap' }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, color: DARK, margin: 0 }}>Reserveringen</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={selectStyle}>
+            <option value="">Alle types</option>
+            <option value="Reservering">Reservering</option>
+            <option value="Bruikleen">Bruikleen</option>
+          </select>
+          <input type="text" placeholder="Zoeken..." value={search} onChange={e => setSearch(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+          <button onClick={() => setCreateOpen(true)} style={buttonAccent}>+ Reservering toevoegen</button>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+        <FilterPill label="Actief" count={cnt('Actief')} active={statusFilter === 'Actief'} onClick={() => setStatusFilter('Actief')} />
+        <FilterPill label="Verlopen" count={cnt('Verlopen')} active={statusFilter === 'Verlopen'} onClick={() => setStatusFilter('Verlopen')} />
+        <FilterPill label="Alle" count={reserveringen.length} active={statusFilter === 'Alle'} onClick={() => setStatusFilter('Alle')} />
+      </div>
+
+      <div style={cardStyle}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Titel</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>SKU</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Quotenummer</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Klant</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Type</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Verloopt op</th>
+                <th style={{ ...tableHeaderStyle, ...tableCellStyle, textAlign: 'left' }}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(r => (
+                <tr key={r.id}>
+                  <td style={{ ...tableCellStyle, fontWeight: 500 }}>
+                    {r.titel}
+                    {r.customProduct && <span style={{ marginLeft: 6, fontSize: 10, color: GREY }}>(handmatig)</span>}
+                  </td>
+                  <td style={{ ...tableCellStyle, fontSize: 12, color: r.sku === '—' ? GREY : undefined }}>{r.sku}</td>
+                  <td style={{ ...tableCellStyle, fontSize: 12 }}>
+                    {r.quotenummer !== '—'
+                      ? <span style={{ color: ACCENT, fontWeight: 500 }}>{r.quotenummer}</span>
+                      : <span style={{ color: GREY }}>&mdash;</span>}
+                  </td>
+                  <td style={{ ...tableCellStyle, fontSize: 13 }}>{r.klant}</td>
+                  <td style={tableCellStyle}>
+                    <Badge color={r.type === 'Bruikleen' ? BLUE : ACCENT} bg={(r.type === 'Bruikleen' ? BLUE : ACCENT) + '18'}>{r.type}</Badge>
+                  </td>
+                  <td style={{ ...tableCellStyle, fontSize: 12 }}>{formatVerloopt(r.verlooptOp)}</td>
+                  <td style={tableCellStyle}>
+                    <Badge color={r.status === 'Actief' ? GREEN : GREY} bg={(r.status === 'Actief' ? GREEN : GREY) + '18'}>{r.status}</Badge>
+                  </td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr><td colSpan={7} style={{ ...tableCellStyle, textAlign: 'center', padding: 40, color: GREY }}>Geen reserveringen gevonden.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Altijd gemount (display-toggle) zodat de static Pages-export de modal bevat. */}
+      <div data-res-create-modal style={{ display: createOpen ? 'block' : 'none' }}>
+        <ReserveringCreateModal
+          onClose={() => setCreateOpen(false)}
+          onCreate={(r) => { setReserveringen(prev => [r, ...prev]); setCreateOpen(false); }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Placeholder Page                                                   */
 /* ------------------------------------------------------------------ */
 function PlaceholderPage({ title, description }: { title: string; description: string }) {
@@ -2403,7 +2661,7 @@ export default function AdminDashboard() {
     { key: 'verkoop-rapport', content: <PlaceholderPage title="Verkoop rapport" description="Bekijk verkooprapporten en statistieken." /> },
     { key: 'reparaties', content: <ReparatiesPage reparaties={reparaties} onSelect={(id) => setSelectedReparatie(id)} onCreate={(r) => { setReparaties(prev => [r, ...prev]); setSelectedReparatie(r.id); }} /> },
     { key: 'kasboek', content: <PlaceholderPage title="Kasboek" description="Volledig kasboek overzicht." /> },
-    { key: 'reserveringen', content: <PlaceholderPage title="Reserveringen" description="Beheer productreserveringen." /> },
+    { key: 'reserveringen', content: <ReserveringenPage /> },
     { key: 'klanten', content: <PlaceholderPage title="Klanten" description="Klantenoverzicht en -beheer." /> },
     { key: 'incomplete-varianten', content: <PlaceholderPage title="Incomplete varianten" description="Varianten die nog aangevuld moeten worden." /> },
     { key: 'accountinstellingen', content: <PlaceholderPage title="Accountinstellingen" description="Beheer je accountinstellingen." /> },

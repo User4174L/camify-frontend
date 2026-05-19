@@ -629,6 +629,23 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
       if(t==='Reparatie aanmelden'){ b.addEventListener('click',function(){ closeRepModal(); showDashSection('reparatie-detail'); }); }
     });
   }
+  // Reservering toevoegen modal (altijd gemount via [data-res-create-modal])
+  var resModalWrap=document.querySelector('[data-res-create-modal]');
+  if(resModalWrap){
+    var openResModal=function(){resModalWrap.style.display='block';};
+    var closeResModal=function(){resModalWrap.style.display='none';};
+    document.querySelectorAll('button').forEach(function(b){
+      if(b.textContent.trim()==='+ Reservering toevoegen'){ b.addEventListener('click',openResModal); }
+    });
+    var resOverlay=resModalWrap.firstElementChild;
+    if(resOverlay){
+      resOverlay.addEventListener('click',function(e){ if(e.target===resOverlay) closeResModal(); });
+    }
+    resModalWrap.querySelectorAll('button').forEach(function(b){
+      var t=b.textContent.trim();
+      if(t==='×'||t==='Annuleren'||t==='Reservering toevoegen'||t==='Bruikleen toevoegen'){ b.addEventListener('click',closeResModal); }
+    });
+  }
 
   // Back links in detail views → back to list
   document.querySelectorAll('button').forEach(function(btn){
