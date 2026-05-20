@@ -17,8 +17,8 @@ const topBrands = [
   { name: 'Panasonic', count: 540, slug: 'panasonic' },
 ];
 
-const justAddedProducts = products.filter(p => p.stock > 0).slice(0, 4);
-const bestsellerProducts = products.filter(p => p.stock > 0).slice(2, 6);
+const justAddedProducts = products.filter(p => p.stock > 0).slice(0, 5);
+const bestsellerProducts = products.filter(p => p.stock > 0).slice(2, 7);
 
 export default function HomePage() {
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
@@ -26,19 +26,42 @@ export default function HomePage() {
 
   return (
     <>
-      {/* HERO */}
-      <section className="hero">
-        <div className="hero__bg-text">Buy, sell or trade</div>
+      {/* HERO — inruil banner (full-bleed strip) */}
+      <section className="trade-hero">
+        <style>{`
+          .trade-hero{position:relative;overflow:hidden;display:flex;align-items:center;min-height:400px;margin-bottom:48px;background:linear-gradient(110deg,#F3F2F0 0%,#F0EFEC 38%,#ECEBE8 100%)}
+          .trade-hero__photo{position:absolute;top:0;right:0;bottom:0;width:62%;background:url(/images/trade-in-hero.jpg) center right/cover;-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 16%,#000 48%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 16%,#000 48%)}
+          .trade-hero .container{position:relative;z-index:2}
+          .trade-hero__content{min-width:0;max-width:540px;padding:36px 0}
+          .trade-hero__icon{color:var(--accent);margin-bottom:16px;display:flex}
+          .trade-hero__title{font-size:clamp(21px,2.4vw,30px);font-weight:800;line-height:1.16;letter-spacing:-.02em;color:var(--text);margin:0;overflow-wrap:break-word}
+          .trade-hero__title span{display:block;color:var(--accent)}
+          .trade-hero__sub{font-size:clamp(13px,1.2vw,15px);color:#5A5C6B;margin:10px 0 0}
+          .trade-hero__btn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;background:var(--accent);color:#fff;font-weight:600;font-size:15px;padding:11px 28px;border-radius:999px;transition:background .2s,transform .2s,box-shadow .2s}
+          .trade-hero__btn:hover{background:var(--accent-h);transform:translateY(-1px);box-shadow:0 8px 22px rgba(232,105,42,.28)}
+          .trade-hero__tp{position:absolute;right:0;bottom:32px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;background:rgba(255,255,255,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:9px 16px;border-radius:999px;box-shadow:0 2px 12px rgba(30,33,51,.07)}
+          @media(max-width:768px){
+            .trade-hero{min-height:0;margin-bottom:32px}
+            .trade-hero__photo{width:100%;opacity:.28;-webkit-mask-image:none;mask-image:none}
+            .trade-hero__content{max-width:none;padding:32px 0}
+            .trade-hero__title{font-size:22px;line-height:1.22}
+            .trade-hero__tp{position:static;margin-top:18px;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0;flex-wrap:wrap;gap:8px}
+          }
+        `}</style>
+        <div className="trade-hero__photo" aria-hidden="true" />
         <div className="container">
-          <h1 className="hero__title"><span>Buy, sell</span> or trade</h1>
-          <p className="hero__subtitle">
-            The trusted marketplace for second-hand camera equipment.<br />
-            Professionally checked, with minimum 12 months warranty.
-          </p>
-          <div className="hero__buttons">
-            <Link href="/trade-in" className="btn btn--primary">Start Selling →</Link>
+          <div className="trade-hero__content">
+            <div className="trade-hero__icon" aria-hidden="true">
+              <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+            </div>
+            <h1 className="trade-hero__title">
+              Verkoop je apparatuur.
+              <span>Geef je gear een nieuw leven.</span>
+            </h1>
+            <p className="trade-hero__sub">Snel, veilig en eenvoudig.</p>
+            <Link href="/trade-in" className="trade-hero__btn">Ruil in &rarr;</Link>
           </div>
-          <div className="hero__trustpilot" style={{ justifyContent: 'center' }}>
+          <div className="trade-hero__tp">
             <span className="trustpilot-label">Excellent</span>
             <div className="trustpilot-stars">
               {[1,2,3,4,5].map(i => <span key={i} className="trustpilot-star">&#9733;</span>)}
@@ -49,6 +72,40 @@ export default function HomePage() {
       </section>
 
       {/* JUST ADDED — right after hero */}
+      <style>{`
+        /* Homepage product grids: 5 kolommen, responsive omlaag */
+        .bestsellers .product-grid-responsive,
+        .just-added-scroll .product-grid-responsive{grid-template-columns:repeat(5,1fr)}
+        @media(max-width:1100px){
+          .bestsellers .product-grid-responsive,
+          .just-added-scroll .product-grid-responsive{grid-template-columns:repeat(4,1fr)}
+        }
+        @media(max-width:880px){
+          .bestsellers .product-grid-responsive,
+          .just-added-scroll .product-grid-responsive{grid-template-columns:repeat(3,1fr)}
+        }
+        @media(max-width:600px){
+          .bestsellers .product-grid-responsive{grid-template-columns:repeat(2,1fr)}
+        }
+        /* Altijd één nette rij — verberg overflow zodat er geen 2e rij ontstaat */
+        /* 4 cols (881-1100): toon 4 */
+        @media(max-width:1100px) and (min-width:881px){
+          .bestsellers .product-grid-responsive > *:nth-child(n+5),
+          .just-added-scroll .product-grid-responsive > *:nth-child(n+5){display:none}
+        }
+        /* 3 cols (Just Added 769-880): toon 3 — onder 768 wordt 't horizontale scroll, dan weer alles tonen */
+        @media(max-width:880px) and (min-width:769px){
+          .just-added-scroll .product-grid-responsive > *:nth-child(n+4){display:none}
+        }
+        /* 3 cols (Bestsellers 601-880): toon 3 */
+        @media(max-width:880px) and (min-width:601px){
+          .bestsellers .product-grid-responsive > *:nth-child(n+4){display:none}
+        }
+        /* 2 cols (Bestsellers <=600): toon 2 */
+        @media(max-width:600px){
+          .bestsellers .product-grid-responsive > *:nth-child(n+3){display:none}
+        }
+      `}</style>
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="section__header">
