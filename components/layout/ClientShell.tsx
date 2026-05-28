@@ -64,8 +64,8 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   const { isAdmin } = useAuth();
   const pathname = usePathname();
 
-  // Checkout has its own standalone layout — skip header/footer/drawer
-  if (pathname?.startsWith('/checkout')) {
+  // Checkout & offer have their own standalone layout — skip header/footer/drawer
+  if (pathname?.startsWith('/checkout') || pathname?.startsWith('/offer')) {
     return <>{children}</>;
   }
 

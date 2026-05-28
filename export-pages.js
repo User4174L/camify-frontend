@@ -26,6 +26,7 @@ const pages = [
   ['/account', 'camify-account'],
   ['/checkout', 'camify-checkout'],
   ['/dashboard', 'camify-dashboard'],
+  ['/offer', 'camify-offer'],
 
   // Lens pages
   ['/lenses', 'camify-lenses'],
@@ -748,7 +749,7 @@ ${navBarHtml}
 ${[
   { title: 'Core Flow', items: pages.filter(([p]) => p === '/' || p.startsWith('/cameras')) },
   { title: 'Product Pages', items: pages.filter(([p]) => p.startsWith('/product')) },
-  { title: 'Account & Checkout', items: pages.filter(([p]) => ['/login', '/account', '/checkout', '/dashboard'].includes(p)) },
+  { title: 'Account & Checkout', items: pages.filter(([p]) => ['/login', '/account', '/checkout', '/dashboard', '/offer'].includes(p)) },
   { title: 'Browse Pages', items: pages.filter(([p]) => ['/brands', '/sale', '/new', '/sell', '/trade-in', '/search'].includes(p) || p.startsWith('/brands/')) },
   { title: 'Info Pages', items: pages.filter(([p]) => ['/knowledge-base', '/faq', '/about'].includes(p)) },
 ].map(section => `  <div class="section">
