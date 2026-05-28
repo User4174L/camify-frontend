@@ -89,6 +89,14 @@ const SHIPPING_POINTS = [
   { k: 'dhl' as const, label: 'DHL Servicepoint', desc: 'Lever af bij een DHL-punt bij jou in de buurt' },
 ];
 
+const REJECT_REASONS = [
+  { k: 'prijs', l: 'Ik vind de geboden prijs te laag' },
+  { k: 'beter-aanbod', l: 'Ik heb een beter aanbod van een andere partij' },
+  { k: 'zelf', l: 'Ik wil het eerst zelf proberen te verkopen' },
+  { k: 'twijfel', l: 'Ik twijfel nog over de verkoop' },
+  { k: 'anders', l: 'Anders, namelijk…' },
+];
+
 const FAQS: { q: string; a: string }[] = [
   {
     q: 'Is mijn verzending verzekerd?',
@@ -125,6 +133,30 @@ function vatPrice(gross: number, mode: VatMode): { v: number; note?: string } {
 const fmtEUR = (n: number) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }).format(n);
 const fmtDate = (s: string) => new Date(s).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
 
+/* nette opvolging per afwijs-reden */
+const REJECT_FOLLOWUP: Record<string, { title: string; body: string }> = {
+  prijs: {
+    title: 'Bedankt voor je eerlijkheid',
+    body: `Wil je dat we nog eens naar de prijs kijken? Je bod blijft geldig t/m ${fmtDate(QUOTE.validUntil)}, en je kunt altijd een nieuw bod aanvragen.`,
+  },
+  'beter-aanbod': {
+    title: 'Bedankt — we kijken ernaar',
+    body: 'We bekijken het andere bod en nemen snel contact met je op om te zien wat we kunnen doen.',
+  },
+  zelf: {
+    title: 'Succes met de verkoop!',
+    body: 'Helemaal goed dat je het zelf probeert. Lukt het toch niet of verandert er iets? Vraag dan gerust een nieuw bod aan — we helpen je graag verder.',
+  },
+  twijfel: {
+    title: 'Geen probleem, neem rustig de tijd',
+    body: `Je bod blijft geldig t/m ${fmtDate(QUOTE.validUntil)}. Twijfel je later nog steeds of wil je een nieuwe taxatie? Je weet ons te vinden.`,
+  },
+  anders: {
+    title: 'Bedankt voor je feedback!',
+    body: 'We hebben je reden genoteerd. Mocht je later toch willen verkopen, vraag gerust een nieuw bod aan — we staan voor je klaar.',
+  },
+};
+
 /* ───────── Page ───────── */
 export default function OfferPage() {
   const router = useRouter();
@@ -160,6 +192,13 @@ export default function OfferPage() {
   /* step 3 bevestigen */
   const [agree, setAgree] = useState(false);
   const [newsletter, setNewsletter] = useState(true);
+
+  /* afwijzen */
+  const [showReject, setShowReject] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  const [betterOffer, setBetterOffer] = useState('');
+  const [rejectNote, setRejectNote] = useState('');
+  const [rejectSent, setRejectSent] = useState(false);
 
   /* berekeningen */
   const sellItems = SELL_ITEMS;
@@ -494,7 +533,7 @@ export default function OfferPage() {
 
       {/* CTA */}
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 20, flexWrap: 'wrap' }}>
-        <button style={{ ...btnSecondary, color: CSS.textSec }} onClick={() => router.push('/')}>Afwijzen</button>
+        <button style={{ ...btnSecondary, color: CSS.textSec }} onClick={() => setShowReject(true)}>Afwijzen</button>
         <button
           style={{
             ...btnPrimary, marginLeft: 'auto', flex: '1 1 240px',
@@ -585,6 +624,92 @@ export default function OfferPage() {
                 })}
               </div>
               <button style={{ ...btnPrimary, width: '100%' }} onClick={confirmModal}>Afspraak bevestigen</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* afwijs-modal */}
+      {showReject && (
+        <div onClick={() => setShowReject(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(30,33,51,.55)', zIndex: 1000, display: 'grid', placeItems: 'center', padding: 16 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 18, width: '100%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,.25)' }}>
+            <div style={{ height: 4, background: CSS.accent, borderRadius: '18px 18px 0 0' }} />
+            <div style={{ padding: 24 }}>
+              {!rejectSent ? (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 6 }}>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: CSS.text, margin: 0 }}>Bod afwijzen</h3>
+                    <button onClick={() => setShowReject(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: CSS.textSec }}><X size={20} /></button>
+                  </div>
+                  <p style={{ fontSize: '.85rem', color: CSS.textSec, margin: '0 0 16px', lineHeight: 1.55 }}>
+                    Jammer dat ons bod (nog) niet bij je past. Mogen we vragen waarom? Zo kunnen we je beter helpen.
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {REJECT_REASONS.map(r => {
+                      const sel = rejectReason === r.k;
+                      return (
+                        <button key={r.k} onClick={() => setRejectReason(r.k)} style={{
+                          display: 'flex', alignItems: 'center', gap: 10, width: '100%', textAlign: 'left',
+                          padding: '11px 14px', borderRadius: CSS.r, cursor: 'pointer', fontFamily: 'inherit',
+                          border: sel ? `1.5px solid ${CSS.accent}` : `1px solid ${CSS.border}`, background: sel ? CSS.accentLight : '#fff',
+                        }}>
+                          <span style={{ width: 18, height: 18, borderRadius: '50%', flexShrink: 0, border: sel ? `5px solid ${CSS.accent}` : `2px solid ${CSS.border}`, background: '#fff' }} />
+                          <span style={{ fontSize: '.86rem', fontWeight: 500, color: CSS.text }}>{r.l}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* follow-up: beter aanbod → kans om mee te bewegen */}
+                  {rejectReason === 'beter-aanbod' && (
+                    <div style={{ marginTop: 14, padding: 14, background: CSS.accentLight, borderRadius: CSS.r }}>
+                      <div style={{ fontSize: '.85rem', fontWeight: 700, color: CSS.text, marginBottom: 4 }}>Geef ons een kans om mee te bewegen 💪</div>
+                      <div style={{ fontSize: '.8rem', color: CSS.textSec, lineHeight: 1.5, marginBottom: 10 }}>
+                        Wat biedt de andere partij? Deel het gerust — vaak kunnen we er samen uitkomen.
+                      </div>
+                      <label style={labelStyle}>Het andere bod (optioneel)</label>
+                      <div style={{ display: 'flex', marginBottom: 10 }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', padding: '0 12px', border: `1.5px solid ${CSS.border}`, borderRight: 'none', borderRadius: `${CSS.r}px 0 0 ${CSS.r}px`, background: '#fff', fontSize: '.9rem', color: CSS.textSec }}>€</span>
+                        <input style={{ ...inputStyle, borderRadius: `0 ${CSS.r}px ${CSS.r}px 0` }} placeholder="350" value={betterOffer} onChange={e => setBetterOffer(e.target.value)} />
+                      </div>
+                      <label style={labelStyle}>Welke partij / toelichting (optioneel)</label>
+                      <textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} placeholder="Bijv. MPB, Marktplaats-bod, …" value={rejectNote} onChange={e => setRejectNote(e.target.value)} />
+                    </div>
+                  )}
+
+                  {rejectReason === 'anders' && (
+                    <div style={{ marginTop: 14 }}>
+                      <label style={labelStyle}>Vertel ons kort waarom</label>
+                      <textarea style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} placeholder="Jouw reden…" value={rejectNote} onChange={e => setRejectNote(e.target.value)} />
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+                    <button style={btnSecondary} onClick={() => setShowReject(false)}>Annuleren</button>
+                    <button
+                      style={{ ...btnPrimary, marginLeft: 'auto', background: rejectReason ? CSS.accent : '#f0b48f', cursor: rejectReason ? 'pointer' : 'not-allowed' }}
+                      disabled={!rejectReason}
+                      onClick={() => setRejectSent(true)}
+                    >
+                      Versturen
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '12px 4px' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: '50%', background: CSS.greenLight, display: 'grid', placeItems: 'center', margin: '0 auto 16px', color: CSS.green }}>
+                    <Check size={28} />
+                  </div>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: CSS.text, margin: '0 0 8px' }}>
+                    {(REJECT_FOLLOWUP[rejectReason] || REJECT_FOLLOWUP.anders).title}
+                  </h3>
+                  <p style={{ fontSize: '.85rem', color: CSS.textSec, lineHeight: 1.55, margin: '0 auto 20px', maxWidth: 380 }}>
+                    {(REJECT_FOLLOWUP[rejectReason] || REJECT_FOLLOWUP.anders).body}
+                  </p>
+                  <button style={btnPrimary} onClick={() => router.push('/')}>Terug naar home</button>
+                </div>
+              )}
             </div>
           </div>
         </div>
