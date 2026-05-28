@@ -4,20 +4,41 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 
 /* ── Product databases ── */
 const SELL_PRODUCTS = [
+  /* Sony */
   { name: 'Sony A7 IV', category: 'camera' },
   { name: 'Sony A7R V', category: 'camera' },
   { name: 'Sony A1', category: 'camera' },
+  { name: 'Sony A7 III', category: 'camera' },
+  { name: 'Sony A7C II', category: 'camera' },
+  { name: 'Sony A7S III', category: 'camera' },
+  { name: 'Sony A9 III', category: 'camera' },
+  { name: 'Sony A6700', category: 'camera' },
+  { name: 'Sony FE 24-70mm f/2.8 GM II', category: 'lens' },
+  { name: 'Sony FE 70-200mm f/2.8 GM II', category: 'lens' },
+  { name: 'Sony FE 35mm f/1.4 GM', category: 'lens' },
+  { name: 'Sony NP-FZ100 Battery', category: 'accessory' },
+  /* Nikon */
   { name: 'Nikon Z9', category: 'camera' },
   { name: 'Nikon Z8', category: 'camera' },
   { name: 'Nikon Z6 III', category: 'camera' },
-  { name: 'Fujifilm X-T5', category: 'camera' },
+  { name: 'Nikon Z7 II', category: 'camera' },
+  { name: 'Nikon Zf', category: 'camera' },
+  { name: 'Nikon Z5', category: 'camera' },
+  { name: 'Nikon Z 24-70mm f/2.8 S', category: 'lens' },
+  { name: 'Nikon Z 70-200mm f/2.8 VR S', category: 'lens' },
+  { name: 'Nikon Z 50mm f/1.8 S', category: 'lens' },
+  /* Canon */
   { name: 'Canon EOS R5', category: 'camera' },
   { name: 'Canon EOS R6 II', category: 'camera' },
-  { name: 'Sony FE 24-70mm f/2.8 GM II', category: 'lens' },
-  { name: 'Nikon Z 24-70mm f/2.8 S', category: 'lens' },
+  { name: 'Canon EOS R5 Mark II', category: 'camera' },
+  { name: 'Canon EOS R3', category: 'camera' },
+  { name: 'Canon EOS R8', category: 'camera' },
+  { name: 'Canon EOS R7', category: 'camera' },
   { name: 'Canon RF 24-70mm f/2.8L IS USM', category: 'lens' },
-  { name: 'Sony FE 70-200mm f/2.8 GM II', category: 'lens' },
-  { name: 'Sony NP-FZ100 Battery', category: 'accessory' },
+  { name: 'Canon RF 70-200mm f/2.8L IS USM', category: 'lens' },
+  { name: 'Canon RF 50mm f/1.2L USM', category: 'lens' },
+  /* Overig */
+  { name: 'Fujifilm X-T5', category: 'camera' },
 ];
 
 interface BuyVariant {
@@ -36,45 +57,236 @@ interface BuyProduct {
   variants: BuyVariant[];
 }
 
+const LENS_ACC_BASIC = ['Lensdop voor', 'Lensdop achter'];
+const LENS_ACC_FULL = ['Lensdop voor', 'Lensdop achter', 'Zonnekap', 'Lenstas', 'Originele doos'];
+const BODY_ACC_BASIC = ['Body cap', 'Accu'];
+const BODY_ACC_FULL = ['Body cap', 'Accu', 'Oplader', 'Originele doos', 'Handleiding'];
+
 const BUY_PRODUCTS: BuyProduct[] = [
-  {
-    id: 'sony-a7rv', name: 'Sony A7R V', category: 'Sony Systeemcamera\'s',
-    variants: [
-      { id: 1, sku: '234501', price: 3000, condition: 'Zeer goed', shutterCount: 1200, accessories: ['Body cap', 'Accu', 'Oplader'] },
-      { id: 2, sku: '234502', price: 3100, condition: 'Zo goed als nieuw', shutterCount: 450, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos'] },
-      { id: 3, sku: '234503', price: 3200, condition: 'Als nieuw', shutterCount: 150, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos', 'Handleiding'] },
-    ],
-  },
+  /* ── Sony ── */
   {
     id: 'sony-a7iv', name: 'Sony A7 IV', category: 'Sony Systeemcamera\'s',
     variants: [
-      { id: 9, sku: '236001', price: 1800, condition: 'Goed', shutterCount: 35000, accessories: ['Body cap', 'Accu'] },
-      { id: 10, sku: '236002', price: 1950, condition: 'Zeer goed', shutterCount: 15000, accessories: ['Body cap', 'Accu', 'Oplader'] },
-      { id: 11, sku: '236003', price: 2080, condition: 'Als nieuw', shutterCount: 2000, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos', 'Handleiding'] },
+      { id: 1001, sku: '236001', price: 1800, condition: 'Goed', shutterCount: 35000, accessories: BODY_ACC_BASIC },
+      { id: 1002, sku: '236002', price: 1950, condition: 'Zeer goed', shutterCount: 15000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 1003, sku: '236003', price: 2080, condition: 'Als nieuw', shutterCount: 2000, accessories: BODY_ACC_FULL },
     ],
   },
   {
-    id: 'nikon-z8', name: 'Nikon Z8', category: 'Nikon Systeemcamera\'s',
+    id: 'sony-a7rv', name: 'Sony A7R V', category: 'Sony Systeemcamera\'s',
     variants: [
-      { id: 23, sku: '400101', price: 3200, condition: 'Zeer goed', shutterCount: 8500, accessories: ['Body cap', 'Accu', 'Oplader'] },
-      { id: 24, sku: '400102', price: 3350, condition: 'Zo goed als nieuw', shutterCount: 3200, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos'] },
-      { id: 25, sku: '400103', price: 3450, condition: 'Als nieuw', shutterCount: 800, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos', 'Handleiding'] },
+      { id: 1011, sku: '234501', price: 3000, condition: 'Zeer goed', shutterCount: 1200, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 1012, sku: '234502', price: 3100, condition: 'Zo goed als nieuw', shutterCount: 450, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos'] },
+      { id: 1013, sku: '234503', price: 3250, condition: 'Als nieuw', shutterCount: 150, accessories: BODY_ACC_FULL },
     ],
   },
   {
-    id: 'canon-eos-r5', name: 'Canon EOS R5', category: 'Canon Systeemcamera\'s',
+    id: 'sony-a1', name: 'Sony A1', category: 'Sony Systeemcamera\'s',
     variants: [
-      { id: 26, sku: '500101', price: 2800, condition: 'Goed', shutterCount: 42000, accessories: ['Body cap', 'Accu'] },
-      { id: 27, sku: '500102', price: 2950, condition: 'Zeer goed', shutterCount: 25000, accessories: ['Body cap', 'Accu', 'Oplader'] },
-      { id: 28, sku: '500103', price: 3100, condition: 'Zo goed als nieuw', shutterCount: 12000, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos'] },
+      { id: 1021, sku: '231001', price: 4200, condition: 'Goed', shutterCount: 60000, accessories: BODY_ACC_BASIC },
+      { id: 1022, sku: '231002', price: 4500, condition: 'Zeer goed', shutterCount: 22000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 1023, sku: '231003', price: 4800, condition: 'Als nieuw', shutterCount: 3500, accessories: BODY_ACC_FULL },
+    ],
+  },
+  {
+    id: 'sony-a7iii', name: 'Sony A7 III', category: 'Sony Systeemcamera\'s',
+    variants: [
+      { id: 1031, sku: '237001', price: 1150, condition: 'Goed', shutterCount: 48000, accessories: BODY_ACC_BASIC },
+      { id: 1032, sku: '237002', price: 1300, condition: 'Zeer goed', shutterCount: 19000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+    ],
+  },
+  {
+    id: 'sony-a7cii', name: 'Sony A7C II', category: 'Sony Systeemcamera\'s',
+    variants: [
+      { id: 1041, sku: '238001', price: 1850, condition: 'Zeer goed', shutterCount: 6800, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 1042, sku: '238002', price: 1980, condition: 'Als nieuw', shutterCount: 900, accessories: BODY_ACC_FULL },
+    ],
+  },
+  {
+    id: 'sony-a7siii', name: 'Sony A7S III', category: 'Sony Systeemcamera\'s',
+    variants: [
+      { id: 1051, sku: '239001', price: 2900, condition: 'Zeer goed', shutterCount: 14000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 1052, sku: '239002', price: 3100, condition: 'Zo goed als nieuw', shutterCount: 4200, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos'] },
     ],
   },
   {
     id: 'sony-fe-24-70', name: 'Sony FE 24-70mm f/2.8 GM II', category: 'Sony Lenzen',
     variants: [
-      { id: 17, sku: '300101', price: 1400, condition: 'Goed', accessories: ['Lensdop voor', 'Lensdop achter'] },
-      { id: 18, sku: '300102', price: 1480, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
-      { id: 19, sku: '300103', price: 1580, condition: 'Als nieuw', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap', 'Lenstas', 'Originele doos'] },
+      { id: 1061, sku: '300101', price: 1400, condition: 'Goed', accessories: LENS_ACC_BASIC },
+      { id: 1062, sku: '300102', price: 1480, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
+      { id: 1063, sku: '300103', price: 1580, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+  {
+    id: 'sony-fe-70-200', name: 'Sony FE 70-200mm f/2.8 GM II', category: 'Sony Lenzen',
+    variants: [
+      { id: 1071, sku: '301101', price: 1900, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
+      { id: 1072, sku: '301102', price: 2050, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+  {
+    id: 'sony-fe-35-14', name: 'Sony FE 35mm f/1.4 GM', category: 'Sony Lenzen',
+    variants: [
+      { id: 1081, sku: '302101', price: 1150, condition: 'Goed', accessories: LENS_ACC_BASIC },
+      { id: 1082, sku: '302102', price: 1280, condition: 'Zeer goed', accessories: LENS_ACC_FULL },
+    ],
+  },
+  {
+    id: 'sony-fe-16-35', name: 'Sony FE 16-35mm f/2.8 GM II', category: 'Sony Lenzen',
+    variants: [
+      { id: 1091, sku: '303101', price: 1850, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
+      { id: 1092, sku: '303102', price: 1990, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+
+  /* ── Nikon ── */
+  {
+    id: 'nikon-z9', name: 'Nikon Z9', category: 'Nikon Systeemcamera\'s',
+    variants: [
+      { id: 2001, sku: '401101', price: 4400, condition: 'Goed', shutterCount: 90000, accessories: BODY_ACC_BASIC },
+      { id: 2002, sku: '401102', price: 4700, condition: 'Zeer goed', shutterCount: 32000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 2003, sku: '401103', price: 4950, condition: 'Als nieuw', shutterCount: 5000, accessories: BODY_ACC_FULL },
+    ],
+  },
+  {
+    id: 'nikon-z8', name: 'Nikon Z8', category: 'Nikon Systeemcamera\'s',
+    variants: [
+      { id: 2011, sku: '400101', price: 3200, condition: 'Zeer goed', shutterCount: 8500, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 2012, sku: '400102', price: 3350, condition: 'Zo goed als nieuw', shutterCount: 3200, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos'] },
+      { id: 2013, sku: '400103', price: 3500, condition: 'Als nieuw', shutterCount: 800, accessories: BODY_ACC_FULL },
+    ],
+  },
+  {
+    id: 'nikon-z6iii', name: 'Nikon Z6 III', category: 'Nikon Systeemcamera\'s',
+    variants: [
+      { id: 2021, sku: '402101', price: 2100, condition: 'Goed', shutterCount: 28000, accessories: BODY_ACC_BASIC },
+      { id: 2022, sku: '402102', price: 2250, condition: 'Zeer goed', shutterCount: 9000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 2023, sku: '402103', price: 2390, condition: 'Als nieuw', shutterCount: 1500, accessories: BODY_ACC_FULL },
+    ],
+  },
+  {
+    id: 'nikon-z7ii', name: 'Nikon Z7 II', category: 'Nikon Systeemcamera\'s',
+    variants: [
+      { id: 2031, sku: '403101', price: 1900, condition: 'Goed', shutterCount: 41000, accessories: BODY_ACC_BASIC },
+      { id: 2032, sku: '403102', price: 2050, condition: 'Zeer goed', shutterCount: 16000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+    ],
+  },
+  {
+    id: 'nikon-zf', name: 'Nikon Zf', category: 'Nikon Systeemcamera\'s',
+    variants: [
+      { id: 2041, sku: '404101', price: 1650, condition: 'Zeer goed', shutterCount: 7400, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 2042, sku: '404102', price: 1780, condition: 'Als nieuw', shutterCount: 600, accessories: BODY_ACC_FULL },
+    ],
+  },
+  {
+    id: 'nikon-z5', name: 'Nikon Z5', category: 'Nikon Systeemcamera\'s',
+    variants: [
+      { id: 2051, sku: '405101', price: 850, condition: 'Goed', shutterCount: 33000, accessories: BODY_ACC_BASIC },
+      { id: 2052, sku: '405102', price: 950, condition: 'Zeer goed', shutterCount: 12000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+    ],
+  },
+  {
+    id: 'nikon-z-24-70', name: 'Nikon Z 24-70mm f/2.8 S', category: 'Nikon Lenzen',
+    variants: [
+      { id: 2061, sku: '410101', price: 1500, condition: 'Goed', accessories: LENS_ACC_BASIC },
+      { id: 2062, sku: '410102', price: 1620, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
+      { id: 2063, sku: '410103', price: 1720, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+  {
+    id: 'nikon-z-70-200', name: 'Nikon Z 70-200mm f/2.8 VR S', category: 'Nikon Lenzen',
+    variants: [
+      { id: 2071, sku: '411101', price: 1850, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
+      { id: 2072, sku: '411102', price: 1980, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+  {
+    id: 'nikon-z-50-18', name: 'Nikon Z 50mm f/1.8 S', category: 'Nikon Lenzen',
+    variants: [
+      { id: 2081, sku: '412101', price: 430, condition: 'Goed', accessories: LENS_ACC_BASIC },
+      { id: 2082, sku: '412102', price: 490, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+  {
+    id: 'nikon-z-14-24', name: 'Nikon Z 14-24mm f/2.8 S', category: 'Nikon Lenzen',
+    variants: [
+      { id: 2091, sku: '413101', price: 1750, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
+      { id: 2092, sku: '413102', price: 1890, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+
+  /* ── Canon ── */
+  {
+    id: 'canon-eos-r5', name: 'Canon EOS R5', category: 'Canon Systeemcamera\'s',
+    variants: [
+      { id: 3001, sku: '500101', price: 2800, condition: 'Goed', shutterCount: 42000, accessories: BODY_ACC_BASIC },
+      { id: 3002, sku: '500102', price: 2950, condition: 'Zeer goed', shutterCount: 25000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 3003, sku: '500103', price: 3100, condition: 'Zo goed als nieuw', shutterCount: 12000, accessories: ['Body cap', 'Accu', 'Oplader', 'Originele doos'] },
+    ],
+  },
+  {
+    id: 'canon-eos-r6ii', name: 'Canon EOS R6 Mark II', category: 'Canon Systeemcamera\'s',
+    variants: [
+      { id: 3011, sku: '501101', price: 1900, condition: 'Goed', shutterCount: 38000, accessories: BODY_ACC_BASIC },
+      { id: 3012, sku: '501102', price: 2050, condition: 'Zeer goed', shutterCount: 14000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 3013, sku: '501103', price: 2200, condition: 'Als nieuw', shutterCount: 1800, accessories: BODY_ACC_FULL },
+    ],
+  },
+  {
+    id: 'canon-eos-r5ii', name: 'Canon EOS R5 Mark II', category: 'Canon Systeemcamera\'s',
+    variants: [
+      { id: 3021, sku: '502101', price: 3700, condition: 'Zeer goed', shutterCount: 9500, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 3022, sku: '502102', price: 3950, condition: 'Als nieuw', shutterCount: 1100, accessories: BODY_ACC_FULL },
+    ],
+  },
+  {
+    id: 'canon-eos-r3', name: 'Canon EOS R3', category: 'Canon Systeemcamera\'s',
+    variants: [
+      { id: 3031, sku: '503101', price: 3600, condition: 'Goed', shutterCount: 70000, accessories: BODY_ACC_BASIC },
+      { id: 3032, sku: '503102', price: 3900, condition: 'Zeer goed', shutterCount: 24000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+    ],
+  },
+  {
+    id: 'canon-eos-r8', name: 'Canon EOS R8', category: 'Canon Systeemcamera\'s',
+    variants: [
+      { id: 3041, sku: '504101', price: 1150, condition: 'Zeer goed', shutterCount: 11000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+      { id: 3042, sku: '504102', price: 1280, condition: 'Als nieuw', shutterCount: 1300, accessories: BODY_ACC_FULL },
+    ],
+  },
+  {
+    id: 'canon-eos-r7', name: 'Canon EOS R7', category: 'Canon Systeemcamera\'s',
+    variants: [
+      { id: 3051, sku: '505101', price: 980, condition: 'Goed', shutterCount: 29000, accessories: BODY_ACC_BASIC },
+      { id: 3052, sku: '505102', price: 1090, condition: 'Zeer goed', shutterCount: 9000, accessories: ['Body cap', 'Accu', 'Oplader'] },
+    ],
+  },
+  {
+    id: 'canon-rf-24-70', name: 'Canon RF 24-70mm f/2.8L IS USM', category: 'Canon Lenzen',
+    variants: [
+      { id: 3061, sku: '510101', price: 1700, condition: 'Goed', accessories: LENS_ACC_BASIC },
+      { id: 3062, sku: '510102', price: 1820, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
+      { id: 3063, sku: '510103', price: 1950, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+  {
+    id: 'canon-rf-70-200', name: 'Canon RF 70-200mm f/2.8L IS USM', category: 'Canon Lenzen',
+    variants: [
+      { id: 3071, sku: '511101', price: 1950, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
+      { id: 3072, sku: '511102', price: 2100, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+  {
+    id: 'canon-rf-50-12', name: 'Canon RF 50mm f/1.2L USM', category: 'Canon Lenzen',
+    variants: [
+      { id: 3081, sku: '512101', price: 1650, condition: 'Goed', accessories: LENS_ACC_BASIC },
+      { id: 3082, sku: '512102', price: 1820, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
+    ],
+  },
+  {
+    id: 'canon-rf-15-35', name: 'Canon RF 15-35mm f/2.8L IS USM', category: 'Canon Lenzen',
+    variants: [
+      { id: 3091, sku: '513101', price: 1600, condition: 'Zeer goed', accessories: ['Lensdop voor', 'Lensdop achter', 'Zonnekap'] },
+      { id: 3092, sku: '513102', price: 1740, condition: 'Als nieuw', accessories: LENS_ACC_FULL },
     ],
   },
 ];
@@ -172,6 +384,121 @@ const IconButton = ({ onClick, title, children }: { onClick: () => void; title: 
     {children}
   </button>
 );
+
+/* ── Step Card component (lifted out: voorkomt remount/focus-loss bij elke render) ── */
+interface StepCardProps {
+  num: number;
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+  activeStep: number;
+  highestStep: number;
+  goToStep: (n: number) => void;
+  sellProgress: number;
+  breadcrumbs: string[];
+}
+
+function StepCard({ num, title, subtitle, children, activeStep, highestStep, goToStep, sellProgress, breadcrumbs }: StepCardProps) {
+  const isActive = activeStep === num;
+  const isCompleted = num < activeStep || (num < highestStep);
+  const isDisabled = num > highestStep;
+
+  return (
+    <div style={{
+      border: isActive ? '1.5px solid #1E2133' : '1.5px solid #EEEEF2',
+      borderRadius: 14,
+      marginBottom: 10,
+      background: '#fff',
+      boxShadow: isActive ? '0 2px 16px rgba(45,48,71,.06)' : 'none',
+      opacity: isDisabled ? 0.6 : 1,
+      overflow: 'hidden',
+    }}>
+      {/* Header */}
+      <div
+        onClick={() => !isDisabled && goToStep(num)}
+        style={{
+          padding: '14px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          cursor: isDisabled ? 'default' : 'pointer',
+          background: isCompleted && !isActive ? '#F8F8FA' : 'transparent',
+          borderBottom: isActive ? '1px solid #EEEEF2' : 'none',
+        }}
+      >
+        <div style={{
+          width: 28, height: 28, borderRadius: '50%',
+          background: isCompleted && !isActive ? '#22c55e' : isActive ? '#E8692A' : '#EEEEF2',
+          color: isActive || (isCompleted && !isActive) ? '#fff' : '#6B6D80',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 13, fontWeight: 700, flexShrink: 0,
+        }}>
+          {isCompleted && !isActive ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
+          ) : num}
+        </div>
+        <div style={{ fontSize: 18, fontWeight: 700, color: '#1E2133' }}>{title}</div>
+        {subtitle && <div style={{ fontSize: 12, color: '#6b7280' }}>{subtitle}</div>}
+      </div>
+
+      {/* Content */}
+      {isActive && (
+        <div style={{ padding: '24px 20px' }}>
+          {/* Progress bar */}
+          {num === 1 && sellProgress > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ height: 3, background: '#EEEEF2', borderRadius: 2 }}>
+                <div style={{ height: 3, background: '#E8692A', borderRadius: 2, width: `${sellProgress}%`, transition: 'width 0.3s' }} />
+              </div>
+            </div>
+          )}
+
+          {/* Breadcrumbs */}
+          {num === 1 && breadcrumbs.length > 0 && (
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
+              {breadcrumbs.map((crumb, i) => (
+                <span key={i}>
+                  {i > 0 && <span style={{ color: '#EEEEF2', margin: '0 4px' }}>&rsaquo;</span>}
+                  <span style={{
+                    padding: '5px 12px', fontSize: 12, borderRadius: 16,
+                    background: i === breadcrumbs.length - 1 ? '#E8692A' : '#F8F8FA',
+                    color: i === breadcrumbs.length - 1 ? '#fff' : '#6b7280',
+                  }}>{crumb}</span>
+                </span>
+              ))}
+            </div>
+          )}
+
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Option card ── */
+function OptionCard({ title, description, onClick, horizontal }: { title: string; description?: string; onClick: () => void; horizontal?: boolean }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        border: '1.5px solid #EEEEF2',
+        borderRadius: 14,
+        padding: horizontal ? '14px 18px' : 20,
+        background: '#fff',
+        cursor: 'pointer',
+        transition: 'all 0.2s',
+        display: horizontal ? 'flex' : 'block',
+        alignItems: horizontal ? 'center' : undefined,
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = '#E8692A'; e.currentTarget.style.background = '#FFF8F5'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = '#EEEEF2'; e.currentTarget.style.background = '#fff'; }}
+    >
+      <div style={{ fontSize: 15, fontWeight: 600, color: '#1E2133', marginBottom: description ? 4 : 0 }}>{title}</div>
+      {description && <div style={{ fontSize: 12, color: '#6b7280' }}>{description}</div>}
+    </div>
+  );
+}
 
 /* ── Main Component ── */
 export default function TradeInPage() {
@@ -380,156 +707,58 @@ export default function TradeInPage() {
 
   const nonEuCountries = ['GB', 'CH', 'NO', 'US', 'NON_EU'];
 
-  /* ── Step Card component ── */
-  const StepCard = ({ num, title, subtitle, children }: { num: number; title: string; subtitle?: string; children: React.ReactNode }) => {
-    const isActive = activeStep === num;
-    const isCompleted = num < activeStep || (num < highestStep);
-    const isDisabled = num > highestStep;
-
-    return (
-      <div style={{
-        border: isActive ? '1.5px solid #1E2133' : '1.5px solid #EEEEF2',
-        borderRadius: 14,
-        marginBottom: 10,
-        background: '#fff',
-        boxShadow: isActive ? '0 2px 16px rgba(45,48,71,.06)' : 'none',
-        opacity: isDisabled ? 0.6 : 1,
-        overflow: 'hidden',
-      }}>
-        {/* Header */}
-        <div
-          onClick={() => !isDisabled && goToStep(num)}
-          style={{
-            padding: '14px 20px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            cursor: isDisabled ? 'default' : 'pointer',
-            background: isCompleted && !isActive ? '#F8F8FA' : 'transparent',
-            borderBottom: isActive ? '1px solid #EEEEF2' : 'none',
-          }}
-        >
-          <div style={{
-            width: 28, height: 28, borderRadius: '50%',
-            background: isCompleted && !isActive ? '#22c55e' : isActive ? '#E8692A' : '#EEEEF2',
-            color: isActive || (isCompleted && !isActive) ? '#fff' : '#6B6D80',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 13, fontWeight: 700, flexShrink: 0,
-          }}>
-            {isCompleted && !isActive ? (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
-            ) : num}
-          </div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: '#1E2133' }}>{title}</div>
-          {subtitle && <div style={{ fontSize: 12, color: '#6b7280' }}>{subtitle}</div>}
-        </div>
-
-        {/* Content */}
-        {isActive && (
-          <div style={{ padding: '24px 20px' }}>
-            {/* Progress bar */}
-            {num === 1 && sellProgress > 0 && (
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ height: 3, background: '#EEEEF2', borderRadius: 2 }}>
-                  <div style={{ height: 3, background: '#E8692A', borderRadius: 2, width: `${sellProgress}%`, transition: 'width 0.3s' }} />
-                </div>
-              </div>
-            )}
-
-            {/* Breadcrumbs */}
-            {num === 1 && breadcrumbs.length > 0 && (
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-                {breadcrumbs.map((crumb, i) => (
-                  <span key={i}>
-                    {i > 0 && <span style={{ color: '#EEEEF2', margin: '0 4px' }}>&rsaquo;</span>}
-                    <span style={{
-                      padding: '5px 12px', fontSize: 12, borderRadius: 16,
-                      background: i === breadcrumbs.length - 1 ? '#E8692A' : '#F8F8FA',
-                      color: i === breadcrumbs.length - 1 ? '#fff' : '#6b7280',
-                    }}>{crumb}</span>
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {children}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  /* ── Option card ── */
-  const OptionCard = ({ title, description, onClick, horizontal }: { title: string; description?: string; onClick: () => void; horizontal?: boolean }) => (
-    <div
-      onClick={onClick}
-      style={{
-        border: '1.5px solid #EEEEF2',
-        borderRadius: 14,
-        padding: horizontal ? '14px 18px' : 20,
-        background: '#fff',
-        cursor: 'pointer',
-        transition: 'all 0.2s',
-        display: horizontal ? 'flex' : 'block',
-        alignItems: horizontal ? 'center' : undefined,
-      }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = '#E8692A'; e.currentTarget.style.background = '#FFF8F5'; }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = '#EEEEF2'; e.currentTarget.style.background = '#fff'; }}
-    >
-      <div style={{ fontSize: 15, fontWeight: 600, color: '#1E2133', marginBottom: description ? 4 : 0 }}>{title}</div>
-      {description && <div style={{ fontSize: 12, color: '#6b7280' }}>{description}</div>}
-    </div>
-  );
+  const stepCardProps = { activeStep, highestStep, goToStep, sellProgress, breadcrumbs };
 
   return (
     <>
       {/* ── Hero Header ── */}
-      <section style={{
-        background: '#1E2133', position: 'relative', overflow: 'hidden',
-      }}>
-        {/* Decorative camera SVG pattern */}
-        <svg style={{ position: 'absolute', top: -20, right: -40, opacity: 0.04, width: 400, height: 400 }} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <section className="ti-hero">
+        {/* Warme oranje glow rechtsboven */}
+        <div className="ti-hero-glow" />
+        {/* Decoratief camera-patroon */}
+        <svg className="ti-hero-svg ti-hero-svg-tr" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="30" y="60" width="140" height="100" rx="16" stroke="white" strokeWidth="3"/>
           <circle cx="100" cy="110" r="30" stroke="white" strokeWidth="3"/>
           <circle cx="100" cy="110" r="18" stroke="white" strokeWidth="2"/>
           <rect x="60" y="45" width="40" height="20" rx="6" stroke="white" strokeWidth="2"/>
           <circle cx="145" cy="78" r="6" stroke="white" strokeWidth="2"/>
-          <rect x="38" y="75" width="12" height="8" rx="2" stroke="white" strokeWidth="1.5"/>
         </svg>
-        <svg style={{ position: 'absolute', bottom: -30, left: -30, opacity: 0.03, width: 300, height: 300, transform: 'rotate(-15deg)' }} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="30" y="60" width="140" height="100" rx="16" stroke="white" strokeWidth="3"/>
-          <circle cx="100" cy="110" r="30" stroke="white" strokeWidth="3"/>
-          <circle cx="100" cy="110" r="18" stroke="white" strokeWidth="2"/>
-          <rect x="60" y="45" width="40" height="20" rx="6" stroke="white" strokeWidth="2"/>
-        </svg>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 24px 28px', position: 'relative', zIndex: 1, textAlign: 'center' }}>
-          <h1 style={{ color: '#fff', fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: 8 }}>
-            Sell your gear
+
+        <div className="ti-hero-inner">
+          <span className="ti-hero-badge">
+            <span className="ti-hero-dot" /> Inruilen &amp; verkopen
+          </span>
+          <h1 className="ti-hero-title">
+            Verkoop je gear <span style={{ color: '#FF8A4C' }}>snel en eerlijk</span>
           </h1>
-          <p style={{ color: 'rgba(255,255,255,.55)', fontSize: 14, lineHeight: 1.6, maxWidth: 520, margin: '0 auto 20px' }}>
-            Free shipping, expert inspection, payment within 48 hours. Get an instant quote for your camera, lens, or accessories.
+          <p className="ti-hero-sub">
+            Gratis verzending, taxatie door echte fotografie-experts en je geld binnen 48 uur op de rekening. Vraag direct een indicatie aan voor je camera, lens of accessoire.
           </p>
-          <div style={{ display: 'flex', gap: 0, maxWidth: 600, margin: '0 auto' }}>
+
+          {/* USP pills */}
+          <div className="ti-hero-usps">
+            {['Gratis verzending', 'Taxatie door experts', 'Betaling binnen 48 uur'].map(u => (
+              <span key={u} className="ti-hero-usp">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A4C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                {u}
+              </span>
+            ))}
+          </div>
+
+          {/* Stappen */}
+          <div className="ti-hero-steps">
             {[
-              { num: 1, label: 'Get your offer', desc: 'We review & quote\nwithin 2 days.' },
-              { num: 2, label: 'Free shipping', desc: 'We send a prepaid\nshipping label.' },
-              { num: 3, label: 'Get paid', desc: 'Payout within\n48 hours.' },
+              { num: 1, label: 'Vraag je offerte aan', desc: 'We bekijken & taxeren binnen 2 dagen.' },
+              { num: 2, label: 'Verstuur gratis', desc: 'Je ontvangt een prepaid verzendlabel.' },
+              { num: 3, label: 'Ontvang je geld', desc: 'Uitbetaling binnen 48 uur.' },
             ].map((s, i) => (
-              <div key={s.num} style={{ flex: 1, position: 'relative', textAlign: 'center' }}>
-                <div style={{
-                  width: 46, height: 46, borderRadius: '50%',
-                  background: 'rgba(255,255,255,.06)', border: '1.5px solid rgba(255,255,255,.12)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  margin: '0 auto 10px', fontSize: 16, fontWeight: 700, color: '#E8692A',
-                }}>{s.num}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 3 }}>{s.label}</div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,.4)', lineHeight: 1.5, whiteSpace: 'pre-line' }}>{s.desc}</div>
-                {i < 2 && (
-                  <div style={{
-                    position: 'absolute', top: 23, left: 'calc(50% + 26px)',
-                    width: 'calc(100% - 52px)', height: 1, background: 'rgba(255,255,255,.1)',
-                  }} />
-                )}
+              <div key={s.num} className="ti-step">
+                <div className="ti-step-num">{s.num}</div>
+                <div className="ti-step-text">
+                  <div className="ti-step-label">{s.label}</div>
+                  <div className="ti-step-desc">{s.desc}</div>
+                </div>
+                {i < 2 && <div className="ti-step-line" />}
               </div>
             ))}
           </div>
@@ -540,7 +769,7 @@ export default function TradeInPage() {
       <div ref={wizardRef} style={{ maxWidth: 1200, padding: '16px 24px 48px', margin: '0 auto' }}>
 
         {/* Step 1: Verkopen */}
-        <StepCard num={1} title="Verkopen">
+        <StepCard num={1} title="Verkopen" {...stepCardProps}>
           {/* ── Search question ── */}
           {wizardQuestion === 'search' && (
             <div style={{ animation: 'fadeIn 0.3s ease' }}>
@@ -587,7 +816,7 @@ export default function TradeInPage() {
               )}
 
               {/* Search */}
-              <div style={{ maxWidth: 600, margin: '0 auto 20px', position: 'relative' }}>
+              <div style={{ maxWidth: 600, margin: '0 auto', position: 'relative' }}>
                 <input
                   ref={searchRef}
                   type="text"
@@ -608,32 +837,40 @@ export default function TradeInPage() {
                 }}>
                   <svg width="16" height="16" fill="none" stroke="#6B6D80" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
                 </div>
+              </div>
 
-                {/* Results dropdown */}
-                {(sellResults.length > 0 || (sellSearch.length > 0 && sellResults.length === 0)) && (
+              {/* Results — inline uitgeklapt, hoger vak met scroll (geen clipping binnen de card) */}
+              {(sellResults.length > 0 || (sellSearch.length > 0 && sellResults.length === 0)) && (
+                <div style={{ maxWidth: 600, margin: '12px auto 0' }}>
+                  {sellResults.length > 0 && (
+                    <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, paddingLeft: 4 }}>
+                      {sellResults.length} {sellResults.length === 1 ? 'product' : 'producten'} gevonden
+                    </div>
+                  )}
                   <div style={{
-                    position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10,
-                    background: '#fff', borderRadius: 14, border: '1.5px solid #EEEEF2',
-                    boxShadow: '0 8px 24px rgba(45,48,71,.1)', marginTop: 4, maxHeight: 440, overflowY: 'auto',
+                    background: '#fff', borderRadius: 14,
+                    boxShadow: '0 12px 32px rgba(45,48,71,.14)', overflow: 'hidden',
                   }}>
                     {sellResults.length > 0 ? (
-                      sellResults.map(p => (
-                        <div
-                          key={p.name}
-                          onClick={() => selectSellProduct(p.name, p.category)}
-                          style={{ padding: '10px 18px', fontSize: 14, cursor: 'pointer', borderBottom: '1px solid #F8F8FA' }}
-                          onMouseEnter={e => { e.currentTarget.style.background = '#FFF8F5'; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = '#fff'; }}
-                        >
-                          {p.name}
-                        </div>
-                      ))
+                      <div style={{ height: 400, overflowY: 'auto' }}>
+                        {sellResults.map((p, idx) => (
+                          <div
+                            key={p.name}
+                            onClick={() => selectSellProduct(p.name, p.category)}
+                            style={{ padding: '14px 18px', fontSize: 14, fontWeight: 500, color: '#1E2133', cursor: 'pointer', borderBottom: idx < sellResults.length - 1 ? '1px solid #F2F2F6' : 'none', borderLeft: '4px solid transparent', transition: 'all 0.15s' }}
+                            onMouseEnter={e => { e.currentTarget.style.background = '#FFF8F5'; e.currentTarget.style.borderLeftColor = '#E8692A'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderLeftColor = 'transparent'; }}
+                          >
+                            {p.name}
+                          </div>
+                        ))}
+                      </div>
                     ) : (
                       <>
                         <p style={{ color: '#6b7280', textAlign: 'center', padding: 16, margin: 0, fontSize: 14 }}>Geen producten gevonden</p>
                         <div
                           onClick={openManualEntry}
-                          style={{ padding: '10px 18px', color: '#E8692A', fontWeight: 600, cursor: 'pointer', borderTop: '2px solid #EEEEF2', fontSize: 14 }}
+                          style={{ padding: '12px 18px', color: '#E8692A', fontWeight: 600, cursor: 'pointer', borderTop: '2px solid #EEEEF2', fontSize: 14 }}
                           onMouseEnter={e => { e.currentTarget.style.background = '#FFF8F5'; }}
                           onMouseLeave={e => { e.currentTarget.style.background = '#fff'; }}
                         >
@@ -642,8 +879,8 @@ export default function TradeInPage() {
                       </>
                     )}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Next button */}
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
@@ -748,7 +985,7 @@ export default function TradeInPage() {
         </StepCard>
 
         {/* Step 2: Kopen */}
-        <StepCard num={2} title="Kopen" subtitle="(optioneel)">
+        <StepCard num={2} title="Kopen" subtitle="(optioneel)" {...stepCardProps}>
           {buyWantsTo === null && (
             <div style={{ animation: 'fadeIn 0.3s ease' }}>
               <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1E2133', textAlign: 'center', marginBottom: 4 }}>
@@ -812,7 +1049,7 @@ export default function TradeInPage() {
               )}
 
               {/* Buy search */}
-              <div style={{ maxWidth: 600, margin: '0 auto 20px', position: 'relative' }}>
+              <div style={{ maxWidth: 600, margin: '0 auto', position: 'relative' }}>
                 <input
                   type="text"
                   placeholder="Zoek op merk, model, SKU..."
@@ -830,46 +1067,56 @@ export default function TradeInPage() {
                 }}>
                   <svg width="16" height="16" fill="none" stroke="#6B6D80" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
                 </div>
+              </div>
 
-                {/* Buy results */}
-                {(buyResults.length > 0 || (buySearch.length > 0 && buyResults.length === 0)) && (
+              {/* Buy results — inline uitgeklapt zodat alles zichtbaar is (geen clipping binnen de card) */}
+              {(buyResults.length > 0 || (buySearch.length > 0 && buyResults.length === 0)) && (
+                <div style={{ maxWidth: 600, margin: '12px auto 0' }}>
+                  {buyResults.length > 0 && (
+                    <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, paddingLeft: 4 }}>
+                      {buyResults.length} {buyResults.length === 1 ? 'product' : 'producten'} gevonden in onze voorraad
+                    </div>
+                  )}
                   <div style={{
-                    position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10,
-                    background: '#fff', borderRadius: 14, border: '1.5px solid #EEEEF2',
-                    boxShadow: '0 8px 24px rgba(45,48,71,.1)', marginTop: 4, maxHeight: 400, overflowY: 'auto',
+                    background: '#fff', borderRadius: 14,
+                    boxShadow: '0 12px 32px rgba(45,48,71,.14)', overflow: 'hidden',
                   }}>
-                    {buyResults.length > 0 ? buyResults.map(product => {
-                      const prices = product.variants.map(v => v.price);
-                      const minPrice = Math.min(...prices);
-                      const maxPrice = Math.max(...prices);
-                      return (
-                        <div
-                          key={product.id}
-                          onClick={() => setVariantModal(product)}
-                          style={{ padding: '16px 20px', cursor: 'pointer', borderBottom: '1px solid #EEEEF2', borderLeft: '4px solid transparent', transition: 'all 0.2s' }}
-                          onMouseEnter={e => { e.currentTarget.style.borderLeftColor = '#E8692A'; e.currentTarget.style.background = '#fffbf7'; }}
-                          onMouseLeave={e => { e.currentTarget.style.borderLeftColor = 'transparent'; e.currentTarget.style.background = 'white'; }}
-                        >
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                              <div style={{ fontWeight: 600, marginBottom: 4, color: '#1E2133', fontSize: 14 }}>{product.name}</div>
-                              <span style={{ fontSize: 14, color: '#6b7280' }}>{product.category}</span>
-                            </div>
-                            <div style={{ textAlign: 'right' }}>
-                              <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Voorraad: {product.variants.length}x</div>
-                              <div style={{ fontSize: 18, fontWeight: 600, color: '#1E2133' }}>
-                                &euro; {minPrice.toLocaleString('nl-NL')} - &euro; {maxPrice.toLocaleString('nl-NL')}
+                    {buyResults.length > 0 ? (
+                      <div style={{ height: 400, overflowY: 'auto' }}>
+                        {buyResults.map((product, idx) => {
+                          const prices = product.variants.map(v => v.price);
+                          const minPrice = Math.min(...prices);
+                          const maxPrice = Math.max(...prices);
+                          return (
+                            <div
+                              key={product.id}
+                              onClick={() => setVariantModal(product)}
+                              style={{ padding: '16px 20px', cursor: 'pointer', borderBottom: idx < buyResults.length - 1 ? '1px solid #F2F2F6' : 'none', borderLeft: '4px solid transparent', transition: 'all 0.2s' }}
+                              onMouseEnter={e => { e.currentTarget.style.borderLeftColor = '#E8692A'; e.currentTarget.style.background = '#fffbf7'; }}
+                              onMouseLeave={e => { e.currentTarget.style.borderLeftColor = 'transparent'; e.currentTarget.style.background = 'white'; }}
+                            >
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                                <div>
+                                  <div style={{ fontWeight: 600, marginBottom: 4, color: '#1E2133', fontSize: 14 }}>{product.name}</div>
+                                  <span style={{ fontSize: 14, color: '#6b7280' }}>{product.category}</span>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                  <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Voorraad: {product.variants.length}x</div>
+                                  <div style={{ fontSize: 18, fontWeight: 600, color: '#1E2133' }}>
+                                    &euro; {minPrice.toLocaleString('nl-NL')} - &euro; {maxPrice.toLocaleString('nl-NL')}
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                      );
-                    }) : (
+                          );
+                        })}
+                      </div>
+                    ) : (
                       <p style={{ color: '#6b7280', textAlign: 'center', padding: 24, margin: 0, fontSize: 14 }}>Geen producten gevonden in onze voorraad</p>
                     )}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Navigation */}
               <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 700, margin: '24px auto 0' }}>
@@ -881,7 +1128,7 @@ export default function TradeInPage() {
         </StepCard>
 
         {/* Step 3: Contact */}
-        <StepCard num={3} title="Persoonlijke gegevens">
+        <StepCard num={3} title="Persoonlijke gegevens" {...stepCardProps}>
           <div style={{ animation: 'fadeIn 0.3s ease' }}>
             <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1E2133', textAlign: 'center', marginBottom: 4 }}>
               Contactgegevens
@@ -891,7 +1138,7 @@ export default function TradeInPage() {
             </p>
 
             <div style={{ maxWidth: 600, margin: '0 auto' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="ti-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div>
                   <label style={{ fontSize: 13, fontWeight: 600, color: '#1E2133', display: 'block', marginBottom: 6 }}>Voornaam *</label>
                   <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jan" style={inputStyle} />
@@ -902,7 +1149,7 @@ export default function TradeInPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 24 }}>
+              <div className="ti-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 24 }}>
                 <div>
                   <label style={{ fontSize: 13, fontWeight: 600, color: '#1E2133', display: 'block', marginBottom: 6 }}>E-mailadres *</label>
                   <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="jan@voorbeeld.nl" style={inputStyle} />
@@ -971,7 +1218,7 @@ export default function TradeInPage() {
         </StepCard>
 
         {/* Step 4: Summary */}
-        <StepCard num={4} title="Voorlopige offerte">
+        <StepCard num={4} title="Voorlopige offerte" {...stepCardProps}>
           {!submitted ? (
             <div style={{ animation: 'fadeIn 0.3s ease', maxWidth: 900, margin: '0 auto' }}>
               <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1E2133', textAlign: 'center', marginBottom: 4 }}>
@@ -1436,6 +1683,164 @@ export default function TradeInPage() {
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Trade-in hero ── */
+        .ti-hero {
+          position: relative;
+          overflow: hidden;
+          background: linear-gradient(135deg, #1B1E2E 0%, #262A45 55%, #3A2519 100%);
+        }
+        .ti-hero-glow {
+          position: absolute;
+          top: -120px;
+          right: -80px;
+          width: 420px;
+          height: 420px;
+          background: radial-gradient(circle, rgba(232,105,42,.35) 0%, rgba(232,105,42,0) 70%);
+          pointer-events: none;
+        }
+        .ti-hero-svg {
+          position: absolute;
+          pointer-events: none;
+        }
+        .ti-hero-svg-tr {
+          top: -30px;
+          right: -30px;
+          width: 360px;
+          height: 360px;
+          opacity: .05;
+        }
+        .ti-hero-inner {
+          position: relative;
+          z-index: 1;
+          max-width: 920px;
+          margin: 0 auto;
+          padding: 40px 24px 44px;
+          text-align: center;
+        }
+        .ti-hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          padding: 5px 14px;
+          border-radius: 999px;
+          background: rgba(232,105,42,.14);
+          border: 1px solid rgba(232,105,42,.3);
+          color: #FF8A4C;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: .02em;
+          margin-bottom: 16px;
+        }
+        .ti-hero-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #FF8A4C;
+          box-shadow: 0 0 0 3px rgba(255,138,76,.25);
+        }
+        .ti-hero-title {
+          color: #fff;
+          font-size: clamp(28px, 5vw, 44px);
+          font-weight: 700;
+          letter-spacing: -0.03em;
+          line-height: 1.08;
+          margin: 0 0 14px;
+        }
+        .ti-hero-sub {
+          color: rgba(255,255,255,.62);
+          font-size: 15px;
+          line-height: 1.6;
+          max-width: 560px;
+          margin: 0 auto 22px;
+        }
+        .ti-hero-usps {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px 18px;
+          margin-bottom: 32px;
+        }
+        .ti-hero-usp {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          color: rgba(255,255,255,.82);
+          font-size: 13px;
+          font-weight: 500;
+        }
+        .ti-hero-steps {
+          display: flex;
+          gap: 0;
+          max-width: 720px;
+          margin: 0 auto;
+        }
+        .ti-step {
+          flex: 1;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 0 10px;
+        }
+        .ti-step-num {
+          width: 46px;
+          height: 46px;
+          border-radius: 50%;
+          background: rgba(255,255,255,.05);
+          border: 1.5px solid rgba(255,255,255,.14);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 12px;
+          font-size: 17px;
+          font-weight: 700;
+          color: #FF8A4C;
+          flex-shrink: 0;
+        }
+        .ti-step-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: #fff;
+          margin-bottom: 4px;
+        }
+        .ti-step-desc {
+          font-size: 12px;
+          color: rgba(255,255,255,.45);
+          line-height: 1.5;
+        }
+        .ti-step-line {
+          position: absolute;
+          top: 23px;
+          left: calc(50% + 30px);
+          width: calc(100% - 60px);
+          height: 1.5px;
+          background: linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.04));
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+          .ti-hero-inner { padding: 30px 20px 34px; }
+          .ti-hero-svg-tr { width: 240px; height: 240px; opacity: .04; }
+          .ti-hero-glow { width: 280px; height: 280px; top: -90px; right: -90px; }
+          .ti-hero-sub { font-size: 14px; }
+          .ti-hero-steps {
+            flex-direction: column;
+            gap: 18px;
+            max-width: 340px;
+          }
+          .ti-step {
+            flex-direction: row;
+            align-items: flex-start;
+            text-align: left;
+            gap: 14px;
+            padding: 0;
+          }
+          .ti-step-num { margin-bottom: 0; }
+          .ti-step-line { display: none; }
+          .ti-form-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </>
