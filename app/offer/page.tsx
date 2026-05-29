@@ -136,12 +136,12 @@ const fmtDate = (s: string) => new Date(s).toLocaleDateString('nl-NL', { day: 'n
 /* nette opvolging per afwijs-reden */
 const REJECT_FOLLOWUP: Record<string, { title: string; body: string }> = {
   prijs: {
-    title: 'Bedankt voor je eerlijkheid',
-    body: `Wil je dat we nog eens naar de prijs kijken? Je bod blijft geldig t/m ${fmtDate(QUOTE.validUntil)}, en je kunt altijd een nieuw bod aanvragen.`,
+    title: 'Bedankt voor je feedback',
+    body: 'We hebben je reden genoteerd. Bedankt dat je de moeite nam om het aan ons door te geven.',
   },
   'beter-aanbod': {
-    title: 'Bedankt — we kijken ernaar',
-    body: 'We bekijken het andere bod en nemen snel contact met je op om te zien wat we kunnen doen.',
+    title: 'Stuur ons je bod',
+    body: 'Stuur je bod naar info@camera-tweedehands.nl, dan kijken we wat we kunnen doen. Een van onze specialisten neemt daarna contact met je op.',
   },
   zelf: {
     title: 'Succes met de verkoop!',
@@ -196,7 +196,6 @@ export default function OfferPage() {
   /* afwijzen */
   const [showReject, setShowReject] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
-  const [betterOffer, setBetterOffer] = useState('');
   const [rejectNote, setRejectNote] = useState('');
   const [rejectSent, setRejectSent] = useState(false);
 
@@ -661,20 +660,13 @@ export default function OfferPage() {
                     })}
                   </div>
 
-                  {/* follow-up: beter aanbod → kans om mee te bewegen */}
+                  {/* follow-up: beter aanbod → vraag het bod door te sturen */}
                   {rejectReason === 'beter-aanbod' && (
                     <div style={{ marginTop: 14, padding: 14, background: CSS.accentLight, borderRadius: CSS.r }}>
-                      <div style={{ fontSize: '.85rem', fontWeight: 700, color: CSS.text, marginBottom: 4 }}>Geef ons een kans om mee te bewegen 💪</div>
-                      <div style={{ fontSize: '.8rem', color: CSS.textSec, lineHeight: 1.5, marginBottom: 10 }}>
-                        Wat biedt de andere partij? Deel het gerust — vaak kunnen we er samen uitkomen.
+                      <div style={{ fontSize: '.85rem', fontWeight: 700, color: CSS.text, marginBottom: 4 }}>Geef ons een kans om mee te bewegen</div>
+                      <div style={{ fontSize: '.8rem', color: CSS.textSec, lineHeight: 1.5 }}>
+                        Stuur je bod door naar <a href="mailto:info@camera-tweedehands.nl" style={{ color: CSS.accent, fontWeight: 600, textDecoration: 'none' }}>info@camera-tweedehands.nl</a>, dan kijken we wat we kunnen doen. Een van onze specialisten neemt daarna contact met je op.
                       </div>
-                      <label style={labelStyle}>Het andere bod (optioneel)</label>
-                      <div style={{ display: 'flex', marginBottom: 10 }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center', padding: '0 12px', border: `1.5px solid ${CSS.border}`, borderRight: 'none', borderRadius: `${CSS.r}px 0 0 ${CSS.r}px`, background: '#fff', fontSize: '.9rem', color: CSS.textSec }}>€</span>
-                        <input style={{ ...inputStyle, borderRadius: `0 ${CSS.r}px ${CSS.r}px 0` }} placeholder="350" value={betterOffer} onChange={e => setBetterOffer(e.target.value)} />
-                      </div>
-                      <label style={labelStyle}>Welke partij / toelichting (optioneel)</label>
-                      <textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} placeholder="Bijv. MPB, Marktplaats-bod, …" value={rejectNote} onChange={e => setRejectNote(e.target.value)} />
                     </div>
                   )}
 
