@@ -907,6 +907,9 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
   const [creditVerzendkosten, setCreditVerzendkosten] = useState(false);
   const [creditBetaalkosten, setCreditBetaalkosten] = useState(false);
   const [creditNewProducts, setCreditNewProducts] = useState<{ name: string; price: string }[]>([]);
+  // Vrije credit-regels: vrije omschrijving + bedrag + BTW ja/nee (boolean i.v.m. mogelijke
+  // buitenlandse / OSS-orders waar BTW niet altijd 21% is — voorlopig simpele toggle).
+  const [creditFreeLines, setCreditFreeLines] = useState<{ desc: string; amount: string; btw: boolean }[]>([]);
 
   const addNewProduct = () => setCreditNewProducts(prev => [...prev, { name: '', price: '' }]);
   const updateNewProduct = (idx: number, field: 'name' | 'price', value: string) => {
@@ -914,9 +917,17 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
   };
   const removeNewProduct = (idx: number) => setCreditNewProducts(prev => prev.filter((_, i) => i !== idx));
 
+  const addFreeLine = () => setCreditFreeLines(prev => [...prev, { desc: '', amount: '', btw: true }]);
+  const updateFreeLine = (idx: number, field: 'desc' | 'amount' | 'btw', value: string | boolean) => {
+    setCreditFreeLines(prev => prev.map((p, i) => i === idx ? { ...p, [field]: field === 'amount' ? String(value).replace(/[^\d.,]/g, '') : value } : p));
+  };
+  const removeFreeLine = (idx: number) => setCreditFreeLines(prev => prev.filter((_, i) => i !== idx));
+
   const validNewProducts = creditNewProducts.filter(p => p.name && p.price && parseFloat(p.price) > 0);
   const hasExchange = validNewProducts.length > 0;
   const newProductsTotal = validNewProducts.reduce((sum, p) => sum + parseFloat(p.price || '0'), 0);
+  const validFreeLines = creditFreeLines.filter(p => p.desc && p.amount && parseFloat(p.amount) > 0);
+  const freeLinesTotal = validFreeLines.reduce((sum, p) => sum + parseFloat(p.amount || '0'), 0);
   const credNr = 'CRED-00012';
   const excNr = 'EXC-00003';
   const newOrdNr = 'CT028946';
@@ -957,6 +968,7 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
     setCreditVerzendkosten(false);
     setCreditBetaalkosten(false);
     setCreditNewProducts([]);
+    setCreditFreeLines([]);
   };
 
   const creditTotal = (() => {
@@ -968,6 +980,7 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
     if (creditVerzendkosten) total -= 6.95;
     if (creditBetaalkosten) total -= 0.29;
     total += newProductsTotal;
+    total -= freeLinesTotal;
     return total;
   })();
 
@@ -992,12 +1005,12 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
               <span style={{ fontSize: 10, color: GREY, marginTop: 3 }}>Verstuurd: {order.laatsteFactuur}</span>
             )}
           </div>
-          <button style={buttonDark} onClick={() => { if (creditConfirmed) resetCreditForm(); else setShowCreditForm(!showCreditForm); }}>Credit factuur</button>
+          <button data-credit-toggle style={buttonDark} onClick={() => { if (creditConfirmed) resetCreditForm(); else setShowCreditForm(!showCreditForm); }}>Credit factuur</button>
         </div>
       </div>
 
-      {/* Credit factuur bevestiging */}
-      {creditConfirmed && (
+      {/* Credit factuur bevestiging — altijd gemount (display-toggle) zodat de statische Pages-export hem kan tonen */}
+      <div data-credit-confirm style={{ display: creditConfirmed ? 'block' : 'none' }}>
         <div style={{ ...cardStyle, marginBottom: 20, border: `2px solid ${GREEN}`, background: '#F0FDF4' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1034,7 +1047,7 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
               {credNr}{hasExchange ? ` / ${excNr}` : ''}
             </div>
             <div style={{ fontSize: 12, color: GREY, marginTop: 6 }}>
-              Nettobedrag: <span style={{ fontWeight: 700, color: creditTotal < 0 ? RED : GREEN }}>
+              Nettobedrag: <span data-credit-confirm-amount style={{ fontWeight: 700, color: creditTotal < 0 ? RED : GREEN }}>
                 {creditTotal < 0 ? '-' : '+'}&euro; {Math.abs(creditTotal).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
               {' '}&mdash; {creditTotal < 0 ? 'Terug naar klant' : creditTotal > 0 ? 'Klant betaalt bij' : 'Verrekend, geen betaling nodig'}
@@ -1048,13 +1061,13 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
           )}
 
           <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-            <button style={buttonOutline} onClick={resetCreditForm}>Sluiten</button>
+            <button data-credit-cancel style={buttonOutline} onClick={resetCreditForm}>Sluiten</button>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Credit factuur form */}
-      {showCreditForm && !creditConfirmed && (
+      {/* Credit factuur form — altijd gemount (display-toggle) voor de statische Pages-export */}
+      <div data-credit-form style={{ display: showCreditForm && !creditConfirmed ? 'block' : 'none' }}>
         <div style={{ ...cardStyle, marginBottom: 20, border: `2px solid ${ACCENT}` }}>
           <h3 style={{ fontSize: 15, fontWeight: 700, color: DARK, marginBottom: 4 }}>Credit factuur aanmaken</h3>
           <p style={{ fontSize: 13, color: GREY, marginBottom: 16 }}>Selecteer welke regels je wilt crediteren. Optioneel kun je een vervangend product toevoegen (exchange).</p>
@@ -1064,7 +1077,7 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
             <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 8 }}>Orderregels crediteren</div>
             {order.orderregels.map((r, i) => (
               <label key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: `1px solid ${BORDER}`, cursor: 'pointer', fontSize: 13 }}>
-                <input type="checkbox" checked={creditSelected.has(i)} onChange={() => toggleCreditItem(i)} />
+                <input type="checkbox" data-credit-line data-amount={r.type === 'Verkoop' ? r.verkoopprijs : r.inkoopprijs} checked={creditSelected.has(i)} onChange={() => toggleCreditItem(i)} />
                 <span style={{ flex: 1, fontWeight: 500, color: creditSelected.has(i) ? RED : DARK }}>{r.variant}</span>
                 <Badge color={r.type === 'Verkoop' ? GREEN : BLUE} bg={r.type === 'Verkoop' ? '#DCFCE7' : '#DBEAFE'}>{r.type}</Badge>
                 <span style={{ fontWeight: 600, color: creditSelected.has(i) ? RED : DARK, minWidth: 80, textAlign: 'right' }}>
@@ -1078,12 +1091,12 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
           <div style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 8 }}>Extra kosten crediteren</div>
             <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', fontSize: 13, cursor: 'pointer' }}>
-              <input type="checkbox" checked={creditVerzendkosten} onChange={() => setCreditVerzendkosten(!creditVerzendkosten)} />
+              <input type="checkbox" data-credit-cost="6.95" checked={creditVerzendkosten} onChange={() => setCreditVerzendkosten(!creditVerzendkosten)} />
               <span style={{ flex: 1 }}>Verzendkosten</span>
               <span style={{ color: creditVerzendkosten ? RED : GREY, fontWeight: 500 }}>{creditVerzendkosten ? '-' : ''}&euro; 6,95</span>
             </label>
             <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', fontSize: 13, cursor: 'pointer' }}>
-              <input type="checkbox" checked={creditBetaalkosten} onChange={() => setCreditBetaalkosten(!creditBetaalkosten)} />
+              <input type="checkbox" data-credit-cost="0.29" checked={creditBetaalkosten} onChange={() => setCreditBetaalkosten(!creditBetaalkosten)} />
               <span style={{ flex: 1 }}>Betaalkosten</span>
               <span style={{ color: creditBetaalkosten ? RED : GREY, fontWeight: 500 }}>{creditBetaalkosten ? '-' : ''}&euro; 0,29</span>
             </label>
@@ -1098,11 +1111,17 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
                 </div>
                 {hasExchange && <Badge color={ACCENT} bg={ACCENT_BG}>EXC wordt aangemaakt</Badge>}
               </div>
-              <button style={{ ...buttonOutline, padding: '5px 12px', fontSize: 12 }} onClick={addNewProduct}>+ Product toevoegen</button>
+              <button data-add-exchange style={{ ...buttonOutline, padding: '5px 12px', fontSize: 12 }} onClick={addNewProduct}>+ Product toevoegen</button>
             </div>
             <p style={{ fontSize: 12, color: GREY, marginBottom: 10 }}>
               Bij een exchange wordt een EXC-nummer aangemaakt dat de credit factuur ({credNr}) koppelt aan een nieuwe order ({newOrdNr}). Het nettobedrag wordt verrekend.
             </p>
+            {/* Template-rij voor statische Pages-export (vanilla JS kloont deze) */}
+            <div data-exchange-template style={{ display: 'none', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+              <input type="text" placeholder="Productnaam of SKU..." style={{ ...inputStyle, flex: 1 }} />
+              <input type="text" data-exchange-price placeholder="Prijs" style={{ ...inputStyle, width: 100 }} />
+              <button type="button" data-exchange-delete style={{ background: 'none', border: 'none', color: RED, cursor: 'pointer', fontSize: 16, padding: '0 4px' }}>&times;</button>
+            </div>
             {creditNewProducts.map((p, i) => (
               <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
                 <input
@@ -1137,8 +1156,70 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
             )}
           </div>
 
+          {/* Vrije regels (omschrijving + BTW ja/nee + bedrag) */}
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px' }}>Vrije regels</div>
+              <button data-add-credit-free style={{ ...buttonOutline, padding: '5px 12px', fontSize: 12 }} onClick={addFreeLine}>+ Vrije regel toevoegen</button>
+            </div>
+            <p style={{ fontSize: 12, color: GREY, marginBottom: 10 }}>
+              Vrije creditregel met eigen omschrijving en bedrag. BTW-keuze is voorlopig ja/nee &mdash; bij buitenlandse / OSS-orders is 21% niet altijd van toepassing.
+            </p>
+            {/* Template-rij voor statische Pages-export (vanilla JS kloont deze) */}
+            <div data-cfree-template style={{ display: 'none', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+              <input type="text" placeholder="Omschrijving..." style={{ ...inputStyle, flex: 1 }} />
+              <button type="button" data-cfree-btw style={{ ...buttonOutline, padding: '8px 12px', fontSize: 12, minWidth: 92, borderColor: ACCENT, color: ACCENT, fontWeight: 600 }}>BTW 21%</button>
+              <div style={{ display: 'inline-flex', alignItems: 'stretch', border: `1px solid ${BORDER}`, borderRadius: 8, overflow: 'hidden' }}>
+                <span style={{ display: 'flex', alignItems: 'center', padding: '0 10px', background: SURFACE, color: GREY, fontSize: 13, borderRight: `1px solid ${BORDER}` }}>&euro;</span>
+                <input type="text" data-cfree-amount placeholder="0,00" style={{ border: 'none', outline: 'none', padding: '8px 10px', fontSize: 13, width: 90, fontFamily: 'inherit' }} />
+              </div>
+              <button type="button" data-cfree-delete style={{ background: 'none', border: 'none', color: RED, cursor: 'pointer', fontSize: 16, padding: '0 4px' }}>&times;</button>
+            </div>
+            {creditFreeLines.map((p, i) => (
+              <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="Omschrijving..."
+                  value={p.desc}
+                  onChange={e => updateFreeLine(i, 'desc', e.target.value)}
+                  style={{ ...inputStyle, flex: 1 }}
+                />
+                <button
+                  type="button"
+                  onClick={() => updateFreeLine(i, 'btw', !p.btw)}
+                  style={{ ...buttonOutline, padding: '8px 12px', fontSize: 12, minWidth: 92, borderColor: p.btw ? ACCENT : BORDER, color: p.btw ? ACCENT : GREY, fontWeight: 600 }}
+                >
+                  {p.btw ? 'BTW 21%' : 'Geen BTW'}
+                </button>
+                <div style={{ display: 'inline-flex', alignItems: 'stretch', border: `1px solid ${BORDER}`, borderRadius: 8, overflow: 'hidden' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', padding: '0 10px', background: SURFACE, color: GREY, fontSize: 13, borderRight: `1px solid ${BORDER}` }}>&euro;</span>
+                  <input
+                    type="text"
+                    placeholder="0,00"
+                    value={p.amount}
+                    onChange={e => updateFreeLine(i, 'amount', e.target.value)}
+                    style={{ border: 'none', outline: 'none', padding: '8px 10px', fontSize: 13, width: 90, fontFamily: 'inherit' }}
+                  />
+                </div>
+                <button onClick={() => removeFreeLine(i)} style={{ background: 'none', border: 'none', color: RED, cursor: 'pointer', fontSize: 16, padding: '0 4px' }}>&times;</button>
+              </div>
+            ))}
+            {creditFreeLines.length === 0 && (
+              <div style={{ fontSize: 12, color: GREY, fontStyle: 'italic', padding: '8px 0' }}>Geen vrije regels. Klik &ldquo;+ Vrije regel toevoegen&rdquo; voor bijv. een korting of toeslag.</div>
+            )}
+            {validFreeLines.length > 0 && (
+              <div style={{ marginTop: 10, padding: 10, background: WHITE, borderRadius: 6, border: `1px solid ${BORDER}`, fontSize: 12 }}>
+                {validFreeLines.map((p, i) => (
+                  <div key={i} style={{ color: RED, fontWeight: 600, marginBottom: i < validFreeLines.length - 1 ? 4 : 0 }}>
+                    &minus; &euro; {parseFloat(p.amount).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} &mdash; {p.desc} <span style={{ color: GREY, fontWeight: 400 }}>({p.btw ? 'incl. 21% BTW' : 'geen BTW'})</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Samenvatting documenten die worden aangemaakt */}
-          {(creditSelected.size > 0 || creditVerzendkosten || creditBetaalkosten) && (
+          {(creditSelected.size > 0 || creditVerzendkosten || creditBetaalkosten || validFreeLines.length > 0) && (
             <div style={{ marginBottom: 16, padding: 12, background: '#FFFBEB', borderRadius: 8, border: '1px solid #FDE68A', fontSize: 12 }}>
               <strong style={{ color: '#92400E' }}>Wordt aangemaakt:</strong>
               <div style={{ display: 'flex', gap: 16, marginTop: 6 }}>
@@ -1153,18 +1234,19 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderTop: `2px solid ${BORDER}` }}>
             <div>
               <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px' }}>Nettobedrag</div>
-              <div style={{ fontSize: 20, fontWeight: 700, color: creditTotal < 0 ? RED : creditTotal > 0 ? GREEN : DARK }}>
+              <div data-credit-total style={{ fontSize: 20, fontWeight: 700, color: creditTotal < 0 ? RED : creditTotal > 0 ? GREEN : DARK }}>
                 {creditTotal < 0 ? '-' : creditTotal > 0 ? '+' : ''}&euro; {Math.abs(creditTotal).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <div style={{ fontSize: 12, color: GREY }}>
+              <div data-credit-subtitle style={{ fontSize: 12, color: GREY }}>
                 {creditTotal < 0 ? 'Klant ontvangt terug' : creditTotal > 0 ? 'Klant betaalt bij' : 'Verrekend, geen betaling nodig'}
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button style={buttonOutline} onClick={resetCreditForm}>Annuleren</button>
+              <button data-credit-cancel style={buttonOutline} onClick={resetCreditForm}>Annuleren</button>
               <button
-                style={{ ...buttonAccent, background: creditSelected.size > 0 || creditVerzendkosten || creditBetaalkosten ? ACCENT : GREY }}
-                disabled={creditSelected.size === 0 && !creditVerzendkosten && !creditBetaalkosten}
+                data-credit-submit
+                style={{ ...buttonAccent, background: creditSelected.size > 0 || creditVerzendkosten || creditBetaalkosten || validFreeLines.length > 0 ? ACCENT : GREY }}
+                disabled={creditSelected.size === 0 && !creditVerzendkosten && !creditBetaalkosten && validFreeLines.length === 0}
                 onClick={() => { setShowCreditForm(false); setCreditConfirmed(true); }}
               >
                 {hasExchange ? 'Credit + Exchange aanmaken' : 'Credit factuur aanmaken'}
@@ -1172,7 +1254,7 @@ function OrderDetailPage({ ordernummer, onBack }: { ordernummer: string; onBack:
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Order info + klantgegevens */}
       <div style={cardStyle}>
@@ -1468,6 +1550,15 @@ function QuotesPage({ onSelectQuote }: { onSelectQuote: (id: string) => void }) 
 function QuoteDetailPage({ quoteId, onBack }: { quoteId: string; onBack: () => void }) {
   const quote = MOCK_QUOTES.find((q) => q.id === quoteId) || MOCK_QUOTES[0];
   const [notesOpen, setNotesOpen] = useState(true);
+  const [showPayment, setShowPayment] = useState(false);
+  // Vrije regels onder Sale: omschrijving + BTW ja/nee + bedrag (boolean BTW i.v.m.
+  // mogelijke buitenlandse / OSS-orders — later evt. fijnmaziger).
+  const [saleFreeLines, setSaleFreeLines] = useState<{ desc: string; amount: string; btw: boolean }[]>([]);
+  const addSaleFreeLine = () => setSaleFreeLines(prev => [...prev, { desc: '', amount: '', btw: true }]);
+  const updateSaleFreeLine = (idx: number, field: 'desc' | 'amount' | 'btw', value: string | boolean) => {
+    setSaleFreeLines(prev => prev.map((p, i) => i === idx ? { ...p, [field]: field === 'amount' ? String(value).replace(/[^\d.,]/g, '') : value } : p));
+  };
+  const removeSaleFreeLine = (idx: number) => setSaleFreeLines(prev => prev.filter((_, i) => i !== idx));
 
   const priceInputWrapper: React.CSSProperties = { display: 'inline-flex', alignItems: 'stretch', border: `1px solid ${BORDER}`, borderRadius: 6, overflow: 'hidden', height: 32 };
   const euroPrefix: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', background: SURFACE, color: GREY, fontSize: 13, borderRight: `1px solid ${BORDER}`, fontWeight: 500 };
@@ -1620,7 +1711,43 @@ function QuoteDetailPage({ quoteId, onBack }: { quoteId: string; onBack: () => v
                 <td style={{ ...tableCellStyle, textAlign: 'center' }}>{deleteIcon}</td>
               </tr>
             ))}
-            <tr><td colSpan={9} style={{ padding: '12px 14px', textAlign: 'center', color: ACCENT, fontWeight: 500, cursor: 'pointer', fontSize: 13 }}>+ Add product</td></tr>
+            {saleFreeLines.map((line, i) => (
+              <tr key={`free-${i}`}>
+                <td style={tableCellStyle} colSpan={4}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: ACCENT, flexShrink: 0 }} />
+                    <input type="text" placeholder="Free line description..." value={line.desc} onChange={e => updateSaleFreeLine(i, 'desc', e.target.value)} style={{ ...inputStyle, width: '100%', maxWidth: 360, padding: '6px 10px' }} />
+                  </div>
+                </td>
+                <td style={tableCellStyle}><div style={priceInputWrapper}><span style={euroPrefix}>&euro;</span><input type="text" placeholder="0.00" value={line.amount} onChange={e => updateSaleFreeLine(i, 'amount', e.target.value)} style={priceInput} /></div></td>
+                <td style={tableCellStyle}>
+                  <button type="button" onClick={() => updateSaleFreeLine(i, 'btw', !line.btw)} style={{ padding: '4px 10px', border: `1px solid ${line.btw ? ACCENT : BORDER}`, borderRadius: 6, background: WHITE, color: line.btw ? ACCENT : GREY, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>{line.btw ? '21%' : 'No VAT'}</button>
+                </td>
+                <td style={tableCellStyle} colSpan={2} />
+                <td style={{ ...tableCellStyle, textAlign: 'center' }}><span onClick={() => removeSaleFreeLine(i)} style={{ color: GREY, cursor: 'pointer', fontSize: 14 }}>&#128465;</span></td>
+              </tr>
+            ))}
+            {/* Template-rij voor de statische Pages-export (vanilla JS kloont deze). In de React-app is hij verborgen. */}
+            <tr data-free-line-template style={{ display: 'none' }}>
+              <td style={tableCellStyle} colSpan={4}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: ACCENT, flexShrink: 0 }} />
+                  <input type="text" placeholder="Free line description..." style={{ ...inputStyle, width: '100%', maxWidth: 360, padding: '6px 10px' }} />
+                </div>
+              </td>
+              <td style={tableCellStyle}><div style={priceInputWrapper}><span style={euroPrefix}>&euro;</span><input type="text" placeholder="0.00" style={priceInput} /></div></td>
+              <td style={tableCellStyle}><button type="button" data-free-btw style={{ padding: '4px 10px', border: `1px solid ${ACCENT}`, borderRadius: 6, background: WHITE, color: ACCENT, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>21%</button></td>
+              <td style={tableCellStyle} colSpan={2} />
+              <td style={{ ...tableCellStyle, textAlign: 'center' }}><span data-free-delete style={{ color: GREY, cursor: 'pointer', fontSize: 14 }}>&#128465;</span></td>
+            </tr>
+            <tr>
+              <td colSpan={9} style={{ padding: '12px 14px', fontSize: 13 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 24 }}>
+                  <span style={{ color: ACCENT, fontWeight: 500, cursor: 'pointer' }}>+ Add product</span>
+                  <span data-add-free-line onClick={addSaleFreeLine} style={{ color: ACCENT, fontWeight: 500, cursor: 'pointer' }}>+ Add free line</span>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -1643,7 +1770,8 @@ function QuoteDetailPage({ quoteId, onBack }: { quoteId: string; onBack: () => v
       {/* Action buttons */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
         <button style={{ ...buttonDark, padding: '10px 24px' }}>Save</button>
-        <button style={{ ...buttonAccent, padding: '10px 24px' }}>View order</button>
+        <button data-open-payment style={{ ...buttonAccent, padding: '10px 24px' }} onClick={() => setShowPayment(true)}>Payment</button>
+        <button style={{ ...buttonOutline, padding: '10px 24px' }}>View order</button>
       </div>
 
       {/* Quote notes */}
@@ -1655,6 +1783,164 @@ function QuoteDetailPage({ quoteId, onBack }: { quoteId: string; onBack: () => v
         {notesOpen && (
           <textarea placeholder="Add a note.." style={{ ...inputStyle, width: '100%', boxSizing: 'border-box', minHeight: 80, resize: 'vertical' }} />
         )}
+      </div>
+
+      <div data-payment-modal style={{ display: showPayment ? 'block' : 'none' }}>
+        <PaymentModal sellTotal={sellTotal} buyTotal={buyTotal} onClose={() => setShowPayment(false)} />
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Payment modal (quote betaling)                                     */
+/* ------------------------------------------------------------------ */
+/*
+ * Betaal-pop-up overgenomen van onze eigen Reusely-stijl: keuze tussen
+ * Cash / Terminal / Payment link / Manual. Cash + Terminal kunnen tegelijk
+ * geselecteerd worden (split payment); Payment link en Manual zijn exclusief.
+ * Kleuren volgen de pages-huisstijl (ACCENT/oranje), niet de Reusely-kleuren.
+ */
+function PaymentModal({ sellTotal, buyTotal, onClose }: { sellTotal: number; buyTotal: number; onClose: () => void }) {
+  const net = sellTotal - buyTotal;
+  const customerOwes = net >= 0;
+  const total = Math.abs(net);
+  const fmt = (n: number) => n.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const [selected, setSelected] = useState<string[]>([]);
+  const [cashAmount, setCashAmount] = useState('');
+  const [terminalAmount, setTerminalAmount] = useState('');
+  const [terminal, setTerminal] = useState('Camera-tweedehands.nl (TH-4135-2520)');
+
+  const has = (k: string) => selected.includes(k);
+  const toggleSplit = (k: 'cash' | 'terminal') => setSelected(prev => {
+    const base = prev.filter(x => x === 'cash' || x === 'terminal');
+    return base.includes(k) ? base.filter(x => x !== k) : [...base, k];
+  });
+  const selectExclusive = (k: 'link' | 'manual') => setSelected(prev => (prev.length === 1 && prev[0] === k) ? [] : [k]);
+
+  const radio = (active: boolean) => (
+    <span data-pay-radio style={{ width: 18, height: 18, borderRadius: '50%', flexShrink: 0, border: active ? `5px solid ${ACCENT}` : `2px solid #D1D5DB`, background: WHITE, transition: 'border 0.15s' }} />
+  );
+
+  const OptionCard = ({ dataKey, active, title, subtitle, onClick }: { dataKey: string; active: boolean; title: string; subtitle: string; onClick: () => void }) => (
+    <button
+      type="button"
+      data-pay-option={dataKey}
+      onClick={onClick}
+      style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left', padding: '14px 16px', background: WHITE, border: `1.5px solid ${active ? ACCENT : BORDER}`, borderRadius: 10, cursor: 'pointer', fontFamily: 'inherit' }}
+    >
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: DARK }}>{title}</div>
+        <div style={{ fontSize: 12.5, color: GREY, marginTop: 2 }}>{subtitle}</div>
+      </div>
+      {radio(active)}
+    </button>
+  );
+
+  const panelStyle: React.CSSProperties = { background: SURFACE, borderRadius: 10, padding: 16, margin: '8px 0' };
+  const labelStyle: React.CSSProperties = { fontSize: 12.5, color: GREY, fontWeight: 500, marginBottom: 6 };
+  const fieldStyle: React.CSSProperties = { ...inputStyle, width: '100%', boxSizing: 'border-box', padding: '10px 12px' };
+  const canComplete = selected.length > 0;
+
+  return (
+    <div
+      data-pay-overlay
+      data-pay-total={total.toFixed(2)}
+      onClick={onClose}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(30,33,51,0.45)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 16px', overflowY: 'auto' }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{ background: WHITE, borderRadius: 16, width: '100%', maxWidth: 480, boxShadow: '0 20px 60px rgba(0,0,0,0.25)', display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}
+      >
+        {/* Header */}
+        <div style={{ padding: '20px 24px 16px', borderBottom: `1px solid ${BORDER}` }}>
+          <h2 style={{ fontSize: 19, fontWeight: 700, color: DARK, margin: 0 }}>Payment</h2>
+          <p style={{ fontSize: 13, color: GREY, margin: '6px 0 0' }}>Select how you want to {customerOwes ? 'receive payment from' : 'pay out'} the customer.</p>
+        </div>
+
+        {/* Scrollable body */}
+        <div style={{ padding: '16px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {/* Betaal-samenvatting */}
+          <div style={{ background: SURFACE, borderRadius: 10, padding: 16, marginBottom: 4 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: GREY, letterSpacing: '0.5px', marginBottom: 10 }}>Summary</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, padding: '3px 0' }}><span style={{ color: GREY }}>Sale total</span><span style={{ color: DARK }}>&euro; {fmt(sellTotal)}</span></div>
+            {buyTotal > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, padding: '3px 0' }}><span style={{ color: GREY }}>Trade-in total</span><span style={{ color: DARK }}>&minus; &euro; {fmt(buyTotal)}</span></div>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, padding: '8px 0 0', marginTop: 6, borderTop: `1px solid ${BORDER}`, fontWeight: 700 }}>
+              <span style={{ color: ACCENT }}>{customerOwes ? 'Customer owes' : 'Customer receives'}</span>
+              <span style={{ color: ACCENT }}>&euro; {fmt(total)}</span>
+            </div>
+          </div>
+
+          {/* Cash */}
+          <OptionCard
+            dataKey="cash"
+            active={has('cash')}
+            title="Cash"
+            subtitle={customerOwes ? 'Collect cash payment in-store.' : 'Pay out the customer in-store.'}
+            onClick={() => toggleSplit('cash')}
+          />
+          <div data-pay-panel="cash" style={{ ...panelStyle, display: has('cash') ? 'block' : 'none' }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: DARK, marginBottom: 2 }}>Split payment amounts</div>
+            <div style={{ fontSize: 12.5, color: GREY, marginBottom: 12 }}>Total: &euro;{fmt(total)}</div>
+            <div style={labelStyle}>Cash amount (&euro;)</div>
+            <input type="text" placeholder="0.00" value={cashAmount} onChange={e => setCashAmount(e.target.value.replace(/[^\d.,]/g, ''))} style={{ ...fieldStyle, marginBottom: 12 }} />
+            <div style={labelStyle}>Terminal amount (&euro;)</div>
+            <input type="text" placeholder="0.00" value={terminalAmount} onChange={e => setTerminalAmount(e.target.value.replace(/[^\d.,]/g, ''))} style={fieldStyle} />
+            <div style={{ fontSize: 12, color: GREY, marginTop: 10 }}>The cash and terminal amounts must add up to &euro;{fmt(total)}.</div>
+          </div>
+
+          {/* Terminal */}
+          <OptionCard
+            dataKey="terminal"
+            active={has('terminal')}
+            title="Terminal"
+            subtitle="Collect payment through a payment terminal."
+            onClick={() => toggleSplit('terminal')}
+          />
+          <div data-pay-panel="terminal" style={{ ...panelStyle, display: has('terminal') ? 'block' : 'none' }}>
+            <div style={labelStyle}>Select terminal</div>
+            <select value={terminal} onChange={e => setTerminal(e.target.value)} style={{ ...fieldStyle, cursor: 'pointer' }}>
+              <option>Camera-tweedehands.nl (TH-4135-2520)</option>
+              <option>Balie 2 (TH-4135-2521)</option>
+              <option>Mobiel pinapparaat (TH-9920-0042)</option>
+            </select>
+          </div>
+
+          {/* Payment link */}
+          <OptionCard
+            dataKey="link"
+            active={has('link')}
+            title="Payment link"
+            subtitle="Email a Pay.nl payment link to the customer."
+            onClick={() => selectExclusive('link')}
+          />
+
+          {/* Manual */}
+          <OptionCard
+            dataKey="manual"
+            active={has('manual')}
+            title="Manual"
+            subtitle="Mark as paid outside the system."
+            onClick={() => selectExclusive('manual')}
+          />
+        </div>
+
+        {/* Footer */}
+        <div style={{ padding: '16px 24px', borderTop: `1px solid ${BORDER}`, display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+          <button data-pay-cancel onClick={onClose} style={buttonOutline}>Cancel</button>
+          <button
+            data-pay-complete
+            disabled={!canComplete}
+            onClick={onClose}
+            style={{ ...buttonAccent, background: canComplete ? ACCENT : '#F0B999', cursor: canComplete ? 'pointer' : 'not-allowed' }}
+          >
+            Complete
+          </button>
+        </div>
       </div>
     </div>
   );

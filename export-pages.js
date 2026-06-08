@@ -684,6 +684,155 @@ document.querySelectorAll('.whats-included-btn').forEach(function(btn){
   });
 })();
 
+/* ===== DASHBOARD: PAYMENT MODAL (quote) ===== */
+(function(){
+  var wrap=document.querySelector('[data-payment-modal]');
+  if(!wrap) return;
+  var ACCENT='#E8692A', BORDER='#EEEEF2';
+  var overlay=wrap.querySelector('[data-pay-overlay]');
+  var openBtn=document.querySelector('[data-open-payment]');
+  function open(){ wrap.style.display='block'; }
+  function close(){ wrap.style.display='none'; }
+  if(openBtn) openBtn.addEventListener('click',function(e){ e.preventDefault(); open(); });
+  if(overlay) overlay.addEventListener('click',function(e){ if(e.target===overlay) close(); });
+  var cancel=wrap.querySelector('[data-pay-cancel]'); if(cancel) cancel.addEventListener('click',close);
+  var complete=wrap.querySelector('[data-pay-complete]'); if(complete) complete.addEventListener('click',function(){ if(!complete.disabled) close(); });
+
+  var selected=[];
+  var cards=wrap.querySelectorAll('[data-pay-option]');
+  function panel(k){ return wrap.querySelector('[data-pay-panel="'+k+'"]'); }
+  function render(){
+    cards.forEach(function(card){
+      var k=card.getAttribute('data-pay-option');
+      var active=selected.indexOf(k)>-1;
+      card.style.border='1.5px solid '+(active?ACCENT:BORDER);
+      var radio=card.querySelector('[data-pay-radio]');
+      if(radio) radio.style.border=active?('5px solid '+ACCENT):'2px solid #D1D5DB';
+    });
+    var pc=panel('cash'); if(pc) pc.style.display=selected.indexOf('cash')>-1?'block':'none';
+    var pt=panel('terminal'); if(pt) pt.style.display=selected.indexOf('terminal')>-1?'block':'none';
+    if(complete){ var can=selected.length>0; complete.style.background=can?ACCENT:'#F0B999'; complete.style.cursor=can?'pointer':'not-allowed'; complete.disabled=!can; }
+  }
+  cards.forEach(function(card){
+    card.addEventListener('click',function(e){
+      e.preventDefault();
+      var k=card.getAttribute('data-pay-option');
+      if(k==='cash'||k==='terminal'){
+        var base=selected.filter(function(x){return x==='cash'||x==='terminal';});
+        if(base.indexOf(k)>-1) base=base.filter(function(x){return x!==k;}); else base.push(k);
+        selected=base;
+      } else {
+        selected=(selected.length===1&&selected[0]===k)?[]:[k];
+      }
+      render();
+    });
+  });
+  render();
+})();
+
+/* ===== DASHBOARD: QUOTE SALE FREE LINES ===== */
+(function(){
+  var addBtn=document.querySelector('[data-add-free-line]');
+  var tpl=document.querySelector('[data-free-line-template]');
+  if(!addBtn||!tpl) return;
+  var ACCENT='#E8692A', GREY='#6B7280', BORDER='#EEEEF2';
+  function wireRow(row){
+    var btw=row.querySelector('[data-free-btw]');
+    if(btw){ btw.addEventListener('click',function(){
+      var on=btw.getAttribute('data-on')!=='0'; on=!on;
+      btw.setAttribute('data-on',on?'1':'0');
+      btw.textContent=on?'21%':'No VAT';
+      btw.style.color=on?ACCENT:GREY;
+      btw.style.border='1px solid '+(on?ACCENT:BORDER);
+    }); }
+    var del=row.querySelector('[data-free-delete]');
+    if(del) del.addEventListener('click',function(){ row.parentNode.removeChild(row); });
+  }
+  addBtn.addEventListener('click',function(e){
+    e.preventDefault();
+    var row=tpl.cloneNode(true);
+    row.removeAttribute('data-free-line-template');
+    row.style.display='';
+    wireRow(row);
+    tpl.parentNode.insertBefore(row,tpl);
+  });
+})();
+
+/* ===== DASHBOARD: CREDIT FACTUUR (order) ===== */
+(function(){
+  var toggleBtn=document.querySelector('[data-credit-toggle]');
+  var form=document.querySelector('[data-credit-form]');
+  var cfm=document.querySelector('[data-credit-confirm]');
+  if(!toggleBtn||!form) return;
+  var ACCENT='#E8692A', GREY='#6B7280', BORDER='#EEEEF2', RED='#EF4444', GREEN='#22C55E', DARK='#1E2133';
+  function num(v){ var n=parseFloat(String(v||'').replace(',','.')); return isNaN(n)?0:n; }
+  function fmt(n){ return n.toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  function recompute(){
+    var total=0, any=false;
+    form.querySelectorAll('[data-credit-line]').forEach(function(cb){ if(cb.checked){ total-=parseFloat(cb.getAttribute('data-amount')||'0'); any=true; } });
+    form.querySelectorAll('[data-credit-cost]').forEach(function(cb){ if(cb.checked){ total-=parseFloat(cb.getAttribute('data-credit-cost')||'0'); any=true; } });
+    form.querySelectorAll('[data-exchange-price]').forEach(function(inp){ if(inp.closest('[data-exchange-template]')) return; total+=num(inp.value); });
+    form.querySelectorAll('[data-cfree-amount]').forEach(function(inp){ if(inp.closest('[data-cfree-template]')) return; var v=num(inp.value); total-=v; if((inp.value||'').trim()) any=true; });
+    var totEl=form.querySelector('[data-credit-total]');
+    if(totEl){ var s=total<0?'-':total>0?'+':''; totEl.textContent=s+'€ '+fmt(Math.abs(total)); totEl.style.color=total<0?RED:total>0?GREEN:DARK; }
+    var subEl=form.querySelector('[data-credit-subtitle]');
+    if(subEl) subEl.textContent=total<0?'Klant ontvangt terug':total>0?'Klant betaalt bij':'Verrekend, geen betaling nodig';
+    var submit=form.querySelector('[data-credit-submit]');
+    if(submit){ submit.style.background=any?ACCENT:GREY; submit.disabled=!any; }
+    return total;
+  }
+
+  toggleBtn.addEventListener('click',function(e){
+    e.preventDefault();
+    if(cfm && cfm.style.display!=='none'){ cfm.style.display='none'; form.style.display='none'; return; }
+    form.style.display=(form.style.display==='none'||form.style.display==='')?'block':'none';
+  });
+
+  form.querySelectorAll('[data-credit-line],[data-credit-cost]').forEach(function(cb){ cb.addEventListener('change',recompute); });
+
+  var exTpl=form.querySelector('[data-exchange-template]');
+  var exAdd=form.querySelector('[data-add-exchange]');
+  function wireExchange(row){
+    row.querySelectorAll('input').forEach(function(i){ i.addEventListener('input',recompute); });
+    var del=row.querySelector('[data-exchange-delete]'); if(del) del.addEventListener('click',function(){ row.parentNode.removeChild(row); recompute(); });
+  }
+  if(exAdd&&exTpl) exAdd.addEventListener('click',function(e){ e.preventDefault(); var row=exTpl.cloneNode(true); row.removeAttribute('data-exchange-template'); row.style.display='flex'; wireExchange(row); exTpl.parentNode.insertBefore(row,exTpl.nextSibling); recompute(); });
+
+  var cfTpl=form.querySelector('[data-cfree-template]');
+  var cfAdd=form.querySelector('[data-add-credit-free]');
+  function wireCFree(row){
+    var amt=row.querySelector('[data-cfree-amount]'); if(amt) amt.addEventListener('input',recompute);
+    var btw=row.querySelector('[data-cfree-btw]');
+    if(btw){ btw.addEventListener('click',function(){
+      var on=btw.getAttribute('data-on')!=='0'; on=!on;
+      btw.setAttribute('data-on',on?'1':'0');
+      btw.textContent=on?'BTW 21%':'Geen BTW';
+      btw.style.color=on?ACCENT:GREY; btw.style.borderColor=on?ACCENT:BORDER;
+    }); }
+    var del=row.querySelector('[data-cfree-delete]'); if(del) del.addEventListener('click',function(){ row.parentNode.removeChild(row); recompute(); });
+  }
+  if(cfAdd&&cfTpl) cfAdd.addEventListener('click',function(e){ e.preventDefault(); var row=cfTpl.cloneNode(true); row.removeAttribute('data-cfree-template'); row.style.display='flex'; wireCFree(row); cfTpl.parentNode.insertBefore(row,cfTpl.nextSibling); recompute(); });
+
+  var submit=form.querySelector('[data-credit-submit]');
+  if(submit) submit.addEventListener('click',function(e){
+    e.preventDefault();
+    if(submit.disabled) return;
+    var total=recompute();
+    if(cfm){
+      var amtEl=cfm.querySelector('[data-credit-confirm-amount]');
+      if(amtEl){ var s=total<0?'-':'+'; amtEl.textContent=s+'€ '+fmt(Math.abs(total)); amtEl.style.color=total<0?RED:GREEN; }
+      cfm.style.display='block';
+    }
+    form.style.display='none';
+  });
+
+  form.querySelectorAll('[data-credit-cancel]').forEach(function(b){ b.addEventListener('click',function(e){ e.preventDefault(); form.style.display='none'; }); });
+  if(cfm) cfm.querySelectorAll('[data-credit-cancel]').forEach(function(b){ b.addEventListener('click',function(e){ e.preventDefault(); cfm.style.display='none'; }); });
+
+  recompute();
+})();
+
 /* ===== LANGUAGE / ACCOUNT DROPDOWNS ===== */
 (function(){
   document.querySelectorAll('.lang-selector, .header__action-btn[aria-label="Account"]').forEach(function(btn){
