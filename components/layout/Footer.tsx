@@ -11,6 +11,8 @@ const company = [
 
 const customerCare = [
   { label: 'Contact us', href: '/contact' },
+  { label: 'How it works', href: '/how-it-works' },
+  { label: 'Quality & grading', href: '/quality-grading' },
   { label: 'Shipping & return', href: '/shipping-returns' },
   { label: 'Payment methods', href: '/payment-methods' },
   { label: 'Warranty & repair', href: '/warranty-repair' },
@@ -94,8 +96,17 @@ export default function Footer() {
             </span>
           </div>
           <div className="footer__payment">
-            {['iDEAL', 'Visa', 'MC', 'AMEX', 'PayPal', 'Apple', 'Klarna'].map((m) => (
-              <div key={m} className="footer__payment-icon">{m}</div>
+            {[
+              ['iDEAL', 'ideal'],
+              ['Visa', 'visa'],
+              ['Mastercard', 'mastercard'],
+              ['American Express', 'amex'],
+              ['PayPal', 'paypal'],
+              ['Bancontact', 'bancontact'],
+            ].map(([name, file]) => (
+              <div key={file} className="footer__payment-icon" style={{ background: '#fff', padding: 3 }}>
+                <img src={`/payment/${file}.svg`} alt={name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+              </div>
             ))}
           </div>
         </div>
