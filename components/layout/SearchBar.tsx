@@ -35,43 +35,98 @@ function getPriceRange(slug: string): { min: number; max: number } | null {
   return { min: Math.min(...prices), max: Math.max(...prices) };
 }
 
+// Normaliseert notaties zodat f/2.8 = f2.8 = 2.8, 50mm = 50, hoofdletters/diakritieken genegeerd
+function normalize(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/ƒ/g, 'f')
+    .replace(/f\/?(?=\d)/g, '')      // f/2.8, f2.8 -> 2.8
+    .replace(/(\d)\s*mm\b/g, '$1')   // 50mm -> 50
+    .replace(/[\/,]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function tokenize(s: string): string[] {
+  return normalize(s).split(' ').filter(Boolean);
+}
+
+function makeVariant(p: (typeof products)[number], v: (typeof products)[number]['variants'][number]): VariantResult {
+  return {
+    productSlug: p.slug,
+    productTitle: p.title,
+    productImage: p.image,
+    sku: v.sku,
+    price: v.price,
+    condition: v.condition,
+    conditionLabel: v.conditionLabel,
+    shutterCount: v.shutterCount,
+  };
+}
+
 function useSearch(query: string) {
-  const q = query.toLowerCase().trim();
+  const raw = query.trim();
+  const q = normalize(raw);
+  const qTokens = tokenize(raw);
+  const isSku = /^\d{4,}$/.test(raw.replace(/\s+/g, ''));
 
-  const matchingProducts = q.length > 0
-    ? searchProducts.filter(p =>
-        p.title.toLowerCase().includes(q) ||
-        p.keywords.some(k => k.includes(q))
-      )
+  // SKU-zoekopdracht (puur numeriek) -> alleen varianten, gematcht op SKU
+  if (isSku) {
+    const skuq = raw.replace(/\s+/g, '');
+    const variants = products
+      .flatMap(p => p.variants.filter(v => v.sku.includes(skuq)).map(v => makeVariant(p, v)))
+      .slice(0, 8);
+    return { filteredProducts: [], filteredOos: [], filteredVariants: variants, filteredBlog: [], hasResults: variants.length > 0 };
+  }
+
+  // Producten: token-subset match (alle zoekwoorden moeten voorkomen), gerankt op relevantie + populariteit
+  const scored = q.length === 0 ? [] : searchProducts
+    .map((p, idx) => {
+      const hay = normalize(p.title + ' ' + p.keywords.join(' '));
+      const titleNorm = normalize(p.title);
+      const titleWords = titleNorm.split(' ');
+      if (!qTokens.every(t => hay.includes(t))) return null;
+      let score = searchProducts.length - idx; // populariteit-proxy (lijstvolgorde = best verkocht eerst)
+      if (titleNorm.startsWith(q)) score += 100;                          // exacte prefix op titel
+      if (qTokens[0] && titleWords[0] === qTokens[0]) score += 40;        // merk-match -> eigen merk eerst (Canon vóór Sigma)
+      score += qTokens.filter(t => titleWords.some(w => w.startsWith(t))).length * 5;
+      return { p, score, inStock: p.stock !== 'Out of stock' };
+    })
+    .filter((x): x is { p: (typeof searchProducts)[number]; score: number; inStock: boolean } => x !== null)
+    .sort((a, b) => b.score - a.score);
+
+  // In-stock altijd eerst (vult de dropdown tot 8)
+  const inStockMatches = scored.filter(s => s.inStock);
+  const filteredProducts = inStockMatches.map(s => s.p).slice(0, 8);
+
+  // OOS pas tonen als de in-stock resultaten de dropdown niet vullen (< 8); vul dan de rest aan.
+  // Bij een brede/vage query (bijv. alleen "c") met 8+ in-stock matches dus géén OOS.
+  const oosSlots = Math.max(0, 8 - filteredProducts.length);
+  const filteredOos = oosSlots > 0
+    ? scored.filter(s => !s.inStock).map(s => s.p).slice(0, oosSlots)
     : [];
 
-  const filteredProducts = matchingProducts.filter(p => p.stock !== 'Out of stock').slice(0, 4);
-  const filteredOos = matchingProducts.filter(p => p.stock === 'Out of stock').slice(0, 3);
-
-  const filteredVariants: VariantResult[] = q.length > 0
-    ? products.flatMap(p =>
-        p.variants
-          .filter(v =>
-            v.sku.includes(q) ||
-            p.title.toLowerCase().includes(q) ||
-            p.slug.includes(q)
-          )
-          .map(v => ({
-            productSlug: p.slug,
-            productTitle: p.title,
-            productImage: p.image,
-            sku: v.sku,
-            price: v.price,
-            condition: v.condition,
-            conditionLabel: v.conditionLabel,
-            shutterCount: v.shutterCount,
-          }))
-      ).slice(0, 5)
+  // Producten-only in de dropdown: de exemplaar-/conditiekeuze hoort op de productpagina
+  // (shuttercount, cosmetische opmerkingen, foto's). Varianten tonen we alleen bij een
+  // SKU-zoekopdracht (zie de SKU-branch hierboven).
+  // Reversibel: zet SHOW_VARIANTS_IN_DROPDOWN op true om bij 1-2 modellen alsnog de
+  // in-stock varianten als aanvulling te tonen (geordend op conditie best -> minder).
+  const SHOW_VARIANTS_IN_DROPDOWN = false;
+  const condOrder: Record<string, number> = { 'as-new': 0, excellent: 1, good: 2, used: 3 };
+  const narrowed = SHOW_VARIANTS_IN_DROPDOWN && inStockMatches.length > 0 && inStockMatches.length <= 2;
+  const filteredVariants: VariantResult[] = narrowed
+    ? inStockMatches
+        .flatMap(s => {
+          const prod = products.find(pp => pp.slug === s.p.slug);
+          return prod ? prod.variants.map(v => makeVariant(prod, v)) : [];
+        })
+        .sort((a, b) => (condOrder[a.condition] ?? 9) - (condOrder[b.condition] ?? 9))
+        .slice(0, Math.max(0, 8 - filteredProducts.length))
     : [];
 
-  const filteredBlog = q.length > 0
-    ? searchBlogPosts.filter(b => b.title.toLowerCase().includes(q)).slice(0, 2)
-    : [];
+  // Blog niet in dit voorbeeld (eventueel later)
+  const filteredBlog = searchBlogPosts.slice(0, 0);
 
   const hasResults = filteredProducts.length > 0 || filteredOos.length > 0 || filteredVariants.length > 0 || filteredBlog.length > 0;
 
