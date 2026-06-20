@@ -35,6 +35,21 @@ function getPriceRange(slug: string): { min: number; max: number } | null {
   return { min: Math.min(...prices), max: Math.max(...prices) };
 }
 
+// Mock-vangnet: zorgt dat elk zoekresultaat een van-tot prijs heeft, ook zonder echte data
+function mockRange(slug: string): { min: number; max: number } {
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0;
+  const min = 300 + (h % 2200);
+  const max = Math.round((min * 1.12) / 10) * 10;
+  return { min, max };
+}
+
+// Prijs per zoekresultaat: echte variant-range -> eigen priceMin/Max -> deterministische mock
+function rangeFor(p: { slug: string; priceMin?: number; priceMax?: number }): { min: number; max: number } {
+  return getPriceRange(p.slug)
+    ?? (p.priceMin != null ? { min: p.priceMin, max: p.priceMax ?? p.priceMin } : mockRange(p.slug));
+}
+
 // Normaliseert notaties zodat f/2.8 = f2.8 = 2.8, 50mm = 50, hoofdletters/diakritieken genegeerd
 function normalize(s: string): string {
   return s
@@ -172,7 +187,7 @@ function SearchDropdown({
         <div className="search-dd__section">
           <div className="search-dd__section-title">Products</div>
           {filteredProducts.map(p => {
-            const range = getPriceRange(p.slug);
+            const range = rangeFor(p);
             return (
               <Link key={p.slug} href={`/product/${p.slug}`} className="search-dd__item" onClick={() => setIsOpen(false)}>
                 <div className="search-dd__thumb">

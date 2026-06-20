@@ -357,6 +357,8 @@ export interface SearchProduct {
   image: string;
   stock: string;
   keywords: string[];
+  priceMin?: number;
+  priceMax?: number;
 }
 
 export const searchProducts: SearchProduct[] = [
@@ -366,22 +368,22 @@ export const searchProducts: SearchProduct[] = [
   { slug: 'fujifilm-x-t4', title: 'Fujifilm X-T4', image: '/images/fujifilm-x-t4.jpg', stock: '5 in stock', keywords: ['fujifilm', 'fuji', 'xt4', 'x-t4', 'aps-c'] },
   { slug: 'sony-fe-24-70mm-f28-gm', title: 'Sony FE 24-70mm f/2.8 GM', image: '/images/sony-24-70-gm.jpg', stock: '5 in stock', keywords: ['sony', '24-70', '24-70mm', 'gm', 'zoom', 'lens'] },
   { slug: 'canon-rf-24-70mm-f28-l-is-usm', title: 'Canon RF 24-70mm f/2.8L IS USM', image: '/images/canon-rf-24-70.jpg', stock: '3 in stock', keywords: ['canon', '24-70', '24-70mm', 'rf', 'zoom', 'lens'] },
-  { slug: 'canon-rf-24-105mm-f4-l-is-usm', title: 'Canon RF 24-105mm f/4L IS USM', image: '/images/canon-rf-24-70.jpg', stock: '4 in stock', keywords: ['canon', '24-105', '24-105mm', 'rf', 'zoom', 'lens'] },
-  { slug: 'canon-rf-24-240mm-f4-63-is-usm', title: 'Canon RF 24-240mm f/4-6.3 IS USM', image: '/images/canon-rf-24-70.jpg', stock: '2 in stock', keywords: ['canon', '24-240', '24-240mm', 'rf', 'zoom', 'lens'] },
-  { slug: 'canon-eos-r6', title: 'Canon EOS R6', image: '/images/canon-r5.jpg', stock: '5 in stock', keywords: ['canon', 'r6', 'eos r6', 'full frame', 'mirrorless'] },
-  { slug: 'canon-eos-r7', title: 'Canon EOS R7', image: '/images/canon-r5.jpg', stock: '4 in stock', keywords: ['canon', 'r7', 'eos r7', 'aps-c', 'mirrorless'] },
-  { slug: 'canon-eos-r8', title: 'Canon EOS R8', image: '/images/canon-r5.jpg', stock: '3 in stock', keywords: ['canon', 'r8', 'eos r8', 'full frame', 'mirrorless'] },
-  { slug: 'canon-eos-r10', title: 'Canon EOS R10', image: '/images/canon-r5.jpg', stock: '6 in stock', keywords: ['canon', 'r10', 'eos r10', 'aps-c', 'mirrorless'] },
-  { slug: 'canon-rf-50mm-f18-stm', title: 'Canon RF 50mm f/1.8 STM', image: '/images/canon-rf-24-70.jpg', stock: '7 in stock', keywords: ['canon', '50mm', '50', 'rf', 'prime', 'lens', '1.8', 'f/1.8'] },
-  { slug: 'canon-rf-70-200mm-f28-l-is-usm', title: 'Canon RF 70-200mm f/2.8L IS USM', image: '/images/canon-rf-24-70.jpg', stock: '3 in stock', keywords: ['canon', '70-200', '70-200mm', 'rf', 'telephoto', 'zoom', 'lens', '2.8', 'f/2.8'] },
-  { slug: 'nikon-z6-iii', title: 'Nikon Z6 III', image: '/images/nikon-z8.jpg', stock: '4 in stock', keywords: ['nikon', 'z6', 'z6 iii', 'z6iii', 'full frame', 'mirrorless'] },
-  { slug: 'nikon-z7-ii', title: 'Nikon Z7 II', image: '/images/nikon-z8.jpg', stock: '3 in stock', keywords: ['nikon', 'z7', 'z7 ii', 'z7ii', 'full frame', 'mirrorless', 'high-res'] },
-  { slug: 'nikon-z9', title: 'Nikon Z9', image: '/images/nikon-z8.jpg', stock: '2 in stock', keywords: ['nikon', 'z9', 'flagship', 'full frame', 'mirrorless'] },
-  { slug: 'nikon-z5', title: 'Nikon Z5', image: '/images/nikon-z8.jpg', stock: '5 in stock', keywords: ['nikon', 'z5', 'full frame', 'mirrorless', 'entry'] },
-  { slug: 'nikon-z50', title: 'Nikon Z50', image: '/images/nikon-z8.jpg', stock: '4 in stock', keywords: ['nikon', 'z50', 'aps-c', 'mirrorless'] },
-  { slug: 'nikon-d850', title: 'Nikon D850', image: '/images/nikon-z8.jpg', stock: '3 in stock', keywords: ['nikon', 'd850', 'dslr', 'full frame'] },
-  { slug: 'nikon-z-24-70mm-f28-s', title: 'Nikon Z 24-70mm f/2.8 S', image: '/images/nikon-z8.jpg', stock: '3 in stock', keywords: ['nikon', '24-70', '24-70mm', 'z', 'zoom', 'lens', '2.8', 'f/2.8'] },
-  { slug: 'nikon-z-70-200mm-f28-s', title: 'Nikon Z 70-200mm f/2.8 S', image: '/images/nikon-z8.jpg', stock: '2 in stock', keywords: ['nikon', '70-200', '70-200mm', 'z', 'telephoto', 'zoom', 'lens', '2.8', 'f/2.8'] },
+  { slug: 'canon-rf-24-105mm-f4-l-is-usm', title: 'Canon RF 24-105mm f/4L IS USM', image: '/images/canon-rf-24-70.jpg', stock: '4 in stock', keywords: ['canon', '24-105', '24-105mm', 'rf', 'zoom', 'lens'], priceMin: 899, priceMax: 1149 },
+  { slug: 'canon-rf-24-240mm-f4-63-is-usm', title: 'Canon RF 24-240mm f/4-6.3 IS USM', image: '/images/canon-rf-24-70.jpg', stock: '2 in stock', keywords: ['canon', '24-240', '24-240mm', 'rf', 'zoom', 'lens'], priceMin: 599, priceMax: 799 },
+  { slug: 'canon-eos-r6', title: 'Canon EOS R6', image: '/images/canon-r5.jpg', stock: '5 in stock', keywords: ['canon', 'r6', 'eos r6', 'full frame', 'mirrorless'], priceMin: 1499, priceMax: 1799 },
+  { slug: 'canon-eos-r7', title: 'Canon EOS R7', image: '/images/canon-r5.jpg', stock: '4 in stock', keywords: ['canon', 'r7', 'eos r7', 'aps-c', 'mirrorless'], priceMin: 1099, priceMax: 1349 },
+  { slug: 'canon-eos-r8', title: 'Canon EOS R8', image: '/images/canon-r5.jpg', stock: '3 in stock', keywords: ['canon', 'r8', 'eos r8', 'full frame', 'mirrorless'], priceMin: 1199, priceMax: 1449 },
+  { slug: 'canon-eos-r10', title: 'Canon EOS R10', image: '/images/canon-r5.jpg', stock: '6 in stock', keywords: ['canon', 'r10', 'eos r10', 'aps-c', 'mirrorless'], priceMin: 749, priceMax: 949 },
+  { slug: 'canon-rf-50mm-f18-stm', title: 'Canon RF 50mm f/1.8 STM', image: '/images/canon-rf-24-70.jpg', stock: '7 in stock', keywords: ['canon', '50mm', '50', 'rf', 'prime', 'lens', '1.8', 'f/1.8'], priceMin: 159, priceMax: 219 },
+  { slug: 'canon-rf-70-200mm-f28-l-is-usm', title: 'Canon RF 70-200mm f/2.8L IS USM', image: '/images/canon-rf-24-70.jpg', stock: '3 in stock', keywords: ['canon', '70-200', '70-200mm', 'rf', 'telephoto', 'zoom', 'lens', '2.8', 'f/2.8'], priceMin: 2199, priceMax: 2599 },
+  { slug: 'nikon-z6-iii', title: 'Nikon Z6 III', image: '/images/nikon-z8.jpg', stock: '4 in stock', keywords: ['nikon', 'z6', 'z6 iii', 'z6iii', 'full frame', 'mirrorless'], priceMin: 1999, priceMax: 2299 },
+  { slug: 'nikon-z7-ii', title: 'Nikon Z7 II', image: '/images/nikon-z8.jpg', stock: '3 in stock', keywords: ['nikon', 'z7', 'z7 ii', 'z7ii', 'full frame', 'mirrorless', 'high-res'], priceMin: 1799, priceMax: 2199 },
+  { slug: 'nikon-z9', title: 'Nikon Z9', image: '/images/nikon-z8.jpg', stock: '2 in stock', keywords: ['nikon', 'z9', 'flagship', 'full frame', 'mirrorless'], priceMin: 3999, priceMax: 4499 },
+  { slug: 'nikon-z5', title: 'Nikon Z5', image: '/images/nikon-z8.jpg', stock: '5 in stock', keywords: ['nikon', 'z5', 'full frame', 'mirrorless', 'entry'], priceMin: 999, priceMax: 1249 },
+  { slug: 'nikon-z50', title: 'Nikon Z50', image: '/images/nikon-z8.jpg', stock: '4 in stock', keywords: ['nikon', 'z50', 'aps-c', 'mirrorless'], priceMin: 699, priceMax: 899 },
+  { slug: 'nikon-d850', title: 'Nikon D850', image: '/images/nikon-z8.jpg', stock: '3 in stock', keywords: ['nikon', 'd850', 'dslr', 'full frame'], priceMin: 1499, priceMax: 1899 },
+  { slug: 'nikon-z-24-70mm-f28-s', title: 'Nikon Z 24-70mm f/2.8 S', image: '/images/nikon-z8.jpg', stock: '3 in stock', keywords: ['nikon', '24-70', '24-70mm', 'z', 'zoom', 'lens', '2.8', 'f/2.8'], priceMin: 1799, priceMax: 2099 },
+  { slug: 'nikon-z-70-200mm-f28-s', title: 'Nikon Z 70-200mm f/2.8 S', image: '/images/nikon-z8.jpg', stock: '2 in stock', keywords: ['nikon', '70-200', '70-200mm', 'z', 'telephoto', 'zoom', 'lens', '2.8', 'f/2.8'], priceMin: 1999, priceMax: 2399 },
   { slug: 'sony-a7r-v', title: 'Sony A7R V', image: '/images/sony-a7r-v.jpg', stock: '2 in stock', keywords: ['sony', 'a7r', 'a7rv', 'a7r v', '61mp', 'high-res'] },
   { slug: 'sony-a1', title: 'Sony A1', image: '/images/sony-a1.jpg', stock: '2 in stock', keywords: ['sony', 'a1', 'flagship', '50mp'] },
   { slug: 'hasselblad-x2d-100c', title: 'Hasselblad X2D 100C', image: '/images/hasselblad-x2d.jpg', stock: '1 in stock', keywords: ['hasselblad', 'x2d', 'medium format', '100mp'] },
