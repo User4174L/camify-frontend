@@ -25,9 +25,11 @@ function Markdown({ source }: { source: string }) {
   const flush = (key: string) => {
     if (list.length) {
       blocks.push(
-        <ul key={key} style={{ margin: '0 0 16px 20px', display: 'grid', gap: 6 }}>
+        <ul key={key} style={{ margin: '0 0 16px', paddingLeft: 22, listStyle: 'disc' }}>
           {list.map((it, i) => (
-            <li key={i}>{renderInline(it, `${key}-${i}`)}</li>
+            <li key={i} style={{ marginBottom: 6, paddingLeft: 4 }}>
+              {renderInline(it, `${key}-${i}`)}
+            </li>
           ))}
         </ul>,
       );

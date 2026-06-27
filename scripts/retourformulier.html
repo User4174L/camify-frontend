@@ -39,11 +39,13 @@
   }
 
   /* Fields */
-  .field { display: inline-block; width: 49%; vertical-align: top; margin-bottom: 5px; }
-  .field.full { width: 100%; }
-  .field .lbl { font-size: 8pt; font-weight: 700; color: #6A6C7A; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
-  .field .box { height: 24px; border: 1px solid #DCDDE6; border-radius: 7px; background: #FAFAFC; }
-  .field .hint { font-size: 7.5pt; color: #9A9CAA; margin-top: 3px; }
+  table.fieldgrid { width: 100%; border-collapse: collapse; }
+  table.fieldgrid td { width: 50%; vertical-align: top; padding-bottom: 8px; }
+  table.fieldgrid td.l { padding-right: 9px; }
+  table.fieldgrid td.r { padding-left: 9px; }
+  .lbl { font-size: 8pt; font-weight: 700; color: #6A6C7A; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+  .box { height: 24px; border: 1px solid #DCDDE6; border-radius: 7px; background: #FAFAFC; }
+  .hint { font-size: 7.5pt; color: #9A9CAA; margin-top: 3px; }
 
   /* Products table */
   table.products { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 2px; }
@@ -114,14 +116,20 @@
   </p>
 
   <span class="section-label">Jouw gegevens</span>
-  <div>
-    <div class="field"><div class="lbl">Ordernummer</div><div class="box"></div></div>
-    <div class="field" style="margin-left:1.5%"><div class="lbl">Besteldatum</div><div class="box"></div></div>
-    <div class="field"><div class="lbl">Naam</div><div class="box"></div></div>
-    <div class="field" style="margin-left:1.5%"><div class="lbl">Telefoonnummer</div><div class="box"></div></div>
-    <div class="field"><div class="lbl">E-mailadres</div><div class="box"></div></div>
-    <div class="field" style="margin-left:1.5%"><div class="lbl">IBAN</div><div class="box"></div><div class="hint">Rekeningnummer waarop we het bedrag terugstorten</div></div>
-  </div>
+  <table class="fieldgrid">
+    <tr>
+      <td class="l"><div class="lbl">Ordernummer</div><div class="box"></div></td>
+      <td class="r"><div class="lbl">Besteldatum</div><div class="box"></div></td>
+    </tr>
+    <tr>
+      <td class="l"><div class="lbl">Naam</div><div class="box"></div></td>
+      <td class="r"><div class="lbl">Telefoonnummer</div><div class="box"></div></td>
+    </tr>
+    <tr>
+      <td class="l"><div class="lbl">E-mailadres</div><div class="box"></div></td>
+      <td class="r"><div class="lbl">IBAN</div><div class="box"></div><div class="hint">Rekeningnummer waarop we het bedrag terugstorten</div></td>
+    </tr>
+  </table>
 
   <span class="section-label">Producten</span>
   <table class="products">
