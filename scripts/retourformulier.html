@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<style>
+  @page {
+    size: A4;
+    margin: 13mm 16mm 12mm 16mm;
+    @bottom-center {
+      content: "Camera-tweedehands.nl B.V.  ·  Kerkstraat 47 Bis, 4191AA Geldermalsen  ·  KvK 80564674  ·  BTW NL861717971B01";
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 7pt;
+      color: #9A9CAA;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-family: Helvetica, Arial, sans-serif; color: #16172B; font-size: 10pt; line-height: 1.45; }
+
+  .accent { color: #E8692A; }
+  .muted  { color: #6A6C7A; }
+
+  /* Header */
+  .brand { display: flex; align-items: center; gap: 9px; }
+  .brand .mark {
+    width: 30px; height: 30px; border-radius: 8px; background: #E8692A;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand .word { font-size: 13pt; font-weight: 800; letter-spacing: .04em; color: #16172B; }
+  .brand .word .dot { color: #E8692A; }
+
+  .title { font-size: 20pt; font-weight: 800; letter-spacing: -.02em; margin: 8px 0 0; }
+  .title-rule { width: 50px; height: 4px; background: #E8692A; border-radius: 2px; margin: 6px 0 8px; }
+  .lead { font-size: 9pt; color: #4A4C5E; max-width: 150mm; line-height: 1.4; }
+
+  .section-label {
+    display: inline-block; font-size: 8pt; font-weight: 800; letter-spacing: .12em;
+    text-transform: uppercase; color: #fff; background: #16172B;
+    padding: 4px 11px; border-radius: 5px; margin: 10px 0 7px;
+  }
+
+  /* Fields */
+  .field { display: inline-block; width: 49%; vertical-align: top; margin-bottom: 5px; }
+  .field.full { width: 100%; }
+  .field .lbl { font-size: 8pt; font-weight: 700; color: #6A6C7A; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+  .field .box { height: 24px; border: 1px solid #DCDDE6; border-radius: 7px; background: #FAFAFC; }
+  .field .hint { font-size: 7.5pt; color: #9A9CAA; margin-top: 3px; }
+
+  /* Products table */
+  table.products { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 2px; }
+  table.products th {
+    text-align: left; font-size: 8pt; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+    color: #fff; background: #16172B; padding: 7px 12px;
+  }
+  table.products th:first-child { border-radius: 6px 0 0 6px; }
+  table.products th:last-child  { border-radius: 0 6px 6px 0; }
+  table.products td { border-bottom: 1px solid #E4E4EC; height: 24px; }
+  .col-sku { width: 26%; }
+  .col-qty { width: 16%; }
+
+  /* Reasons */
+  .reasons { margin-top: 4px; }
+  .reason { display: inline-block; width: 49%; vertical-align: top; margin-bottom: 8px; font-size: 9.5pt; }
+  .reason .chk { display: inline-block; width: 14px; height: 14px; border: 1.6px solid #E8692A; border-radius: 4px; vertical-align: -2px; margin-right: 8px; }
+  .reason .line { display: inline-block; border-bottom: 1px solid #C9CAD4; width: 42mm; }
+
+  /* Steps */
+  .steps { margin-top: 4px; page-break-inside: avoid; }
+  .step-addr { page-break-inside: avoid; }
+  .step { display: inline-block; width: 32%; vertical-align: top; padding-right: 10px; }
+  .step .num { width: 22px; height: 22px; border-radius: 50%; background: #E8692A; color: #fff; font-weight: 800; font-size: 9pt; text-align: center; line-height: 22px; margin-bottom: 6px; }
+  .step .st { font-weight: 700; font-size: 9.5pt; margin-bottom: 2px; }
+  .step .sd { font-size: 8.5pt; color: #6A6C7A; }
+
+  /* Address box */
+  .addr {
+    margin-top: 12px; border: 1px solid #DCDDE6; border-left: 4px solid #E8692A;
+    border-radius: 8px; padding: 11px 16px; background: #FAFAFC;
+  }
+  .addr .h { font-size: 8pt; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #6A6C7A; margin-bottom: 5px; }
+  .addr .a { font-size: 11pt; font-weight: 700; line-height: 1.4; }
+  .addr .c { font-size: 8.5pt; color: #6A6C7A; margin-top: 7px; }
+
+  /* Page 2 */
+  .page2 { page-break-before: always; }
+  .info-card {
+    border: 1px solid #E4E4EC; border-radius: 9px; padding: 13px 16px; margin-bottom: 11px; background: #fff;
+  }
+  .info-card .ih { display: flex; align-items: center; gap: 8px; font-size: 11pt; font-weight: 800; margin-bottom: 5px; }
+  .info-card .ih .n { width: 20px; height: 20px; border-radius: 50%; background: #FCE9DF; color: #E8692A; font-size: 8.5pt; font-weight: 800; text-align: center; line-height: 20px; }
+  .info-card p { font-size: 9pt; color: #44465A; line-height: 1.55; }
+  .info-card ul { margin: 5px 0 0 16px; }
+  .info-card li { font-size: 9pt; color: #44465A; line-height: 1.5; margin-bottom: 3px; }
+  .pill { display: inline-block; background: #FCE9DF; color: #C2531A; font-size: 8pt; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
+</style>
+</head>
+<body>
+
+  <!-- ============ PAGE 1 — FORM ============ -->
+  <div class="brand">
+    <div class="mark">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    </div>
+    <span class="word">CAMERA-TWEEDEHANDS<span class="dot">.</span>NL</span>
+  </div>
+
+  <h1 class="title">Retourformulier</h1>
+  <div class="title-rule"></div>
+  <p class="lead">
+    Jammer dat je bestelling niet helemaal naar wens is — hopelijk kunnen we de volgende keer meer voor je betekenen.
+    Vul dit formulier zo volledig mogelijk in en stop het bij je retourzending. We verwerken je retour binnen 14 dagen na ontvangst.
+  </p>
+
+  <span class="section-label">Jouw gegevens</span>
+  <div>
+    <div class="field"><div class="lbl">Ordernummer</div><div class="box"></div></div>
+    <div class="field" style="margin-left:1.5%"><div class="lbl">Besteldatum</div><div class="box"></div></div>
+    <div class="field"><div class="lbl">Naam</div><div class="box"></div></div>
+    <div class="field" style="margin-left:1.5%"><div class="lbl">Telefoonnummer</div><div class="box"></div></div>
+    <div class="field"><div class="lbl">E-mailadres</div><div class="box"></div></div>
+    <div class="field" style="margin-left:1.5%"><div class="lbl">IBAN</div><div class="box"></div><div class="hint">Rekeningnummer waarop we het bedrag terugstorten</div></div>
+  </div>
+
+  <span class="section-label">Producten</span>
+  <table class="products">
+    <thead>
+      <tr><th class="col-sku">SKU</th><th>Product</th><th class="col-qty">Aantal</th></tr>
+    </thead>
+    <tbody>
+      <tr><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <span class="section-label">Reden van retour</span>
+  <div class="reasons">
+    <div class="reason"><span class="chk"></span>Verkeerd besteld</div>
+    <div class="reason"><span class="chk"></span>Niet naar verwachting</div>
+    <div class="reason"><span class="chk"></span>Beschadigd of defect ontvangen</div>
+    <div class="reason"><span class="chk"></span>Anders, namelijk: <span class="line"></span></div>
+  </div>
+
+  <div class="step-addr">
+  <span class="section-label">Zo stuur je je retour</span>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div class="st">Vul dit formulier in</div><div class="sd">Zo volledig mogelijk, voor een vlotte afhandeling.</div></div>
+    <div class="step"><div class="num">2</div><div class="st">In de doos</div><div class="sd">Stop het formulier én de artikelen goed verpakt in de doos.</div></div>
+    <div class="step"><div class="num">3</div><div class="st">Verstuur</div><div class="sd">Voldoende gefrankeerd naar het retouradres hiernaast.</div></div>
+  </div>
+
+  <div class="addr">
+    <div class="h">Retouradres</div>
+    <div class="a">Camera-tweedehands.nl &nbsp;·&nbsp; T.a.v. Retouren<br>Kerkstraat 47 Bis, 4191AA Geldermalsen</div>
+    <div class="c">Vragen? Mail <strong>info@camera-tweedehands.nl</strong> of bel <strong>085 301 83 32</strong> (ma–vr 09:00–17:30).</div>
+  </div>
+  </div>
+
+  <!-- ============ PAGE 2 — KEY INFO ============ -->
+  <div class="page2">
+    <div class="brand">
+      <div class="mark">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </div>
+      <span class="word">CAMERA-TWEEDEHANDS<span class="dot">.</span>NL</span>
+    </div>
+
+    <h1 class="title" style="font-size:20pt; margin-top:14px;">Belangrijk om te weten over je retour</h1>
+    <div class="title-rule"></div>
+
+    <div class="info-card">
+      <div class="ih"><span class="n">1</span> Herroepingsrecht — 14 dagen bedenktijd</div>
+      <p>Als consument mag je je online bestelling tot <strong>14 dagen na ontvangst</strong> zonder opgave van reden annuleren. Na het aanmelden van je retour heb je nog eens <strong>14 dagen</strong> om het product terug te sturen. Je krijgt dan het volledige orderbedrag inclusief de oorspronkelijke verzendkosten terug.</p>
+    </div>
+
+    <div class="info-card">
+      <div class="ih"><span class="n">2</span> Voorwaarden voor je retour</div>
+      <ul>
+        <li>Compleet en in originele staat, inclusief alle toebehoren, labels en — indien mogelijk — de originele verzenddoos.</li>
+        <li>Je mag het product bekijken en testen zoals in een winkel, maar het mag niet verder gebruikt zijn. Bij waardevermindering door meer dan beoordelen kunnen we kosten in rekening brengen.</li>
+        <li>Het pakket moet voldoende gefrankeerd zijn; onvoldoende gefrankeerde retouren kunnen we niet aannemen.</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <div class="ih"><span class="n">3</span> Kosten van retourzending</div>
+      <p>De kosten van de retourzending zijn voor eigen rekening. <strong>Uitzondering:</strong> is je product defect of beschadigd ontvangen? Dan vergoeden wij de retourkosten. Bewaar altijd je verzendbewijs — zonder bewijs van verzending kan er geen aanspraak worden gemaakt op vergoeding bij verlies.</p>
+    </div>
+
+    <div class="info-card">
+      <div class="ih"><span class="n">4</span> Terugbetaling</div>
+      <p>We betalen het orderbedrag binnen <strong>14 dagen na aanmelding</strong> van je retour terug op je IBAN, mits we het complete product in goede staat retour hebben ontvangen (of je een sluitend bewijs van volledige terugzending hebt overlegd).</p>
+    </div>
+
+    <div class="info-card">
+      <div class="ih"><span class="n">5</span> Let op</div>
+      <ul>
+        <li>Het retourbeleid geldt uitsluitend voor <strong>online aankopen</strong> via de webshop — niet voor aankopen in de showroom.</li>
+        <li>Het herroepingsrecht geldt alleen voor <strong>consumenten</strong>; zakelijke klanten hebben in beginsel geen herroepingsrecht.</li>
+        <li>Ging de aankoop gepaard met de <strong>inruil</strong> van andere fotoapparatuur, dan is herroeping uitgesloten.</li>
+      </ul>
+    </div>
+
+    <div class="addr" style="margin-top:14px;">
+      <div class="h">Hulp nodig?</div>
+      <div class="a" style="font-size:10pt;">info@camera-tweedehands.nl &nbsp;·&nbsp; 085 301 83 32</div>
+      <div class="c">Onze klantenservice helpt je graag verder, ma–vr van 09:00 tot 17:30.</div>
+    </div>
+  </div>
+
+</body>
+</html>

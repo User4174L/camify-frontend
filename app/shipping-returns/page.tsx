@@ -1,15 +1,23 @@
 import SimplePage from '@/components/layout/SimplePage';
 
 const rows = [
-  ['Nederland & België — onder €100', '€5,95', '1–2 werkdagen'],
-  ['Nederland & België — boven €100', 'Gratis', '1–2 werkdagen'],
-  ['Buiten de EU (0–23 kg)', '€14,95', 'Varieert per land'],
+  ['Nederland & België', 'Gratis vanaf €100, anders €4,95', '1–2 werkdagen'],
+  ['Duitsland', 'Gratis vanaf €100, anders €6,95', '1–2 werkdagen'],
+  ['Overig EU (incl. Frankrijk)', '€14,95', '2–5 werkdagen'],
+  ['Buiten de EU (0–23 kg)', 'Berekend in de checkout (vanaf €79)', 'Varieert per land'],
 ];
 
 const steps = [
-  { n: '1', t: 'Aanmelden', d: 'Meld je retour binnen 14 dagen aan via e-mail of het retourformulier.' },
-  { n: '2', t: 'Terugsturen', d: 'Stuur het product compleet en voldoende gefrankeerd retour, in originele staat.' },
-  { n: '3', t: 'Terugbetaling', d: 'Na ontvangst en controle betalen we binnen 14 dagen terug.' },
+  { n: '1', t: 'Aanmelden', d: 'Meld je retour binnen 14 dagen na ontvangst aan via info@camera-tweedehands.nl, met je ordernummer.' },
+  { n: '2', t: 'Terugsturen', d: 'Print het retourformulier, voeg het bij en stuur het product compleet, in originele staat en voldoende gefrankeerd retour.' },
+  { n: '3', t: 'Terugbetaling', d: 'Na ontvangst en controle betalen we het orderbedrag binnen 14 dagen terug op je IBAN.' },
+];
+
+const conditions = [
+  'Compleet en in originele staat, inclusief alle toebehoren, labels en — indien mogelijk — de originele verzenddoos.',
+  'Het product mag bekeken en getest worden zoals in een winkel, maar niet verder gebruikt zijn.',
+  'De kosten van retourzending zijn voor eigen rekening, tenzij het product defect of beschadigd is ontvangen — dan vergoeden we de retourkosten.',
+  'Het pakket moet voldoende gefrankeerd zijn; onvoldoende gefrankeerde retouren kunnen we niet aannemen.',
 ];
 
 function Carrier({ name }: { name: string }) {
@@ -37,10 +45,14 @@ export default function Page() {
         </span>
       </div>
 
+      <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 10px' }}>Verzending</h2>
+      <p style={{ fontSize: 14.5, color: 'var(--text-sec)', margin: '0 0 18px', lineHeight: 1.65 }}>
+        Voor 15:00 besteld op werkdagen = dezelfde dag verzonden. In de meeste gevallen ontvang je je pakket de volgende dag (internationale zendingen uitgezonderd). Elke bestelling gaat aangetekend en verzekerd de deur uit.
+      </p>
+
       <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 12px' }}>Verzendkosten &amp; levertijd</h2>
-      <p style={{ fontSize: 14, color: 'var(--text-sec)', margin: '0 0 12px' }}>Voor 15:00 besteld = dezelfde werkdag verzonden.</p>
-      <div style={{ overflowX: 'auto', marginBottom: 32 }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, minWidth: 480 }}>
+      <div style={{ overflowX: 'auto', marginBottom: 10 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, minWidth: 520 }}>
           <thead>
             <tr>
               {['Bestemming', 'Kosten', 'Levertijd'].map(h => (
@@ -59,6 +71,9 @@ export default function Page() {
           </tbody>
         </table>
       </div>
+      <p style={{ fontSize: 12.5, color: '#8A8C99', margin: '0 0 32px' }}>
+        Bestellingen buiten de EU worden in de checkout berekend; eventuele invoerrechten en lokale btw zijn voor rekening van de ontvanger.
+      </p>
 
       <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 14px' }}>Retourneren in 3 stappen</h2>
       <div style={{ display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', marginBottom: 28 }}>
@@ -71,12 +86,28 @@ export default function Page() {
         ))}
       </div>
 
-      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px 20px', fontSize: 14, lineHeight: 1.6 }}>
+      <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 12px' }}>Voorwaarden voor retour</h2>
+      <ul style={{ margin: '0 0 24px', paddingLeft: 0, listStyle: 'none', display: 'grid', gap: 10 }}>
+        {conditions.map((c, i) => (
+          <li key={i} style={{ display: 'flex', gap: 10, fontSize: 14, lineHeight: 1.6, color: 'var(--text)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.2" style={{ flexShrink: 0, marginTop: 2 }}><path d="M20 6 9 17l-5-5" /></svg>
+            <span>{c}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* Retourformulier download */}
+      <a href="/retourformulier.pdf" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, border: '1.5px solid var(--accent)', color: 'var(--accent)', fontWeight: 600, fontSize: 14, padding: '11px 20px', borderRadius: 999, marginBottom: 32 }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
+        Download het retourformulier (PDF)
+      </a>
+
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px 20px', fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
         <strong>Retouradres</strong><br />
         Camera-tweedehands.nl — T.a.v. Retouren<br />
         Kerkstraat 47 Bis, 4191AA Geldermalsen, Nederland
         <div style={{ fontSize: 13, color: 'var(--text-sec)', marginTop: 10 }}>
-          Geldt uitsluitend voor online aankopen (niet showroom). Alleen consumenten hebben herroepingsrecht.
+          Het retourbeleid geldt uitsluitend voor online aankopen via de webshop (niet voor showroom-aankopen). Het herroepingsrecht geldt alleen voor consumenten; zakelijke klanten hebben in beginsel geen herroepingsrecht.
         </div>
       </div>
     </SimplePage>
