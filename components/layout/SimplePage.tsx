@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import Breadcrumb from '@/components/layout/Breadcrumb';
+import WordReveal from '@/components/ui/WordReveal';
 
 /**
  * Herbruikbare standalone tekstpagina (legal / customer-care / info).
@@ -76,12 +77,14 @@ export default function SimplePage({
   intro,
   markdown,
   children,
+  titleReveal = false,
 }: {
   title: string;
   breadcrumb: string;
   intro?: string;
   markdown?: string;
   children?: ReactNode;
+  titleReveal?: boolean;
 }) {
   return (
     <div className="container" style={{ paddingTop: 24, paddingBottom: 80 }}>
@@ -95,10 +98,20 @@ export default function SimplePage({
           color: 'var(--text)',
         }}
       >
-        {title}
+        {titleReveal ? <WordReveal text={title} /> : title}
       </h1>
       {intro ? (
-        <p style={{ fontSize: 16, color: '#5A5C6B', maxWidth: 920, margin: '0 0 28px' }}>
+        <p
+          style={{
+            fontSize: 16,
+            color: '#5A5C6B',
+            maxWidth: 920,
+            margin: '0 0 28px',
+            ...(titleReveal
+              ? { animation: 'camWordReveal .6s cubic-bezier(.16,1,.3,1) both', animationDelay: '320ms' }
+              : {}),
+          }}
+        >
           {intro}
         </p>
       ) : null}
