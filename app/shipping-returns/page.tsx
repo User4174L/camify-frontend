@@ -1,4 +1,12 @@
 import SimplePage from '@/components/layout/SimplePage';
+import TrustStrip from '@/components/ui/TrustStrip';
+
+const trust = [
+  { ic: <><rect x="1" y="3" width="15" height="13" rx="1.5" /><path d="M16 8h4l3 3v5h-7z" /><circle cx="5.5" cy="18.5" r="2" /><circle cx="18.5" cy="18.5" r="2" /></>, n: 'Gratis vanaf €100', l: 'NL, België & Duitsland' },
+  { ic: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>, n: 'Voor 15:00 besteld', l: 'zelfde dag verzonden' },
+  { ic: <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></>, n: 'Aangetekend', l: 'verzekerd verzonden' },
+  { ic: <><path d="M3 7v6h6" /><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" /></>, n: '14 dagen', l: 'retourrecht' },
+];
 
 const rows = [
   ['Nederland & België', 'Gratis vanaf €100, anders €4,95', '1–2 werkdagen'],
@@ -33,8 +41,11 @@ export default function Page() {
     <SimplePage
       title="Shipping &amp; returns"
       breadcrumb="Shipping & returns"
+      eyebrow="Verzenden & retour"
       intro="Snel, aangetekend en verzekerd verzonden — met een eenvoudig 14-daags retourrecht."
     >
+      <div style={{ marginBottom: 28 }}><TrustStrip items={trust} /></div>
+
       {/* Carriers + badge */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 24 }}>
         <span style={{ fontSize: 13, color: 'var(--text-sec)' }}>Verzonden met:</span>
@@ -78,7 +89,7 @@ export default function Page() {
       <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 14px' }}>Retourneren in 3 stappen</h2>
       <div style={{ display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', marginBottom: 28 }}>
         {steps.map(s => (
-          <div key={s.n} style={{ border: '1px solid var(--border)', borderRadius: 12, padding: '18px' }}>
+          <div key={s.n} className="cam-lift" style={{ border: '1px solid var(--border)', borderRadius: 12, padding: '18px', background: '#fff' }}>
             <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--accent)', color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>{s.n}</div>
             <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{s.t}</div>
             <div style={{ fontSize: 13.5, color: 'var(--text-sec)', lineHeight: 1.5 }}>{s.d}</div>

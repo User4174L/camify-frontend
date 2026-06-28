@@ -28,12 +28,13 @@ export default function ContactPage() {
     <SimplePage
       title="Contact us"
       breadcrumb="Contact"
+      eyebrow="Klantenservice"
       intro="Vraag over een order, product of inruil? We helpen je graag — kies het kanaal dat je prettig vindt."
     >
       {/* Kanalen */}
       <div style={{ display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', marginBottom: 14 }}>
         {channels.map(c => (
-          <div key={c.label} style={{ border: '1px solid var(--border)', borderRadius: 12, padding: '16px 18px', display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div key={c.label} className="cam-lift" style={{ border: '1px solid var(--border)', borderRadius: 12, padding: '16px 18px', display: 'flex', gap: 12, alignItems: 'center', background: '#fff' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.8" style={{ flexShrink: 0 }}>{c.icon}</svg>
             <div style={{ minWidth: 0 }}>
               <div style={{ fontWeight: 700, fontSize: 14 }}>{c.label}</div>

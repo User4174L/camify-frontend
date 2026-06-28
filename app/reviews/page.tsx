@@ -11,6 +11,7 @@ export default function ReviewsPage() {
     <SimplePage
       title="Reviews"
       breadcrumb="Reviews"
+      eyebrow="Reviews"
       intro="Rated 4.9 on Trustpilot by thousands of photographers across Europe."
     >
       {/* Trustpilot widget placeholder */}
@@ -32,7 +33,8 @@ export default function ReviewsPage() {
         {sample.map((r) => (
           <div
             key={r.name}
-            style={{ border: '1px solid var(--border)', borderRadius: 12, padding: 18 }}
+            className="cam-lift"
+            style={{ border: '1px solid var(--border)', borderRadius: 12, padding: 18, background: '#fff' }}
           >
             <div style={{ color: 'var(--tp)', fontSize: 14, marginBottom: 6 }}>★★★★★</div>
             <p style={{ margin: '0 0 10px', fontSize: 14, lineHeight: 1.6 }}>{r.text}</p>

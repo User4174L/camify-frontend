@@ -1,10 +1,11 @@
 import Breadcrumb from '@/components/layout/Breadcrumb';
+import WordReveal from '@/components/ui/WordReveal';
 
 const stats = [
   { num: '2018', label: 'Founded' },
   { num: '€1.2M+', label: 'In stock' },
   { num: '15K+', label: 'Items sold' },
-  { num: '4.8 ★', label: 'Trustpilot' },
+  { num: '4.9 ★', label: 'Trustpilot' },
   { num: '10+', label: 'EU countries' },
 ];
 
@@ -16,16 +17,19 @@ const timeline = [
 
 export default function AboutPage() {
   return (
-    <div className="container" style={{ paddingTop: 24, paddingBottom: 72 }}>
-      <Breadcrumb items={[{ label: 'About us' }]} />
-
-      <h1 style={{ fontSize: 'clamp(28px,4vw,40px)', fontWeight: 800, letterSpacing: '-.02em', margin: '14px 0 14px' }}>
-        About Camify
-      </h1>
-      <p style={{ fontSize: 16, color: '#5A5C6B', maxWidth: 620, lineHeight: 1.6, marginBottom: 28 }}>
-        We&rsquo;re building Europe&rsquo;s most trusted marketplace for pre-owned camera equipment. Every item inspected,
-        graded, and backed by warranty &mdash; so you can focus on what matters: making images.
-      </p>
+    <>
+      <div className="svc-header">
+        <div className="container">
+          <Breadcrumb items={[{ label: 'About us' }]} />
+          <div className="svc-eyebrow">Over ons</div>
+          <h1 className="svc-title"><WordReveal text="About Camify" /></h1>
+          <p className="svc-intro" style={{ animation: 'camWordReveal .6s cubic-bezier(.16,1,.3,1) both', animationDelay: '300ms' }}>
+            We&rsquo;re building Europe&rsquo;s most trusted marketplace for pre-owned camera equipment. Every item inspected,
+            graded, and backed by warranty &mdash; so you can focus on what matters: making images.
+          </p>
+        </div>
+      </div>
+      <div className="container" style={{ paddingBottom: 72 }}>
 
       {/* Stats */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 44 }}>
@@ -45,7 +49,7 @@ export default function AboutPage() {
           { t: '14 dagen retour', p: <><path d="M3 7v6h6" /><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" /></> },
           { t: 'Echte productfoto’s', p: <><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /><circle cx="12" cy="13" r="4" /></> },
         ].map(u => (
-          <div key={u.t} style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--border)', borderRadius: 12, padding: '14px 16px' }}>
+          <div key={u.t} className="cam-lift" style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--border)', borderRadius: 12, padding: '14px 16px', background: '#fff' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.8" style={{ flexShrink: 0 }}>{u.p}</svg>
             <span style={{ fontSize: 13.5, fontWeight: 600 }}>{u.t}</span>
           </div>
@@ -79,7 +83,7 @@ export default function AboutPage() {
       {/* Timeline */}
       <div style={{ display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', maxWidth: 760, marginBottom: 28 }}>
         {timeline.map(t => (
-          <div key={t.year} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px 18px', textAlign: 'center' }}>
+          <div key={t.year} className="cam-lift" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px 18px', textAlign: 'center' }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--accent)' }}>{t.year}</div>
             <div style={{ fontSize: 13.5, color: 'var(--text-sec)', marginTop: 2 }}>{t.text}</div>
           </div>
@@ -106,6 +110,7 @@ export default function AboutPage() {
         <span style={{ color: 'var(--tp)', letterSpacing: 1 }}>★★★★★</span>
         <span><strong style={{ color: 'var(--text)' }}>Trustpilot 4.9</strong> — widget met live reviews wordt hier ingeladen.</span>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

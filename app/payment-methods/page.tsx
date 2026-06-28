@@ -1,4 +1,12 @@
 import SimplePage from '@/components/layout/SimplePage';
+import TrustStrip from '@/components/ui/TrustStrip';
+
+const trust = [
+  { ic: <><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></>, n: 'Veilig via Pay.nl', l: 'beveiligde SSL-betaling' },
+  { ic: <><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>, n: '14 methodes', l: 'iDEAL, PayPal, creditcard…' },
+  { ic: <><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>, n: 'In 3 termijnen', l: '0% rente' },
+  { ic: <><path d="M3 9l1-5h16l1 5" /><path d="M4 9v11h16V9" /><path d="M9 20v-6h6v6" /></>, n: 'Pinnen & contant', l: 'in de showroom' },
+];
 
 const online = [
   { name: 'iDEAL', note: 'Meest gekozen', logo: '/payment/ideal.svg' },
@@ -52,7 +60,7 @@ const icons: Record<string, React.ReactNode> = {
 
 function Badge({ name, note, logo, icon }: { name: string; note: string; logo?: string; icon?: string }) {
   return (
-    <div style={{ border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 14, background: '#fff' }}>
+    <div className="cam-lift" style={{ border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 14, background: '#fff' }}>
       <div style={{ width: 64, height: 40, borderRadius: 6, background: '#fff', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, padding: 5 }}>
         {logo
           ? <img src={logo} alt={`${name} logo`} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
@@ -71,8 +79,11 @@ export default function Page() {
     <SimplePage
       title="Payment methods"
       breadcrumb="Payment methods"
+      eyebrow="Betalen"
       intro="Bij Camera-tweedehands.nl kies je de betaalmethode die het beste bij je past — online en in de winkel. Veilig en snel."
     >
+      <div style={{ marginBottom: 32 }}><TrustStrip items={trust} /></div>
+
       <h2 style={{ fontSize: 20, fontWeight: 700, margin: '8px 0 14px' }}>Online betalen</h2>
       <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', marginBottom: 32 }}>
         {online.map(m => <Badge key={m.name} {...m} />)}

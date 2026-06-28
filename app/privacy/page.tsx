@@ -90,6 +90,7 @@ export default function Page() {
     <SimplePage
       title="Privacy policy"
       breadcrumb="Privacy policy"
+      eyebrow="Privacy"
       intro="Hoe we omgaan met je persoonsgegevens, conform de AVG."
       markdown={md}
     />

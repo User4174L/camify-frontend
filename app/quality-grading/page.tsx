@@ -78,12 +78,13 @@ export default function Page() {
     <SimplePage
       title="Quality &amp; grading"
       breadcrumb="Quality & grading"
+      eyebrow="Kwaliteit"
       intro="Of je nu koopt, verkoopt of inruilt: we beoordelen de staat van elk item duidelijk en eerlijk, in vijf gedetailleerde conditieniveaus. Zo weet je precies wat je koopt."
     >
       {/* Conditieschaal */}
       <div style={{ display: 'grid', gap: 14, marginBottom: 36 }}>
         {grades.map(g => (
-          <div key={g.name} style={{ border: '1px solid var(--border)', borderRadius: 12, padding: '18px 20px', background: '#fff' }}>
+          <div key={g.name} className="cam-lift" style={{ border: '1px solid var(--border)', borderRadius: 12, padding: '18px 20px', background: '#fff' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 6 }}>
               <div style={{ fontWeight: 800, fontSize: 16 }}>{g.name}</div>
               <Dots level={g.level} />

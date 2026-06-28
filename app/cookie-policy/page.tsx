@@ -23,6 +23,7 @@ export default function Page() {
     <SimplePage
       title="Cookie policy"
       breadcrumb="Cookie policy"
+      eyebrow="Cookies"
       intro="Welke cookies we gebruiken en hoe je je toestemming beheert."
       markdown={md}
     />

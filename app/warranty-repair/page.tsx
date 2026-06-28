@@ -22,6 +22,7 @@ export default function Page() {
     <SimplePage
       title="Warranty &amp; repair"
       breadcrumb="Warranty & repair"
+      eyebrow="Garantie"
       intro="Elk product heeft minimaal 12 maanden garantie. Reparatie nodig? We helpen."
       markdown={md}
     />

@@ -78,6 +78,7 @@ export default function SimplePage({
   markdown,
   children,
   titleReveal = false,
+  eyebrow,
 }: {
   title: string;
   breadcrumb: string;
@@ -85,39 +86,36 @@ export default function SimplePage({
   markdown?: string;
   children?: ReactNode;
   titleReveal?: boolean;
+  eyebrow?: string;
 }) {
   return (
-    <div className="container" style={{ paddingTop: 24, paddingBottom: 80 }}>
-      <Breadcrumb items={[{ label: breadcrumb }]} />
-      <h1
-        style={{
-          fontSize: 34,
-          fontWeight: 800,
-          letterSpacing: '-.02em',
-          margin: '14px 0 14px',
-          color: 'var(--text)',
-        }}
-      >
-        {titleReveal ? <WordReveal text={title} /> : title}
-      </h1>
-      {intro ? (
-        <p
-          style={{
-            fontSize: 16,
-            color: '#5A5C6B',
-            maxWidth: 920,
-            margin: '0 0 28px',
-            ...(titleReveal
-              ? { animation: 'camWordReveal .6s cubic-bezier(.16,1,.3,1) both', animationDelay: '320ms' }
-              : {}),
-          }}
-        >
-          {intro}
-        </p>
-      ) : null}
-      <div style={{ maxWidth: 920, fontSize: 15, lineHeight: 1.75, color: 'var(--text)' }}>
-        {markdown ? <Markdown source={markdown} /> : children}
+    <>
+      <div className="svc-header">
+        <div className="container">
+          <Breadcrumb items={[{ label: breadcrumb }]} />
+          {eyebrow ? <div className="svc-eyebrow">{eyebrow}</div> : null}
+          <h1 className="svc-title" style={!eyebrow ? { marginTop: 14 } : undefined}>
+            {titleReveal ? <WordReveal text={title} /> : title}
+          </h1>
+          {intro ? (
+            <p
+              className="svc-intro"
+              style={
+                titleReveal
+                  ? { animation: 'camWordReveal .6s cubic-bezier(.16,1,.3,1) both', animationDelay: '320ms' }
+                  : undefined
+              }
+            >
+              {intro}
+            </p>
+          ) : null}
+        </div>
       </div>
-    </div>
+      <div className="container" style={{ paddingBottom: 80 }}>
+        <div style={{ maxWidth: 920, fontSize: 15, lineHeight: 1.75, color: 'var(--text)' }}>
+          {markdown ? <Markdown source={markdown} /> : children}
+        </div>
+      </div>
+    </>
   );
 }

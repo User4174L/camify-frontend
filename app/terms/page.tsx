@@ -174,6 +174,7 @@ export default function Page() {
     <SimplePage
       title="Terms & conditions"
       breadcrumb="Terms & conditions"
+      eyebrow="Juridisch"
       intro="Algemene voorwaarden Camera-tweedehands.nl B.V."
       markdown={md}
     />
