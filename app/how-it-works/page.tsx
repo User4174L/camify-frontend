@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import Reveal from '@/components/ui/Reveal';
+import RelatedLinks from '@/components/ui/RelatedLinks';
 
 const I = {
   select: <><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></>,
@@ -13,28 +14,36 @@ const I = {
 
 const sellSteps = [
   { ic: I.select, t: 'Selecteer je apparatuur', d: 'Zoek je camera, lens of accessoire op in onze inruiltool en geef de conditie aan. Meerdere items tegelijk kan ook.' },
-  { ic: I.price, t: 'Vraag een prijsopgave aan', d: 'Je ziet direct een indicatie van de waarde, gebaseerd op actuele marktprijzen, conditie en vraag.' },
+  { ic: I.price, t: 'Vraag een prijsopgave aan', d: 'Je ziet direct een indicatie van de waarde, gebaseerd op actuele marktprijzen, conditie en vraag. De offerte is vrijblijvend en 7 dagen geldig.' },
   { ic: I.offer, t: 'Ontvang je bod', d: 'Akkoord met de prijsopgave? Dan ontvang je ons bod met een gratis verzendlabel per e-mail.' },
-  { ic: I.ship, t: 'Verstuur gratis & verzekerd', d: 'Verpak je apparatuur goed, plak het label erop en lever het af bij een PostNL- of DHL-punt. Volledig verzekerd.' },
+  { ic: I.ship, t: 'Verstuur gratis & verzekerd', d: 'Verpak je apparatuur goed, plak het label erop en lever het af bij een PostNL- of DHL-punt. De verzending is volledig verzekerd.' },
   { ic: I.inspect, t: 'Inspectie & test', d: 'Onze technici inspecteren en testen alles binnen 2 werkdagen na ontvangst — sensor, autofocus, glas, sluiter en cosmetische staat.' },
   { ic: I.pay, t: 'Uitbetaald of verrekend', d: 'Klopt de conditie met je opgave? Dan betalen we binnen 48 uur uit op je IBAN — of je verrekent het bedrag met een nieuwe aankoop.' },
 ];
 
-const buySteps = [
-  { t: 'Blader', d: 'Kies uit duizenden geïnspecteerde items de conditie en prijs die bij je past.' },
-  { t: 'Bekijk', d: 'Echte foto’s van het exacte item, de precieze conditie en de shuttercount (waar van toepassing).' },
-  { t: 'Reken af', d: 'Betaal veilig met je voorkeursbetaalmethode.' },
-  { t: 'Ontvang', d: 'Aangetekend en verzekerd bezorgd, met minimaal 12 maanden garantie en 14 dagen retourrecht.' },
+const packing = [
+  'Gebruik bij voorkeur de originele doos, of een stevige doos met ruim vulmateriaal (noppenfolie of foam).',
+  'Verpak losse onderdelen (lenzen, accu’s, opladers) afzonderlijk zodat ze niet tegen elkaar schuiven.',
+  'Stuur alleen de items mee die in je offerte staan, inclusief de bijbehorende accessoires.',
+  'Voeg een briefje met je naam en ordernummer toe, zodat we je pakket direct kunnen koppelen.',
+  'Bewaar je verzendbewijs: zonder bewijs van verzending kan er geen aanspraak worden gemaakt op vergoeding bij verlies of schade.',
 ];
 
-const checks = ['Sensor & dode pixels', 'Autofocus-nauwkeurigheid', 'Lensglas & coating', 'Sluiter & shuttercount', 'Knoppen, ringen & poorten', 'Cosmetische staat & LCD'];
+const goodToKnow = [
+  { t: 'Vrijblijvende offerte (7 dagen geldig)', d: 'Onze offertes zijn vrijblijvend en maximaal 7 dagen geldig. Bij wezenlijke marktontwikkelingen of als de conditie afwijkt van je opgave, kunnen we het bod aanpassen — altijd in overleg en met jouw akkoord.' },
+  { t: 'Veilige, eerlijke handel', d: 'We controleren serienummers via StopHeling.nl. Zo houden we de markt schoon en koop je met een gerust hart bij ons terug.' },
+  { t: 'Verpakking & verzekering', d: 'Pakketten zijn verzekerd tegen schade en verlies, mits zorgvuldig verpakt en met een bewaard verzendbewijs. Schade door ondeugdelijke verpakking valt buiten de dekking.' },
+  { t: 'Zakelijk verkopen', d: 'Verkoop je als btw-geregistreerd bedrijf? Dan hanteren we een prijs op basis van btw of marge, afhankelijk van je situatie; bij intracommunautaire levering met btw-verlegging ontvang je een prijs exclusief btw.' },
+  { t: 'Drone inruilen?', d: 'Koppel je drone vóór verzending los van je DJI-account, zodat wij ’m kunnen testen en doorverkopen.' },
+  { t: 'Koop én verkoop in één', d: 'Koop je tegelijk iets en ruil je in? Dat zijn twee losse overeenkomsten. Je houdt je herroepingsrecht op de aankoop; het ingeruilde toestel nemen we niet terug, maar verrekenen we in geld.' },
+];
 
 const faqs = [
   { q: 'Wat als de conditie afwijkt van mijn opgave?', a: 'Dan nemen we contact op met een aangepast bod. Ga je niet akkoord, dan sturen we je apparatuur kosteloos terug.' },
   { q: 'Moet ik iets terugkopen, of kan ik ook alleen verkopen?', a: 'Alleen verkopen kan natuurlijk ook. Inruilen tegen een nieuwe aankoop mag, maar is geen voorwaarde — je kiest zelf voor uitbetaling of verrekening.' },
   { q: 'Hoe bepalen jullie de waarde van mijn apparatuur?', a: 'Op basis van actuele marktprijzen, de conditie, de vraag en wat vergelijkbare items opbrengen. Omdat we direct aan eindklanten verkopen, zonder tussenpartijen, kunnen we scherp bieden.' },
-  { q: 'Hoe verpak ik mijn apparatuur het beste?', a: 'Gebruik bij voorkeur de originele doos en voldoende beschermend materiaal (bijv. noppenfolie). De verzending met ons label is volledig verzekerd.' },
   { q: 'Wanneer krijg ik mijn geld?', a: 'Na de inspectie (binnen 2 werkdagen na ontvangst) en jouw akkoord betalen we binnen 48 uur uit via bankoverschrijving op je IBAN.' },
+  { q: 'Verkoop ik aan jullie met herroepingsrecht?', a: 'Nee — als je apparatuur aan ons verkoopt, is er geen herroepings- of terugkooprecht. Dat geldt wél voor producten die je als consument bij ons koopt (14 dagen).' },
 ];
 
 function Ic({ children }: { children: React.ReactNode }) {
@@ -53,6 +62,12 @@ export default function Page() {
         .hiw-sec__t{font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-.02em;margin:0 0 6px;color:var(--text);scroll-margin-top:90px}
         .hiw-sec__s{font-size:15px;color:var(--text-sec);margin:0 0 24px;max-width:42em}
 
+        .hiw-choice{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
+        .hiw-choice__card{border:1px solid var(--border);border-radius:16px;padding:20px 22px;background:#fff}
+        .hiw-choice__h{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;color:var(--text);margin-bottom:6px}
+        .hiw-choice__h .dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+        .hiw-choice__d{font-size:14px;color:var(--text-sec);line-height:1.6}
+
         .hiw-timeline{display:grid;gap:0}
         .hiw-step{display:grid;grid-template-columns:48px 1fr;gap:16px}
         .hiw-step__rail{display:flex;flex-direction:column;align-items:center}
@@ -70,11 +85,14 @@ export default function Page() {
         .hiw-check__i{display:flex;gap:9px;font-size:13.5px;font-weight:600;color:var(--text);align-items:center}
         .hiw-check__i svg{color:var(--accent);flex-shrink:0}
 
-        .hiw-buy{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-        .hiw-buy__card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;height:100%}
-        .hiw-buy__step{font-weight:800;font-size:12px;color:var(--accent);margin-bottom:6px;letter-spacing:.04em}
-        .hiw-buy__t{font-weight:700;font-size:15px;margin-bottom:4px;color:var(--text)}
-        .hiw-buy__d{font-size:13.5px;color:var(--text-sec);line-height:1.55}
+        .hiw-list{display:grid;gap:11px;margin:0;padding:0;list-style:none}
+        .hiw-list li{display:flex;gap:11px;font-size:14.5px;line-height:1.6;color:var(--text)}
+        .hiw-list svg{color:var(--accent);flex-shrink:0;margin-top:3px}
+
+        .hiw-know{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+        .hiw-know__card{border:1px solid var(--border);border-radius:14px;padding:17px 19px;background:#fff}
+        .hiw-know__t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:5px}
+        .hiw-know__d{font-size:13.5px;color:var(--text-sec);line-height:1.55}
 
         .hiw-faq{display:grid;gap:10px}
         .hiw-faq details{background:#fff;border:1px solid var(--border);border-radius:14px;padding:15px 18px}
@@ -90,12 +108,11 @@ export default function Page() {
 
         @media(max-width:760px){
           .hiw-inspect{grid-template-columns:1fr;padding:20px}
-          .hiw-buy{grid-template-columns:1fr 1fr}
+          .hiw-choice,.hiw-know{grid-template-columns:1fr}
         }
-        @media(max-width:460px){.hiw-buy{grid-template-columns:1fr}.hiw-check{grid-template-columns:1fr}}
+        @media(max-width:460px){.hiw-check{grid-template-columns:1fr}}
       `}</style>
 
-      {/* Standaard banner met stock-foto — consistent met de andere service-pagina's */}
       <div className="svc-header svc-header--photo">
         <div className="svc-header__photo" style={{ backgroundImage: 'url(/images/hero-photographer-2.jpg)' }} aria-hidden="true" />
         <div className="container">
@@ -105,18 +122,38 @@ export default function Page() {
             <h1 className="svc-title">How it works</h1>
             <p className="svc-intro">
               Je camera-apparatuur verkopen of inruilen is bij ons zo geregeld — eerlijk geprijsd, gratis verzekerd
-              verzonden en snel uitbetaald. Kopen kan natuurlijk net zo eenvoudig.
+              verzonden en snel uitbetaald. Zoek je juist naar kopen? Bekijk dan de <Link href="/buying" style={{ color: 'var(--accent)', fontWeight: 600 }}>koopgids</Link>.
             </p>
           </div>
         </div>
       </div>
 
       <div className="container" style={{ paddingBottom: 72 }}>
+        {/* Verkopen vs inruilen */}
+        <section className="hiw-sec">
+          <Reveal>
+            <h2 id="verkopen" className="hiw-sec__t">Verkopen of inruilen?</h2>
+            <p className="hiw-sec__s">Twee manieren om je gear een nieuw leven te geven — je kiest zelf.</p>
+          </Reveal>
+          <Reveal>
+            <div className="hiw-choice">
+              <div className="hiw-choice__card cam-lift">
+                <div className="hiw-choice__h"><span className="dot" /> Verkopen</div>
+                <div className="hiw-choice__d">Je ontvangt het bedrag direct op je IBAN, binnen 48 uur na akkoord en inspectie. Ideaal als je gewoon je apparatuur wilt verkopen.</div>
+              </div>
+              <div className="hiw-choice__card cam-lift">
+                <div className="hiw-choice__h"><span className="dot" /> Inruilen</div>
+                <div className="hiw-choice__d">Je verrekent de waarde direct met een nieuwe aankoop bij ons. Vaak interessant als je wilt upgraden — je betaalt alleen het verschil bij.</div>
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
         {/* SELL STEPS — timeline */}
         <section className="hiw-sec">
           <Reveal>
-            <h2 id="verkopen" className="hiw-sec__t">Verkopen of inruilen in 6 stappen</h2>
-            <p className="hiw-sec__s">Eenvoudig geregeld — alleen verkopen kan, inruilen tegen een nieuwe aankoop ook.</p>
+            <h2 id="stappen" className="hiw-sec__t">In 6 stappen</h2>
+            <p className="hiw-sec__s">Van prijsopgave tot uitbetaling — alles vrijblijvend.</p>
           </Reveal>
           <div className="hiw-timeline">
             {sellSteps.map((s, i) => (
@@ -145,6 +182,22 @@ export default function Page() {
           </Reveal>
         </section>
 
+        {/* Inpakken */}
+        <section className="hiw-sec">
+          <Reveal>
+            <h2 id="inpakken" className="hiw-sec__t">Zo pak je je apparatuur in</h2>
+            <p className="hiw-sec__s">Goed verpakt = veilig verzekerd. Een paar tips voor een vlotte, schadevrije verzending.</p>
+            <ul className="hiw-list">
+              {packing.map(p => (
+                <li key={p}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </section>
+
         {/* INSPECTION block */}
         <section className="hiw-sec">
           <Reveal>
@@ -152,13 +205,13 @@ export default function Page() {
               <img className="hiw-inspect__img" src="/images/canon-r5.jpg" alt="Professionele inspectie van camera-apparatuur" />
               <div>
                 <div className="svc-eyebrow" style={{ margin: '0 0 10px' }}>Elk item getest</div>
-                <h2 id="inspectie" className="hiw-sec__t" style={{ marginBottom: 8 }}>Professioneel geïnspecteerd, eerlijk gegradeerd</h2>
+                <h2 id="inspectie" className="hiw-sec__t" style={{ marginBottom: 8 }}>Hoe wij je gear keuren</h2>
                 <p className="hiw-sec__s" style={{ marginBottom: 4 }}>
-                  Onze technici controleren elk onderdeel en maken echte foto’s van het exacte item — geen stockbeelden.
-                  Zo weet je vooraf precies wat je koopt of verkoopt.
+                  Onze technici controleren elk onderdeel en maken echte foto’s van het exacte item. Wijkt de conditie af
+                  van je opgave, dan zie je altijd eerst het aangepaste bod — je beslist zelf.
                 </p>
                 <div className="hiw-check">
-                  {checks.map(c => (
+                  {['Sensor & dode pixels', 'Autofocus-nauwkeurigheid', 'Lensglas & coating', 'Sluiter & shuttercount', 'Knoppen, ringen & poorten', 'Cosmetische staat & LCD'].map(c => (
                     <div className="hiw-check__i" key={c}>
                       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
                       {c}
@@ -170,19 +223,18 @@ export default function Page() {
           </Reveal>
         </section>
 
-        {/* BUY STEPS */}
+        {/* Goed om te weten */}
         <section className="hiw-sec">
           <Reveal>
-            <h2 id="kopen" className="hiw-sec__t">Kopen in 4 stappen</h2>
-            <p className="hiw-sec__s">Net zo vertrouwd als nieuw — met garantie en retourrecht.</p>
+            <h2 id="goed-om-te-weten" className="hiw-sec__t">Goed om te weten</h2>
+            <p className="hiw-sec__s">De belangrijkste voorwaarden rond verkopen en inruilen, in het kort.</p>
           </Reveal>
-          <div className="hiw-buy">
-            {buySteps.map((s, i) => (
-              <Reveal key={s.t} delay={i * 60}>
-                <div className="hiw-buy__card cam-lift">
-                  <div className="hiw-buy__step">Stap {i + 1}</div>
-                  <div className="hiw-buy__t">{s.t}</div>
-                  <div className="hiw-buy__d">{s.d}</div>
+          <div className="hiw-know">
+            {goodToKnow.map((k, i) => (
+              <Reveal key={k.t} delay={i * 45}>
+                <div className="hiw-know__card cam-lift">
+                  <div className="hiw-know__t">{k.t}</div>
+                  <div className="hiw-know__d">{k.d}</div>
                 </div>
               </Reveal>
             ))}
@@ -208,6 +260,14 @@ export default function Page() {
             Meer vragen? Bekijk de <Link href="/faq" style={{ color: 'var(--accent)', fontWeight: 600 }}>volledige FAQ</Link> of <Link href="/contact" style={{ color: 'var(--accent)', fontWeight: 600 }}>neem contact op</Link>.
           </p>
         </section>
+
+        <RelatedLinks
+          items={[
+            { label: 'Koopgids', desc: 'Hoe kopen bij Camify werkt — conditie, betalen en levering.', href: '/buying' },
+            { label: 'Quality & grading', desc: 'Hoe we conditie bepalen, testen en transparant communiceren.', href: '/quality-grading' },
+            { label: 'Verzending & retour', desc: 'Levertijden, verzendkosten en het 14-daags retourrecht.', href: '/shipping-returns' },
+          ]}
+        />
       </div>
     </>
   );

@@ -53,6 +53,11 @@ export default function Page() {
       parent={{ label: 'Help', href: '/help' }}
       image="/images/hero-photographer-2.jpg"
       intro="Snel, aangetekend en verzekerd verzonden — met een eenvoudig 14-daags retourrecht."
+      related={[
+        { label: 'Warranty & repair', desc: 'Minimaal 12 maanden garantie en reparaties.', href: '/warranty-repair' },
+        { label: 'Payment methods', desc: 'Alle manieren waarop je veilig kunt betalen.', href: '/payment-methods' },
+        { label: 'How it works', desc: 'Verkopen, inruilen en kopen — stap voor stap.', href: '/how-it-works' },
+      ]}
     >
       <div style={{ marginBottom: 28 }}><TrustStrip items={trust} /></div>
 

@@ -16,12 +16,12 @@ const collections = [
   {
     ic: <><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" /></>,
     title: 'Kopen',
-    desc: 'Conditie en gradering, betaalmethodes en wat “excl. btw” betekent.',
-    href: '/quality-grading',
+    desc: 'Hoe kopen werkt, conditie en gradering, betalen en wat “excl. btw” betekent.',
+    href: '/buying',
     topics: [
+      { label: 'Kopen bij Camify — koopgids', href: '/buying' },
       { label: 'Conditie & gradering uitgelegd', href: '/quality-grading' },
       { label: 'Betaalmethodes', href: '/payment-methods' },
-      { label: 'Veilig betalen', href: '/payment-methods#veilig' },
     ],
   },
   {

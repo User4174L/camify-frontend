@@ -83,6 +83,11 @@ export default function Page() {
       parent={{ label: 'Help', href: '/help' }}
       image="/images/hero-photographer-2.jpg"
       intro="Bij Camera-tweedehands.nl kies je de betaalmethode die het beste bij je past — online en in de winkel. Veilig en snel."
+      related={[
+        { label: 'Shipping & returns', desc: 'Levertijden, verzendkosten en 14 dagen retour.', href: '/shipping-returns' },
+        { label: 'Buying guide', desc: 'Hoe kopen bij Camify werkt — conditie, btw en levering.', href: '/buying' },
+        { label: 'Warranty & repair', desc: 'Minimaal 12 maanden garantie en reparaties.', href: '/warranty-repair' },
+      ]}
     >
       <div style={{ marginBottom: 32 }}><TrustStrip items={trust} /></div>
 

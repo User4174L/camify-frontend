@@ -27,6 +27,11 @@ export default function Page() {
       image="/images/hero-photographer-2.jpg"
       intro="Elk product heeft minimaal 12 maanden garantie. Reparatie nodig? We helpen."
       markdown={md}
+      related={[
+        { label: 'Shipping & returns', desc: 'Retourneren, terugbetaling en levertijden.', href: '/shipping-returns' },
+        { label: 'Quality & grading', desc: 'Hoe we conditie bepalen en testen.', href: '/quality-grading' },
+        { label: 'Contact', desc: 'Een probleem met je bestelling? We helpen je graag.', href: '/contact' },
+      ]}
     />
   );
 }
