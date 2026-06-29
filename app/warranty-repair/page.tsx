@@ -23,6 +23,7 @@ export default function Page() {
       title="Warranty &amp; repair"
       breadcrumb="Warranty & repair"
       eyebrow="Garantie"
+      parent={{ label: 'Help', href: '/help' }}
       intro="Elk product heeft minimaal 12 maanden garantie. Reparatie nodig? We helpen."
       markdown={md}
     />

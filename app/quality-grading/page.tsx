@@ -79,6 +79,7 @@ export default function Page() {
       title="Quality &amp; grading"
       breadcrumb="Quality & grading"
       eyebrow="Kwaliteit"
+      parent={{ label: 'Help', href: '/help' }}
       intro="Of je nu koopt, verkoopt of inruilt: we beoordelen de staat van elk item duidelijk en eerlijk, in vijf gedetailleerde conditieniveaus. Zo weet je precies wat je koopt."
     >
       {/* Conditieschaal */}

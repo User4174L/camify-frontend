@@ -80,6 +80,7 @@ export default function Page() {
       title="Payment methods"
       breadcrumb="Payment methods"
       eyebrow="Betalen"
+      parent={{ label: 'Help', href: '/help' }}
       intro="Bij Camera-tweedehands.nl kies je de betaalmethode die het beste bij je past — online en in de winkel. Veilig en snel."
     >
       <div style={{ marginBottom: 32 }}><TrustStrip items={trust} /></div>
@@ -95,7 +96,7 @@ export default function Page() {
       </div>
 
       {/* Trust-blok */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px 20px' }}>
+      <div id="veilig" style={{ display: 'flex', alignItems: 'center', gap: 14, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px 20px', scrollMarginTop: 90 }}>
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.8" style={{ flexShrink: 0 }}>
           <rect x="3" y="11" width="18" height="11" rx="2" />
           <path d="M7 11V7a5 5 0 0 1 10 0v4" />

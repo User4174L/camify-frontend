@@ -9,6 +9,16 @@ import WordReveal from '@/components/ui/WordReveal';
  * content als markdown-string (basis overgenomen van camera-tweedehands.nl).
  */
 
+function slugify(text: string): string {
+  return text
+    .replace(/\*\*/g, '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function renderInline(text: string, keyBase: string): ReactNode[] {
   return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
     part.startsWith('**') && part.endsWith('**') ? (
@@ -43,14 +53,14 @@ function Markdown({ source }: { source: string }) {
     if (line.startsWith('### ')) {
       flush(`${key}-l`);
       blocks.push(
-        <h3 key={key} style={{ fontSize: 17, fontWeight: 700, margin: '22px 0 8px' }}>
+        <h3 key={key} id={slugify(line.slice(4))} style={{ fontSize: 17, fontWeight: 700, margin: '22px 0 8px', scrollMarginTop: 90 }}>
           {renderInline(line.slice(4), key)}
         </h3>,
       );
     } else if (line.startsWith('## ')) {
       flush(`${key}-l`);
       blocks.push(
-        <h2 key={key} style={{ fontSize: 22, fontWeight: 700, margin: '30px 0 10px' }}>
+        <h2 key={key} id={slugify(line.slice(3))} style={{ fontSize: 22, fontWeight: 700, margin: '30px 0 10px', scrollMarginTop: 90 }}>
           {renderInline(line.slice(3), key)}
         </h2>,
       );
@@ -79,6 +89,7 @@ export default function SimplePage({
   children,
   titleReveal = false,
   eyebrow,
+  parent,
 }: {
   title: string;
   breadcrumb: string;
@@ -87,12 +98,14 @@ export default function SimplePage({
   children?: ReactNode;
   titleReveal?: boolean;
   eyebrow?: string;
+  parent?: { label: string; href: string };
 }) {
+  const crumbs = parent ? [parent, { label: breadcrumb }] : [{ label: breadcrumb }];
   return (
     <>
       <div className="svc-header">
         <div className="container">
-          <Breadcrumb items={[{ label: breadcrumb }]} />
+          <Breadcrumb items={crumbs} />
           {eyebrow ? <div className="svc-eyebrow">{eyebrow}</div> : null}
           <h1 className="svc-title" style={!eyebrow ? { marginTop: 14 } : undefined}>
             {titleReveal ? <WordReveal text={title} /> : title}

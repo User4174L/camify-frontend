@@ -1,5 +1,13 @@
 import SimplePage from '@/components/layout/SimplePage';
 import TrustStrip from '@/components/ui/TrustStrip';
+import PageNav from '@/components/ui/PageNav';
+
+const nav = [
+  { label: 'Verzending', href: '#verzending' },
+  { label: 'Verzendkosten', href: '#kosten' },
+  { label: 'Retourneren', href: '#retourneren' },
+  { label: 'Voorwaarden', href: '#voorwaarden' },
+];
 
 const trust = [
   { ic: <><rect x="1" y="3" width="15" height="13" rx="1.5" /><path d="M16 8h4l3 3v5h-7z" /><circle cx="5.5" cy="18.5" r="2" /><circle cx="18.5" cy="18.5" r="2" /></>, n: 'Gratis vanaf €100', l: 'NL, België & Duitsland' },
@@ -42,9 +50,12 @@ export default function Page() {
       title="Shipping &amp; returns"
       breadcrumb="Shipping & returns"
       eyebrow="Verzenden & retour"
+      parent={{ label: 'Help', href: '/help' }}
       intro="Snel, aangetekend en verzekerd verzonden — met een eenvoudig 14-daags retourrecht."
     >
       <div style={{ marginBottom: 28 }}><TrustStrip items={trust} /></div>
+
+      <PageNav items={nav} />
 
       {/* Carriers + badge */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 24 }}>
@@ -56,12 +67,12 @@ export default function Page() {
         </span>
       </div>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 10px' }}>Verzending</h2>
+      <h2 id="verzending" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 10px', scrollMarginTop: 90 }}>Verzending</h2>
       <p style={{ fontSize: 14.5, color: 'var(--text-sec)', margin: '0 0 18px', lineHeight: 1.65 }}>
         Voor 15:00 besteld op werkdagen = dezelfde dag verzonden. In de meeste gevallen ontvang je je pakket de volgende dag (internationale zendingen uitgezonderd). Elke bestelling gaat aangetekend en verzekerd de deur uit.
       </p>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 12px' }}>Verzendkosten &amp; levertijd</h2>
+      <h2 id="kosten" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 12px', scrollMarginTop: 90 }}>Verzendkosten &amp; levertijd</h2>
       <div style={{ overflowX: 'auto', marginBottom: 10 }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, minWidth: 520 }}>
           <thead>
@@ -86,7 +97,7 @@ export default function Page() {
         Bestellingen buiten de EU worden in de checkout berekend; eventuele invoerrechten en lokale btw zijn voor rekening van de ontvanger.
       </p>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 14px' }}>Retourneren in 3 stappen</h2>
+      <h2 id="retourneren" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 14px', scrollMarginTop: 90 }}>Retourneren in 3 stappen</h2>
       <div style={{ display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', marginBottom: 28 }}>
         {steps.map(s => (
           <div key={s.n} className="cam-lift" style={{ border: '1px solid var(--border)', borderRadius: 12, padding: '18px', background: '#fff' }}>
@@ -97,7 +108,7 @@ export default function Page() {
         ))}
       </div>
 
-      <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 12px' }}>Voorwaarden voor retour</h2>
+      <h2 id="voorwaarden" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 12px', scrollMarginTop: 90 }}>Voorwaarden voor retour</h2>
       <ul style={{ margin: '0 0 24px', paddingLeft: 0, listStyle: 'none', display: 'grid', gap: 10 }}>
         {conditions.map((c, i) => (
           <li key={i} style={{ display: 'flex', gap: 10, fontSize: 14, lineHeight: 1.6, color: 'var(--text)' }}>

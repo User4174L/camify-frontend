@@ -29,6 +29,7 @@ export default function ContactPage() {
       title="Contact us"
       breadcrumb="Contact"
       eyebrow="Klantenservice"
+      parent={{ label: 'Help', href: '/help' }}
       intro="Vraag over een order, product of inruil? We helpen je graag — kies het kanaal dat je prettig vindt."
     >
       {/* Kanalen */}

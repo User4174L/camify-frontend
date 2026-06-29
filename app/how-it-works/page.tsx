@@ -1,6 +1,6 @@
 import Link from 'next/link';
+import Breadcrumb from '@/components/layout/Breadcrumb';
 import Reveal from '@/components/ui/Reveal';
-import WordReveal from '@/components/ui/WordReveal';
 
 const I = {
   select: <><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></>,
@@ -9,9 +9,6 @@ const I = {
   ship: <><rect x="1" y="3" width="15" height="13" rx="1.5" /><path d="M16 8h4l3 3v5h-7z" /><circle cx="5.5" cy="18.5" r="2" /><circle cx="18.5" cy="18.5" r="2" /></>,
   inspect: <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></>,
   pay: <><circle cx="12" cy="12" r="10" /><path d="M15 9.5a4 4 0 1 0 0 5" /><path d="M7 11h6M7 13h5" /></>,
-  clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
-  shield: <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></>,
-  retour: <><path d="M3 7v6h6" /><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" /></>,
 };
 
 const sellSteps = [
@@ -21,13 +18,6 @@ const sellSteps = [
   { ic: I.ship, t: 'Verstuur gratis & verzekerd', d: 'Verpak je apparatuur goed, plak het label erop en lever het af bij een PostNL- of DHL-punt. Volledig verzekerd.' },
   { ic: I.inspect, t: 'Inspectie & test', d: 'Onze technici inspecteren en testen alles binnen 2 werkdagen na ontvangst — sensor, autofocus, glas, sluiter en cosmetische staat.' },
   { ic: I.pay, t: 'Uitbetaald of verrekend', d: 'Klopt de conditie met je opgave? Dan betalen we binnen 48 uur uit op je IBAN — of je verrekent het bedrag met een nieuwe aankoop.' },
-];
-
-const metrics = [
-  { ic: I.clock, n: 'Binnen 48 uur', l: 'uitbetaald na akkoord' },
-  { ic: I.shield, n: 'Min. 12 maanden', l: 'garantie op alles' },
-  { ic: I.ship, n: 'Gratis & verzekerd', l: 'aangetekend verzonden' },
-  { ic: I.retour, n: '14 dagen', l: 'retourrecht' },
 ];
 
 const buySteps = [
@@ -59,49 +49,15 @@ export default function Page() {
   return (
     <>
       <style>{`
-        .hiw-hero{position:relative;overflow:hidden;background:radial-gradient(120% 120% at 88% 0%,#FBE9DF 0%,#F8F8FA 44%,#fff 100%);padding:52px 0 60px}
-        .hiw-hero__grid{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
-        .hiw-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
-        .hiw-eyebrow::before{content:"";width:24px;height:2px;background:var(--accent)}
-        .hiw-h1{font-size:clamp(27px,4.6vw,50px);font-weight:800;line-height:1.04;letter-spacing:-.03em;color:var(--text);margin:0;overflow-wrap:break-word}
-        .hiw-h1 .ac{color:var(--accent)}
-        .hiw-sub{font-size:clamp(15px,1.3vw,17px);color:var(--text-sec);line-height:1.6;margin:18px 0 0;max-width:31em}
-        .hiw-cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:26px}
-        .hiw-btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-weight:600;font-size:15px;padding:13px 28px;border-radius:999px;transition:transform .2s,box-shadow .2s,background .2s}
-        .hiw-btn:hover{background:var(--accent-h);transform:translateY(-2px);box-shadow:0 10px 26px rgba(232,105,42,.3)}
-        .hiw-btn--ghost{background:#fff;color:var(--text);border:1.5px solid var(--border)}
-        .hiw-btn--ghost:hover{background:#fff;border-color:var(--accent);color:var(--accent);box-shadow:0 8px 20px rgba(30,33,51,.08)}
-
-        .hiw-quote{position:relative;justify-self:center;width:100%;max-width:370px}
-        .hiw-quote__back{position:absolute;inset:20px -16px -16px 16px;background:#fff;border:1px solid var(--border);border-radius:20px;transform:rotate(3.5deg);opacity:.65}
-        .hiw-quote__card{position:relative;background:#fff;border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 34px 64px -30px rgba(30,33,51,.4)}
-        .hiw-quote__pill{position:absolute;top:-12px;right:16px;background:var(--tp);color:#fff;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px rgba(0,182,122,.35)}
-        .hiw-quote__head{display:flex;gap:14px;align-items:center;margin-bottom:16px}
-        .hiw-quote__thumb{width:62px;height:62px;border-radius:14px;object-fit:cover;background:var(--surface);border:1px solid var(--border)}
-        .hiw-quote__name{font-weight:800;font-size:16px}
-        .hiw-quote__cond{font-size:12.5px;color:var(--text-sec);margin-top:3px}
-        .hiw-quote__stars{color:#F5A623;letter-spacing:1px}
-        .hiw-quote__val{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:13px;padding:13px 16px;margin-bottom:14px}
-        .hiw-quote__val small{font-size:12px;color:var(--text-sec)}
-        .hiw-quote__val b{font-size:25px;font-weight:800;letter-spacing:-.02em;color:var(--text)}
-        .hiw-quote__accept{width:100%;background:var(--accent);color:#fff;font-weight:700;font-size:14px;padding:12px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:8px;border:none}
-        .hiw-quote__note{text-align:center;font-size:11.5px;color:var(--text-sec);margin-top:11px}
-
-        .hiw-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}
-        .hiw-metric{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:14px;padding:15px 16px}
-        .hiw-metric__ic{color:var(--accent);flex-shrink:0}
-        .hiw-metric__n{font-weight:800;font-size:14.5px;line-height:1.15}
-        .hiw-metric__l{font-size:12px;color:var(--text-sec)}
-
-        .hiw-sec{padding:18px 0}
-        .hiw-sec__t{font-size:clamp(22px,2.6vw,30px);font-weight:800;letter-spacing:-.02em;margin:0 0 6px;color:var(--text)}
-        .hiw-sec__s{font-size:15px;color:var(--text-sec);margin:0 0 26px;max-width:42em}
+        .hiw-sec{padding:8px 0 18px}
+        .hiw-sec__t{font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-.02em;margin:0 0 6px;color:var(--text);scroll-margin-top:90px}
+        .hiw-sec__s{font-size:15px;color:var(--text-sec);margin:0 0 24px;max-width:42em}
 
         .hiw-timeline{display:grid;gap:0}
         .hiw-step{display:grid;grid-template-columns:48px 1fr;gap:16px}
         .hiw-step__rail{display:flex;flex-direction:column;align-items:center}
-        .hiw-step__num{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(232,105,42,.3);flex-shrink:0}
-        .hiw-step__line{flex:1;width:2px;background:linear-gradient(var(--border),var(--border));margin:6px 0}
+        .hiw-step__num{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .hiw-step__line{flex:1;width:2px;background:var(--border);margin:6px 0}
         .hiw-step:last-child .hiw-step__line{display:none}
         .hiw-step__body{background:#fff;border:1px solid var(--border);border-radius:16px;padding:17px 20px;display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
         .hiw-step__ic{color:var(--accent);flex-shrink:0;margin-top:1px}
@@ -128,95 +84,35 @@ export default function Page() {
         .hiw-faq details[open] summary::after{content:"−"}
         .hiw-faq p{margin:12px 0 2px;font-size:14px;color:var(--text-sec);line-height:1.65}
 
-        .hiw-final{position:relative;overflow:hidden;background:linear-gradient(120deg,#1E2133,#2A2E47);border-radius:24px;padding:48px 40px;text-align:center;color:#fff;margin:10px 0 8px}
-        .hiw-final::after{content:"";position:absolute;width:320px;height:320px;background:radial-gradient(circle,rgba(232,105,42,.5),transparent 70%);top:-130px;right:-70px;pointer-events:none}
-        .hiw-final__t{font-size:clamp(22px,3vw,33px);font-weight:800;letter-spacing:-.02em;position:relative;margin:0}
-        .hiw-final__s{font-size:15px;color:rgba(255,255,255,.74);margin:11px auto 22px;position:relative;max-width:34em}
-        .hiw-final__btn{position:relative;display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-weight:700;font-size:15px;padding:14px 32px;border-radius:999px;transition:transform .2s,box-shadow .2s}
-        .hiw-final__btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(232,105,42,.4)}
+        .hiw-cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+        .hiw-btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-weight:600;font-size:14.5px;padding:12px 26px;border-radius:999px;transition:transform .2s,box-shadow .2s,background .2s}
+        .hiw-btn:hover{background:var(--accent-h);transform:translateY(-2px);box-shadow:0 10px 26px rgba(232,105,42,.3)}
 
-        @media(max-width:900px){
-          .hiw-hero__grid{grid-template-columns:1fr;gap:34px}
-          .hiw-quote{justify-self:start;margin-left:4px}
-        }
         @media(max-width:760px){
-          .hiw-metrics{grid-template-columns:1fr 1fr}
           .hiw-inspect{grid-template-columns:1fr;padding:20px}
           .hiw-buy{grid-template-columns:1fr 1fr}
         }
-        @media(max-width:460px){
-          .hiw-buy{grid-template-columns:1fr}
-          .hiw-check{grid-template-columns:1fr}
-        }
+        @media(max-width:460px){.hiw-buy{grid-template-columns:1fr}.hiw-check{grid-template-columns:1fr}}
       `}</style>
 
-      {/* HERO */}
-      <section className="hiw-hero">
+      {/* Standaard banner — consistent met de andere service-pagina's */}
+      <div className="svc-header">
         <div className="container">
-          <div className="hiw-hero__grid">
-            <div>
-              <div className="hiw-eyebrow">Verkopen &amp; inruilen</div>
-              <h1 className="hiw-h1">
-                <WordReveal text="Verkoop je gear." />
-                <br />
-                <span className="ac"><WordReveal text="Eerlijk geprijsd, snel uitbetaald." startDelay={260} /></span>
-              </h1>
-              <p className="hiw-sub" style={{ animation: 'camWordReveal .6s cubic-bezier(.16,1,.3,1) both', animationDelay: '620ms' }}>
-                Van een directe prijsopgave tot uitbetaling binnen 48 uur — gratis verzekerd verzonden, professioneel
-                getest en transparant geprijsd. Zo geef je je camera-apparatuur een tweede leven.
-              </p>
-              <div className="hiw-cta-row">
-                <Link href="/trade-in" className="hiw-btn">Start je gratis prijsopgave &rarr;</Link>
-                <Link href="/cameras" className="hiw-btn hiw-btn--ghost">Bekijk het aanbod</Link>
-              </div>
-            </div>
-
-            {/* Instant-bod kaart (mockup) */}
-            <Reveal delay={120} y={26}>
-              <div className="hiw-quote">
-                <div className="hiw-quote__back" aria-hidden="true" />
-                <div className="hiw-quote__card">
-                  <span className="hiw-quote__pill">Direct bod</span>
-                  <div className="hiw-quote__head">
-                    <img className="hiw-quote__thumb" src="/images/sony-a7-iv.jpg" alt="Sony A7 IV" />
-                    <div>
-                      <div className="hiw-quote__name">Sony A7 IV — body</div>
-                      <div className="hiw-quote__cond">Conditie: Zeer goed <span className="hiw-quote__stars">★★★★☆</span></div>
-                    </div>
-                  </div>
-                  <div className="hiw-quote__val">
-                    <small>Geschatte inruilwaarde</small>
-                    <b>€1.240</b>
-                  </div>
-                  <button className="hiw-quote__accept" type="button">Bod accepteren &rarr;</button>
-                  <div className="hiw-quote__note">Gratis verzendlabel · uitbetaald binnen 48 uur</div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-
-          {/* Metrics strip */}
-          <div className="hiw-metrics">
-            {metrics.map((m, i) => (
-              <Reveal key={m.n} delay={i * 70}>
-                <div className="hiw-metric cam-lift">
-                  <span className="hiw-metric__ic"><Ic>{m.ic}</Ic></span>
-                  <div>
-                    <div className="hiw-metric__n">{m.n}</div>
-                    <div className="hiw-metric__l">{m.l}</div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <Breadcrumb items={[{ label: 'Help', href: '/help' }, { label: 'How it works' }]} />
+          <div className="svc-eyebrow">Verkopen &amp; inruilen</div>
+          <h1 className="svc-title">How it works</h1>
+          <p className="svc-intro">
+            Je camera-apparatuur verkopen of inruilen is bij ons zo geregeld — eerlijk geprijsd, gratis verzekerd
+            verzonden en snel uitbetaald. Kopen kan natuurlijk net zo eenvoudig.
+          </p>
         </div>
-      </section>
+      </div>
 
-      <div className="container" style={{ paddingTop: 40, paddingBottom: 72 }}>
+      <div className="container" style={{ paddingBottom: 72 }}>
         {/* SELL STEPS — timeline */}
         <section className="hiw-sec">
           <Reveal>
-            <h2 className="hiw-sec__t">Verkopen of inruilen in 6 stappen</h2>
+            <h2 id="verkopen" className="hiw-sec__t">Verkopen of inruilen in 6 stappen</h2>
             <p className="hiw-sec__s">Eenvoudig geregeld — alleen verkopen kan, inruilen tegen een nieuwe aankoop ook.</p>
           </Reveal>
           <div className="hiw-timeline">
@@ -252,8 +148,8 @@ export default function Page() {
             <div className="hiw-inspect">
               <img className="hiw-inspect__img" src="/images/canon-r5.jpg" alt="Professionele inspectie van camera-apparatuur" />
               <div>
-                <div className="hiw-eyebrow" style={{ marginBottom: 10 }}>Elk item getest</div>
-                <h2 className="hiw-sec__t" style={{ marginBottom: 8 }}>Professioneel geïnspecteerd, eerlijk gegradeerd</h2>
+                <div className="svc-eyebrow" style={{ margin: '0 0 10px' }}>Elk item getest</div>
+                <h2 id="inspectie" className="hiw-sec__t" style={{ marginBottom: 8 }}>Professioneel geïnspecteerd, eerlijk gegradeerd</h2>
                 <p className="hiw-sec__s" style={{ marginBottom: 4 }}>
                   Onze technici controleren elk onderdeel en maken echte foto’s van het exacte item — geen stockbeelden.
                   Zo weet je vooraf precies wat je koopt of verkoopt.
@@ -274,7 +170,7 @@ export default function Page() {
         {/* BUY STEPS */}
         <section className="hiw-sec">
           <Reveal>
-            <h2 className="hiw-sec__t">Kopen in 4 stappen</h2>
+            <h2 id="kopen" className="hiw-sec__t">Kopen in 4 stappen</h2>
             <p className="hiw-sec__s">Net zo vertrouwd als nieuw — met garantie en retourrecht.</p>
           </Reveal>
           <div className="hiw-buy">
@@ -293,7 +189,7 @@ export default function Page() {
         {/* FAQ */}
         <section className="hiw-sec">
           <Reveal>
-            <h2 className="hiw-sec__t">Veelgestelde vragen over verkopen</h2>
+            <h2 id="faq" className="hiw-sec__t">Veelgestelde vragen over verkopen</h2>
           </Reveal>
           <div className="hiw-faq">
             {faqs.map((f, i) => (
@@ -309,15 +205,6 @@ export default function Page() {
             Meer vragen? Bekijk de <Link href="/faq" style={{ color: 'var(--accent)', fontWeight: 600 }}>volledige FAQ</Link> of <Link href="/contact" style={{ color: 'var(--accent)', fontWeight: 600 }}>neem contact op</Link>.
           </p>
         </section>
-
-        {/* FINAL CTA */}
-        <Reveal>
-          <section className="hiw-final">
-            <h2 className="hiw-final__t">Klaar om je gear in te ruilen?</h2>
-            <p className="hiw-final__s">Vraag vrijblijvend je prijsopgave aan — binnen een minuut weet je wat je apparatuur waard is.</p>
-            <Link href="/trade-in" className="hiw-final__btn">Start je gratis prijsopgave &rarr;</Link>
-          </section>
-        </Reveal>
       </div>
     </>
   );
