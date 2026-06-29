@@ -58,6 +58,13 @@ export default function Page() {
         { label: 'Payment methods', desc: 'Alle manieren waarop je veilig kunt betalen.', href: '/payment-methods' },
         { label: 'How it works', desc: 'Verkopen, inruilen en kopen — stap voor stap.', href: '/how-it-works' },
       ]}
+      faqs={[
+        { q: 'Hoe snel wordt mijn bestelling bezorgd?', a: 'Voor 15:00 besteld op werkdagen = dezelfde dag verzonden. Binnen Nederland, België en Duitsland ontvang je je pakket meestal de volgende werkdag; voor de rest van de EU duurt het doorgaans 2–5 werkdagen.' },
+        { q: 'Wat kost verzending?', a: 'Nederland & België: gratis vanaf €100, anders €4,95. Duitsland: gratis vanaf €100, anders €6,95. Overig EU (incl. Frankrijk): €14,95. Buiten de EU wordt het tarief in de checkout berekend.' },
+        { q: 'Hoe retourneer ik een product?', a: 'Meld je retour binnen 14 dagen na ontvangst aan via info@camera-tweedehands.nl met je ordernummer. Print het retourformulier, voeg het bij en stuur het product compleet en in originele staat retour.' },
+        { q: 'Wanneer krijg ik mijn geld terug?', a: 'Na ontvangst en controle van je retour betalen we het orderbedrag binnen 14 dagen terug op je IBAN.' },
+        { q: 'Zijn mijn pakketten verzekerd?', a: 'Ja, elke zending gaat aangetekend en verzekerd de deur uit. Bewaar bij een retour altijd je verzendbewijs.' },
+      ]}
     >
       <div style={{ marginBottom: 28 }}><TrustStrip items={trust} /></div>
 

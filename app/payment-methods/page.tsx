@@ -88,6 +88,13 @@ export default function Page() {
         { label: 'Buying guide', desc: 'Hoe kopen bij Camify werkt — conditie, btw en levering.', href: '/buying' },
         { label: 'Warranty & repair', desc: 'Minimaal 12 maanden garantie en reparaties.', href: '/warranty-repair' },
       ]}
+      faqs={[
+        { q: 'Welke betaalmethodes accepteren jullie?', a: 'iDEAL, creditcard (Visa, Mastercard, American Express), PayPal, Bancontact en betaling in 3 termijnen, naast diverse internationale methodes. Alle betalingen verlopen beveiligd via onze betaalprovider Pay.nl.' },
+        { q: 'Kan ik in termijnen betalen?', a: 'Ja, je kunt je aankoop in 3 termijnen betalen, renteloos. Je kiest deze optie tijdens het afrekenen.' },
+        { q: 'Wat betekent “excl. btw” bij een product?', a: 'Dat het onder de margeregeling valt: er wordt geen aparte btw berekend en de getoonde prijs is de prijs die je betaalt. Producten zonder dat label hebben 21% btw inbegrepen. In beide gevallen is de weergegeven prijs je eindprijs.' },
+        { q: 'Is online betalen bij jullie veilig?', a: 'Ja. Alle betalingen verlopen via een beveiligde (SSL) verbinding en worden verwerkt door onze betaalprovider Pay.nl. Wij slaan zelf geen betaalgegevens op.' },
+        { q: 'Hoe en wanneer krijg ik een terugbetaling?', a: 'Een terugbetaling gaat terug naar je oorspronkelijke betaalmethode, nadat we een eventuele retour hebben ontvangen en gecontroleerd. Zie Verzending & retour voor de termijnen.' },
+      ]}
     >
       <div style={{ marginBottom: 32 }}><TrustStrip items={trust} /></div>
 

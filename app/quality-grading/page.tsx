@@ -87,6 +87,12 @@ export default function Page() {
         { label: 'How it works', desc: 'Verkopen en inruilen — stap voor stap.', href: '/how-it-works' },
         { label: 'Warranty & repair', desc: 'Minimaal 12 maanden garantie en reparaties.', href: '/warranty-repair' },
       ]}
+      faqs={[
+        { q: 'Hoe bepalen jullie de conditie van een product?', a: 'Elk item wordt door onze technici geïnspecteerd en in een van vijf conditieniveaus ingedeeld, op basis van de uiterlijke staat. We controleren onder andere sensor, autofocus, lensglas, sluitermechanisme en cosmetische staat.' },
+        { q: 'Lezen jullie de shuttercount uit?', a: 'Waar van toepassing lezen we de shuttercount uit met professionele diagnosetools (EXIF-data of fabrikant-servicesoftware) en vermelden we deze op de productpagina.' },
+        { q: 'Heeft een hoge shuttercount invloed op de conditie?', a: 'Nee. De conditie gaat over de uiterlijke staat — een camera met een hoge shuttercount kan dus alsnog “Zo goed als nieuw” zijn. De prijs wordt wel aangepast op basis van de shuttercount.' },
+        { q: 'Zijn de foto’s van het echte item?', a: 'Ja. Elke listing bevat echte foto’s van het exacte item dat je ontvangt, vanuit meerdere hoeken — geen stockbeelden.' },
+      ]}
     >
       {/* Conditieschaal */}
       <div style={{ display: 'grid', gap: 14, marginBottom: 36 }}>

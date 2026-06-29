@@ -32,6 +32,12 @@ export default function Page() {
         { label: 'Quality & grading', desc: 'Hoe we conditie bepalen en testen.', href: '/quality-grading' },
         { label: 'Contact', desc: 'Een probleem met je bestelling? We helpen je graag.', href: '/contact' },
       ]}
+      faqs={[
+        { q: 'Hoe lang heb ik garantie?', a: 'Op tweedehands producten geldt minimaal 12 maanden garantie, op nieuwe producten 24 maanden — tenzij anders vermeld bij het product.' },
+        { q: 'Wat valt niet onder de garantie?', a: 'Normale slijtage en gebruikssporen, accu’s onder 30% van de opgegeven capaciteit, flitsbuizen (slijtageonderdeel) en schade door verkeerd gebruik of externe invloeden. Voor tweedehands geldt een jaarlijkse afschrijving van 20%.' },
+        { q: 'Hoe meld ik een garantieclaim of reparatie?', a: 'Neem contact op via info@camera-tweedehands.nl met je ordernummer en een omschrijving van het probleem. Zichtbare transport- of valschade meld je binnen 7 dagen na ontvangst.' },
+        { q: 'Is de garantie overdraagbaar?', a: 'Nee, de garantie kan alleen worden ingeroepen door de oorspronkelijke koper en is niet overdraagbaar; een garantiebewijs is vereist.' },
+      ]}
     />
   );
 }

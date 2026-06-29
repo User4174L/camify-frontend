@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import WordReveal from '@/components/ui/WordReveal';
 import RelatedLinks from '@/components/ui/RelatedLinks';
+import FaqList from '@/components/ui/FaqList';
 
 /**
  * Herbruikbare standalone tekstpagina (legal / customer-care / info).
@@ -93,6 +94,7 @@ export default function SimplePage({
   parent,
   image,
   related,
+  faqs,
 }: {
   title: string;
   breadcrumb: string;
@@ -104,6 +106,7 @@ export default function SimplePage({
   parent?: { label: string; href: string };
   image?: string;
   related?: { label: string; desc: string; href: string }[];
+  faqs?: { q: string; a: string }[];
 }) {
   const crumbs = parent ? [parent, { label: breadcrumb }] : [{ label: breadcrumb }];
   return (
@@ -136,6 +139,12 @@ export default function SimplePage({
         <div style={{ maxWidth: 920, fontSize: 15, lineHeight: 1.75, color: 'var(--text)' }}>
           {markdown ? <Markdown source={markdown} /> : children}
         </div>
+        {faqs && faqs.length ? (
+          <section style={{ maxWidth: 920, marginTop: 40 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 14px', color: 'var(--text)' }}>Veelgestelde vragen</h2>
+            <FaqList items={faqs} />
+          </section>
+        ) : null}
         {related && related.length ? (
           <div style={{ maxWidth: 920 }}>
             <RelatedLinks items={related} />
