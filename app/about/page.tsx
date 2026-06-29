@@ -18,15 +18,18 @@ const timeline = [
 export default function AboutPage() {
   return (
     <>
-      <div className="svc-header">
+      <div className="svc-header svc-header--photo">
+        <div className="svc-header__photo" style={{ backgroundImage: 'url(/images/hero-photographer-1.jpg)' }} aria-hidden="true" />
         <div className="container">
-          <Breadcrumb items={[{ label: 'About us' }]} />
-          <div className="svc-eyebrow">Over ons</div>
-          <h1 className="svc-title"><WordReveal text="About Camify" /></h1>
-          <p className="svc-intro" style={{ animation: 'camWordReveal .6s cubic-bezier(.16,1,.3,1) both', animationDelay: '300ms' }}>
-            We&rsquo;re building Europe&rsquo;s most trusted marketplace for pre-owned camera equipment. Every item inspected,
-            graded, and backed by warranty &mdash; so you can focus on what matters: making images.
-          </p>
+          <div className="svc-header__inner">
+            <Breadcrumb items={[{ label: 'About us' }]} />
+            <div className="svc-eyebrow">Over ons</div>
+            <h1 className="svc-title"><WordReveal text="About Camify" /></h1>
+            <p className="svc-intro" style={{ animation: 'camWordReveal .6s cubic-bezier(.16,1,.3,1) both', animationDelay: '300ms' }}>
+              We&rsquo;re building Europe&rsquo;s most trusted marketplace for pre-owned camera equipment. Every item inspected,
+              graded, and backed by warranty &mdash; so you can focus on what matters: making images.
+            </p>
+          </div>
         </div>
       </div>
       <div className="container" style={{ paddingBottom: 72 }}>

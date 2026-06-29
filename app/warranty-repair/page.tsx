@@ -24,6 +24,7 @@ export default function Page() {
       breadcrumb="Warranty & repair"
       eyebrow="Garantie"
       parent={{ label: 'Help', href: '/help' }}
+      image="/images/hero-photographer-2.jpg"
       intro="Elk product heeft minimaal 12 maanden garantie. Reparatie nodig? We helpen."
       markdown={md}
     />

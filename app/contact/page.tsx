@@ -30,6 +30,7 @@ export default function ContactPage() {
       breadcrumb="Contact"
       eyebrow="Klantenservice"
       parent={{ label: 'Help', href: '/help' }}
+      image="/images/hero-photographer-1.jpg"
       intro="Vraag over een order, product of inruil? We helpen je graag — kies het kanaal dat je prettig vindt."
     >
       {/* Kanalen */}

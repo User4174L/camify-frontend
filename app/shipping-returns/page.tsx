@@ -51,6 +51,7 @@ export default function Page() {
       breadcrumb="Shipping & returns"
       eyebrow="Verzenden & retour"
       parent={{ label: 'Help', href: '/help' }}
+      image="/images/hero-photographer-2.jpg"
       intro="Snel, aangetekend en verzekerd verzonden — met een eenvoudig 14-daags retourrecht."
     >
       <div style={{ marginBottom: 28 }}><TrustStrip items={trust} /></div>

@@ -90,6 +90,7 @@ export default function SimplePage({
   titleReveal = false,
   eyebrow,
   parent,
+  image,
 }: {
   title: string;
   breadcrumb: string;
@@ -99,12 +100,15 @@ export default function SimplePage({
   titleReveal?: boolean;
   eyebrow?: string;
   parent?: { label: string; href: string };
+  image?: string;
 }) {
   const crumbs = parent ? [parent, { label: breadcrumb }] : [{ label: breadcrumb }];
   return (
     <>
-      <div className="svc-header">
+      <div className={image ? 'svc-header svc-header--photo' : 'svc-header'}>
+        {image ? <div className="svc-header__photo" style={{ backgroundImage: `url(${image})` }} aria-hidden="true" /> : null}
         <div className="container">
+          <div className="svc-header__inner">
           <Breadcrumb items={crumbs} />
           {eyebrow ? <div className="svc-eyebrow">{eyebrow}</div> : null}
           <h1 className="svc-title" style={!eyebrow ? { marginTop: 14 } : undefined}>
@@ -122,6 +126,7 @@ export default function SimplePage({
               {intro}
             </p>
           ) : null}
+          </div>
         </div>
       </div>
       <div className="container" style={{ paddingBottom: 80 }}>

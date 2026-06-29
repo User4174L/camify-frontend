@@ -16,12 +16,15 @@ const topics = [
 export default function CustomerServicePage() {
   return (
     <>
-      <div className="svc-header">
+      <div className="svc-header svc-header--photo">
+        <div className="svc-header__photo" style={{ backgroundImage: 'url(/images/hero-photographer-1.jpg)' }} aria-hidden="true" />
         <div className="container">
-          <Breadcrumb items={[{ label: 'Customer service' }]} />
-          <div className="svc-eyebrow">Klantenservice</div>
-          <h1 className="svc-title">Hoe kunnen we je helpen?</h1>
-          <p className="svc-intro">Kies hieronder een onderwerp — of neem direct contact met ons op.</p>
+          <div className="svc-header__inner">
+            <Breadcrumb items={[{ label: 'Customer service' }]} />
+            <div className="svc-eyebrow">Klantenservice</div>
+            <h1 className="svc-title">Hoe kunnen we je helpen?</h1>
+            <p className="svc-intro">Kies hieronder een onderwerp — of neem direct contact met ons op.</p>
+          </div>
         </div>
       </div>
       <div className="container" style={{ paddingBottom: 80 }}>

@@ -81,6 +81,7 @@ export default function Page() {
       breadcrumb="Payment methods"
       eyebrow="Betalen"
       parent={{ label: 'Help', href: '/help' }}
+      image="/images/hero-photographer-2.jpg"
       intro="Bij Camera-tweedehands.nl kies je de betaalmethode die het beste bij je past — online en in de winkel. Veilig en snel."
     >
       <div style={{ marginBottom: 32 }}><TrustStrip items={trust} /></div>

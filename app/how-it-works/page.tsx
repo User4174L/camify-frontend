@@ -95,16 +95,19 @@ export default function Page() {
         @media(max-width:460px){.hiw-buy{grid-template-columns:1fr}.hiw-check{grid-template-columns:1fr}}
       `}</style>
 
-      {/* Standaard banner — consistent met de andere service-pagina's */}
-      <div className="svc-header">
+      {/* Standaard banner met stock-foto — consistent met de andere service-pagina's */}
+      <div className="svc-header svc-header--photo">
+        <div className="svc-header__photo" style={{ backgroundImage: 'url(/images/hero-photographer-2.jpg)' }} aria-hidden="true" />
         <div className="container">
-          <Breadcrumb items={[{ label: 'Help', href: '/help' }, { label: 'How it works' }]} />
-          <div className="svc-eyebrow">Verkopen &amp; inruilen</div>
-          <h1 className="svc-title">How it works</h1>
-          <p className="svc-intro">
-            Je camera-apparatuur verkopen of inruilen is bij ons zo geregeld — eerlijk geprijsd, gratis verzekerd
-            verzonden en snel uitbetaald. Kopen kan natuurlijk net zo eenvoudig.
-          </p>
+          <div className="svc-header__inner">
+            <Breadcrumb items={[{ label: 'Help', href: '/help' }, { label: 'How it works' }]} />
+            <div className="svc-eyebrow">Verkopen &amp; inruilen</div>
+            <h1 className="svc-title">How it works</h1>
+            <p className="svc-intro">
+              Je camera-apparatuur verkopen of inruilen is bij ons zo geregeld — eerlijk geprijsd, gratis verzekerd
+              verzonden en snel uitbetaald. Kopen kan natuurlijk net zo eenvoudig.
+            </p>
+          </div>
         </div>
       </div>
 

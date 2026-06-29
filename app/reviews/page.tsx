@@ -13,6 +13,7 @@ export default function ReviewsPage() {
       breadcrumb="Reviews"
       eyebrow="Reviews"
       parent={{ label: 'Help', href: '/help' }}
+      image="/images/hero-photographer-1.jpg"
       intro="Rated 4.9 on Trustpilot by thousands of photographers across Europe."
     >
       {/* Trustpilot widget placeholder */}

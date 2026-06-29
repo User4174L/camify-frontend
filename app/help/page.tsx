@@ -84,7 +84,7 @@ export default function HelpCenterPage() {
     <>
       <style>{`
         .help-hero{position:relative;overflow:hidden;min-height:340px;display:flex;align-items:center;
-          background:linear-gradient(180deg,rgba(20,21,43,.72),rgba(20,21,43,.82)),url(/images/trade-in-hero.jpg) center/cover}
+          background:linear-gradient(180deg,rgba(20,21,43,.66),rgba(20,21,43,.78)),url(/images/hero-photographer-1.jpg) center 28%/cover}
         .help-hero__inner{position:relative;z-index:2;width:100%;text-align:center;padding:54px 0}
         .help-hero__eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#fff;opacity:.8;margin-bottom:14px}
         .help-hero__title{font-size:clamp(28px,4.4vw,46px);font-weight:800;letter-spacing:-.025em;color:#fff;margin:0 0 10px}
