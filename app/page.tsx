@@ -249,7 +249,7 @@ export default function HomePage() {
           </div>
 
           <div className="why__stats">
-            <div><div className="why__stat-number">10,000+</div><div className="why__stat-label">Products</div></div>
+            <div><div className="why__stat-number">1709</div><div className="why__stat-label">Items in stock</div></div>
             <div><div className="why__stat-number">15,000+</div><div className="why__stat-label">Items Sold</div></div>
             <div><div className="why__stat-number">100+</div><div className="why__stat-label">Brands</div></div>
             <div><div className="why__stat-number">4.9</div><div className="why__stat-label">Trustpilot Rating</div></div>

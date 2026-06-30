@@ -1,10 +1,8 @@
-import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
-
 /**
- * Rij met drie trust-kaarten: Trustpilot (live Mini-widget + statische fallback),
- * WebwinkelKeur (statisch) en Google (statisch).
- * De Trustpilot-widget rendert alleen op camera-tweedehands.nl; elders toont de fallback.
- * WebwinkelKeur/Google hebben geen gratis embed → cijfers handmatig bijwerken hieronder.
+ * Rij met drie statische trust-kaarten: Trustpilot, WebwinkelKeur en Google —
+ * visueel consistent (logo + score + reviews). Cijfers handmatig bijwerken hieronder.
+ * (De live Trustpilot Mini-widget is te hoog voor deze compacte kaart; live reviews
+ * staan in de Carousel eronder en op /reviews.)
  */
 function GreenStar() {
   return (
@@ -34,23 +32,19 @@ export default function TrustBadges() {
     >
       <style>{`@media(max-width:760px){.trust-badges{grid-template-columns:1fr !important}}`}</style>
 
-      {/* Trustpilot — live Mini-widget met statische fallback */}
-      <div style={card}>
-        <TrustpilotWidget templateId={TP.mini} token={TP_TOKEN.mini} height="84px">
-          <a href="https://nl.trustpilot.com/review/www.camera-tweedehands.nl" target="_blank" rel="noopener" style={{ textDecoration: 'none', display: 'block' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, justifyContent: 'center' }}>
-              <span style={{ color: '#00b67a', fontSize: 16 }}>★</span>
-              <span style={{ fontWeight: 800, fontSize: 15, color: 'var(--text)' }}>Trustpilot</span>
-            </div>
-            <div style={{ display: 'flex', gap: 3, justifyContent: 'center', margin: '7px 0' }}>
-              {[0, 1, 2, 3, 4].map(i => <GreenStar key={i} />)}
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--text-sec)' }}>
-              <strong style={{ color: 'var(--text)' }}>TrustScore 4,9</strong> · 523 reviews
-            </div>
-          </a>
-        </TrustpilotWidget>
-      </div>
+      {/* Trustpilot — statisch (consistent met de andere kaarten) */}
+      <a href="https://nl.trustpilot.com/review/www.camera-tweedehands.nl" target="_blank" rel="noopener" style={{ ...card, textDecoration: 'none' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, justifyContent: 'center' }}>
+          <span style={{ color: '#00b67a', fontSize: 16 }}>★</span>
+          <span style={{ fontWeight: 800, fontSize: 15, color: 'var(--text)' }}>Trustpilot</span>
+        </div>
+        <div style={{ display: 'flex', gap: 3, justifyContent: 'center' }}>
+          {[0, 1, 2, 3, 4].map(i => <GreenStar key={i} />)}
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--text-sec)' }}>
+          <strong style={{ color: 'var(--text)' }}>TrustScore 4,9</strong> · 523 reviews
+        </div>
+      </a>
 
       {/* WebwinkelKeur — statisch */}
       <div style={card}>
