@@ -1,51 +1,51 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 
 const faqData = [
   {
-    category: 'Buying',
+    category: 'Kopen',
     items: [
-      { q: 'How do I place an order?', a: 'Just browse our shop, add items to your cart, and check out — it works like any online store. Every product page shows the exact condition, real photos, and shutter count (where applicable), so you know exactly what you\'re getting before you hit "buy."' },
-      { q: 'What payment methods do you accept?', a: 'We accept iDEAL, PayPal, credit card (Visa, Mastercard, Amex), Bancontact, SOFORT, and Klarna. With Klarna you can also choose to pay in installments. All payments are processed securely through our payment provider.' },
-      { q: 'How long does shipping take?', a: 'Orders within the Netherlands typically arrive within 1–2 business days. For other EU countries, expect 3–5 business days. Shipments to the UK usually take 5–7 business days. You\'ll receive a tracking link as soon as your order ships.' },
-      { q: 'Is shipping free?', a: 'Shipping is free on orders over €100 to the Netherlands, Belgium and Germany. Below €100 it\'s €4.95 (NL & Belgium) or €6.95 (Germany). For the rest of the EU, including France, shipping is a flat €14.95. Orders outside the EU are calculated at checkout (from €79). Every order is sent tracked and insured.' },
-      { q: 'What do the condition grades mean?', a: 'We use five grades to keep things transparent. "As New" means virtually unused, no visible signs of use. "Excellent" means minimal cosmetic wear — maybe a faint mark on the body, but looks nearly perfect. "Good" means light, normal wear from regular use. "Used" means clearly visible wear but everything works perfectly. "Heavily Used" means significant cosmetic wear, but still fully functional and tested.' },
-      { q: 'How is the shutter count determined?', a: 'We read the shutter count directly from the camera\'s EXIF data using professional diagnostic tools. For brands like Sony and Nikon, the count is embedded in every photo the camera takes. For Canon, we use manufacturer service software. The exact shutter count is listed on every camera product page.' },
-      { q: 'Can I see the actual product photos before buying?', a: 'Absolutely — every product listing includes real photos of the actual item you\'ll receive, not stock images. We photograph each item from multiple angles so you can see the exact cosmetic condition. What you see is literally what you get.' },
-      { q: 'Do you offer price matching?', a: 'We constantly monitor the market to keep our prices competitive, but we don\'t do formal price matching. That said, if you find the same item in the same condition at a lower price from a reputable dealer, reach out to us — we\'re always happy to have a conversation about it.' },
-      { q: 'What does "EXCL. VAT" mean? Do your prices include VAT?', a: 'Items marked "EXCL. VAT" are sold under the margin scheme (margeregeling). Under this scheme, no separate VAT is charged — the price you see is the price you pay. Items without this label have 21% VAT included in the displayed price. In both cases, the price shown is the final price you pay at checkout.' },
-    ]
+      { q: 'Hoe plaats ik een bestelling?', a: 'Blader door de shop, voeg items toe aan je winkelwagen en reken af — net als bij elke webshop. Elke productpagina toont de exacte conditie, echte foto’s en (waar van toepassing) de shuttercount, zodat je vooraf precies weet wat je koopt.' },
+      { q: 'Welke betaalmethodes accepteren jullie?', a: 'iDEAL, creditcard (Visa, Mastercard, American Express), PayPal, Bancontact en betaling in 3 termijnen via in3, naast diverse internationale methodes. Alle betalingen verlopen beveiligd via onze betaalprovider Pay.nl.' },
+      { q: 'Hoe snel wordt mijn bestelling bezorgd?', a: 'Voor 15:00 besteld op werkdagen = dezelfde dag verzonden. Binnen Nederland, België en Duitsland ontvang je je pakket meestal de volgende werkdag; voor de rest van de EU duurt het doorgaans 2–5 werkdagen. Na verzending ontvang je de track & trace per e-mail en kun je je zending ook volgen in je account.' },
+      { q: 'Wat kost verzending?', a: 'Nederland & België: gratis vanaf €100, anders €4,95. Duitsland: gratis vanaf €100, anders €6,95. Overig EU (incl. Frankrijk): €14,95. Buiten de EU: €79. Elke bestelling gaat aangetekend en verzekerd de deur uit.' },
+      { q: 'Wat betekenen de conditieniveaus?', a: 'We hanteren vijf niveaus, op basis van de uiterlijke staat: Zo goed als nieuw, Zeer goed, Goed, Gebruikt en Zeer gebruikt. Elk item wordt professioneel geïnspecteerd en eerlijk gegradeerd, met echte foto’s van het exacte item. Zie Quality & grading voor de details.' },
+      { q: 'Hoe bepalen jullie de shuttercount?', a: 'Waar van toepassing lezen we de shuttercount uit met professionele diagnosetools — uit de EXIF-data of via fabrikant-servicesoftware. De exacte shuttercount staat vermeld op de productpagina.' },
+      { q: 'Kan ik de echte foto’s vooraf zien?', a: 'Ja. Elke listing bevat echte foto’s van het exacte item dat je ontvangt, vanuit meerdere hoeken — geen stockbeelden. Wat je ziet, is wat je krijgt.' },
+      { q: 'Wat betekent “excl. btw”? Zijn jullie prijzen inclusief btw?', a: 'Items met “excl. btw” vallen onder de margeregeling: er wordt geen aparte btw berekend en de getoonde prijs is de prijs die je betaalt. Items zonder dat label hebben 21% btw inbegrepen. In beide gevallen is de weergegeven prijs je eindprijs.' },
+    ],
   },
   {
-    category: 'Selling & Trade-in',
+    category: 'Verkopen & inruilen',
     items: [
-      { q: 'How does the trade-in process work?', a: 'It\'s super simple. Use our online trade-in tool to get an instant estimate — just select your product, describe its condition, and you\'ll see a quote right away. If you\'re happy with it, we\'ll send you a free prepaid shipping label. Ship your gear to us, we inspect it, and you get paid.' },
-      { q: 'How do you determine the trade-in value?', a: 'We base our trade-in values on current market prices, the item\'s condition, demand, and how much similar items are selling for. Our quotes are competitive because we sell directly to end customers rather than through middlemen. We\'re always transparent about how we arrive at a price.' },
-      { q: 'How long does the appraisal take?', a: 'Once we receive your item, our technicians inspect and test it within 2 business days. We check everything — sensor condition, autofocus accuracy, lens clarity, shutter mechanism, and cosmetic condition. You\'ll get an email with the final valuation as soon as we\'re done.' },
-      { q: 'How do I ship my gear to you?', a: 'After accepting your trade-in quote, we\'ll email you a free prepaid shipping label. Just pack your gear securely (we recommend the original box if you have it, plus bubble wrap), stick the label on, and drop it off at any PostNL or DHL point. Shipping is fully insured on our end.' },
-      { q: 'When do I get paid?', a: 'Once our team completes the inspection and the final valuation matches the quote, payment is processed within 48 hours via bank transfer to your IBAN. If the condition differs from what was described, we\'ll contact you with an adjusted offer — you can always choose to have your item shipped back for free instead.' },
-    ]
+      { q: 'Hoe werkt het inruilen of verkopen?', a: 'Gebruik onze inruiltool voor een directe waarde-indicatie. Akkoord met de prijsopgave? Dan ontvang je een gratis verzendlabel. Stuur je apparatuur op, wij inspecteren en testen alles, en je wordt uitbetaald — of je verrekent het bedrag met een nieuwe aankoop.' },
+      { q: 'Hoe bepalen jullie de inruilwaarde?', a: 'Op basis van actuele marktprijzen, de conditie, de vraag en wat vergelijkbare items opbrengen. Omdat we direct aan eindklanten verkopen, zonder tussenpartijen, kunnen we scherp bieden.' },
+      { q: 'Hoe lang duurt de keuring?', a: 'Na ontvangst inspecteren en testen onze technici je apparatuur binnen 2 werkdagen — sensor, autofocus, glas, sluiter en cosmetische staat. Je krijgt bericht zodra we klaar zijn.' },
+      { q: 'Hoe stuur ik mijn apparatuur op?', a: 'Na akkoord op je prijsopgave ontvang je een gratis verzendlabel. Verpak je gear goed (bij voorkeur de originele doos plus beschermend materiaal), plak het label erop en lever het af bij een PostNL- of DHL-punt. De verzending is volledig verzekerd.' },
+      { q: 'Wanneer krijg ik mijn geld?', a: 'Klopt de conditie met je opgave? Dan betalen we doorgaans binnen 2–3 werkdagen na ontvangst uit op je IBAN. Wijkt de conditie af, dan nemen we contact op met een aangepast bod — of we sturen je apparatuur kosteloos terug.' },
+    ],
   },
   {
-    category: 'Shipping & Returns',
+    category: 'Verzending & retour',
     items: [
-      { q: 'What is your return policy?', a: 'For online purchases, you have 14 days after receiving your order to return it, no questions asked. The item should be in the same condition as when you received it. Just contact us, and we\'ll arrange everything — it\'s hassle-free because we want you to buy with confidence.' },
-      { q: 'How do I return an item?', a: 'Reach out to us via email, phone, or live chat and mention your order number. We\'ll send you a prepaid return label right away. Once we receive and inspect the returned item, your refund is processed within 3–5 business days back to your original payment method.' },
-      { q: 'Do you ship internationally?', a: 'Yes! We ship to all EU countries, the United Kingdom, Switzerland, and Norway. We use trusted carriers like DHL and PostNL with full tracking and insurance on every shipment. We\'re looking into expanding to more regions soon.' },
-      { q: 'What about customs duties for non-EU orders?', a: 'For orders within the EU, there are no customs duties or additional taxes — it\'s all included in the price. For the UK, Switzerland, and Norway, import duties and local VAT may apply upon delivery. These costs are the responsibility of the buyer, and the amounts vary by country.' },
-    ]
+      { q: 'Wat is jullie retourbeleid?', a: 'Voor online aankopen heb je 14 dagen na ontvangst om te retourneren, zonder opgave van reden. Het product moet compleet en in originele staat zijn. Meld je retour aan en we regelen het samen — zo koop je met een gerust hart.' },
+      { q: 'Hoe retourneer ik een product?', a: 'Meld je retour binnen 14 dagen aan via info@camera-tweedehands.nl met je ordernummer, voeg het retourformulier bij en stuur het product compleet retour. Na ontvangst en controle betalen we het orderbedrag doorgaans binnen 3–5 werkdagen terug op je oorspronkelijke betaalmethode.' },
+      { q: 'Verzenden jullie internationaal?', a: 'Ja. Binnen de EU verzenden we tegen de geldende tarieven; buiten de EU verzenden we voor €79. Elke zending gaat aangetekend en verzekerd, met track & trace.' },
+      { q: 'Hoe zit het met invoerrechten buiten de EU?', a: 'Voor bestellingen buiten de EU worden btw-producten zonder btw verkocht. Eventuele invoerrechten en lokale belastingen zijn voor rekening van de klant en variëren per land.' },
+    ],
   },
   {
-    category: 'Warranty & Support',
+    category: 'Garantie & support',
     items: [
-      { q: 'What warranty do you offer?', a: 'Every item we sell comes with a 12-month Camify warranty. That\'s our promise that your gear will work as described. We stand behind every product because our technicians thoroughly test everything before it goes on sale. Damage caused by the customer (water damage, drop damage) is not covered.' },
-      { q: 'What does the warranty cover?', a: 'Our warranty covers manufacturing defects and mechanical or electronic failures — things like a shutter mechanism failing, autofocus issues, or sensor malfunctions. It does not cover physical damage from drops or impacts, water damage, or normal cosmetic wear from regular use.' },
-      { q: 'How do I make a warranty claim?', a: 'Contact our support team with your order number and a description of the issue. We\'ll guide you through the process — in most cases, we\'ll send you a prepaid shipping label so you can send the item in for repair or replacement. We aim to resolve warranty claims within 5–7 business days.' },
-      { q: 'Can I extend my warranty?', a: 'Yes! At checkout you can add our Camify Extended Warranty, which extends your coverage to 24 months. It covers the same things as the standard warranty but gives you an extra year of peace of mind. The cost depends on the product price and is shown at checkout.' },
-      { q: 'How do I contact customer service?', a: 'You can reach us by email at support@camera-tweedehands.nl, by phone at 085 301 83 32 on weekdays between 09:00 and 16:30 CET, or via the live chat on our website. We typically respond to emails within a few hours during business days. We\'re real people who love cameras — not a call center.' },
-    ]
+      { q: 'Welke garantie geven jullie?', a: 'Op tweedehands producten geldt minimaal 12 maanden garantie, op nieuwe producten 24 maanden — tenzij anders vermeld bij het product. Elk item wordt vóór verkoop grondig getest.' },
+      { q: 'Wat valt wel en niet onder de garantie?', a: 'Gedekt zijn defecten die bij verkoop niet bekend of zichtbaar waren. Niet gedekt: normale slijtage en gebruikssporen, accu’s onder 30% van de opgegeven capaciteit, flitsbuizen (slijtageonderdeel) en schade door val, vocht of verkeerd gebruik.' },
+      { q: 'Hoe meld ik een garantieclaim of reparatie?', a: 'Neem contact op via info@camera-tweedehands.nl met je ordernummer en een omschrijving van het probleem. We besteden reparaties uit aan gespecialiseerde partners; een reparatie duurt doorgaans 4–8 weken en op een uitgevoerde reparatie zit minimaal 6 maanden garantie.' },
+      { q: 'Is de garantie overdraagbaar?', a: 'Nee, de garantie kan alleen worden ingeroepen door de oorspronkelijke koper en is niet overdraagbaar; een garantiebewijs is vereist.' },
+      { q: 'Hoe bereik ik de klantenservice?', a: 'Per e-mail via klantenservice@camera-tweedehands.nl, telefonisch op 085 301 83 32 (ma–vr 09:00–17:30) of via de live chat op de website. We reageren doorgaans binnen 1 werkdag.' },
+    ],
   },
 ];
 
@@ -62,25 +62,37 @@ export default function FaqPage() {
         ...cat,
         items: cat.items.filter(item =>
           item.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.a.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+          item.a.toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
       })).filter(cat => cat.items.length > 0)
     : faqData;
 
   return (
     <div className="container">
-      <Breadcrumb items={[{ label: 'FAQ' }]} />
+      <Breadcrumb items={[{ label: 'Help', href: '/help' }, { label: 'FAQ' }]} />
 
-      <section style={{ background: 'linear-gradient(135deg, #1E2133 0%, #2a2d42 50%, #1E2133 100%)', color: '#fff', borderRadius: 'var(--rl)', padding: '48px 40px', marginBottom: 48, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'radial-gradient(circle, rgba(232,105,42,.08) 0%, transparent 70%)' }} />
-        <h1 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 700, marginBottom: 16, position: 'relative' }}>How can we help?</h1>
-        <div style={{ maxWidth: 480, margin: '0 auto' }}>
+      <section
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+          borderRadius: 'var(--rl)',
+          padding: '52px 40px',
+          marginBottom: 48,
+          textAlign: 'center',
+          color: '#fff',
+          background: 'linear-gradient(180deg, rgba(20,21,43,.74), rgba(20,21,43,.84)), url(/images/hero-photographer-1.jpg) center 28%/cover',
+        }}
+      >
+        <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', opacity: .8, marginBottom: 12 }}>Camify Help Center</div>
+        <h1 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, letterSpacing: '-.02em', marginBottom: 18, position: 'relative' }}>Hoe kunnen we je helpen?</h1>
+        <div style={{ maxWidth: 500, margin: '0 auto' }}>
           <input
             type="text"
-            placeholder="Search for answers..."
+            placeholder="Zoek een onderwerp of vraag…"
+            aria-label="Zoeken in FAQ"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            style={{ width: '100%', padding: '14px 20px', borderRadius: 50, border: '1.5px solid rgba(255,255,255,.2)', background: 'rgba(255,255,255,.1)', color: '#fff', fontSize: 14, fontFamily: 'inherit', outline: 'none' }}
+            style={{ width: '100%', padding: '14px 20px', borderRadius: 50, border: '1.5px solid rgba(255,255,255,.25)', background: 'rgba(255,255,255,.12)', color: '#fff', fontSize: 14, fontFamily: 'inherit', outline: 'none' }}
           />
         </div>
       </section>
@@ -95,7 +107,7 @@ export default function FaqPage() {
                 <div key={key} className={`accordion__item${openItems[key] ? ' is-open' : ''}`}>
                   <button className="accordion__trigger" aria-expanded={openItems[key]} onClick={() => toggle(key)}>
                     {item.q}
-                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></svg>
                   </button>
                   <div className="accordion__body">
                     <p>{item.a}</p>
@@ -107,11 +119,15 @@ export default function FaqPage() {
         </div>
       ))}
 
+      {filteredFaq.length === 0 ? (
+        <p style={{ fontSize: 15, color: 'var(--text-sec)', margin: '0 0 40px' }}>Geen resultaten gevonden. Probeer een andere zoekterm of <Link href="/contact" style={{ color: 'var(--accent)', fontWeight: 600 }}>neem contact op</Link>.</p>
+      ) : null}
+
       <section style={{ background: 'linear-gradient(135deg, #1E2133 0%, #2a2d42 60%, #1E2133 100%)', borderRadius: 'var(--rl)', padding: '40px', textAlign: 'center', marginBottom: 48, position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', bottom: -40, right: -20, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(232,105,42,.06) 0%, transparent 70%)' }} />
-        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, color: '#fff', position: 'relative' }}>Still have questions?</h2>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,.6)', marginBottom: 20, position: 'relative' }}>Our team is ready to help you.</p>
-        <a href="/about" className="btn btn--primary" style={{ position: 'relative' }}>Contact Us</a>
+        <div style={{ position: 'absolute', bottom: -40, right: -20, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(232,105,42,.08) 0%, transparent 70%)' }} />
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, color: '#fff', position: 'relative' }}>Nog vragen?</h2>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,.6)', marginBottom: 20, position: 'relative' }}>Ons team helpt je graag verder.</p>
+        <Link href="/contact" className="btn btn--primary" style={{ position: 'relative' }}>Neem contact op</Link>
       </section>
     </div>
   );

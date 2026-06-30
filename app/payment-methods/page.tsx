@@ -4,7 +4,7 @@ import TrustStrip from '@/components/ui/TrustStrip';
 const trust = [
   { ic: <><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></>, n: 'Veilig via Pay.nl', l: 'beveiligde SSL-betaling' },
   { ic: <><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>, n: '14 methodes', l: 'iDEAL, PayPal, creditcard…' },
-  { ic: <><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>, n: 'In 3 termijnen', l: '0% rente' },
+  { ic: <><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>, n: 'In 3 termijnen', l: 'via in3 · 0% rente' },
   { ic: <><path d="M3 9l1-5h16l1 5" /><path d="M4 9v11h16V9" /><path d="M9 20v-6h6v6" /></>, n: 'Pinnen & contant', l: 'in de showroom' },
 ];
 

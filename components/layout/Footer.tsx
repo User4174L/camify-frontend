@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
 
 const company = [
   { label: 'About us', href: '/about' },
@@ -76,14 +77,8 @@ export default function Footer() {
                 <Link key={l.label} href={l.href} className="footer__link">{l.label}</Link>
               ))}
             </div>
-            <div className="footer__tp" style={{ marginTop: 16 }}>
-              <span style={{ color: 'var(--tp)' }}>&#9733;</span>
-              <span>Trustpilot — 4.9</span>
-              <div className="trustpilot-stars" style={{ marginLeft: 4 }}>
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <span key={i} className="trustpilot-star" style={{ width: 16, height: 16, fontSize: 9 }}>&#9733;</span>
-                ))}
-              </div>
+            <div style={{ marginTop: 16, maxWidth: 240 }}>
+              <TrustpilotWidget templateId={TP.microCombo} theme="dark" height="20px" />
             </div>
           </div>
         </div>

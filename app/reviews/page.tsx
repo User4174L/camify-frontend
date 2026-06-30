@@ -1,10 +1,5 @@
 import SimplePage from '@/components/layout/SimplePage';
-
-const sample = [
-  { name: 'Mark D.', text: 'Lens arrived even better than described. Honest grading and fast shipping.' },
-  { name: 'Sanne V.', text: 'Sold my old body via trade-in — smooth process and a fair price.' },
-  { name: 'Thomas R.', text: 'Great service and real photos of the actual item. Buy with confidence.' },
-];
+import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
 
 export default function ReviewsPage() {
   return (
@@ -14,36 +9,20 @@ export default function ReviewsPage() {
       eyebrow="Reviews"
       parent={{ label: 'Help', href: '/help' }}
       image="/images/hero-photographer-1.jpg"
-      intro="Rated 4.9 on Trustpilot by thousands of photographers across Europe."
+      intro="Beoordeeld door duizenden fotografen in heel Europa. Lees hieronder de echte reviews op Trustpilot."
+      related={[
+        { label: 'How it works', desc: 'Verkopen, inruilen en kopen — stap voor stap.', href: '/how-it-works' },
+        { label: 'Quality & grading', desc: 'Hoe we conditie bepalen en testen.', href: '/quality-grading' },
+        { label: 'About us', desc: 'Het verhaal achter Camify.', href: '/about' },
+      ]}
     >
-      {/* Trustpilot widget placeholder */}
-      <div
-        style={{
-          border: '1px dashed var(--border)',
-          borderRadius: 12,
-          padding: '20px 24px',
-          marginBottom: 28,
-          background: 'var(--surface)',
-          color: '#5A5C6B',
-          fontSize: 14,
-        }}
-      >
-        ★★★★★ Trustpilot widget — live feed wordt hier ingeladen (TrustBox / API).
+      {/* Score bovenaan */}
+      <div style={{ marginBottom: 8 }}>
+        <TrustpilotWidget templateId={TP.microCombo} height="24px" style={{ textAlign: 'left' }} />
       </div>
 
-      <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))' }}>
-        {sample.map((r) => (
-          <div
-            key={r.name}
-            className="cam-lift"
-            style={{ border: '1px solid var(--border)', borderRadius: 12, padding: 18, background: '#fff' }}
-          >
-            <div style={{ color: 'var(--tp)', fontSize: 14, marginBottom: 6 }}>★★★★★</div>
-            <p style={{ margin: '0 0 10px', fontSize: 14, lineHeight: 1.6 }}>{r.text}</p>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>{r.name}</span>
-          </div>
-        ))}
-      </div>
+      {/* Live reviews-grid */}
+      <TrustpilotWidget templateId={TP.grid} height="520px" stars="4,5" reviewLanguages="nl" />
     </SimplePage>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ProductGrid from '@/components/product/ProductGrid';
 import QuickView from '@/components/product/QuickView';
+import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
 import { products } from '@/data/products';
 
 const topBrands = [
@@ -268,28 +269,8 @@ export default function HomePage() {
               <span>Trustpilot</span>
             </div>
           </div>
-          <div className="reviews__grid">
-            {[
-              { title: 'Fantastic service!', text: 'Ordered a Nikon Z8 in excellent condition. Arrived within 2 days, perfectly packaged. Camera was exactly as described. Will definitely buy again!', author: 'M.V.', date: 'Feb 2026' },
-              { title: 'Best prices in Europe', text: 'Compared prices across 5 different used camera shops. Camify had the best price for the Canon RF 70-200mm f/2.8 and the condition was better than expected.', author: 'J.K.', date: 'Jan 2026' },
-              { title: 'Easy trade-in process', text: 'Sold my old Sony A7III and bought a Fujifilm X-T5. The trade-in quote was fair and the whole process took less than a week. Great experience!', author: 'S.D.', date: 'Feb 2026' },
-            ].map((review, i) => (
-              <div key={i} className="review-card">
-                <div className="review-card__stars">
-                  {[1,2,3,4,5].map(s => <span key={s} className="trustpilot-star">&#9733;</span>)}
-                </div>
-                <div className="review-card__title">{review.title}</div>
-                <div className="review-card__text">{review.text}</div>
-                <div className="review-card__author">
-                  <div className="review-card__avatar">{review.author}</div>
-                  <div>
-                    <div className="review-card__name">{review.author}</div>
-                    <div className="review-card__date">{review.date}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* Live Trustpilot-reviews (Carousel) */}
+          <TrustpilotWidget templateId={TP.carousel} height="240px" stars="4,5" reviewLanguages="nl" />
         </div>
       </section>
 

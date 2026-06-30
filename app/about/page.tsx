@@ -1,5 +1,6 @@
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import WordReveal from '@/components/ui/WordReveal';
+import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
 
 const stats = [
   { num: '2018', label: 'Founded' },
@@ -108,10 +109,9 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Trustpilot */}
-      <div style={{ marginTop: 44, border: '1px dashed var(--border)', borderRadius: 12, padding: '18px 24px', background: 'var(--surface)', display: 'flex', alignItems: 'center', gap: 12, color: 'var(--text-sec)', fontSize: 14 }}>
-        <span style={{ color: 'var(--tp)', letterSpacing: 1 }}>★★★★★</span>
-        <span><strong style={{ color: 'var(--text)' }}>Trustpilot 4.9</strong> — widget met live reviews wordt hier ingeladen.</span>
+      {/* Trustpilot — live Mini-widget */}
+      <div style={{ marginTop: 44, maxWidth: 360 }}>
+        <TrustpilotWidget templateId={TP.mini} height="150px" />
       </div>
       </div>
     </>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Geist } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import ClientShell from "@/components/layout/ClientShell";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className={dmSans.className}>
+        <Script
+          src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
+          strategy="afterInteractive"
+        />
         <ClientShell>{children}</ClientShell>
       </body>
     </html>
