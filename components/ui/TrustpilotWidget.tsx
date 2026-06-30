@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type CSSProperties } from 'react';
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 
 declare global {
   interface Window {
@@ -25,6 +25,7 @@ export default function TrustpilotWidget({
   reviewLanguages,
   className,
   style,
+  children,
 }: {
   templateId: string;
   token?: string;
@@ -36,6 +37,8 @@ export default function TrustpilotWidget({
   reviewLanguages?: string;
   className?: string;
   style?: CSSProperties;
+  /** Fallback-inhoud die getoond wordt zolang/indien de live widget niet rendert (bv. ander domein). */
+  children?: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -60,9 +63,11 @@ export default function TrustpilotWidget({
       data-token={token}
       style={style}
     >
-      <a href="https://nl.trustpilot.com/review/www.camera-tweedehands.nl" target="_blank" rel="noopener">
-        Trustpilot
-      </a>
+      {children ?? (
+        <a href="https://nl.trustpilot.com/review/www.camera-tweedehands.nl" target="_blank" rel="noopener">
+          Trustpilot
+        </a>
+      )}
     </div>
   );
 }
@@ -84,4 +89,5 @@ export const TP = {
 export const TP_TOKEN = {
   microTrustScore: '5bcf1715-ff02-4195-9853-3f248413e733',
   carousel: '162f39f3-c000-4c80-8a63-a33642253b59',
+  mini: '2d108f53-7196-42a8-97a2-2d32463da388',
 } as const;

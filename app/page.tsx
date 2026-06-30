@@ -5,6 +5,7 @@ import Link from 'next/link';
 import ProductGrid from '@/components/product/ProductGrid';
 import QuickView from '@/components/product/QuickView';
 import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
+import TrustBadges from '@/components/ui/TrustBadges';
 import { products } from '@/data/products';
 
 const topBrands = [
@@ -259,12 +260,12 @@ export default function HomePage() {
       {/* REVIEWS */}
       <section className="reviews">
         <div className="container">
-          <div className="reviews__header">
-            <div className="reviews__tp-logo">
-              <span style={{ color: 'var(--tp)', fontSize: 24 }}>&#9733;</span>
-              <span>Trustpilot</span>
-            </div>
+          <div style={{ textAlign: 'center', marginBottom: 28 }}>
+            <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 10 }}>Vertrouwd door 4.200+ fotografen</div>
+            <h2 className="section__title" style={{ margin: 0 }}>Wat onze klanten <span>zeggen</span></h2>
           </div>
+          {/* Trust-kaarten: Trustpilot (live Mini + fallback) · WebwinkelKeur · Google */}
+          <TrustBadges />
           {/* Live Trustpilot-reviews (Carousel — laatste reviews) */}
           <TrustpilotWidget templateId={TP.carousel} token={TP_TOKEN.carousel} height="140px" stars="1,2,3,4,5" reviewLanguages="nl" />
         </div>
