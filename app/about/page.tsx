@@ -1,6 +1,6 @@
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import WordReveal from '@/components/ui/WordReveal';
-import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
+import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
 
 const stats = [
   { num: '2018', label: 'Founded' },
@@ -109,9 +109,9 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Trustpilot — live Mini-widget */}
-      <div style={{ marginTop: 44, maxWidth: 360 }}>
-        <TrustpilotWidget templateId={TP.mini} height="150px" />
+      {/* Trustpilot — live Micro TrustScore */}
+      <div style={{ marginTop: 44, maxWidth: 300 }}>
+        <TrustpilotWidget templateId={TP.microTrustScore} token={TP_TOKEN.microTrustScore} height="20px" />
       </div>
       </div>
     </>

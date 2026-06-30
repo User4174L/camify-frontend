@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ProductGrid from '@/components/product/ProductGrid';
 import QuickView from '@/components/product/QuickView';
-import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
+import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
 import { products } from '@/data/products';
 
 const topBrands = [
@@ -63,7 +63,7 @@ export default function HomePage() {
             <Link href="/trade-in" className="trade-hero__btn">Ruil in &rarr;</Link>
           </div>
           <div className="trade-hero__tp">
-            <TrustpilotWidget templateId={TP.microStar} height="24px" width="200px" />
+            <TrustpilotWidget templateId={TP.microTrustScore} token={TP_TOKEN.microTrustScore} height="20px" width="240px" />
           </div>
         </div>
       </section>
@@ -265,8 +265,8 @@ export default function HomePage() {
               <span>Trustpilot</span>
             </div>
           </div>
-          {/* Live Trustpilot-reviews (Carousel) */}
-          <TrustpilotWidget templateId={TP.carousel} height="240px" stars="4,5" reviewLanguages="nl" />
+          {/* Live Trustpilot-reviews (Carousel — laatste reviews) */}
+          <TrustpilotWidget templateId={TP.carousel} token={TP_TOKEN.carousel} height="140px" stars="1,2,3,4,5" reviewLanguages="nl" />
         </div>
       </section>
 

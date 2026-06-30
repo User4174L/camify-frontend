@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useCart, type CartItem } from '@/context/CartContext';
-import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
+import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
 import { assetPath } from '@/lib/utils';
 
 /* ───────── constants ───────── */
@@ -1280,7 +1280,7 @@ function CheckoutPageInner() {
 
       {/* Trustpilot — live Micro TrustScore */}
       <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${CSS.border}`, display: 'flex', justifyContent: 'center' }}>
-        <TrustpilotWidget templateId={TP.microTrustScore} height="20px" width="180px" />
+        <TrustpilotWidget templateId={TP.microTrustScore} token={TP_TOKEN.microTrustScore} height="20px" width="100%" />
       </div>
     </div>
   );

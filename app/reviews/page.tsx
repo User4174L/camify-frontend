@@ -1,5 +1,5 @@
 import SimplePage from '@/components/layout/SimplePage';
-import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
+import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
 
 export default function ReviewsPage() {
   return (
@@ -17,12 +17,12 @@ export default function ReviewsPage() {
       ]}
     >
       {/* Score bovenaan */}
-      <div style={{ marginBottom: 8 }}>
-        <TrustpilotWidget templateId={TP.microCombo} height="24px" style={{ textAlign: 'left' }} />
+      <div style={{ marginBottom: 18, maxWidth: 300 }}>
+        <TrustpilotWidget templateId={TP.microTrustScore} token={TP_TOKEN.microTrustScore} height="20px" />
       </div>
 
-      {/* Live reviews-grid */}
-      <TrustpilotWidget templateId={TP.grid} height="520px" stars="4,5" reviewLanguages="nl" />
+      {/* Live reviews (Carousel — laatste reviews) */}
+      <TrustpilotWidget templateId={TP.carousel} token={TP_TOKEN.carousel} height="140px" stars="1,2,3,4,5" reviewLanguages="nl" />
     </SimplePage>
   );
 }

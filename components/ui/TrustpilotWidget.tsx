@@ -16,6 +16,7 @@ const BUSINESS_UNIT_ID = '63efddc46c5dc26ae2638c47';
  */
 export default function TrustpilotWidget({
   templateId,
+  token,
   height = '52px',
   width = '100%',
   theme,
@@ -26,6 +27,7 @@ export default function TrustpilotWidget({
   style,
 }: {
   templateId: string;
+  token?: string;
   height?: string;
   width?: string;
   theme?: 'light' | 'dark';
@@ -55,9 +57,10 @@ export default function TrustpilotWidget({
       data-theme={theme}
       data-stars={stars}
       data-review-languages={reviewLanguages}
+      data-token={token}
       style={style}
     >
-      <a href="https://www.trustpilot.com/review/www.camera-tweedehands.nl" target="_blank" rel="noopener">
+      <a href="https://nl.trustpilot.com/review/www.camera-tweedehands.nl" target="_blank" rel="noopener">
         Trustpilot
       </a>
     </div>
@@ -75,4 +78,10 @@ export const TP = {
   grid: '539adbd6dec7e10e686debee',
   list: '539ad60defb9600b94d7df2c',
   reviewCollector: '56278e9abfbbba0bdcd568bc',
+} as const;
+
+/** Per-widget tokens uit het Trustpilot-dashboard (nodig om de widget te renderen). */
+export const TP_TOKEN = {
+  microTrustScore: '5bcf1715-ff02-4195-9853-3f248413e733',
+  carousel: '162f39f3-c000-4c80-8a63-a33642253b59',
 } as const;

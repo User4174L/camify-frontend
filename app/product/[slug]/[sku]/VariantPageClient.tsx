@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumb from '@/components/layout/Breadcrumb';
-import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
+import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
 import { products } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
@@ -589,7 +589,7 @@ export default function VariantDetailPage() {
 
           {/* Trustpilot — sociale proof onder de USP's */}
           <div style={{ marginBottom: 20 }}>
-            <TrustpilotWidget templateId={TP.microCombo} height="20px" width="100%" style={{ marginLeft: -6 }} />
+            <TrustpilotWidget templateId={TP.microTrustScore} token={TP_TOKEN.microTrustScore} height="20px" width="100%" />
           </div>
 
           {/* --- Detail cards --- */}
