@@ -63,6 +63,7 @@ export default function Page() {
         { q: 'Wat kost verzending?', a: 'Nederland & België: gratis vanaf €100, anders €4,95. Duitsland: gratis vanaf €100, anders €6,95. Overig EU (incl. Frankrijk): €14,95. Buiten de EU: €79 — btw-producten worden dan zonder btw verkocht en invoerrechten zijn voor rekening van de klant.' },
         { q: 'Hoe retourneer ik een product?', a: 'Meld je retour binnen 14 dagen na ontvangst aan via info@camera-tweedehands.nl met je ordernummer. Print het retourformulier, voeg het bij en stuur het product compleet en in originele staat retour.' },
         { q: 'Wanneer krijg ik mijn geld terug?', a: 'Na ontvangst en controle van je retour betalen we het orderbedrag doorgaans binnen 3–5 werkdagen terug op je IBAN (uiterlijk 14 dagen), op je oorspronkelijke betaalmethode.' },
+        { q: 'Kan ik een product omruilen voor een ander?', a: 'Een retour betekent dat je het aankoopbedrag terugkrijgt. Wil je binnen de retourtermijn omruilen voor een ander product? Neem dan even contact met ons op, dan regelen we het samen.' },
         { q: 'Zijn mijn pakketten verzekerd?', a: 'Ja, elke zending gaat aangetekend en verzekerd de deur uit. Bewaar bij een retour altijd je verzendbewijs.' },
       ]}
     >
