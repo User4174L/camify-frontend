@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
 
 const company = [
   { label: 'About us', href: '/about' },
@@ -77,9 +76,16 @@ export default function Footer() {
                 <Link key={l.label} href={l.href} className="footer__link">{l.label}</Link>
               ))}
             </div>
-            <div style={{ marginTop: 16, maxWidth: 240 }}>
-              <TrustpilotWidget templateId={TP.microTrustScore} token={TP_TOKEN.microTrustScore} theme="dark" height="20px" />
-            </div>
+            <a
+              href="https://nl.trustpilot.com/review/www.camera-tweedehands.nl"
+              target="_blank"
+              rel="noopener"
+              style={{ marginTop: 18, display: 'inline-flex', alignItems: 'center', gap: 7, textDecoration: 'none' }}
+            >
+              <span style={{ color: '#00b67a', fontSize: 15 }}>&#9733;</span>
+              <span style={{ color: '#fff', fontWeight: 700, fontSize: 13 }}>Trustpilot</span>
+              <span style={{ color: 'rgba(255,255,255,.6)', fontSize: 13 }}>TrustScore 4,9</span>
+            </a>
           </div>
         </div>
 
