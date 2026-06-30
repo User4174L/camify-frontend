@@ -12,7 +12,7 @@ const online = [
   { name: 'iDEAL', note: 'Meest gekozen', logo: '/payment/ideal.svg' },
   { name: 'Bancontact', note: 'België', logo: '/payment/bancontact.svg' },
   { name: 'PayPal', note: '+ 3,4% toeslag', logo: '/payment/paypal.svg' },
-  { name: 'In 3 termijnen', note: '0% rente', icon: 'installments' },
+  { name: 'In 3 termijnen', note: 'via in3 · 0% rente', icon: 'installments' },
   { name: 'Visa', note: 'Creditcard', logo: '/payment/visa.svg' },
   { name: 'Mastercard', note: 'Creditcard', logo: '/payment/mastercard.svg' },
   { name: 'Maestro', note: '', logo: '/payment/maestro.svg' },
@@ -90,10 +90,10 @@ export default function Page() {
       ]}
       faqs={[
         { q: 'Welke betaalmethodes accepteren jullie?', a: 'iDEAL, creditcard (Visa, Mastercard, American Express), PayPal, Bancontact en betaling in 3 termijnen, naast diverse internationale methodes. Alle betalingen verlopen beveiligd via onze betaalprovider Pay.nl.' },
-        { q: 'Kan ik in termijnen betalen?', a: 'Ja, je kunt je aankoop in 3 termijnen betalen, renteloos. Je kiest deze optie tijdens het afrekenen.' },
+        { q: 'Kan ik in termijnen betalen?', a: 'Ja, je kunt je aankoop in 3 termijnen betalen via in3, renteloos. Je kiest deze optie tijdens het afrekenen.' },
         { q: 'Wat betekent “excl. btw” bij een product?', a: 'Dat het onder de margeregeling valt: er wordt geen aparte btw berekend en de getoonde prijs is de prijs die je betaalt. Producten zonder dat label hebben 21% btw inbegrepen. In beide gevallen is de weergegeven prijs je eindprijs.' },
         { q: 'Is online betalen bij jullie veilig?', a: 'Ja. Alle betalingen verlopen via een beveiligde (SSL) verbinding en worden verwerkt door onze betaalprovider Pay.nl. Wij slaan zelf geen betaalgegevens op.' },
-        { q: 'Hoe en wanneer krijg ik een terugbetaling?', a: 'Een terugbetaling gaat terug naar je oorspronkelijke betaalmethode, nadat we een eventuele retour hebben ontvangen en gecontroleerd. Zie Verzending & retour voor de termijnen.' },
+        { q: 'Hoe en wanneer krijg ik een terugbetaling?', a: 'Een terugbetaling gaat terug naar je oorspronkelijke betaalmethode, nadat we een eventuele retour hebben ontvangen en gecontroleerd — doorgaans binnen 3–5 werkdagen.' },
       ]}
     >
       <div style={{ marginBottom: 32 }}><TrustStrip items={trust} /></div>

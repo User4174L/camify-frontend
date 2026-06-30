@@ -18,7 +18,7 @@ const sellSteps = [
   { ic: I.offer, t: 'Ontvang je bod', d: 'Akkoord met de prijsopgave? Dan ontvang je ons bod met een gratis verzendlabel per e-mail.' },
   { ic: I.ship, t: 'Verstuur gratis & verzekerd', d: 'Verpak je apparatuur goed, plak het label erop en lever het af bij een PostNL- of DHL-punt. De verzending is volledig verzekerd.' },
   { ic: I.inspect, t: 'Inspectie & test', d: 'Onze technici inspecteren en testen alles binnen 2 werkdagen na ontvangst — sensor, autofocus, glas, sluiter en cosmetische staat.' },
-  { ic: I.pay, t: 'Uitbetaald of verrekend', d: 'Klopt de conditie met je opgave? Dan betalen we binnen 48 uur uit op je IBAN — of je verrekent het bedrag met een nieuwe aankoop.' },
+  { ic: I.pay, t: 'Uitbetaald of verrekend', d: 'Klopt de conditie met je opgave? Dan betalen we binnen 2–3 werkdagen na ontvangst uit op je IBAN — of je verrekent het bedrag met een nieuwe aankoop.' },
 ];
 
 const packing = [
@@ -42,7 +42,7 @@ const faqs = [
   { q: 'Wat als de conditie afwijkt van mijn opgave?', a: 'Dan nemen we contact op met een aangepast bod. Ga je niet akkoord, dan sturen we je apparatuur kosteloos terug.' },
   { q: 'Moet ik iets terugkopen, of kan ik ook alleen verkopen?', a: 'Alleen verkopen kan natuurlijk ook. Inruilen tegen een nieuwe aankoop mag, maar is geen voorwaarde — je kiest zelf voor uitbetaling of verrekening.' },
   { q: 'Hoe bepalen jullie de waarde van mijn apparatuur?', a: 'Op basis van actuele marktprijzen, de conditie, de vraag en wat vergelijkbare items opbrengen. Omdat we direct aan eindklanten verkopen, zonder tussenpartijen, kunnen we scherp bieden.' },
-  { q: 'Wanneer krijg ik mijn geld?', a: 'Na de inspectie (binnen 2 werkdagen na ontvangst) en jouw akkoord betalen we binnen 48 uur uit via bankoverschrijving op je IBAN.' },
+  { q: 'Wanneer krijg ik mijn geld?', a: 'Na ontvangst inspecteren en testen we je apparatuur, en betalen we doorgaans binnen 2–3 werkdagen uit via bankoverschrijving op je IBAN.' },
   { q: 'Verkoop ik aan jullie met herroepingsrecht?', a: 'Nee — als je apparatuur aan ons verkoopt, is er geen herroepings- of terugkooprecht. Dat geldt wél voor producten die je als consument bij ons koopt (14 dagen).' },
 ];
 
@@ -139,7 +139,7 @@ export default function Page() {
             <div className="hiw-choice">
               <div className="hiw-choice__card cam-lift">
                 <div className="hiw-choice__h"><span className="dot" /> Verkopen</div>
-                <div className="hiw-choice__d">Je ontvangt het bedrag direct op je IBAN, binnen 48 uur na akkoord en inspectie. Ideaal als je gewoon je apparatuur wilt verkopen.</div>
+                <div className="hiw-choice__d">Je ontvangt het bedrag op je IBAN, binnen 2–3 werkdagen na ontvangst en inspectie. Ideaal als je gewoon je apparatuur wilt verkopen.</div>
               </div>
               <div className="hiw-choice__card cam-lift">
                 <div className="hiw-choice__h"><span className="dot" /> Inruilen</div>

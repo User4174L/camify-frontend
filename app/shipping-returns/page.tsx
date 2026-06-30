@@ -20,13 +20,13 @@ const rows = [
   ['Nederland & België', 'Gratis vanaf €100, anders €4,95', '1–2 werkdagen'],
   ['Duitsland', 'Gratis vanaf €100, anders €6,95', '1–2 werkdagen'],
   ['Overig EU (incl. Frankrijk)', '€14,95', '2–5 werkdagen'],
-  ['Buiten de EU (0–23 kg)', 'Berekend in de checkout (vanaf €79)', 'Varieert per land'],
+  ['Buiten de EU (0–23 kg)', '€79', 'Varieert per land'],
 ];
 
 const steps = [
   { n: '1', t: 'Aanmelden', d: 'Meld je retour binnen 14 dagen na ontvangst aan via info@camera-tweedehands.nl, met je ordernummer.' },
   { n: '2', t: 'Terugsturen', d: 'Print het retourformulier, voeg het bij en stuur het product compleet, in originele staat en voldoende gefrankeerd retour.' },
-  { n: '3', t: 'Terugbetaling', d: 'Na ontvangst en controle betalen we het orderbedrag binnen 14 dagen terug op je IBAN.' },
+  { n: '3', t: 'Terugbetaling', d: 'Na ontvangst en controle betalen we het orderbedrag doorgaans binnen 3–5 werkdagen terug op je IBAN (uiterlijk 14 dagen).' },
 ];
 
 const conditions = [
@@ -60,9 +60,9 @@ export default function Page() {
       ]}
       faqs={[
         { q: 'Hoe snel wordt mijn bestelling bezorgd?', a: 'Voor 15:00 besteld op werkdagen = dezelfde dag verzonden. Binnen Nederland, België en Duitsland ontvang je je pakket meestal de volgende werkdag; voor de rest van de EU duurt het doorgaans 2–5 werkdagen.' },
-        { q: 'Wat kost verzending?', a: 'Nederland & België: gratis vanaf €100, anders €4,95. Duitsland: gratis vanaf €100, anders €6,95. Overig EU (incl. Frankrijk): €14,95. Buiten de EU wordt het tarief in de checkout berekend.' },
+        { q: 'Wat kost verzending?', a: 'Nederland & België: gratis vanaf €100, anders €4,95. Duitsland: gratis vanaf €100, anders €6,95. Overig EU (incl. Frankrijk): €14,95. Buiten de EU: €79 — btw-producten worden dan zonder btw verkocht en invoerrechten zijn voor rekening van de klant.' },
         { q: 'Hoe retourneer ik een product?', a: 'Meld je retour binnen 14 dagen na ontvangst aan via info@camera-tweedehands.nl met je ordernummer. Print het retourformulier, voeg het bij en stuur het product compleet en in originele staat retour.' },
-        { q: 'Wanneer krijg ik mijn geld terug?', a: 'Na ontvangst en controle van je retour betalen we het orderbedrag binnen 14 dagen terug op je IBAN.' },
+        { q: 'Wanneer krijg ik mijn geld terug?', a: 'Na ontvangst en controle van je retour betalen we het orderbedrag doorgaans binnen 3–5 werkdagen terug op je IBAN (uiterlijk 14 dagen), op je oorspronkelijke betaalmethode.' },
         { q: 'Zijn mijn pakketten verzekerd?', a: 'Ja, elke zending gaat aangetekend en verzekerd de deur uit. Bewaar bij een retour altijd je verzendbewijs.' },
       ]}
     >
@@ -82,7 +82,7 @@ export default function Page() {
 
       <h2 id="verzending" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 10px', scrollMarginTop: 90 }}>Verzending</h2>
       <p style={{ fontSize: 14.5, color: 'var(--text-sec)', margin: '0 0 18px', lineHeight: 1.65 }}>
-        Voor 15:00 besteld op werkdagen = dezelfde dag verzonden. In de meeste gevallen ontvang je je pakket de volgende dag (internationale zendingen uitgezonderd). Elke bestelling gaat aangetekend en verzekerd de deur uit.
+        Voor 15:00 besteld op werkdagen = dezelfde dag verzonden. In de meeste gevallen ontvang je je pakket de volgende dag (internationale zendingen uitgezonderd). Elke bestelling gaat aangetekend en verzekerd de deur uit. Na verzending ontvang je de track &amp; trace per e-mail en kun je je zending ook volgen in je account.
       </p>
 
       <h2 id="kosten" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 12px', scrollMarginTop: 90 }}>Verzendkosten &amp; levertijd</h2>
@@ -107,7 +107,7 @@ export default function Page() {
         </table>
       </div>
       <p style={{ fontSize: 12.5, color: '#8A8C99', margin: '0 0 32px' }}>
-        Bestellingen buiten de EU worden in de checkout berekend; eventuele invoerrechten en lokale btw zijn voor rekening van de ontvanger.
+        Buiten de EU verzenden we voor €79. Btw-producten worden dan zonder btw verkocht; invoerrechten en lokale belastingen zijn voor rekening van de klant.
       </p>
 
       <h2 id="retourneren" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 14px', scrollMarginTop: 90 }}>Retourneren in 3 stappen</h2>

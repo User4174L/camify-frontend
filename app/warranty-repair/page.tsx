@@ -15,7 +15,9 @@ Meld gebreken binnen 7 dagen na ontvangst.
 
 ## Reparatie aanvragen
 
-Heb je een reparatie nodig — binnen of buiten garantie? Neem contact met ons op via de contactpagina of info@camera-tweedehands.nl met je ordernummer en een omschrijving van het probleem. We laten je weten wat de mogelijkheden, doorlooptijd en eventuele kosten zijn.`;
+Heb je een reparatie nodig — binnen of buiten garantie? Neem contact met ons op via de contactpagina of info@camera-tweedehands.nl met je ordernummer en een omschrijving van het probleem.
+
+We besteden reparaties uit aan **gespecialiseerde partners**. Een reparatie duurt doorgaans **4–8 weken**, en op een uitgevoerde reparatie zit **minimaal 6 maanden garantie**. We laten je vooraf weten wat de mogelijkheden en eventuele kosten zijn.`;
 
 export default function Page() {
   return (
@@ -36,6 +38,7 @@ export default function Page() {
         { q: 'Hoe lang heb ik garantie?', a: 'Op tweedehands producten geldt minimaal 12 maanden garantie, op nieuwe producten 24 maanden — tenzij anders vermeld bij het product.' },
         { q: 'Wat valt niet onder de garantie?', a: 'Normale slijtage en gebruikssporen, accu’s onder 30% van de opgegeven capaciteit, flitsbuizen (slijtageonderdeel) en schade door verkeerd gebruik of externe invloeden. Voor tweedehands geldt een jaarlijkse afschrijving van 20%.' },
         { q: 'Hoe meld ik een garantieclaim of reparatie?', a: 'Neem contact op via info@camera-tweedehands.nl met je ordernummer en een omschrijving van het probleem. Zichtbare transport- of valschade meld je binnen 7 dagen na ontvangst.' },
+        { q: 'Hoe lang duurt een reparatie?', a: 'Een reparatie duurt doorgaans 4–8 weken. We besteden reparaties uit aan gespecialiseerde partners, en op een uitgevoerde reparatie zit minimaal 6 maanden garantie.' },
         { q: 'Is de garantie overdraagbaar?', a: 'Nee, de garantie kan alleen worden ingeroepen door de oorspronkelijke koper en is niet overdraagbaar; een garantiebewijs is vereist.' },
       ]}
     />
