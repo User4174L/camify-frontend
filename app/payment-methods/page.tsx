@@ -9,7 +9,7 @@ const trust = [
 ];
 
 const online = [
-  { name: 'iDEAL', note: 'Meest gekozen', logo: '/payment/ideal.svg' },
+  { name: 'iDEAL / Wero', note: 'Meest gekozen', logo: '/payment/ideal.svg' },
   { name: 'Bancontact', note: 'België', logo: '/payment/bancontact.svg' },
   { name: 'PayPal', note: '+ 3,4% toeslag', logo: '/payment/paypal.svg' },
   { name: 'In 3 termijnen', note: 'via in3 · 0% rente', icon: 'installments' },

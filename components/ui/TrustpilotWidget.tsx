@@ -68,6 +68,7 @@ export default function TrustpilotWidget({
 export const TP = {
   microCombo: '5419b6ffb0d04a076446a9af',
   microStar: '5419b732fbfb950b10de65e5',
+  microTrustScore: '5419b637fa0340045cd0c936',
   horizontal: '5406e65db0d04a09e042d5fc',
   mini: '53aa8807dec7e10d38f59f32',
   carousel: '53aa8912dec7e10d38f59f36',

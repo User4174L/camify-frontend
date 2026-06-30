@@ -63,11 +63,7 @@ export default function HomePage() {
             <Link href="/trade-in" className="trade-hero__btn">Ruil in &rarr;</Link>
           </div>
           <div className="trade-hero__tp">
-            <span className="trustpilot-label">Excellent</span>
-            <div className="trustpilot-stars">
-              {[1,2,3,4,5].map(i => <span key={i} className="trustpilot-star">&#9733;</span>)}
-            </div>
-            <span className="trustpilot-logo"><span className="tp-star">&#9733;</span> Trustpilot</span>
+            <TrustpilotWidget templateId={TP.microStar} height="24px" width="200px" />
           </div>
         </div>
       </section>

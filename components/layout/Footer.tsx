@@ -78,7 +78,7 @@ export default function Footer() {
               ))}
             </div>
             <div style={{ marginTop: 16, maxWidth: 240 }}>
-              <TrustpilotWidget templateId={TP.microCombo} theme="dark" height="20px" />
+              <TrustpilotWidget templateId={TP.microTrustScore} theme="dark" height="20px" />
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useCart, type CartItem } from '@/context/CartContext';
+import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
 import { assetPath } from '@/lib/utils';
 
 /* ───────── constants ───────── */
@@ -869,16 +870,23 @@ function CheckoutPageInner() {
                 })}
               </div>
 
-              {/* Replacement device */}
+              {/* Replacement device — duidelijke selecteerbare kaart met uitleg */}
               <div
                 onClick={() => setReplacementChoices(prev => ({ ...prev, [idx]: !hasReplacement }))}
-                style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: '.78rem', color: CSS.text, padding: '6px 0' }}>
-                <div style={{ width: 20, height: 20, borderRadius: 5, border: `2px solid ${hasReplacement ? CSS.accent : CSS.border}`, background: hasReplacement ? CSS.accent : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all .2s' }}>
+                style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', padding: '10px 12px', borderRadius: 8, border: `1.5px solid ${hasReplacement ? CSS.accent : CSS.border}`, background: hasReplacement ? CSS.accentLight : '#fff', transition: 'all .2s' }}>
+                <div style={{ width: 20, height: 20, borderRadius: 5, border: `2px solid ${hasReplacement ? CSS.accent : CSS.border}`, background: hasReplacement ? CSS.accent : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1, transition: 'all .2s' }}>
                   {hasReplacement && <CheckIcon size={10} stroke="#fff" strokeWidth={3} />}
                 </div>
-                <RepeatIcon />
-                <span>Vervangend toestel tijdens reparatie</span>
-                <span style={{ color: CSS.textMuted }}>&euro; {getReplacementPrice(item.price)}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                    <RepeatIcon />
+                    <span style={{ fontSize: '.8rem', fontWeight: 700, color: CSS.text }}>Vervangend toestel tijdens reparatie</span>
+                    <span style={{ marginLeft: 'auto', fontSize: '.78rem', fontWeight: 600, color: hasReplacement ? CSS.accent : CSS.textMuted }}>+ &euro; {getReplacementPrice(item.price)}</span>
+                  </div>
+                  <p style={{ margin: '3px 0 0', fontSize: '.72rem', color: CSS.textSec, lineHeight: 1.45 }}>
+                    Bij een eventuele reparatie ontvang je een vervangend product, zodat je nooit zonder zit.
+                  </p>
+                </div>
               </div>
             </div>
           );
@@ -1270,9 +1278,9 @@ function CheckoutPageInner() {
         </div>
       </div>
 
-      {/* Trustpilot */}
+      {/* Trustpilot — live Micro TrustScore */}
       <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${CSS.border}`, display: 'flex', justifyContent: 'center' }}>
-        <TrustpilotBadge />
+        <TrustpilotWidget templateId={TP.microTrustScore} height="20px" width="180px" />
       </div>
     </div>
   );
