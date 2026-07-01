@@ -18,7 +18,7 @@ const topics = [
   },
   {
     t: 'Betalen, btw & marge',
-    d: 'De meeste producten zijn margeproducten (geen aparte btw — de prijs die je ziet is de prijs die je betaalt). Items met “excl. btw” vallen onder de margeregeling. In beide gevallen is de getoonde prijs je eindprijs.',
+    d: 'Onze producten zijn standaard margeproducten; staat er een BTW-label bij, dan is het een btw-product (prijs incl. btw). De getoonde prijs is altijd de prijs die je betaalt. Zakelijk? Bij een btw-product vraag je de btw terug; bij een margeproduct niet, maar dan draag je bij verkoop ook geen btw af.',
     link: { label: 'Alle betaalmethodes', href: '/payment-methods' },
   },
   {
@@ -34,7 +34,7 @@ const topics = [
 ];
 
 const goodToKnow = [
-  { t: 'Margeproducten', d: 'Onze producten zijn margeproducten, tenzij anders vermeld. De getoonde prijs is altijd je eindprijs.' },
+  { t: 'Marge of btw', d: 'Standaard zijn onze producten margeproducten; alleen bij een BTW-label is het een btw-product (prijs incl. btw). De getoonde prijs is altijd je eindprijs.' },
   { t: 'Prijzen onder voorbehoud', d: 'Alle prijzen zijn onder voorbehoud van type- en drukfouten. Bij een aantoonbare fout komt er geen bindende overeenkomst tot stand.' },
   { t: 'Voor consumenten', d: 'Aanbiedingen en kortingen zijn bedoeld voor consumenten en eindgebruikers; aankopen voor wederverkoop zijn niet toegestaan.' },
   { t: 'Reserveringen', d: 'Een reservering geldt tot uiterlijk 17:00 uur op de dag waarop deze wordt gemaakt, tenzij anders afgesproken.' },
@@ -42,7 +42,7 @@ const goodToKnow = [
 
 const faqs = [
   { q: 'Welke betaalmethodes kan ik gebruiken?', a: 'iDEAL, creditcard (Visa, Mastercard, Amex), PayPal, Bancontact en betaling in 3 termijnen, naast diverse internationale methodes. Alle betalingen verlopen beveiligd via Pay.nl.' },
-  { q: 'Wat betekent “excl. btw” bij een product?', a: 'Dat het onder de margeregeling valt: er wordt geen aparte btw berekend, de getoonde prijs is de prijs die je betaalt. Producten zonder dat label hebben 21% btw in de prijs inbegrepen.' },
+  { q: 'Zijn jullie prijzen inclusief btw? Wat betekent het BTW-label?', a: 'Onze producten zijn standaard margeproducten. Staat er een BTW-label bij, dan is het een btw-product en is de prijs inclusief btw. De getoonde prijs is altijd de prijs die je betaalt. Koop je zakelijk? Bij een btw-product vraag je de btw terug; bij een margeproduct niet, maar dan draag je bij latere verkoop ook geen btw af. Voor zakelijke EU-kopers verleggen we de btw via een intracommunautaire levering.' },
   { q: 'Krijg ik garantie op een tweedehands product?', a: 'Ja, op alle tweedehands producten geldt minimaal 12 maanden garantie, op nieuwe producten 24 maanden — tenzij anders vermeld bij het product.' },
   { q: 'Zijn de foto’s van het echte item?', a: 'Ja. Elke listing bevat echte foto’s van het exacte item dat je ontvangt, vanuit meerdere hoeken. Wat je ziet, is wat je krijgt.' },
 ];

@@ -15,7 +15,7 @@ const faqData = [
       { q: 'Wat betekenen de conditieniveaus?', a: 'We hanteren vijf niveaus, op basis van de uiterlijke staat: Zo goed als nieuw, Zeer goed, Goed, Gebruikt en Zeer gebruikt. Elk item wordt professioneel geïnspecteerd en eerlijk gegradeerd, met echte foto’s van het exacte item. Zie Quality & grading voor de details.' },
       { q: 'Hoe bepalen jullie de shuttercount?', a: 'Waar van toepassing lezen we de shuttercount uit met professionele diagnosetools — uit de EXIF-data of via fabrikant-servicesoftware. De exacte shuttercount staat vermeld op de productpagina.' },
       { q: 'Kan ik de echte foto’s vooraf zien?', a: 'Ja. Elke listing bevat echte foto’s van het exacte item dat je ontvangt, vanuit meerdere hoeken — geen stockbeelden. Wat je ziet, is wat je krijgt.' },
-      { q: 'Wat betekent “excl. btw”? Zijn jullie prijzen inclusief btw?', a: 'Items met “excl. btw” vallen onder de margeregeling: er wordt geen aparte btw berekend en de getoonde prijs is de prijs die je betaalt. Items zonder dat label hebben 21% btw inbegrepen. In beide gevallen is de weergegeven prijs je eindprijs.' },
+      { q: 'Zijn jullie prijzen inclusief btw? Wat betekent het BTW-label?', a: 'Onze producten zijn standaard margeproducten. Staat er een BTW-label bij, dan is het een btw-product en is de prijs inclusief btw. In beide gevallen is de getoonde prijs altijd de prijs die je betaalt — er komt niets bij. Koop je zakelijk? Bij een margeproduct kun je de btw niet terugvragen, maar bij latere verkoop draag je er ook geen btw over af, dus het verschil is vaak klein. Bij een btw-product vraag je de btw wel gewoon terug. Voor zakelijke kopers binnen de EU verleggen we de btw via een intracommunautaire levering.' },
     ],
   },
   {
