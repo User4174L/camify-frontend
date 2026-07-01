@@ -210,12 +210,12 @@ const MOCK_VAULT: VaultItem[] = [
   {
     id: 'v-1', title: 'Sony A7 IV Body', brand: 'Sony', category: 'camera',
     serial: '4250412', purchaseDate: '2026-03-09', warrantyUntil: '2028-03-09',
-    shop: 'Camify', shutterCount: 12_400,
+    shop: 'Camera-tweedehands.nl', shutterCount: 12_400,
   },
   {
     id: 'v-2', title: 'Sigma 35mm f/1.4 DG DN Art', brand: 'Sigma', category: 'lens',
     serial: '55217803', purchaseDate: '2026-02-21', warrantyUntil: '2028-02-21',
-    shop: 'Camify',
+    shop: 'Camera-tweedehands.nl',
   },
   {
     id: 'v-3', title: 'Canon EOS R5 Body', brand: 'Canon', category: 'camera',
@@ -679,11 +679,11 @@ function VaultSection({ items, setItems }: { items: VaultItem[]; setItems: (v: V
   const [serial, setSerial] = useState('');
   const [purchaseDate, setPurchaseDate] = useState('');
   const [warrantyUntil, setWarrantyUntil] = useState('');
-  const [shop, setShop] = useState('Camify');
+  const [shop, setShop] = useState('Camera-tweedehands.nl');
 
   const reset = () => {
     setPickedTitle(''); setPickedBrand(''); setPickedCategory('camera');
-    setSerial(''); setPurchaseDate(''); setWarrantyUntil(''); setShop('Camify');
+    setSerial(''); setPurchaseDate(''); setWarrantyUntil(''); setShop('Camera-tweedehands.nl');
     setAdding(false); setPickerOpen(false);
   };
 
@@ -747,7 +747,7 @@ function VaultSection({ items, setItems }: { items: VaultItem[]; setItems: (v: V
               </div>
             ) : !pickerOpen ? (
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <Button variant="secondary" size="sm" onClick={() => setPickerOpen(true)}>Kies uit Camify-catalogus</Button>
+                <Button variant="secondary" size="sm" onClick={() => setPickerOpen(true)}>Kies uit Camera-tweedehands.nl-catalogus</Button>
                 <Button variant="ghost" size="sm" onClick={() => setPickedTitle('Eigen item')}>Of voer handmatig in</Button>
               </div>
             ) : (
@@ -778,7 +778,7 @@ function VaultSection({ items, setItems }: { items: VaultItem[]; setItems: (v: V
             <InputField label="Serienummer" value={serial} onChange={setSerial} placeholder="bv. 4250412" />
             <InputField label="Koopdatum" value={purchaseDate} onChange={setPurchaseDate} type="date" />
             <InputField label="Garantie tot" value={warrantyUntil} onChange={setWarrantyUntil} type="date" />
-            <InputField label="Winkel" value={shop} onChange={setShop} placeholder="Camify, Cameraland, MPB…" />
+            <InputField label="Winkel" value={shop} onChange={setShop} placeholder="Camera-tweedehands.nl, Cameraland, MPB…" />
           </div>
 
           <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
@@ -1182,7 +1182,7 @@ function NewsletterSection({ subscribed, setSubscribed }: { subscribed: boolean;
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div>
             <div style={{ fontSize: 15, fontWeight: 600, color: DARK, marginBottom: 4 }}>
-              Camify Nieuwsbrief
+              Camera-tweedehands.nl Nieuwsbrief
             </div>
             <div style={{ fontSize: 13, color: GREY, lineHeight: 1.5, maxWidth: 480 }}>
               Tips van fotografie-enthousiastelingen, nieuwe binnenkomers en exclusieve outlet-deals.

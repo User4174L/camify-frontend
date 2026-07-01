@@ -1430,11 +1430,11 @@ export default function TradeInPage() {
         </div>
       </section>
 
-      {/* ── Why sell with Camify section ── */}
+      {/* ── Why sell with Camera-tweedehands.nl section ── */}
       <section style={{ background: '#fff', padding: '48px 24px', borderTop: '1px solid #EEEEF2' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1E2133', textAlign: 'center', marginBottom: 8, letterSpacing: '-0.02em' }}>
-            Waarom verkopen bij Camify?
+            Waarom verkopen bij Camera-tweedehands.nl?
           </h2>
           <p style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', marginBottom: 32, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}>
             Wij maken het verkopen van je camera-apparatuur zo eenvoudig en voordelig mogelijk

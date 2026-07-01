@@ -32,8 +32,8 @@ export default function Footer() {
       <div className="container">
         <div className="footer__grid">
           <div className="footer__brand">
-            <Link href="/" className="logo">
-              <div className="logo__icon">C</div>Camify
+            <Link href="/" className="logo" aria-label="Camera-tweedehands.nl">
+              <img src="/images/logo-white.png" alt="Camera-tweedehands.nl" style={{ height: 30, width: 'auto', display: 'block' }} />
             </Link>
             <div className="footer__contact">
               <div className="footer__contact-item">

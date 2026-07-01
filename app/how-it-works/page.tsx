@@ -263,7 +263,7 @@ export default function Page() {
 
         <RelatedLinks
           items={[
-            { label: 'Koopgids', desc: 'Hoe kopen bij Camify werkt — conditie, betalen en levering.', href: '/buying' },
+            { label: 'Koopgids', desc: 'Hoe kopen bij Camera-tweedehands.nl werkt — conditie, betalen en levering.', href: '/buying' },
             { label: 'Quality & grading', desc: 'Hoe we conditie bepalen, testen en transparant communiceren.', href: '/quality-grading' },
             { label: 'Verzending & retour', desc: 'Levertijden, verzendkosten en het 14-daags retourrecht.', href: '/shipping-returns' },
           ]}

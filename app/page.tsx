@@ -221,7 +221,7 @@ export default function HomePage() {
       <section className="why">
         <div className="container">
           <div className="why__header">
-            <h2>Why <span>Camify</span>?</h2>
+            <h2>Why <span>Camera-tweedehands.nl</span>?</h2>
             <p>We make buying and selling used camera gear simple, safe, and affordable.</p>
           </div>
           <div className="why__grid">

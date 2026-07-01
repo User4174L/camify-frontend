@@ -83,7 +83,7 @@ export default function FaqPage() {
           background: 'linear-gradient(180deg, rgba(20,21,43,.74), rgba(20,21,43,.84)), url(/images/hero-photographer-1.jpg) center 28%/cover',
         }}
       >
-        <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', opacity: .8, marginBottom: 12 }}>Camify Help Center</div>
+        <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', opacity: .8, marginBottom: 12 }}>Camera-tweedehands.nl Help Center</div>
         <h1 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, letterSpacing: '-.02em', marginBottom: 18, position: 'relative' }}>Hoe kunnen we je helpen?</h1>
         <div style={{ maxWidth: 500, margin: '0 auto' }}>
           <input

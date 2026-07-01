@@ -70,8 +70,8 @@ export default function Header() {
 
           {/* ===== DESKTOP LAYOUT (hidden on mobile via CSS) ===== */}
           <div className="header__top header__desktop">
-            <Link href="/" className="logo">
-              <div className="logo__icon">C</div>Camify
+            <Link href="/" className="logo" aria-label="Camera-tweedehands.nl">
+              <img src="/images/logo-black.png" alt="Camera-tweedehands.nl" style={{ height: 30, width: 'auto', display: 'block' }} />
             </Link>
 
             <SearchBar />
@@ -273,8 +273,8 @@ export default function Header() {
                 <span /><span /><span />
               </button>
 
-              <Link href="/" className="logo header__mobile-logo">
-                <div className="logo__icon">C</div>Camify
+              <Link href="/" className="logo header__mobile-logo" aria-label="Camera-tweedehands.nl">
+                <img src="/images/logo-black.png" alt="Camera-tweedehands.nl" style={{ height: 26, width: 'auto', display: 'block' }} />
               </Link>
 
               <div className="header__mobile-actions">

@@ -83,7 +83,7 @@ function getBrandIntro(brand: string): string {
 
 function getBrandFaqs(brand: string) {
   return [
-    { q: `What warranty do your used ${brand} products come with?`, a: `Every ${brand} product comes with a 12-month Camify warranty covering manufacturing defects and mechanical failures. This includes shutter mechanisms, autofocus systems, sensor issues, and lens elements.` },
+    { q: `What warranty do your used ${brand} products come with?`, a: `Every ${brand} product comes with a 12-month Camera-tweedehands.nl warranty covering manufacturing defects and mechanical failures. This includes shutter mechanisms, autofocus systems, sensor issues, and lens elements.` },
     { q: `How do you grade ${brand} equipment?`, a: `Our team inspects every ${brand} product using a standardized checklist. We check cosmetic condition, optical clarity, autofocus accuracy, mechanical function, and all controls. The grade reflects the overall state of the product.` },
     { q: `Can I return a ${brand} product if I'm not satisfied?`, a: `Yes. For online purchases you have 14 days after delivery to return the product, no questions asked. The item must be in the same condition as received. We'll arrange a prepaid return label.` },
     { q: `Do you buy used ${brand} gear?`, a: `Absolutely! We buy and trade used ${brand} equipment. You can request a quote through our website or visit our store. We offer competitive prices and instant payment.` },

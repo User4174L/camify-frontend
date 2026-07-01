@@ -40,7 +40,7 @@ function PinGate({ children }: { children: React.ReactNode }) {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8fa', fontFamily: 'var(--font)' }}>
       <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '48px 40px', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,.08)', textAlign: 'center', maxWidth: 340, width: '100%' }}>
         <div style={{ width: 48, height: 48, background: '#E8692A', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: '#fff', fontWeight: 700, fontSize: 20 }}>C</div>
-        <h1 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, color: '#1E2133' }}>Camify Preview</h1>
+        <h1 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, color: '#1E2133' }}>Camera-tweedehands.nl Preview</h1>
         <p style={{ fontSize: 14, color: '#6B6D80', marginBottom: 24 }}>Voer de pincode in om de site te bekijken</p>
         <input
           type="password"

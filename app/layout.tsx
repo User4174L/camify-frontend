@@ -14,9 +14,9 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Camify - Tweedehands Camera's, Lenzen & Accessoires",
+  title: "Camera-tweedehands.nl - Tweedehands Camera's, Lenzen & Accessoires",
   description:
-    "Koop en verkoop tweedehands camera's, lenzen en foto-accessoires bij Camify. Kwaliteit gegarandeerd.",
+    "Koop en verkoop tweedehands camera's, lenzen en foto-accessoires bij Camera-tweedehands.nl. Kwaliteit gegarandeerd.",
 };
 
 export default function RootLayout({

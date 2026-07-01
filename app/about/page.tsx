@@ -13,7 +13,7 @@ const stats = [
 const timeline = [
   { year: '2018', text: 'Founded in Geldermalsen' },
   { year: '2023', text: '10,000th item sold' },
-  { year: '2025', text: 'European expansion as Camify' },
+  { year: '2025', text: 'Growing across Europe' },
 ];
 
 export default function AboutPage() {
@@ -25,7 +25,7 @@ export default function AboutPage() {
           <div className="svc-header__inner">
             <Breadcrumb items={[{ label: 'About us' }]} />
             <div className="svc-eyebrow">Over ons</div>
-            <h1 className="svc-title"><WordReveal text="About Camify" /></h1>
+            <h1 className="svc-title"><WordReveal text="About Camera-tweedehands.nl" /></h1>
             <p className="svc-intro" style={{ animation: 'camWordReveal .6s cubic-bezier(.16,1,.3,1) both', animationDelay: '300ms' }}>
               We&rsquo;re building Europe&rsquo;s most trusted marketplace for pre-owned camera equipment. Every item inspected,
               graded, and backed by warranty &mdash; so you can focus on what matters: making images.
@@ -63,7 +63,7 @@ export default function AboutPage() {
       {/* Story */}
       <div style={{ maxWidth: 760, fontSize: 15.5, lineHeight: 1.75, color: 'var(--text)' }}>
         <p style={{ margin: '0 0 18px' }}>
-          Camify started from frustration. Buying used camera gear online meant scrolling through blurry Marktplaats
+          Camera-tweedehands.nl started from frustration. Buying used camera gear online meant scrolling through blurry Marktplaats
           listings, hoping the seller was honest about that &ldquo;barely used&rdquo; lens. Selling wasn&rsquo;t any
           better &mdash; lowball offers, no-shows, and the hassle of shipping without guarantees.
         </p>
@@ -96,9 +96,9 @@ export default function AboutPage() {
 
       <div style={{ maxWidth: 760, fontSize: 15.5, lineHeight: 1.75, color: 'var(--text)' }}>
         <p style={{ margin: '0 0 24px' }}>
-          Today, we&rsquo;re expanding across Europe under the name <strong>Camify</strong>. New name, same obsession:
-          making it safe, simple, and enjoyable to buy and sell used camera gear. We inspect every single item ourselves.
-          We photograph everything. We write honest descriptions. And we stand behind every sale.
+          Today, we serve photographers across Europe — with the same obsession: making it safe, simple, and enjoyable
+          to buy and sell used camera gear. We inspect every single item ourselves. We photograph everything. We write
+          honest descriptions. And we stand behind every sale.
         </p>
 
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '20px 24px' }}>

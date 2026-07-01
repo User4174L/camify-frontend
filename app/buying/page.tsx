@@ -56,7 +56,7 @@ export default function Page() {
           <div className="svc-header__inner">
             <Breadcrumb items={[{ label: 'Help', href: '/help' }, { label: 'Buying guide' }]} />
             <div className="svc-eyebrow">Kopen</div>
-            <h1 className="svc-title">Kopen bij Camify</h1>
+            <h1 className="svc-title">Kopen bij Camera-tweedehands.nl</h1>
             <p className="svc-intro">
               Tweedehands kopen, net zo vertrouwd als nieuw — professioneel geïnspecteerd, eerlijk geprijsd en met
               garantie. Zo werkt het. Wil je juist verkopen of inruilen? Bekijk dan <Link href="/how-it-works" style={{ color: 'var(--accent)', fontWeight: 600 }}>How it works</Link>.

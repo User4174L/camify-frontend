@@ -5,10 +5,10 @@ const collections = [
   {
     ic: <><path d="M12 2 2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5M2 12l10 5 10-5" /></>,
     title: 'Aan de slag',
-    desc: 'Hoe Camify werkt — kopen, verkopen en inruilen in het kort.',
+    desc: 'Hoe Camera-tweedehands.nl werkt — kopen, verkopen en inruilen in het kort.',
     href: '/how-it-works',
     topics: [
-      { label: 'Hoe Camify werkt', href: '/how-it-works#verkopen' },
+      { label: 'Hoe Camera-tweedehands.nl werkt', href: '/how-it-works#verkopen' },
       { label: 'Kopen in 4 stappen', href: '/how-it-works#kopen' },
       { label: 'Veelgestelde vragen', href: '/faq' },
     ],
@@ -19,7 +19,7 @@ const collections = [
     desc: 'Hoe kopen werkt, conditie en gradering, betalen en het verschil tussen marge en btw.',
     href: '/buying',
     topics: [
-      { label: 'Kopen bij Camify — koopgids', href: '/buying' },
+      { label: 'Kopen bij Camera-tweedehands.nl — koopgids', href: '/buying' },
       { label: 'Conditie & gradering uitgelegd', href: '/quality-grading' },
       { label: 'Betaalmethodes', href: '/payment-methods' },
     ],
@@ -74,7 +74,7 @@ const popular = [
   { t: 'Huidige verwerkingstijden', href: '/how-it-works' },
   { t: 'Levering & verzendkosten', href: '/shipping-returns' },
   { t: 'Garantie, retour & terugbetaling', href: '/warranty-repair' },
-  { t: 'Verkopen & inruilen met Camify', href: '/how-it-works' },
+  { t: 'Verkopen & inruilen met Camera-tweedehands.nl', href: '/how-it-works' },
   { t: 'Er is een probleem met mijn bestelling', href: '/contact' },
   { t: 'Betaalmethodes', href: '/payment-methods' },
 ];
@@ -119,7 +119,7 @@ export default function HelpCenterPage() {
       <section className="help-hero">
         <div className="container">
           <div className="help-hero__inner">
-            <div className="help-hero__eyebrow">Camify Help Center</div>
+            <div className="help-hero__eyebrow">Camera-tweedehands.nl Help Center</div>
             <h1 className="help-hero__title">Hoe kunnen we je helpen?</h1>
             <p className="help-hero__sub">Vind snel antwoord over kopen, verkopen, verzending, garantie en je apparatuur.</p>
             <div className="help-search">

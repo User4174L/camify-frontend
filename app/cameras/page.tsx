@@ -621,7 +621,7 @@ export default function CamerasPage() {
         <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Frequently asked questions</h2>
         <div className="accordion">
           {[
-            { q: 'What warranty do your cameras come with?', a: 'Every camera comes with a 12-month Camify warranty covering manufacturing defects and mechanical failures. This includes shutter mechanisms, autofocus systems, and sensor issues.' },
+            { q: 'What warranty do your cameras come with?', a: 'Every camera comes with a 12-month Camera-tweedehands.nl warranty covering manufacturing defects and mechanical failures. This includes shutter mechanisms, autofocus systems, and sensor issues.' },
             { q: 'How do you determine the condition grade?', a: 'Our team inspects every camera using a standardized checklist. We check cosmetic condition, sensor cleanliness, autofocus accuracy, shutter mechanism, and all buttons and dials. The grade reflects the overall state of the camera.' },
             { q: 'Can I return a camera if I\'m not satisfied?', a: 'Yes. For online purchases you have 14 days after delivery to return the camera, no questions asked. The item must be in the same condition as received. We\'ll arrange a prepaid return label.' },
             { q: 'Are shutter counts accurate?', a: 'Yes. We read shutter counts directly from the camera\'s EXIF data using professional diagnostic tools. For Canon, we use manufacturer service software. The exact count is shown on every listing.' },

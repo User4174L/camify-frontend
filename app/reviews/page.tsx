@@ -13,7 +13,7 @@ export default function ReviewsPage() {
       related={[
         { label: 'How it works', desc: 'Verkopen, inruilen en kopen — stap voor stap.', href: '/how-it-works' },
         { label: 'Quality & grading', desc: 'Hoe we conditie bepalen en testen.', href: '/quality-grading' },
-        { label: 'About us', desc: 'Het verhaal achter Camify.', href: '/about' },
+        { label: 'About us', desc: 'Het verhaal achter Camera-tweedehands.nl.', href: '/about' },
       ]}
     >
       {/* Score bovenaan */}

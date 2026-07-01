@@ -83,7 +83,7 @@ export default function Page() {
       image="/images/hero-photographer-2.jpg"
       intro="Of je nu koopt, verkoopt of inruilt: we beoordelen de staat van elk item duidelijk en eerlijk, in vijf gedetailleerde conditieniveaus. Zo weet je precies wat je koopt."
       related={[
-        { label: 'Buying guide', desc: 'Hoe kopen bij Camify werkt — van listing tot levering.', href: '/buying' },
+        { label: 'Buying guide', desc: 'Hoe kopen bij Camera-tweedehands.nl werkt — van listing tot levering.', href: '/buying' },
         { label: 'How it works', desc: 'Verkopen en inruilen — stap voor stap.', href: '/how-it-works' },
         { label: 'Warranty & repair', desc: 'Minimaal 12 maanden garantie en reparaties.', href: '/warranty-repair' },
       ]}

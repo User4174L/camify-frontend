@@ -1314,7 +1314,7 @@ function CheckoutPageInner() {
       <div style={{ background: '#fff', borderBottom: `1px solid ${CSS.border}`, padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-            <img src={assetPath('/images/logo.png')} alt="Camify" style={{ height: 36, width: 36, objectFit: 'contain' }} />
+            <img src={assetPath('/images/logo-icon.png')} alt="Camera-tweedehands.nl" style={{ height: 36, width: 36, objectFit: 'contain' }} />
           </Link>
           <Link href="/" style={{ fontSize: '.8rem', color: CSS.textMuted, textDecoration: 'none', marginLeft: 16 }}>
             &larr; Terug naar winkel
