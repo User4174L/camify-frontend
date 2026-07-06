@@ -8,6 +8,7 @@ import Breadcrumb from '@/components/layout/Breadcrumb';
 import ProductGrid from '@/components/product/ProductGrid';
 import QuickView from '@/components/product/QuickView';
 import { products } from '@/data/products';
+import { padBrandProducts } from '@/data/brand-demo-products';
 
 /* ── Filter helpers ── */
 function matchesPriceRange(price: number, range: string): boolean {
@@ -25,6 +26,15 @@ const categoryFilters = [
   { key: 'lenses', label: 'Lenses', image: '/images/canon-rf-24-70mm-f28-l-is-usm.jpg' },
   { key: 'other', label: 'Other', image: '/images/dji-mavic-2-pro.jpg' },
 ];
+
+const BRAND_HERO_IMAGES: Record<string, string> = {
+  canon: '/images/canon-r5.jpg',
+  nikon: '/images/nikon-z8.jpg',
+  sony: '/images/sony-a1.jpg',
+  fujifilm: '/images/fujifilm-x-t4.jpg',
+  hasselblad: '/images/hasselblad-x2d-100c.jpg',
+  dji: '/images/dji-mavic-2-pro.jpg',
+};
 
 const priceFilters = ['Under €500', '€500 – €1,000', '€1,000 – €2,000', '€2,000 – €5,000', '€5,000+'];
 const conditionFilters = ['As New', 'Excellent', 'Good', 'Used', 'Heavily Used'];
@@ -94,7 +104,11 @@ export default function BrandPage() {
   const params = useParams();
   const brandSlug = params.brand as string;
   const brandName = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
-  const brandProducts = products.filter(p => p.brand.toLowerCase() === brandSlug.toLowerCase());
+  const brandProducts = padBrandProducts(
+    products.filter(p => p.brand.toLowerCase() === brandSlug.toLowerCase()),
+    brandName,
+    16,
+  );
 
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState('relevance');
@@ -161,7 +175,9 @@ export default function BrandPage() {
   const firstHalf = paginatedProducts.slice(0, 8);
   const secondHalf = paginatedProducts.slice(8);
 
-  const quickViewProduct = quickViewId ? products.find(p => p.id === quickViewId) ?? null : null;
+  const quickViewProduct = quickViewId
+    ? brandProducts.find(p => p.id === quickViewId) ?? products.find(p => p.id === quickViewId) ?? null
+    : null;
 
   const cameraCount = brandProducts.filter(p => p.category === 'cameras').length;
   const lensCount = brandProducts.filter(p => p.category === 'lenses').length;
@@ -169,6 +185,8 @@ export default function BrandPage() {
   const catCounts: Record<string, number> = { all: brandProducts.length, cameras: cameraCount, lenses: lensCount, other: otherCount };
 
   const faqs = getBrandFaqs(brandName);
+  const brandHeroImage =
+    BRAND_HERO_IMAGES[brandSlug.toLowerCase()] ?? brandProducts[0]?.image ?? '/images/hero-photographer-1.jpg';
 
   return (
     <div className="container">
@@ -177,8 +195,9 @@ export default function BrandPage() {
         { label: brandName },
       ]} />
 
-      {/* Title + SEO intro */}
-      <div style={{ marginBottom: 28 }}>
+      {/* Brand header: text + category tiles left, brand image right */}
+      <div style={{ display: 'flex', gap: 32, alignItems: 'stretch', flexWrap: 'wrap', marginBottom: 28 }}>
+      <div style={{ flex: '1.3 1 460px', minWidth: 320 }}>
         <h1 className="section__title" style={{ marginBottom: 12 }}>
           Premium Used {brandName} Gear
         </h1>
@@ -211,10 +230,9 @@ export default function BrandPage() {
             Whether you&apos;re upgrading your current setup or looking for a reliable backup, our range of used {brandName} equipment covers every need and budget. All products come with detailed condition reports and are covered by our comprehensive warranty program. We ship across Europe with fast delivery and easy 14-day returns for online purchases.
           </p>
         )}
-      </div>
 
-      {/* Category tiles (square buttons with product images like cameras page) */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
+        {/* Category tiles (square buttons with product images like cameras page) */}
+        <div style={{ display: 'flex', gap: 12, marginTop: 20, flexWrap: 'wrap' }}>
         {categoryFilters.map(cat => {
           const isActive = activeCategory === cat.key;
           return (
@@ -271,6 +289,46 @@ export default function BrandPage() {
             </button>
           );
         })}
+        </div>
+      </div>
+
+      {/* Brand visual right of the text */}
+      <div
+        style={{
+          flex: '1 1 320px',
+          minWidth: 280,
+          minHeight: 280,
+          position: 'relative',
+          borderRadius: 12,
+          overflow: 'hidden',
+          border: '1.5px solid var(--border)',
+          background: 'var(--bg-subtle, #f5f5f5)',
+        }}
+      >
+        <Image
+          src={brandHeroImage}
+          alt={`${brandName} equipment`}
+          fill
+          sizes="(max-width: 900px) 100vw, 40vw"
+          style={{ objectFit: 'cover' }}
+        />
+        <span
+          style={{
+            position: 'absolute',
+            top: 14,
+            left: 14,
+            background: '#fff',
+            border: '1px solid var(--border)',
+            borderRadius: 999,
+            padding: '5px 14px',
+            fontSize: 13,
+            fontWeight: 700,
+            color: '#1a1a2e',
+          }}
+        >
+          {brandName}
+        </span>
+      </div>
       </div>
 
       {/* Filter bar (dropdown style like cameras page) */}
