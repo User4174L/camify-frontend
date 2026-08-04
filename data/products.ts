@@ -400,6 +400,8 @@ export const searchProducts: SearchProduct[] = [
   { slug: 'nikon-z50', title: 'Nikon Z50', image: '/images/nikon-z8.jpg', stock: '4 in stock', keywords: ['nikon', 'z50', 'aps-c', 'mirrorless'], priceMin: 699, priceMax: 899 },
   { slug: 'nikon-d850', title: 'Nikon D850', image: '/images/nikon-z8.jpg', stock: '3 in stock', keywords: ['nikon', 'd850', 'dslr', 'full frame'], priceMin: 1499, priceMax: 1899 },
   { slug: 'nikon-d3200', title: 'Nikon D3200', image: '/images/nikon-z8.jpg', stock: '2 in stock', keywords: ['nikon', 'd3200', 'dslr', 'aps-c'] },
+  { slug: 'nikon-z-50mm-f18-s', title: 'Nikon Z 50mm f/1.8 S', image: '/images/nikon-z8.jpg', stock: '4 in stock', keywords: ['nikon', '50mm', '50', 'z', 'prime', 'lens', '1.8', 'f/1.8'], priceMin: 379, priceMax: 449 },
+  { slug: 'nikon-af-s-500mm-f56e-pf', title: 'Nikon AF-S 500mm f/5.6E PF ED VR', image: '/images/nikon-z8.jpg', stock: '2 in stock', keywords: ['nikon', '500mm', '500', 'telephoto', 'prime', 'lens', '5.6', 'pf'], priceMin: 2499, priceMax: 2799 },
   { slug: 'nikon-z-24-70mm-f28-s', title: 'Nikon Z 24-70mm f/2.8 S', image: '/images/nikon-z8.jpg', stock: '3 in stock', keywords: ['nikon', '24-70', '24-70mm', 'z', 'zoom', 'lens', '2.8', 'f/2.8'], priceMin: 1799, priceMax: 2099 },
   { slug: 'nikon-z-70-200mm-f28-s', title: 'Nikon Z 70-200mm f/2.8 S', image: '/images/nikon-z8.jpg', stock: '2 in stock', keywords: ['nikon', '70-200', '70-200mm', 'z', 'telephoto', 'zoom', 'lens', '2.8', 'f/2.8'], priceMin: 1999, priceMax: 2399 },
   { slug: 'sony-a7r-v', title: 'Sony A7R V', image: '/images/sony-a7r-v.jpg', stock: '2 in stock', keywords: ['sony', 'a7r', 'a7rv', 'a7r v', '61mp', 'high-res'] },

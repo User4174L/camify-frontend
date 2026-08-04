@@ -68,11 +68,28 @@ function tokenize(s: string): string[] {
   return normalize(s).split(' ').filter(Boolean);
 }
 
-// Korte tokens (1-2 tekens: R, M, Z8-los, 'a1') alleen als heel woord matchen — nooit als
-// substring, anders matcht 'r' elk product met een r erin. Het laatste token mag tijdens het
-// typen wel prefix zijn ('canon eos r' -> R5, R6, R10). Langere tokens matchen als substring
-// binnen de tekst ('320' vindt 'd3200').
+// Woord-componenten voor getal-matching: het woord zelf, range-delen ('24-105' -> 24, 105)
+// en ingebedde getallen in modelwoorden ('d3200' -> 3200).
+function numberComponents(w: string): string[] {
+  return [w, ...w.split('-'), ...(w.match(/\d+(?:\.\d+)?/g) ?? [])];
+}
+
+// Uitsluiten is net zo belangrijk als vinden:
+// - Getallen zijn EXACT: '50' matcht 50(mm) maar nooit 500, 150 of 1850. Wel op component-
+//   niveau: '105' vindt '24-105', '3200' vindt 'd3200'. Alleen het laatste token mag als
+//   getal-prefix doorgroeien tijdens het typen ('nikon 50|' toont ook 500mm, tot het
+//   volgende teken dat corrigeert).
+// - Korte tokens (1-2 tekens: R, M, 'a1') alleen als heel woord — nooit als substring,
+//   anders matcht 'r' elk product met een r erin. Laatste token mag prefix zijn
+//   ('canon eos r' -> R5, R6, R10).
+// - Langere teksttokens matchen als substring binnen de tekst.
 function tokenMatches(token: string, hay: string, hayWords: string[], isLast: boolean): boolean {
+  if (/^\d+(\.\d+)?$/.test(token)) {
+    return hayWords.some(w => {
+      const comps = numberComponents(w);
+      return comps.includes(token) || (isLast && comps.some(c => c.startsWith(token)));
+    });
+  }
   if (token.length <= 2) {
     return hayWords.some(w => w === token || (isLast && w.startsWith(token)));
   }
