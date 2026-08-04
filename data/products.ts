@@ -387,6 +387,7 @@ export const searchProducts: SearchProduct[] = [
   { slug: 'canon-rf-24-70mm-f28-l-is-usm', title: 'Canon RF 24-70mm f/2.8L IS USM', image: '/images/canon-rf-24-70.jpg', stock: '3 in stock', keywords: ['canon', '24-70', '24-70mm', 'rf', 'zoom', 'lens'] },
   { slug: 'canon-rf-24-105mm-f4-l-is-usm', title: 'Canon RF 24-105mm f/4L IS USM', image: '/images/canon-rf-24-70.jpg', stock: '4 in stock', keywords: ['canon', '24-105', '24-105mm', 'rf', 'zoom', 'lens'], priceMin: 899, priceMax: 1149 },
   { slug: 'canon-rf-24-240mm-f4-63-is-usm', title: 'Canon RF 24-240mm f/4-6.3 IS USM', image: '/images/canon-rf-24-70.jpg', stock: '2 in stock', keywords: ['canon', '24-240', '24-240mm', 'rf', 'zoom', 'lens'], priceMin: 599, priceMax: 799 },
+  { slug: 'canon-eos-r', title: 'Canon EOS R', image: '/images/canon-r5.jpg', stock: '2 in stock', keywords: ['canon', 'eos', 'eos r', 'full frame', 'mirrorless'], priceMin: 749, priceMax: 899 },
   { slug: 'canon-eos-r6', title: 'Canon EOS R6', image: '/images/canon-r5.jpg', stock: '5 in stock', keywords: ['canon', 'r6', 'eos r6', 'full frame', 'mirrorless'], priceMin: 1499, priceMax: 1799 },
   { slug: 'canon-eos-r7', title: 'Canon EOS R7', image: '/images/canon-r5.jpg', stock: '4 in stock', keywords: ['canon', 'r7', 'eos r7', 'aps-c', 'mirrorless'], priceMin: 1099, priceMax: 1349 },
   { slug: 'canon-eos-r8', title: 'Canon EOS R8', image: '/images/canon-r5.jpg', stock: '3 in stock', keywords: ['canon', 'r8', 'eos r8', 'full frame', 'mirrorless'], priceMin: 1199, priceMax: 1449 },

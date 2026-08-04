@@ -195,7 +195,11 @@ function useSearch(query: string) {
       .map(({ p, v }) => makeVariant(p, v));
   }
 
-  const filteredAlternatives = alternatives.filter(s2 => s2.inStock).map(s2 => s2.p).slice(0, 5);
+  const altInStock = alternatives.filter(s2 => s2.inStock).map(s2 => s2.p).slice(0, 5);
+  const filteredAlternatives = altInStock;
+  // OOS-alternatieven vullen aan (duidelijk als niet-op-voorraad gestyled, met Notify)
+  const filteredAlternativesOos = alternatives.filter(s2 => !s2.inStock).map(s2 => s2.p)
+    .slice(0, Math.max(0, 5 - altInStock.length));
 
   // In-stock altijd eerst; met een SKU-sectie erbij max 5 producten, anders 8
   const productCap = filteredVariants.length > 0 ? 5 : 8;
@@ -211,9 +215,9 @@ function useSearch(query: string) {
   // Blog niet in dit voorbeeld (eventueel later als eigen gesegmenteerde groep)
   const filteredBlog = searchBlogPosts.slice(0, 0);
 
-  const hasResults = filteredProducts.length > 0 || filteredOos.length > 0 || filteredVariants.length > 0 || filteredBlog.length > 0 || filteredAlternatives.length > 0;
+  const hasResults = filteredProducts.length > 0 || filteredOos.length > 0 || filteredVariants.length > 0 || filteredBlog.length > 0 || filteredAlternatives.length > 0 || filteredAlternativesOos.length > 0;
 
-  return { filteredProducts, filteredOos, filteredVariants, filteredBlog, filteredAlternatives, hasResults, skuOnTop };
+  return { filteredProducts, filteredOos, filteredVariants, filteredBlog, filteredAlternatives, filteredAlternativesOos, hasResults, skuOnTop };
 }
 
 // Bij precies één beschikbare variant: direct door naar de variantpagina (scheelt een klik
@@ -232,6 +236,7 @@ function SearchDropdown({
   filteredVariants,
   filteredBlog,
   filteredAlternatives,
+  filteredAlternativesOos,
   hasResults,
   skuOnTop,
 }: {
@@ -243,6 +248,7 @@ function SearchDropdown({
   filteredVariants: VariantResult[];
   filteredBlog: ReturnType<typeof useSearch>['filteredBlog'];
   filteredAlternatives: ReturnType<typeof useSearch>['filteredAlternatives'];
+  filteredAlternativesOos: ReturnType<typeof useSearch>['filteredAlternativesOos'];
   hasResults: boolean;
   skuOnTop: boolean;
 }) {
@@ -397,8 +403,9 @@ function SearchDropdown({
         </>
       )}
 
-      {/* 5. Alternatieven-vangnet: alleen bij nul echte resultaten, altijd expliciet gelabeld */}
-      {filteredAlternatives.length > 0 && (
+      {/* 5. Alternatieven-vangnet: alleen bij nul echte resultaten, altijd expliciet gelabeld;
+          in stock eerst, OOS als herkenbare aanvulling met Notify */}
+      {(filteredAlternatives.length > 0 || filteredAlternativesOos.length > 0) && (
         <div className="search-dd__section">
           <div className="search-dd__section-title">
             No exact match for &ldquo;{query}&rdquo; — close alternatives
@@ -431,6 +438,21 @@ function SearchDropdown({
               </Link>
             );
           })}
+          {filteredAlternativesOos.map(p => (
+            <Link key={p.slug} href={`/product/${p.slug}`} className="search-dd__item" onClick={() => setIsOpen(false)}>
+              <div className="search-dd__thumb" style={{ opacity: 0.4 }}>
+                <img src={assetPath(p.image)} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'grayscale(100%)' }} />
+              </div>
+              <div className="search-dd__info" style={{ opacity: 0.5 }}>
+                <div className="search-dd__title">{p.title}</div>
+                <div className="search-dd__meta" style={{ color: '#9ca3af' }}>Out of stock</div>
+              </div>
+              <span style={{
+                fontSize: 11, fontWeight: 700, color: '#fff', background: '#E8692A',
+                padding: '4px 10px', borderRadius: 4, whiteSpace: 'nowrap', alignSelf: 'center', flexShrink: 0,
+              }}>Notify</span>
+            </Link>
+          ))}
         </div>
       )}
 
@@ -464,7 +486,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  const { filteredProducts, filteredOos, filteredVariants, filteredBlog, filteredAlternatives, hasResults, skuOnTop } = useSearch(query);
+  const { filteredProducts, filteredOos, filteredVariants, filteredBlog, filteredAlternatives, filteredAlternativesOos, hasResults, skuOnTop } = useSearch(query);
 
   if (mobile) {
     return (
@@ -498,6 +520,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
             filteredVariants={filteredVariants}
             filteredBlog={filteredBlog}
             filteredAlternatives={filteredAlternatives}
+            filteredAlternativesOos={filteredAlternativesOos}
             hasResults={hasResults}
             skuOnTop={skuOnTop}
           />
@@ -530,6 +553,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
           filteredVariants={filteredVariants}
           filteredBlog={filteredBlog}
           filteredAlternatives={filteredAlternatives}
+          filteredAlternativesOos={filteredAlternativesOos}
           hasResults={hasResults}
           skuOnTop={skuOnTop}
         />
