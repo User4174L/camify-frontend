@@ -147,29 +147,41 @@ function useSearch(query: string) {
 
   // Producten: token-subset match — alle getypte woorden moeten voorkomen, nooit andersom
   // (weggelaten woorden als EF/STM verbergen niets). Gerankt op relevantie + populariteit.
-  const matchWith = (fuzzy: boolean) => q.length === 0 ? [] : searchProducts
+  const matchWith = (tokens: string[], fuzzy: boolean) => q.length === 0 || tokens.length === 0 ? [] : searchProducts
     .map((p, idx) => {
       const hay = normalize(p.title + ' ' + p.keywords.join(' '));
       const hayWords = hay.split(' ');
       const titleNorm = normalize(p.title);
       const titleWords = titleNorm.split(' ');
-      const ok = qTokens.every((t, i) =>
-        tokenMatches(t, hay, hayWords, i === qTokens.length - 1)
+      const ok = tokens.every((t, i) =>
+        tokenMatches(t, hay, hayWords, i === tokens.length - 1)
         || (fuzzy && tokenMatchesFuzzy(t, hayWords)));
       if (!ok) return null;
       let score = searchProducts.length - idx; // populariteit-proxy (lijstvolgorde = best verkocht eerst)
       if (titleNorm.startsWith(q)) score += 100;                          // exacte prefix op titel
       if (titleNorm === q) score += 100;                                  // exacte naam wint altijd
-      if (qTokens[0] && titleWords[0] === qTokens[0]) score += 40;        // merk-match -> eigen merk eerst (Canon vóór Sigma)
-      score += qTokens.filter(t => titleWords.some(w => w.startsWith(t))).length * 5;
+      if (tokens[0] && titleWords[0] === tokens[0]) score += 40;          // merk-match -> eigen merk eerst (Canon vóór Sigma)
+      score += tokens.filter(t => titleWords.some(w => w.startsWith(t))).length * 5;
       return { p, score, inStock: p.stock !== 'Out of stock' };
     })
     .filter((x): x is { p: (typeof searchProducts)[number]; score: number; inStock: boolean } => x !== null)
     .sort((a, b) => b.score - a.score);
 
   // Eerst exact; levert dat niets op, dan één fuzzy-herkansing (typo-vangnet: hasslblad -> hasselblad)
-  let scored = matchWith(false);
-  if (scored.length === 0 && qTokens.some(t => t.length >= 4)) scored = matchWith(true);
+  let scored = matchWith(qTokens, false);
+  if (scored.length === 0 && qTokens.some(t => t.length >= 4)) scored = matchWith(qTokens, true);
+
+  // Alternatieven-vangnet bij NUL resultaten — betrouwbaar, dus alleen door het minst
+  // onderscheidende token (diafragma-decimaal) te laten vallen. Merk en brandpunt blijven
+  // altijd staan: 'nikon 50 1.4' -> alternatief Nikon 50mm 1.8; nooit ineens Canon of 40mm.
+  // Zichtbaar als eigen sectie, nooit stil door echte resultaten gemengd.
+  let alternatives: typeof scored = [];
+  if (scored.length === 0 && qTokens.length >= 2) {
+    const altTokens = qTokens.filter(t => !/^\d+\.\d+$/.test(t));
+    if (altTokens.length > 0 && altTokens.length < qTokens.length) {
+      alternatives = matchWith(altTokens, false);
+    }
+  }
 
   // SKU-treffers (alleen bij cijfer-queries): exact > begint-met > bevat, over alle varianten
   let filteredVariants: VariantResult[] = [];
@@ -182,6 +194,8 @@ function useSearch(query: string) {
       .slice(0, skuOnTop ? 8 : 5)
       .map(({ p, v }) => makeVariant(p, v));
   }
+
+  const filteredAlternatives = alternatives.filter(s2 => s2.inStock).map(s2 => s2.p).slice(0, 5);
 
   // In-stock altijd eerst; met een SKU-sectie erbij max 5 producten, anders 8
   const productCap = filteredVariants.length > 0 ? 5 : 8;
@@ -197,9 +211,9 @@ function useSearch(query: string) {
   // Blog niet in dit voorbeeld (eventueel later als eigen gesegmenteerde groep)
   const filteredBlog = searchBlogPosts.slice(0, 0);
 
-  const hasResults = filteredProducts.length > 0 || filteredOos.length > 0 || filteredVariants.length > 0 || filteredBlog.length > 0;
+  const hasResults = filteredProducts.length > 0 || filteredOos.length > 0 || filteredVariants.length > 0 || filteredBlog.length > 0 || filteredAlternatives.length > 0;
 
-  return { filteredProducts, filteredOos, filteredVariants, filteredBlog, hasResults, skuOnTop };
+  return { filteredProducts, filteredOos, filteredVariants, filteredBlog, filteredAlternatives, hasResults, skuOnTop };
 }
 
 // Bij precies één beschikbare variant: direct door naar de variantpagina (scheelt een klik
@@ -217,6 +231,7 @@ function SearchDropdown({
   filteredOos,
   filteredVariants,
   filteredBlog,
+  filteredAlternatives,
   hasResults,
   skuOnTop,
 }: {
@@ -227,6 +242,7 @@ function SearchDropdown({
   filteredOos: ReturnType<typeof useSearch>['filteredOos'];
   filteredVariants: VariantResult[];
   filteredBlog: ReturnType<typeof useSearch>['filteredBlog'];
+  filteredAlternatives: ReturnType<typeof useSearch>['filteredAlternatives'];
   hasResults: boolean;
   skuOnTop: boolean;
 }) {
@@ -381,6 +397,43 @@ function SearchDropdown({
         </>
       )}
 
+      {/* 5. Alternatieven-vangnet: alleen bij nul echte resultaten, altijd expliciet gelabeld */}
+      {filteredAlternatives.length > 0 && (
+        <div className="search-dd__section">
+          <div className="search-dd__section-title">
+            No exact match for &ldquo;{query}&rdquo; — close alternatives
+          </div>
+          {filteredAlternatives.map(p => {
+            const sv = singleVariantFor(p.slug);
+            const range = rangeFor(p);
+            return (
+              <Link
+                key={p.slug}
+                href={sv ? `/product/${p.slug}/${sv.sku}` : `/product/${p.slug}`}
+                className="search-dd__item"
+                onClick={() => setIsOpen(false)}
+              >
+                <div className="search-dd__thumb">
+                  <img src={assetPath(p.image)} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div className="search-dd__info">
+                  <div className="search-dd__title">{p.title}</div>
+                  <div className="search-dd__meta" style={{ color: '#16a34a' }}>{sv ? '1 in stock' : p.stock}</div>
+                </div>
+                <div className="search-dd__price" style={{ textAlign: 'right', lineHeight: 1.3 }}>
+                  {sv
+                    ? <>&euro;{sv.price.toLocaleString('nl-NL')}</>
+                    : range.min === range.max
+                      ? <>&euro;{range.min.toLocaleString('nl-NL')}</>
+                      : <>&euro;{range.min.toLocaleString('nl-NL')} – &euro;{range.max.toLocaleString('nl-NL')}</>
+                  }
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+
       {!hasResults && (
         <div style={{ padding: '24px 20px', textAlign: 'center', color: '#9ca3af', fontSize: 13 }}>
           No results for &ldquo;{query}&rdquo;
@@ -411,7 +464,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  const { filteredProducts, filteredOos, filteredVariants, filteredBlog, hasResults, skuOnTop } = useSearch(query);
+  const { filteredProducts, filteredOos, filteredVariants, filteredBlog, filteredAlternatives, hasResults, skuOnTop } = useSearch(query);
 
   if (mobile) {
     return (
@@ -444,6 +497,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
             filteredOos={filteredOos}
             filteredVariants={filteredVariants}
             filteredBlog={filteredBlog}
+            filteredAlternatives={filteredAlternatives}
             hasResults={hasResults}
             skuOnTop={skuOnTop}
           />
@@ -475,6 +529,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
           filteredOos={filteredOos}
           filteredVariants={filteredVariants}
           filteredBlog={filteredBlog}
+          filteredAlternatives={filteredAlternatives}
           hasResults={hasResults}
           skuOnTop={skuOnTop}
         />
