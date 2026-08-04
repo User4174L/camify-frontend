@@ -164,7 +164,7 @@ function useSearch(query: string) {
   // Producten: token-subset match — alle getypte woorden moeten voorkomen, nooit andersom
   // (weggelaten woorden als EF/STM verbergen niets). Gerankt op relevantie + populariteit.
   const matchWith = (tokens: string[], fuzzy: boolean) => q.length === 0 || tokens.length === 0 ? [] : searchProducts
-    .map((p, idx) => {
+    .map(p => {
       const hay = normalize(p.title + ' ' + p.keywords.join(' '));
       const hayWords = hay.split(' ');
       const titleNorm = normalize(p.title);
@@ -173,7 +173,10 @@ function useSearch(query: string) {
         tokenMatches(t, hay, hayWords, i === tokens.length - 1)
         || (fuzzy && tokenMatchesFuzzy(t, hayWords)));
       if (!ok) return null;
-      let score = searchProducts.length - idx; // populariteit-proxy (lijstvolgorde = best verkocht eerst)
+      // Fase 1: geen populariteitsdata -> binnen gelijke relevantie alfabetisch (natuurlijke
+      // sortering, zie tie-breaker onderaan). Fase 2: eigen sell-velocity / marktdata (MPB)
+      // als primaire volgorde, evt. voorraad/marge als extra gewicht.
+      let score = 0;
       if (titleNorm.startsWith(q)) score += 100;                          // exacte prefix op titel
       if (titleNorm === q) score += 100;                                  // exacte naam wint altijd
       if (tokens[0] && titleWords[0] === tokens[0]) score += 40;          // merk-match -> eigen merk eerst (Canon vóór Sigma)
@@ -182,7 +185,8 @@ function useSearch(query: string) {
       return { p, score, inStock: p.stock !== 'Out of stock' };
     })
     .filter((x): x is { p: (typeof searchProducts)[number]; score: number; inStock: boolean } => x !== null)
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => b.score - a.score
+      || a.p.title.localeCompare(b.p.title, undefined, { numeric: true, sensitivity: 'base' }));
 
   // Eerst exact; levert dat niets op, dan één fuzzy-herkansing (typo-vangnet: hasslblad -> hasselblad)
   let scored = matchWith(qTokens, false);
