@@ -119,6 +119,22 @@ function tokenMatchesFuzzy(token: string, hayWords: string[]): boolean {
   return hayWords.some(w => w.length >= 3 && editDistance(token, w) <= maxD);
 }
 
+// Geschreven volgorde krijgt voorrang: staan de querywoorden als aaneengesloten woordreeks
+// in de titel ('canon eos r' in 'Canon EOS R5'), dan wint dat van los verspreide treffers
+// ('Canon EF-EOS R Mount Adapter' matcht wel, maar zonder frase-bonus -> onderaan).
+function phraseBonus(tokens: string[], titleWords: string[]): number {
+  outer: for (let i = 0; i + tokens.length <= titleWords.length; i++) {
+    for (let j = 0; j < tokens.length; j++) {
+      const w = titleWords[i + j];
+      const t = tokens[j];
+      const last = j === tokens.length - 1;
+      if (!(w === t || (last && w.startsWith(t)))) continue outer;
+    }
+    return 60;
+  }
+  return 0;
+}
+
 function makeVariant(p: (typeof products)[number], v: (typeof products)[number]['variants'][number]): VariantResult {
   return {
     productSlug: p.slug,
@@ -161,6 +177,7 @@ function useSearch(query: string) {
       if (titleNorm.startsWith(q)) score += 100;                          // exacte prefix op titel
       if (titleNorm === q) score += 100;                                  // exacte naam wint altijd
       if (tokens[0] && titleWords[0] === tokens[0]) score += 40;          // merk-match -> eigen merk eerst (Canon vóór Sigma)
+      score += phraseBonus(tokens, titleWords);                           // geschreven volgorde wint van verspreide treffers
       score += tokens.filter(t => titleWords.some(w => w.startsWith(t))).length * 5;
       return { p, score, inStock: p.stock !== 'Out of stock' };
     })

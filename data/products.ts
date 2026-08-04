@@ -413,6 +413,7 @@ export const searchProducts: SearchProduct[] = [
   { slug: 'sony-fe-70-200mm-f28-gm-oss-ii', title: 'Sony FE 70-200mm f/2.8 GM OSS II', image: '/images/sony-70-200-gm-ii.jpg', stock: '3 in stock', keywords: ['sony', '70-200', '70-200mm', 'gm', 'telephoto', 'lens'] },
   { slug: 'canon-eos-r6-ii', title: 'Canon EOS R6 II', image: '/images/canon-r6-ii.jpg', stock: 'Out of stock', keywords: ['canon', 'r6', 'r6 ii', 'eos r6', 'full frame', 'mirrorless'] },
   { slug: 'sony-fe-135mm-f18-gm', title: 'Sony FE 135mm f/1.8 GM', image: '/images/sony-135-gm.jpg', stock: 'Out of stock', keywords: ['sony', '135mm', '135', 'gm', 'portrait', 'lens', 'prime', 'fe 135mm', 'f/1.8', 'sony fe 135mm f/1.8 gm'] },
+  { slug: 'canon-ef-eos-r-mount-adapter', title: 'Canon EF-EOS R Mount Adapter', image: '/images/canon-rf-24-70.jpg', stock: '6 in stock', keywords: ['canon', 'adapter', 'mount', 'ef', 'ef-eos r'], priceMin: 79, priceMax: 109 },
   { slug: 'leica-m11', title: 'Leica M11', image: '/images/leica-m11.jpg', stock: 'Out of stock', keywords: ['leica', 'm11', 'm 11', 'rangefinder', 'full frame'] },
 ];
 
