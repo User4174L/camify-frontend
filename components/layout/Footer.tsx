@@ -57,6 +57,13 @@ export default function Footer() {
               {company.map((l) => (
                 <Link key={l.label} href={l.href} className="footer__link">{l.label}</Link>
               ))}
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('ct:open-cookie-preferences'))}
+                className="footer__link"
+                style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', font: 'inherit' }}
+              >
+                Cookie preferences
+              </button>
             </div>
           </div>
 

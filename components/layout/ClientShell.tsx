@@ -10,6 +10,7 @@ import UspBar from '@/components/layout/UspBar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/cart/CartDrawer';
 import UpsellPopup from '@/components/cart/UpsellPopup';
+import CookieConsent from '@/components/ui/CookieConsent';
 
 const SITE_PIN = '4174';
 const SKIP_PIN = process.env.NEXT_PUBLIC_SKIP_PIN === '1';
@@ -76,6 +77,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
       <main>{children}</main>
       {!isAdmin && <Footer />}
       <CartDrawer />
+      <CookieConsent />
       {lastAddedItem && lastAddedProduct && (
         <UpsellPopup
           item={lastAddedItem}
