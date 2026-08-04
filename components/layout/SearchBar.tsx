@@ -50,12 +50,13 @@ function rangeFor(p: { slug: string; priceMin?: number; priceMax?: number }): { 
     ?? (p.priceMin != null ? { min: p.priceMin, max: p.priceMax ?? p.priceMin } : mockRange(p.slug));
 }
 
-// Normaliseert notaties zodat f/2.8 = f2.8 = 2.8, 50mm = 50, hoofdletters/diakritieken genegeerd
+// Normaliseert notaties zodat f/2.8 = f2.8 = 2.8 = 2,8, 50mm = 50, hoofdletters/diakritieken genegeerd
 function normalize(s: string): string {
   return s
     .toLowerCase()
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/ƒ/g, 'f')
+    .replace(/(\d),(\d)/g, '$1.$2')  // NL-komma: 1,4 -> 1.4
     .replace(/f\/?(?=\d)/g, '')      // f/2.8, f2.8 -> 2.8
     .replace(/(\d)\s*mm\b/g, '$1')   // 50mm -> 50
     .replace(/[\/,]/g, ' ')
@@ -65,6 +66,40 @@ function normalize(s: string): string {
 
 function tokenize(s: string): string[] {
   return normalize(s).split(' ').filter(Boolean);
+}
+
+// Korte tokens (1-2 tekens: R, M, Z8-los, 'a1') alleen als heel woord matchen — nooit als
+// substring, anders matcht 'r' elk product met een r erin. Het laatste token mag tijdens het
+// typen wel prefix zijn ('canon eos r' -> R5, R6, R10). Langere tokens matchen als substring
+// binnen de tekst ('320' vindt 'd3200').
+function tokenMatches(token: string, hay: string, hayWords: string[], isLast: boolean): boolean {
+  if (token.length <= 2) {
+    return hayWords.some(w => w === token || (isLast && w.startsWith(token)));
+  }
+  return hay.includes(token);
+}
+
+// Kleine edit-distance voor typo-tolerantie (Hasslblad -> Hasselblad)
+function editDistance(a: string, b: string): number {
+  if (Math.abs(a.length - b.length) > 2) return 3;
+  const prev = new Array(b.length + 1).fill(0).map((_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let diag = prev[0];
+    prev[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const tmp = prev[j];
+      prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1));
+      diag = tmp;
+    }
+  }
+  return prev[b.length];
+}
+
+// Fuzzy alleen als vangnet: tokens van 4+ tekens, afstand 1 (of 2 bij lange woorden)
+function tokenMatchesFuzzy(token: string, hayWords: string[]): boolean {
+  if (token.length < 4 || /^\d+$/.test(token)) return false;
+  const maxD = token.length >= 7 ? 2 : 1;
+  return hayWords.some(w => w.length >= 3 && editDistance(token, w) <= maxD);
 }
 
 function makeVariant(p: (typeof products)[number], v: (typeof products)[number]['variants'][number]): VariantResult {
@@ -84,26 +119,30 @@ function useSearch(query: string) {
   const raw = query.trim();
   const q = normalize(raw);
   const qTokens = tokenize(raw);
-  const isSku = /^\d{4,}$/.test(raw.replace(/\s+/g, ''));
 
-  // SKU-zoekopdracht (puur numeriek) -> alleen varianten, gematcht op SKU
-  if (isSku) {
-    const skuq = raw.replace(/\s+/g, '');
-    const variants = products
-      .flatMap(p => p.variants.filter(v => v.sku.includes(skuq)).map(v => makeVariant(p, v)))
-      .slice(0, 8);
-    return { filteredProducts: [], filteredOos: [], filteredVariants: variants, filteredBlog: [], hasResults: variants.length > 0 };
-  }
+  // Cijfer-detectie voor SKU-gedrag. Producten blijven ALTIJD meezoeken ('3200' vindt de
+  // D3200 als product), SKU-treffers komen er als eigen sectie bij:
+  //  - 3-4 cijfers: waarschijnlijk een modelnummer (D3200, A6600) -> producten boven, SKU's eronder
+  //  - 5+ cijfers: vrijwel zeker SKU-intentie (CT-SKU's zijn 5-cijferig, modelnamen nooit) -> SKU's boven
+  const digits = raw.replace(/\s+/g, '');
+  const isDigitQuery = /^\d{3,}$/.test(digits);
+  const skuOnTop = /^\d{5,}$/.test(digits);
 
-  // Producten: token-subset match (alle zoekwoorden moeten voorkomen), gerankt op relevantie + populariteit
-  const scored = q.length === 0 ? [] : searchProducts
+  // Producten: token-subset match — alle getypte woorden moeten voorkomen, nooit andersom
+  // (weggelaten woorden als EF/STM verbergen niets). Gerankt op relevantie + populariteit.
+  const matchWith = (fuzzy: boolean) => q.length === 0 ? [] : searchProducts
     .map((p, idx) => {
       const hay = normalize(p.title + ' ' + p.keywords.join(' '));
+      const hayWords = hay.split(' ');
       const titleNorm = normalize(p.title);
       const titleWords = titleNorm.split(' ');
-      if (!qTokens.every(t => hay.includes(t))) return null;
+      const ok = qTokens.every((t, i) =>
+        tokenMatches(t, hay, hayWords, i === qTokens.length - 1)
+        || (fuzzy && tokenMatchesFuzzy(t, hayWords)));
+      if (!ok) return null;
       let score = searchProducts.length - idx; // populariteit-proxy (lijstvolgorde = best verkocht eerst)
       if (titleNorm.startsWith(q)) score += 100;                          // exacte prefix op titel
+      if (titleNorm === q) score += 100;                                  // exacte naam wint altijd
       if (qTokens[0] && titleWords[0] === qTokens[0]) score += 40;        // merk-match -> eigen merk eerst (Canon vóór Sigma)
       score += qTokens.filter(t => titleWords.some(w => w.startsWith(t))).length * 5;
       return { p, score, inStock: p.stock !== 'Out of stock' };
@@ -111,41 +150,46 @@ function useSearch(query: string) {
     .filter((x): x is { p: (typeof searchProducts)[number]; score: number; inStock: boolean } => x !== null)
     .sort((a, b) => b.score - a.score);
 
-  // In-stock altijd eerst (vult de dropdown tot 8)
-  const inStockMatches = scored.filter(s => s.inStock);
-  const filteredProducts = inStockMatches.map(s => s.p).slice(0, 8);
+  // Eerst exact; levert dat niets op, dan één fuzzy-herkansing (typo-vangnet: hasslblad -> hasselblad)
+  let scored = matchWith(false);
+  if (scored.length === 0 && qTokens.some(t => t.length >= 4)) scored = matchWith(true);
 
-  // OOS pas tonen als de in-stock resultaten de dropdown niet vullen (< 8); vul dan de rest aan.
-  // Bij een brede/vage query (bijv. alleen "c") met 8+ in-stock matches dus géén OOS.
-  const oosSlots = Math.max(0, 8 - filteredProducts.length);
+  // SKU-treffers (alleen bij cijfer-queries): exact > begint-met > bevat, over alle varianten
+  let filteredVariants: VariantResult[] = [];
+  if (isDigitQuery) {
+    const all = products.flatMap(p => p.variants.map(v => ({ p, v })));
+    const exact = all.filter(({ v }) => v.sku === digits);
+    const starts = all.filter(({ v }) => v.sku !== digits && v.sku.startsWith(digits));
+    const contains = all.filter(({ v }) => !v.sku.startsWith(digits) && v.sku.includes(digits));
+    filteredVariants = [...exact, ...starts, ...contains]
+      .slice(0, skuOnTop ? 8 : 5)
+      .map(({ p, v }) => makeVariant(p, v));
+  }
+
+  // In-stock altijd eerst; met een SKU-sectie erbij max 5 producten, anders 8
+  const productCap = filteredVariants.length > 0 ? 5 : 8;
+  const inStockMatches = scored.filter(s => s.inStock);
+  const filteredProducts = inStockMatches.map(s => s.p).slice(0, productCap);
+
+  // OOS pas tonen als in-stock + SKU-treffers de dropdown niet vullen; vul dan aan met Notify.
+  const oosSlots = Math.max(0, 8 - filteredProducts.length - filteredVariants.length);
   const filteredOos = oosSlots > 0
     ? scored.filter(s => !s.inStock).map(s => s.p).slice(0, oosSlots)
     : [];
 
-  // Producten-only in de dropdown: de exemplaar-/conditiekeuze hoort op de productpagina
-  // (shuttercount, cosmetische opmerkingen, foto's). Varianten tonen we alleen bij een
-  // SKU-zoekopdracht (zie de SKU-branch hierboven).
-  // Reversibel: zet SHOW_VARIANTS_IN_DROPDOWN op true om bij 1-2 modellen alsnog de
-  // in-stock varianten als aanvulling te tonen (geordend op conditie best -> minder).
-  const SHOW_VARIANTS_IN_DROPDOWN = false;
-  const condOrder: Record<string, number> = { 'as-new': 0, excellent: 1, good: 2, used: 3 };
-  const narrowed = SHOW_VARIANTS_IN_DROPDOWN && inStockMatches.length > 0 && inStockMatches.length <= 2;
-  const filteredVariants: VariantResult[] = narrowed
-    ? inStockMatches
-        .flatMap(s => {
-          const prod = products.find(pp => pp.slug === s.p.slug);
-          return prod ? prod.variants.map(v => makeVariant(prod, v)) : [];
-        })
-        .sort((a, b) => (condOrder[a.condition] ?? 9) - (condOrder[b.condition] ?? 9))
-        .slice(0, Math.max(0, 8 - filteredProducts.length))
-    : [];
-
-  // Blog niet in dit voorbeeld (eventueel later)
+  // Blog niet in dit voorbeeld (eventueel later als eigen gesegmenteerde groep)
   const filteredBlog = searchBlogPosts.slice(0, 0);
 
   const hasResults = filteredProducts.length > 0 || filteredOos.length > 0 || filteredVariants.length > 0 || filteredBlog.length > 0;
 
-  return { filteredProducts, filteredOos, filteredVariants, filteredBlog, hasResults };
+  return { filteredProducts, filteredOos, filteredVariants, filteredBlog, hasResults, skuOnTop };
+}
+
+// Bij precies één beschikbare variant: direct door naar de variantpagina (scheelt een klik
+// waar niets te kiezen valt) en één prijs + '1 in stock' i.p.v. een van-tot-range.
+function singleVariantFor(slug: string) {
+  const p = products.find(pp => pp.slug === slug);
+  return p && p.variants.length === 1 ? p.variants[0] : null;
 }
 
 function SearchDropdown({
@@ -157,6 +201,7 @@ function SearchDropdown({
   filteredVariants,
   filteredBlog,
   hasResults,
+  skuOnTop,
 }: {
   query: string;
   setQuery: (q: string) => void;
@@ -166,6 +211,7 @@ function SearchDropdown({
   filteredVariants: VariantResult[];
   filteredBlog: ReturnType<typeof useSearch>['filteredBlog'];
   hasResults: boolean;
+  skuOnTop: boolean;
 }) {
   if (query.length === 0) {
     return (
@@ -180,44 +226,50 @@ function SearchDropdown({
     );
   }
 
-  return (
-    <>
-      {/* 1. Products (in stock) */}
-      {filteredProducts.length > 0 && (
-        <div className="search-dd__section">
-          <div className="search-dd__section-title">Products</div>
-          {filteredProducts.map(p => {
-            const range = rangeFor(p);
-            return (
-              <Link key={p.slug} href={`/product/${p.slug}`} className="search-dd__item" onClick={() => setIsOpen(false)}>
-                <div className="search-dd__thumb">
-                  <img src={assetPath(p.image)} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                </div>
-                <div className="search-dd__info">
-                  <div className="search-dd__title">{p.title}</div>
-                  <div className="search-dd__meta" style={{ color: '#16a34a' }}>{p.stock}</div>
-                </div>
-                {range && (
-                  <div className="search-dd__price" style={{ textAlign: 'right', lineHeight: 1.3 }}>
-                    {range.min === range.max
-                      ? <>&euro;{range.min.toLocaleString('nl-NL')}</>
-                      : <>&euro;{range.min.toLocaleString('nl-NL')} – &euro;{range.max.toLocaleString('nl-NL')}</>
-                    }
-                  </div>
-                )}
-              </Link>
-            );
-          })}
-        </div>
-      )}
+  // Producten-sectie: bij precies 1 beschikbare variant direct door naar de variantpagina
+  // met één prijs en '1 in stock' i.p.v. een van-tot-range.
+  const productsSection = filteredProducts.length > 0 && (
+    <div className="search-dd__section">
+      <div className="search-dd__section-title">Products</div>
+      {filteredProducts.map(p => {
+        const sv = singleVariantFor(p.slug);
+        const range = rangeFor(p);
+        return (
+          <Link
+            key={p.slug}
+            href={sv ? `/product/${p.slug}/${sv.sku}` : `/product/${p.slug}`}
+            className="search-dd__item"
+            onClick={() => setIsOpen(false)}
+          >
+            <div className="search-dd__thumb">
+              <img src={assetPath(p.image)} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
+            <div className="search-dd__info">
+              <div className="search-dd__title">{p.title}</div>
+              <div className="search-dd__meta" style={{ color: '#16a34a' }}>{sv ? '1 in stock' : p.stock}</div>
+            </div>
+            {sv ? (
+              <div className="search-dd__price" style={{ textAlign: 'right', lineHeight: 1.3 }}>
+                &euro;{sv.price.toLocaleString('nl-NL')}
+              </div>
+            ) : range && (
+              <div className="search-dd__price" style={{ textAlign: 'right', lineHeight: 1.3 }}>
+                {range.min === range.max
+                  ? <>&euro;{range.min.toLocaleString('nl-NL')}</>
+                  : <>&euro;{range.min.toLocaleString('nl-NL')} – &euro;{range.max.toLocaleString('nl-NL')}</>
+                }
+              </div>
+            )}
+          </Link>
+        );
+      })}
+    </div>
+  );
 
-      {/* 2. Variants */}
-      {filteredVariants.length > 0 && (
-        <>
-          {filteredProducts.length > 0 && <div className="search-dd__divider" />}
-          <div className="search-dd__section">
-            <div className="search-dd__section-title">Variants</div>
-            {filteredVariants.map(v => (
+  const variantsSection = filteredVariants.length > 0 && (
+    <div className="search-dd__section">
+      <div className="search-dd__section-title">SKU match</div>
+      {filteredVariants.map(v => (
               <Link
                 key={v.sku}
                 href={`/product/${v.productSlug}/${v.sku}`}
@@ -247,10 +299,17 @@ function SearchDropdown({
                 </div>
                 <div className="search-dd__price">&euro;{v.price.toLocaleString('nl-NL')}</div>
               </Link>
-            ))}
-          </div>
-        </>
-      )}
+      ))}
+    </div>
+  );
+
+  return (
+    <>
+      {/* 1+2. Producten en SKU-treffers — SKU's boven bij 5+ cijfers (SKU-intentie),
+          eronder bij 3-4 cijfers (waarschijnlijk een modelnummer zoals D3200) */}
+      {skuOnTop ? variantsSection : productsSection}
+      {(productsSection && variantsSection) && <div className="search-dd__divider" />}
+      {skuOnTop ? productsSection : variantsSection}
 
       {/* 3. Out of stock */}
       {filteredOos.length > 0 && (
@@ -335,7 +394,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  const { filteredProducts, filteredOos, filteredVariants, filteredBlog, hasResults } = useSearch(query);
+  const { filteredProducts, filteredOos, filteredVariants, filteredBlog, hasResults, skuOnTop } = useSearch(query);
 
   if (mobile) {
     return (
@@ -369,6 +428,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
             filteredVariants={filteredVariants}
             filteredBlog={filteredBlog}
             hasResults={hasResults}
+            skuOnTop={skuOnTop}
           />
         </div>
       </div>
@@ -399,6 +459,7 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
           filteredVariants={filteredVariants}
           filteredBlog={filteredBlog}
           hasResults={hasResults}
+          skuOnTop={skuOnTop}
         />
       </div>
     </div>
