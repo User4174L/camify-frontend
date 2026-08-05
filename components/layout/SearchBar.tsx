@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { searchProducts, searchBlogPosts, products } from '@/data/products';
 import { assetPath } from '@/lib/utils';
+import StockNotifier, { usageMetricForCategory, type UsageMetric } from '@/components/ui/StockNotifier';
 
 const popularSearches = ['Sony A1', 'Nikon Z8', 'Canon R5 II', 'Canon 70-200mm 2.8', 'Leica M11', 'Sony 24-70mm GM', 'Hasselblad', 'DJI Mavic'];
 
@@ -15,6 +16,18 @@ function conditionColor(condition: string): string {
     case 'used': return '#ca8a04';
     default: return '#6b7280';
   }
+}
+
+interface NotifyTarget {
+  title: string;
+  usageMetric: UsageMetric;
+}
+
+/* Usage metric per zoekresultaat: via de productdata als die er is, anders keyword-heuristiek */
+function usageMetricForSearchItem(slug: string, keywords: string[]): UsageMetric {
+  const p = products.find(pp => pp.slug === slug);
+  if (p) return usageMetricForCategory(p.category);
+  return keywords.includes('lens') ? 'none' : 'shutter';
 }
 
 interface VariantResult {
@@ -260,10 +273,12 @@ function SearchDropdown({
   filteredAlternativesOos,
   hasResults,
   skuOnTop,
+  onNotify,
 }: {
   query: string;
   setQuery: (q: string) => void;
   setIsOpen: (v: boolean) => void;
+  onNotify: (target: NotifyTarget) => void;
   filteredProducts: ReturnType<typeof useSearch>['filteredProducts'];
   filteredOos: ReturnType<typeof useSearch>['filteredOos'];
   filteredVariants: VariantResult[];
@@ -386,7 +401,14 @@ function SearchDropdown({
                   <div className="search-dd__title">{p.title}</div>
                   <div className="search-dd__meta" style={{ color: '#9ca3af' }}>Out of stock</div>
                 </div>
-                <span style={{
+                <span
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsOpen(false);
+                    onNotify({ title: p.title, usageMetric: usageMetricForSearchItem(p.slug, p.keywords) });
+                  }}
+                  style={{
                   fontSize: 11,
                   fontWeight: 700,
                   color: '#fff',
@@ -468,7 +490,14 @@ function SearchDropdown({
                 <div className="search-dd__title">{p.title}</div>
                 <div className="search-dd__meta" style={{ color: '#9ca3af' }}>Out of stock</div>
               </div>
-              <span style={{
+              <span
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsOpen(false);
+                  onNotify({ title: p.title, usageMetric: usageMetricForSearchItem(p.slug, p.keywords) });
+                }}
+                style={{
                 fontSize: 11, fontWeight: 700, color: '#fff', background: '#E8692A',
                 padding: '4px 10px', borderRadius: 4, whiteSpace: 'nowrap', alignSelf: 'center', flexShrink: 0,
               }}>Notify</span>
@@ -495,7 +524,43 @@ function SearchDropdown({
 export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [notifyTarget, setNotifyTarget] = useState<NotifyTarget | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+
+  /* Notify-popup vanuit de zoekresultaten (OOS-items) */
+  const notifyModal = notifyTarget && (
+    <div
+      onClick={() => setNotifyTarget(null)}
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 10000,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: '#fff', borderRadius: 16, width: '100%', maxWidth: 440,
+          padding: '32px 28px 28px', position: 'relative', maxHeight: '90vh', overflowY: 'auto',
+        }}
+      >
+        <button
+          onClick={() => setNotifyTarget(null)}
+          style={{
+            position: 'absolute', top: 16, right: 16, background: 'none', border: 'none',
+            cursor: 'pointer', color: '#9ca3af', fontSize: 20, lineHeight: 1, padding: 4,
+          }}
+          aria-label="Close"
+        >
+          &#10005;
+        </button>
+        <StockNotifier
+          key={notifyTarget.title}
+          productTitle={notifyTarget.title}
+          usageMetric={notifyTarget.usageMetric}
+        />
+      </div>
+    </div>
+  );
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -544,8 +609,10 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
             filteredAlternativesOos={filteredAlternativesOos}
             hasResults={hasResults}
             skuOnTop={skuOnTop}
+            onNotify={setNotifyTarget}
           />
         </div>
+        {notifyModal}
       </div>
     );
   }
@@ -577,8 +644,10 @@ export default function SearchBar({ mobile = false }: { mobile?: boolean }) {
           filteredAlternativesOos={filteredAlternativesOos}
           hasResults={hasResults}
           skuOnTop={skuOnTop}
+          onNotify={setNotifyTarget}
         />
       </div>
+      {notifyModal}
     </div>
   );
 }

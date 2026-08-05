@@ -409,6 +409,7 @@ export const searchProducts: SearchProduct[] = [
   { slug: 'sony-a1', title: 'Sony A1', image: '/images/sony-a1.jpg', stock: '2 in stock', keywords: ['sony', 'a1', 'flagship', '50mp'] },
   { slug: 'hasselblad-x2d-100c', title: 'Hasselblad X2D 100C', image: '/images/hasselblad-x2d.jpg', stock: '1 in stock', keywords: ['hasselblad', 'x2d', 'medium format', '100mp'] },
   { slug: 'dji-mavic-2-pro', title: 'DJI Mavic 2 Pro', image: '/images/dji-mavic-2.jpg', stock: 'Out of stock', keywords: ['dji', 'mavic', 'drone', 'mavic 2'] },
+  { slug: 'sony-a7-v', title: 'Sony Alpha A7 V', image: '/images/sony-a7-iv.jpg', stock: 'Out of stock', keywords: ['sony', 'a7', 'a7v', 'a7 v', 'alpha', 'full frame', 'mirrorless'] },
   { slug: 'nikon-zf', title: 'Nikon Zf', image: '/images/nikon-zf.jpg', stock: '3 in stock', keywords: ['nikon', 'zf', 'retro', 'full frame'] },
   { slug: 'sony-fe-70-200mm-f28-gm-oss-ii', title: 'Sony FE 70-200mm f/2.8 GM OSS II', image: '/images/sony-70-200-gm-ii.jpg', stock: '3 in stock', keywords: ['sony', '70-200', '70-200mm', 'gm', 'telephoto', 'lens'] },
   { slug: 'canon-eos-r6-ii', title: 'Canon EOS R6 II', image: '/images/canon-r6-ii.jpg', stock: 'Out of stock', keywords: ['canon', 'r6', 'r6 ii', 'eos r6', 'full frame', 'mirrorless'] },

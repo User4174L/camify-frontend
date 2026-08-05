@@ -113,7 +113,7 @@ export default function StockNotifier({
           onChange={e => setEmail(e.target.value)}
           style={{
             width: '100%', padding: '12px 16px', border: '1.5px solid var(--border, #e5e7eb)',
-            borderRadius: 10, fontSize: 14, outline: 'none', boxSizing: 'border-box',
+            borderRadius: 10, fontSize: 14, outline: 'none', boxSizing: 'border-box', background: '#fff',
           }}
         />
       </div>

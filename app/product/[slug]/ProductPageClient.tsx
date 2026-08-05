@@ -9,6 +9,7 @@ import { products, type Product, type ProductVariant } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
 import { assetPath } from '@/lib/utils';
+import StockNotifier, { usageMetricForCategory } from '@/components/ui/StockNotifier';
 
 /* ------------------------------------------------------------------ */
 /*  SEO texts per product slug                                        */
@@ -249,12 +250,6 @@ export default function ProductPage() {
   const [showCartPopup, setShowCartPopup] = useState(false);
   const [cartVariant, setCartVariant] = useState<ProductVariant | null>(null);
 
-  /* OOS state */
-  const [notifyEmail, setNotifyEmail] = useState('');
-  const [notifySuccess, setNotifySuccess] = useState(false);
-  const [notifyConditions, setNotifyConditions] = useState<Record<string, boolean>>({ 'As new': true, 'Excellent': true, 'Good': true, 'Fair': true, 'Used': false, 'Heavily used': false });
-  const [notifyMaxShutter, setNotifyMaxShutter] = useState('none');
-
   if (!product) {
     return (
       <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>
@@ -354,74 +349,12 @@ export default function ProductPage() {
 
             {/* Notify form */}
             <div>
-              {!notifySuccess ? (
-                <div style={{ background: '#f9fafb', borderRadius: 12, padding: 32 }}>
-                  <div style={{ width: 48, height: 48, background: '#fff7ed', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                    <svg width="24" height="24" fill="none" stroke="#f97316" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                  </div>
-                  <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>Get notified when available</h2>
-                  <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 24, lineHeight: 1.6 }}>
-                    We don&apos;t have a {product.title} in stock right now, but we regularly receive new units. Set your preferences below and we&apos;ll email you the moment one arrives.
-                  </p>
-
-                  {/* Email */}
-                  <input
-                    type="email"
-                    placeholder="Your email address"
-                    value={notifyEmail}
-                    onChange={e => setNotifyEmail(e.target.value)}
-                    style={{ width: '100%', padding: '12px 16px', border: '1.5px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontFamily: 'inherit', outline: 'none', marginBottom: 20, boxSizing: 'border-box' }}
-                  />
-
-                  {/* Minimum condition */}
-                  <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginBottom: 10 }}>Minimum condition</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
-                    {Object.keys(notifyConditions).map(cond => (
-                      <label key={cond} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer', color: '#374151' }}>
-                        <input
-                          type="checkbox"
-                          checked={notifyConditions[cond]}
-                          onChange={() => setNotifyConditions(prev => ({ ...prev, [cond]: !prev[cond] }))}
-                          style={{ accentColor: '#22c55e', width: 16, height: 16 }}
-                        />
-                        {cond}
-                      </label>
-                    ))}
-                  </div>
-
-                  {/* Max shutter count */}
-                  <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginBottom: 8 }}>Max. shutter count</div>
-                  <select
-                    value={notifyMaxShutter}
-                    onChange={e => setNotifyMaxShutter(e.target.value)}
-                    style={{ width: '100%', padding: '12px 16px', border: '1.5px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontFamily: 'inherit', outline: 'none', marginBottom: 24, boxSizing: 'border-box', background: '#fff' }}
-                  >
-                    <option value="none">No preference</option>
-                    <option value="10000">Under 10,000</option>
-                    <option value="25000">Under 25,000</option>
-                    <option value="50000">Under 50,000</option>
-                    <option value="100000">Under 100,000</option>
-                  </select>
-
-                  {/* Notify button */}
-                  <button
-                    onClick={() => { if (notifyEmail.includes('@')) setNotifySuccess(true); }}
-                    style={{ width: '100%', padding: '14px 24px', borderRadius: 999, border: 'none', background: '#f97316', color: '#fff', fontSize: 16, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-                  >
-                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    Notify me
-                  </button>
-                  <p style={{ fontSize: 11, color: '#9ca3af', textAlign: 'center', marginTop: 12 }}>You&apos;ll receive an email each time a matching item is listed. Unsubscribe anytime.</p>
-                </div>
-              ) : (
-                <div style={{ background: '#f9fafb', borderRadius: 12, padding: 32, textAlign: 'center' }}>
-                  <div style={{ width: 48, height: 48, background: '#dcfce7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                    <svg width="24" height="24" fill="none" stroke="#166534" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-                  </div>
-                  <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>Alert created!</h2>
-                  <p style={{ fontSize: 14, color: '#6b7280' }}>We&apos;ll notify {notifyEmail} when a matching {product.title} arrives.</p>
-                </div>
-              )}
+              <div style={{ background: '#f9fafb', borderRadius: 12, padding: 32 }}>
+                <StockNotifier
+                  productTitle={product.title}
+                  usageMetric={usageMetricForCategory(product.category)}
+                />
+              </div>
             </div>
           </div>
 
