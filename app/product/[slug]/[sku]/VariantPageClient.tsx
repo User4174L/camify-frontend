@@ -10,6 +10,7 @@ import { products } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
 import { assetPath } from '@/lib/utils';
+import StockNotifier, { usageMetricForCategory } from '@/components/ui/StockNotifier';
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
@@ -312,6 +313,13 @@ export default function VariantDetailPage() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIdx, setLightboxIdx] = useState(0);
 
+  /* Demo: append ?oos=1 to preview the out-of-stock state of this page.
+     Read from window.location to stay compatible with the static export. */
+  const [oosPreview, setOosPreview] = useState(false);
+  useEffect(() => {
+    setOosPreview(new URLSearchParams(window.location.search).get('oos') === '1');
+  }, []);
+
   if (!product || !variant) {
     return (
       <div style={{ padding: '80px 24px', textAlign: 'center' }}>
@@ -505,7 +513,21 @@ export default function VariantDetailPage() {
           {/* Title */}
           <h1 style={{ fontSize: 26, fontWeight: 700, color: '#1f2937', margin: '0 0 8px', lineHeight: 1.2 }}>{product.title}</h1>
 
+          {/* ===== OOS state: purchase block is replaced by the stock notifier ===== */}
+          {oosPreview && (
+            <>
+              <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 16px' }}>Currently out of stock</p>
+              <div style={{ background: '#f9fafb', borderRadius: 16, padding: '24px 20px', marginBottom: 20 }}>
+                <StockNotifier
+                  productTitle={product.title}
+                  usageMetric={usageMetricForCategory(product.category)}
+                />
+              </div>
+            </>
+          )}
+
           {/* Condition label + badge */}
+          {!oosPreview && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: '#6b7280' }}>
               Condition: <span style={{ display: 'inline-block', background: conditionBg(variant.condition), color: conditionColor(variant.condition), borderRadius: 999, padding: '3px 12px', fontSize: 12, fontWeight: 600 }}>{variant.conditionLabel}</span>
@@ -520,13 +542,17 @@ export default function VariantDetailPage() {
               </span>
             )}
           </div>
+          )}
 
           {/* Price */}
+          {!oosPreview && (
           <div style={{ marginBottom: 12 }}>
             <span style={{ fontSize: 32, fontWeight: 700, color: '#1f2937' }}>&euro; {formattedPrice}</span>
           </div>
+          )}
 
           {/* Add to cart */}
+          {!oosPreview && (
           <div className="variant-detail__cart-desktop" style={{ marginBottom: 16 }}>
             <div style={{ display: 'flex', gap: 10 }}>
               <button
@@ -567,6 +593,7 @@ export default function VariantDetailPage() {
               Save when you trade in
             </Link>
           </div>
+          )}
 
           {/* USPs */}
           <div style={{
@@ -593,6 +620,7 @@ export default function VariantDetailPage() {
           </div>
 
           {/* --- Detail cards --- */}
+          {!oosPreview && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
 
             {/* Card: Shutter Count */}
@@ -642,9 +670,10 @@ export default function VariantDetailPage() {
             )}
 
           </div>
+          )}
 
           {/* View all variants (expandable) */}
-          {product.variants.length > 1 && (
+          {!oosPreview && product.variants.length > 1 && (
             <div style={{ border: '1px solid #e5e7eb', borderRadius: 12, overflow: 'hidden', marginBottom: 16, marginTop: 8 }}>
               <button
                 onClick={() => setVariantsOpen(!variantsOpen)}
@@ -785,6 +814,7 @@ export default function VariantDetailPage() {
       </div>
 
       {/* ============ MOBILE STICKY CART BAR ============ */}
+      {!oosPreview && (
       <div className="variant-detail__sticky-cart" style={{ display: 'none' }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 18, fontWeight: 700, color: '#1f2937' }}>&euro; {formattedPrice}</div>
@@ -810,6 +840,7 @@ export default function VariantDetailPage() {
           )}
         </button>
       </div>
+      )}
 
       {/* ============ MODALS ============ */}
       <Modal className="info-modal-condition" open={showConditionModal} onClose={() => setShowConditionModal(false)}>

@@ -3,27 +3,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import { products, Product } from '@/data/products';
+import StockNotifier, { BellIcon, usageMetricForCategory } from '@/components/ui/StockNotifier';
 
 const oosProducts = products.filter(p => p.category === 'cameras' && p.stock === 0);
-
-const conditionOptions = ['As new', 'Excellent', 'Good', 'Fair', 'Used', 'Heavily used'];
-const defaultConditions = ['As new', 'Excellent', 'Good', 'Fair'];
-
-const shutterCountOptions = [
-  'No preference',
-  'Under 5,000',
-  'Under 10,000',
-  'Under 25,000',
-  'Under 50,000',
-  'Under 100,000',
-];
-
-const BellIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-  </svg>
-);
 
 const faqItems = [
   {
@@ -46,22 +28,10 @@ const faqItems = [
 
 export default function OutOfStockPage() {
   const [notifyProduct, setNotifyProduct] = useState<Product | null>(null);
-  const [notifyEmail, setNotifyEmail] = useState('');
-  const [notifyConditions, setNotifyConditions] = useState<string[]>(defaultConditions);
-  const [notifyShutterCount, setNotifyShutterCount] = useState('No preference');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-
-  const toggleCondition = (c: string) => {
-    setNotifyConditions(prev =>
-      prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]
-    );
-  };
 
   const openNotifyPopup = (product: Product) => {
     setNotifyProduct(product);
-    setNotifyEmail('');
-    setNotifyConditions([...defaultConditions]);
-    setNotifyShutterCount('No preference');
   };
 
   return (
@@ -238,139 +208,11 @@ export default function OutOfStockPage() {
               &#10005;
             </button>
 
-            {/* Bell icon */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-              <div
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: '50%',
-                  background: 'var(--accent)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                </svg>
-              </div>
-            </div>
-
-            {/* Title */}
-            <h3 style={{ fontSize: 18, fontWeight: 700, textAlign: 'center', marginBottom: 8 }}>
-              Get notified when available
-            </h3>
-            <p style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', lineHeight: 1.6, marginBottom: 24 }}>
-              We don&apos;t have a {notifyProduct.title} in stock right now, but we regularly receive new units. Set your preferences below and we&apos;ll email you the moment one arrives.
-            </p>
-
-            {/* Email input */}
-            <div style={{ marginBottom: 20 }}>
-              <input
-                type="email"
-                placeholder="Your email address"
-                value={notifyEmail}
-                onChange={(e) => setNotifyEmail(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: '1.5px solid var(--border)',
-                  borderRadius: 10,
-                  fontSize: 14,
-                  outline: 'none',
-                  boxSizing: 'border-box',
-                }}
-              />
-            </div>
-
-            {/* Minimum condition */}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ fontSize: 14, fontWeight: 600, display: 'block', marginBottom: 10 }}>
-                Minimum condition
-              </label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {conditionOptions.map(c => (
-                  <label
-                    key={c}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      fontSize: 13,
-                      cursor: 'pointer',
-                      padding: '6px 12px',
-                      borderRadius: 8,
-                      border: notifyConditions.includes(c) ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
-                      background: notifyConditions.includes(c) ? '#fff7ed' : '#fff',
-                      transition: 'all 0.15s',
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={notifyConditions.includes(c)}
-                      onChange={() => toggleCondition(c)}
-                      style={{ accentColor: 'var(--accent)' }}
-                    />
-                    {c}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Max shutter count */}
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ fontSize: 14, fontWeight: 600, display: 'block', marginBottom: 10 }}>
-                Max. shutter count
-              </label>
-              <select
-                value={notifyShutterCount}
-                onChange={(e) => setNotifyShutterCount(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: '1.5px solid var(--border)',
-                  borderRadius: 10,
-                  fontSize: 14,
-                  background: '#fff',
-                  cursor: 'pointer',
-                  boxSizing: 'border-box',
-                }}
-              >
-                {shutterCountOptions.map(o => (
-                  <option key={o} value={o}>{o}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Submit button */}
-            <button
-              onClick={() => setNotifyProduct(null)}
-              style={{
-                width: '100%',
-                padding: '14px',
-                background: 'var(--accent)',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 10,
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-              }}
-            >
-              <BellIcon />
-              Notify me
-            </button>
-
-            {/* Disclaimer */}
-            <p style={{ fontSize: 12, color: '#9ca3af', textAlign: 'center', marginTop: 14, lineHeight: 1.5 }}>
-              You&apos;ll receive an email each time a matching item is listed. Unsubscribe anytime.
-            </p>
+            <StockNotifier
+              key={notifyProduct.id}
+              productTitle={notifyProduct.title}
+              usageMetric={usageMetricForCategory(notifyProduct.category)}
+            />
           </div>
         </div>
       )}
