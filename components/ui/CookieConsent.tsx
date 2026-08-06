@@ -53,8 +53,7 @@ const COPY = {
     reject: 'Alles weigeren',
     accept: 'Alles accepteren',
     manage: 'Zelf instellen',
-    langTitle: 'Je browser staat op Nederlands',
-    langBody: 'Wil je de site in het Nederlands?',
+    langLabel: 'Taal',
     prefsTitle: 'Cookievoorkeuren',
     prefsBody: 'Kies welke cookies je goed vindt. Noodzakelijke cookies houden de winkel werkend en staan altijd aan.',
     save: 'Bewaren',
@@ -70,8 +69,7 @@ const COPY = {
     reject: 'Reject all',
     accept: 'Accept all',
     manage: 'Choose yourself',
-    langTitle: 'Your browser is set to English',
-    langBody: 'Would you like the site in English?',
+    langLabel: 'Language',
     prefsTitle: 'Cookie preferences',
     prefsBody: 'Choose which cookies you’re okay with. Necessary cookies keep the shop working and are always on.',
     save: 'Save',
@@ -111,6 +109,16 @@ export default function CookieConsent() {
   const [visible, setVisible] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
+
+  // Mobiel = bottom sheet (duimbereik), desktop = center-modal.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    const apply = () => setIsMobile(mq.matches);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
 
   // Sitetaal. In de echte app komt dit uit de URL-locale; hier simuleerbaar
   // met ?sitelang=en zodat de mismatch-situatie te demonstreren is.
@@ -180,8 +188,9 @@ export default function CookieConsent() {
     <div
       onKeyDown={e => { if (e.key === 'Escape' && readConsent()) { setVisible(false); setTimeout(() => setView('hidden'), 220); } }}
       style={{
-        position: 'fixed', inset: 0, zIndex: 300, display: 'flex', alignItems: 'center',
-        justifyContent: 'center', padding: 20,
+        position: 'fixed', inset: 0, zIndex: 300, display: 'flex',
+        alignItems: isMobile ? 'flex-end' : 'center',
+        justifyContent: 'center', padding: isMobile ? 0 : 20,
         background: visible ? 'rgba(24,26,44,.45)' : 'rgba(24,26,44,0)',
         backdropFilter: visible ? 'blur(2px)' : 'none', transition: 'background .25s',
       }}
@@ -191,9 +200,15 @@ export default function CookieConsent() {
         aria-modal="true"
         aria-label={t.prefsTitle}
         style={{
-          background: '#fff', borderRadius: 16, boxShadow: '0 12px 48px rgba(0,0,0,.18)',
-          maxWidth: 480, width: '100%', padding: '32px 32px 28px',
-          opacity: visible ? 1 : 0, transform: visible ? 'translateY(0) scale(1)' : 'translateY(14px) scale(.97)',
+          background: '#fff',
+          borderRadius: isMobile ? '20px 20px 0 0' : 16,
+          boxShadow: '0 12px 48px rgba(0,0,0,.18)',
+          maxWidth: isMobile ? '100%' : 480, width: '100%',
+          padding: isMobile ? '24px 20px calc(20px + env(safe-area-inset-bottom))' : '32px 32px 28px',
+          opacity: visible ? 1 : 0,
+          transform: visible
+            ? 'translateY(0) scale(1)'
+            : isMobile ? 'translateY(40px)' : 'translateY(14px) scale(.97)',
           transition: 'opacity .25s, transform .25s',
         }}
       >
@@ -208,17 +223,15 @@ export default function CookieConsent() {
             </p>
 
             {/* Taalrij: alleen bij mismatch. Geen dropdown, geen landenlijst,
-                geen "op basis van je locatie" — twee knoppen, klaar. */}
+                geen "op basis van je locatie", geen uitlegzinnen — een klein
+                tweetalig label + twee knoppen, klaar. */}
             {showLanguageRow && suggested && suggestedCopy ? (
               <div style={{
                 border: '1px solid #EEEEF2', borderRadius: 12, padding: '14px 16px',
                 marginBottom: 22, background: '#FAFAFB',
               }}>
-                <p style={{ fontSize: 14, color: '#1E2133', fontWeight: 600, marginBottom: 2 }}>
-                  {suggestedCopy.langTitle}
-                </p>
-                <p style={{ fontSize: 13.5, color: '#6B6D80', marginBottom: 12 }}>
-                  {suggestedCopy.langBody}
+                <p style={{ fontSize: 12.5, color: '#6B6D80', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                  {suggestedCopy.langLabel} / {t.langLabel}
                 </p>
                 <div style={{ display: 'flex', gap: 8 }}>
                   {[suggested, LANGUAGES.find(l => l.code === siteLang)!].map(lang => {
@@ -245,16 +258,17 @@ export default function CookieConsent() {
               </div>
             ) : null}
 
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            {/* Mobiel gestapeld: accept onderaan = in het duimbereik. */}
+            <div style={{ display: 'flex', gap: 10, flexDirection: isMobile ? 'column' : 'row', flexWrap: 'wrap' }}>
               <button
                 onClick={() => save({ analytics: false, marketing: false })}
-                style={{ ...btnBase, background: '#fff', color: '#E8692A', border: '2px solid #E8692A', minWidth: 150 }}
+                style={{ ...btnBase, background: '#fff', color: '#E8692A', border: '2px solid #E8692A', minWidth: isMobile ? 0 : 150 }}
               >
                 {t.reject}
               </button>
               <button
                 onClick={() => save({ analytics: true, marketing: true })}
-                style={{ ...btnBase, background: '#E8692A', color: '#fff', border: '2px solid #E8692A', minWidth: 150, boxShadow: '0 4px 14px rgba(232,105,42,.35)' }}
+                style={{ ...btnBase, background: '#E8692A', color: '#fff', border: '2px solid #E8692A', minWidth: isMobile ? 0 : 150, boxShadow: '0 4px 14px rgba(232,105,42,.35)' }}
               >
                 {t.accept}
               </button>
@@ -287,16 +301,16 @@ export default function CookieConsent() {
                 <Toggle on={row.on} disabled={row.locked} onChange={row.set} />
               </div>
             ))}
-            <div style={{ display: 'flex', gap: 10, marginTop: 22, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 10, marginTop: 22, flexDirection: isMobile ? 'column' : 'row', flexWrap: 'wrap' }}>
               <button
                 onClick={() => save({ analytics, marketing })}
-                style={{ ...btnBase, background: '#fff', color: '#1E2133', border: '2px solid #D5D6DE', minWidth: 150 }}
+                style={{ ...btnBase, background: '#fff', color: '#1E2133', border: '2px solid #D5D6DE', minWidth: isMobile ? 0 : 150 }}
               >
                 {t.save}
               </button>
               <button
                 onClick={() => save({ analytics: true, marketing: true })}
-                style={{ ...btnBase, background: '#E8692A', color: '#fff', border: '2px solid #E8692A', minWidth: 150, boxShadow: '0 4px 14px rgba(232,105,42,.35)' }}
+                style={{ ...btnBase, background: '#E8692A', color: '#fff', border: '2px solid #E8692A', minWidth: isMobile ? 0 : 150, boxShadow: '0 4px 14px rgba(232,105,42,.35)' }}
               >
                 {t.accept}
               </button>
