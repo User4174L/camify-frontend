@@ -111,8 +111,13 @@ export default function CookieConsent() {
   const [marketing, setMarketing] = useState(false);
 
   // Mobiel = bottom sheet (duimbereik), desktop = center-modal.
+  // ?mobile=1 forceert de mobiele variant, zodat die op desktop te bekijken is.
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('mobile') === '1') {
+      setIsMobile(true);
+      return;
+    }
     const mq = window.matchMedia('(max-width: 640px)');
     const apply = () => setIsMobile(mq.matches);
     apply();
@@ -203,7 +208,7 @@ export default function CookieConsent() {
           background: '#fff',
           borderRadius: isMobile ? '20px 20px 0 0' : 16,
           boxShadow: '0 12px 48px rgba(0,0,0,.18)',
-          maxWidth: isMobile ? '100%' : 480, width: '100%',
+          maxWidth: isMobile ? 430 : 480, width: '100%',
           padding: isMobile ? '24px 20px calc(20px + env(safe-area-inset-bottom))' : '32px 32px 28px',
           opacity: visible ? 1 : 0,
           transform: visible
