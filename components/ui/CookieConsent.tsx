@@ -238,20 +238,22 @@ export default function CookieConsent() {
                 <p style={{ fontSize: 12.5, color: '#6B6D80', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '.04em' }}>
                   {suggestedCopy.langLabel} / {t.langLabel}
                 </p>
-                <div style={{ display: 'flex', gap: 8 }}>
+                {/* Onder elkaar: bovenste = de verwachte taal (browsertaal),
+                    oranje omrand als voorselectie. */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {[suggested, LANGUAGES.find(l => l.code === siteLang)!].map(lang => {
-                    const active = lang.code === siteLang;
+                    const expected = lang.code === suggested.code;
                     return (
                       <button
                         key={lang.code}
                         onClick={() => setSiteLang(lang.code)}
                         style={{
-                          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
-                          padding: '10px 12px', borderRadius: 10, fontSize: 14.5, fontWeight: 600,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                          padding: '11px 12px', borderRadius: 10, fontSize: 14.5, fontWeight: 600,
                           cursor: 'pointer', fontFamily: 'inherit',
-                          background: active ? '#fff' : '#fff',
+                          background: '#fff',
                           color: '#1E2133',
-                          border: active ? '2px solid #E8692A' : '2px solid #E1E1E6',
+                          border: expected ? '2px solid #E8692A' : '2px solid #E1E1E6',
                         }}
                       >
                         <span style={{ fontSize: 17 }}>{lang.flag}</span>
