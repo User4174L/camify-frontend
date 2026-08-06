@@ -48,8 +48,8 @@ const detectBrowserLanguage = (): LangCode | null => {
 
 const COPY = {
   nl: {
-    title: 'Zullen we je bezoek persoonlijker maken?',
-    body: 'We gebruiken cookies om de winkel te laten werken, en — alleen met jouw toestemming — om je apparatuur en aanbiedingen te tonen die bij je passen. Je kunt je keuze altijd wijzigen via “Cookievoorkeuren” onderaan de pagina.',
+    title: 'Wil je de beste ervaring?',
+    body: 'Wij ook. Met cookies laten we je apparatuur en deals zien die écht bij je passen — alleen als jij dat goed vindt. Aanpassen kan altijd via “Cookievoorkeuren” onderaan de pagina.',
     reject: 'Alles weigeren',
     accept: 'Alles accepteren',
     manage: 'Zelf instellen',
@@ -64,8 +64,8 @@ const COPY = {
     ],
   },
   en: {
-    title: 'Shall we make your visit more personal?',
-    body: 'We use cookies to keep the shop running and — only with your permission — to show you gear and deals that match your interests. You can change your choice anytime via “Cookie preferences” at the bottom of the page.',
+    title: 'Want the best experience?',
+    body: 'So do we. With cookies we can show you gear and deals that actually fit you — only if you’re okay with it. You can change your choice anytime via “Cookie preferences” at the bottom of the page.',
     reject: 'Reject all',
     accept: 'Accept all',
     manage: 'Choose yourself',
