@@ -200,6 +200,20 @@ export default function CookieConsent() {
         backdropFilter: visible ? 'blur(2px)' : 'none', transition: 'background .25s',
       }}
     >
+      {/* Demo-only: schakel de mobiele weergave (bottom sheet, schermbreed,
+          knoppen gestapeld) aan/uit zodat de developer beide varianten ziet. */}
+      <button
+        onClick={() => setIsMobile(m => !m)}
+        style={{
+          position: 'fixed', top: 14, right: 14, zIndex: 310,
+          padding: '8px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600,
+          fontFamily: 'inherit', cursor: 'pointer',
+          background: '#1E2133', color: '#fff', border: 'none',
+          boxShadow: '0 2px 10px rgba(0,0,0,.25)',
+        }}
+      >
+        {isMobile ? '🖥️ Test desktop' : '📱 Test mobiel'}
+      </button>
       <div
         role="dialog"
         aria-modal="true"
@@ -208,7 +222,7 @@ export default function CookieConsent() {
           background: '#fff',
           borderRadius: isMobile ? '20px 20px 0 0' : 16,
           boxShadow: '0 12px 48px rgba(0,0,0,.18)',
-          maxWidth: isMobile ? 430 : 480, width: '100%',
+          maxWidth: isMobile ? '100%' : 480, width: '100%',
           padding: isMobile ? '24px 20px calc(20px + env(safe-area-inset-bottom))' : '32px 32px 28px',
           opacity: visible ? 1 : 0,
           transform: visible
