@@ -732,12 +732,12 @@ export default function TradeInPage() {
             Verkoop je gear <span style={{ color: '#FF8A4C' }}>snel en eerlijk</span>
           </h1>
           <p className="ti-hero-sub">
-            Gratis verzending, taxatie door echte fotografie-experts en je geld binnen 48 uur op de rekening. Vraag direct een indicatie aan voor je camera, lens of accessoire.
+            Gratis verzending, taxatie door echte fotografie-experts en je geld binnen 3 tot 5 werkdagen op de rekening. Vraag direct een indicatie aan voor je camera, lens of accessoire.
           </p>
 
           {/* USP pills */}
           <div className="ti-hero-usps">
-            {['Gratis verzending', 'Taxatie door experts', 'Betaling binnen 48 uur'].map(u => (
+            {['Gratis verzending', 'Taxatie door experts', 'Uitbetaling in 3-5 werkdagen'].map(u => (
               <span key={u} className="ti-hero-usp">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A4C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                 {u}
@@ -748,9 +748,9 @@ export default function TradeInPage() {
           {/* Stappen */}
           <div className="ti-hero-steps">
             {[
-              { num: 1, label: 'Vraag je offerte aan', desc: 'We bekijken & taxeren binnen 2 dagen.' },
+              { num: 1, label: 'Vraag je offerte aan', desc: 'Je hoort binnen 3-5 werkdagen van ons, meestal sneller.' },
               { num: 2, label: 'Verstuur gratis', desc: 'Je ontvangt een prepaid verzendlabel.' },
-              { num: 3, label: 'Ontvang je geld', desc: 'Uitbetaling binnen 48 uur.' },
+              { num: 3, label: 'Ontvang je geld', desc: 'Binnen 3-5 werkdagen na goedkeuring.' },
             ].map((s, i) => (
               <div key={s.num} className="ti-step">
                 <div className="ti-step-num">{s.num}</div>
@@ -1360,7 +1360,7 @@ export default function TradeInPage() {
         <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, textAlign: 'center' }}>
           {[
             { value: '100.000+', label: 'Producten verwerkt' },
-            { value: '48u', label: 'Gemiddelde uitbetaling' },
+            { value: '3-5 dg', label: 'Gemiddelde uitbetaling' },
             { value: '4.9/5', label: 'Klantbeoordeling' },
             { value: '100%', label: 'Verzekerde verzending' },
           ].map((stat, i) => (
@@ -1393,11 +1393,11 @@ export default function TradeInPage() {
             {[
               { num: 1, title: 'Ontvang een bod', desc: 'Voer je apparatuur in en ontvang direct een eerlijk bod op basis van de actuele marktwaarde.',
                 icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> },
-              { num: 2, title: 'Gratis verzenden', desc: 'Wij sturen je een vooraf betaald en verzekerd verzendlabel. Pak je spullen in en lever ze in bij een PostNL-punt.',
+              { num: 2, title: 'Gratis verzenden', desc: 'Wij sturen je een vooraf betaald verzendlabel en kiezen de vervoerder. Daarmee is het vervoer ons risico: raakt je pakket onderweg beschadigd of zoek, dan lossen wij dat op. Bewaar wel altijd je afgiftebewijs.',
                 icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> },
               { num: 3, title: 'Inspectie door experts', desc: 'Onze technici inspecteren elk item. Is de conditie beter dan verwacht? Dan verhogen wij het bod.',
                 icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
-              { num: 4, title: 'Betaling binnen 48u', desc: 'Accepteer het definitieve bod en ontvang betaling binnen 48 uur via bankoverschrijving.',
+              { num: 4, title: 'Uitbetaling', desc: 'Accepteer het definitieve bod en ontvang je geld binnen 3 tot 5 werkdagen via bankoverschrijving. Kom je langs in de showroom, dan betalen we direct uit.',
                 icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 10h20"/><path d="M6 16h4"/><path d="M14 16h4"/></svg> },
             ].map(step => (
               <div key={step.num} style={{
@@ -1447,7 +1447,7 @@ export default function TradeInPage() {
             {[
               { num: 1, title: 'Beste waarde garantie', desc: 'Concurrerende prijzen op basis van realtime marktdata van meer dan 10 Europese platformen.',
                 icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8692A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> },
-              { num: 2, title: 'Betaling binnen 48 uur', desc: 'Snelle en betrouwbare betaling via bankoverschrijving, altijd binnen 48 uur na acceptatie.',
+              { num: 2, title: 'Snelle uitbetaling', desc: 'Betaling via bankoverschrijving binnen 3 tot 5 werkdagen na goedkeuring. In de showroom betalen we direct uit.',
                 icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8692A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
               { num: 3, title: 'Zonder gedoe', desc: 'Geen wachten op kopers, geen onderhandelen. Wij regelen alles van verzending tot betaling.',
                 icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8692A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> },

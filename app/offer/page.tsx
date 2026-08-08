@@ -505,7 +505,7 @@ export default function OfferPage() {
       <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${CSS.border}`, display: 'flex', flexWrap: 'wrap', gap: '8px 18px' }}>
         {[
           { Icon: Truck, t: 'Gratis & verzekerd verzenden' },
-          { Icon: BadgeCheck, t: 'Uitbetaling binnen 48 uur' },
+          { Icon: BadgeCheck, t: 'Uitbetaling in 3-5 werkdagen' },
           { Icon: ShieldCheck, t: 'Taxatie door experts' },
           { Icon: RotateCcw, t: 'Vrijblijvend' },
         ].map(s => {

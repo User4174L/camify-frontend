@@ -171,7 +171,7 @@ export default function HelpCenterPage() {
         <div className="help-cta">
           <div>
             <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--text)' }}>Niet gevonden wat je zocht?</div>
-            <div style={{ fontSize: 14, color: 'var(--text-sec)' }}>Onze klantenservice helpt je graag verder, ma–vr 09:00–17:30.</div>
+            <div style={{ fontSize: 14, color: 'var(--text-sec)' }}>Onze klantenservice helpt je graag verder, ma–vr 09:00–16:30 en za 09:00–16:00 op afspraak.</div>
           </div>
           <Link href="/contact" style={{ background: 'var(--accent)', color: '#fff', fontWeight: 600, fontSize: 14.5, padding: '12px 26px', borderRadius: 999 }}>
             Neem contact op &rarr;
