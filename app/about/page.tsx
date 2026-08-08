@@ -3,15 +3,15 @@ import WordReveal from '@/components/ui/WordReveal';
 import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
 
 const stats = [
-  { num: '2018', label: 'Founded' },
-  { num: '€1.2M+', label: 'In stock' },
-  { num: '15K+', label: 'Items sold' },
+  { num: '2011', label: 'Opgericht' },
+  { num: '± 2.000', label: 'Op voorraad' },
+  { num: '50.000+', label: 'Verkocht' },
   { num: '4.9 ★', label: 'Trustpilot' },
-  { num: '10+', label: 'EU countries' },
+  { num: 'Hele EU', label: 'Wij verzenden naar' },
 ];
 
 const timeline = [
-  { year: '2018', text: 'Founded in Geldermalsen' },
+  { year: '2011', text: 'Gestart in Geldermalsen' },
   { year: '2023', text: '10,000th item sold' },
   { year: '2025', text: 'Growing across Europe' },
 ];
@@ -73,7 +73,7 @@ export default function AboutPage() {
         </blockquote>
 
         <p style={{ margin: '0 0 18px' }}>
-          In 2018, we opened our doors in Geldermalsen as <strong>Camera-Tweedehands.nl</strong> &mdash; a small operation
+          In 2011, we opened our doors in Geldermalsen as <strong>Camera-Tweedehands.nl</strong> &mdash; a small operation
           with a big idea: bring the trust of a professional dealer to the second-hand camera market. Every item inspected.
           Every product graded honestly. Every purchase backed by a real warranty.
         </p>

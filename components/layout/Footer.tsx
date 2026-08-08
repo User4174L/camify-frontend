@@ -6,6 +6,7 @@ const company = [
   { label: 'Terms & conditions', href: '/terms' },
   { label: 'Privacy policy', href: '/privacy' },
   { label: 'Cookie policy', href: '/cookie-policy' },
+  { label: 'Disclaimer', href: '/disclaimer' },
   { label: 'Sitemap', href: '/sitemap.xml' },
 ];
 
@@ -13,6 +14,7 @@ const customerCare = [
   { label: 'Contact us', href: '/contact' },
   { label: 'How it works', href: '/how-it-works' },
   { label: 'Quality & grading', href: '/quality-grading' },
+  { label: 'Shuttercount', href: '/shuttercount' },
   { label: 'Shipping & return', href: '/shipping-returns' },
   { label: 'Payment methods', href: '/payment-methods' },
   { label: 'Warranty & repair', href: '/warranty-repair' },

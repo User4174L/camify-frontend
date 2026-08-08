@@ -10,6 +10,7 @@ const topics = [
   { label: 'Payment methods', href: '/payment-methods', desc: 'Alle manieren waarop je veilig kunt betalen.' },
   { label: 'Warranty & repair', href: '/warranty-repair', desc: 'Minimaal 12 maanden garantie en reparaties.' },
   { label: 'Quality & grading', href: '/quality-grading', desc: 'Hoe we conditie bepalen, testen en communiceren.' },
+  { label: 'Shuttercount', href: '/shuttercount', desc: 'Wat het getal betekent en onze garantie op de sluiter.' },
   { label: 'FAQ', href: '/faq', desc: 'Antwoorden op de meestgestelde vragen.' },
 ];
 

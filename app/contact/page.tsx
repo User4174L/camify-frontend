@@ -46,7 +46,7 @@ export default function ContactPage() {
         ))}
       </div>
       <p style={{ fontSize: 13, color: '#8A8C99', margin: '0 0 32px' }}>
-        Openingstijden klantenservice: <strong style={{ color: 'var(--text)' }}>ma–vr 09:00–17:30</strong> · we reageren doorgaans binnen 1 werkdag.
+        Openingstijden: <strong style={{ color: 'var(--text)' }}>ma&ndash;vr 09:00&ndash;16:30, za 09:00&ndash;16:00 (op afspraak)</strong> &middot; op e-mail antwoorden we meestal binnen 1&ndash;2 werkdagen.
       </p>
 
       <div style={{ display: 'grid', gap: 40, gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.2fr)' }}>
