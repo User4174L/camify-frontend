@@ -42,12 +42,13 @@ export default function TrustBadges() {
           {[0, 1, 2, 3, 4].map(i => <GreenStar key={i} />)}
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-sec)' }}>
-          <strong style={{ color: 'var(--text)' }}>TrustScore 4,9</strong> · 523 reviews
+          <strong style={{ color: 'var(--text)' }}>TrustScore 4,9</strong> · 591 reviews
         </div>
       </a>
 
-      {/* WebwinkelKeur — statisch */}
-      <div style={card}>
+      {/* WebwinkelKeur — statisch. Cijfer is het totaal over vijf bronnen, door
+          WebwinkelKeur zelf berekend; zie /reviews voor de opbouw per bron. */}
+      <a href="https://www.webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043" target="_blank" rel="noopener" style={{ ...card, textDecoration: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#d6168d" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m8 12 3 3 5-6" /></svg>
           <span style={{ fontWeight: 800, fontSize: 15, color: 'var(--text)' }}>WebwinkelKeur</span>
@@ -56,11 +57,11 @@ export default function TrustBadges() {
           <span style={{ color: '#FFC107', letterSpacing: 1, fontSize: 11 }}>★★★★★</span>
           <span style={{ color: '#fff', fontWeight: 700, fontSize: 13 }}>9,7 / 10</span>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-sec)' }}>3.589 reviews</div>
-      </div>
+        <div style={{ fontSize: 12, color: 'var(--text-sec)' }}>3.638 reviews</div>
+      </a>
 
       {/* Google — statisch */}
-      <div style={card}>
+      <a href="https://www.google.com/search?q=Camera-Tweedehands.nl+Geldermalsen" target="_blank" rel="noopener" style={{ ...card, textDecoration: 'none' }}>
         <svg width="25" height="25" viewBox="0 0 48 48" aria-label="Google">
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
           <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
@@ -72,7 +73,7 @@ export default function TrustBadges() {
           <span style={{ color: '#FFC107', letterSpacing: 1, fontSize: 14 }}>★★★★★</span>
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-sec)' }}>187 reviews</div>
-      </div>
+      </a>
     </div>
   );
 }
