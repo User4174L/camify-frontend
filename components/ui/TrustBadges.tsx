@@ -46,8 +46,9 @@ export default function TrustBadges() {
         </div>
       </a>
 
-      {/* WebwinkelKeur — statisch. Cijfer is het totaal over vijf bronnen, door
-          WebwinkelKeur zelf berekend; zie /reviews voor de opbouw per bron. */}
+      {/* WebwinkelKeur — statisch. Bewust hun EIGEN score (9,4 uit 1.893) en niet het
+          totaalcijfer van 9,7 dat zij over vijf bronnen berekenen: daar zitten 953
+          Trusted Shops-reviews in die nergens meer na te lezen zijn. Zie /reviews. */}
       <a href="https://www.webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043" target="_blank" rel="noopener" style={{ ...card, textDecoration: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#d6168d" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m8 12 3 3 5-6" /></svg>
@@ -55,9 +56,9 @@ export default function TrustBadges() {
         </div>
         <div style={{ background: '#1E2133', borderRadius: 999, padding: '5px 13px', display: 'inline-flex', alignItems: 'center', gap: 7, margin: '3px 0' }}>
           <span style={{ color: '#FFC107', letterSpacing: 1, fontSize: 11 }}>★★★★★</span>
-          <span style={{ color: '#fff', fontWeight: 700, fontSize: 13 }}>9,7 / 10</span>
+          <span style={{ color: '#fff', fontWeight: 700, fontSize: 13 }}>9,4 / 10</span>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-sec)' }}>3.638 reviews</div>
+        <div style={{ fontSize: 12, color: 'var(--text-sec)' }}>1.893 reviews</div>
       </a>
 
       {/* Google — statisch */}

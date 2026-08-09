@@ -6,7 +6,7 @@ const stats = [
   { num: '2011', label: 'Opgericht' },
   { num: '± 2.000', label: 'Op voorraad' },
   { num: '50.000+', label: 'Verkocht' },
-  { num: '9,7 / 10', label: 'Uit 3.638 beoordelingen' },
+  { num: '2.694', label: 'Beoordelingen' },
   { num: 'Hele EU', label: 'Wij verzenden naar' },
 ];
 

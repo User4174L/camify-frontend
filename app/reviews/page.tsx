@@ -5,13 +5,24 @@ import SimplePage from '@/components/layout/SimplePage';
 // beheert (Organization/LocalBusiness). Deze pagina is er voor de merkzoekvraag
 // ("camera-tweedehands ervaringen") en voor conversie, niet voor rich snippets.
 //
-// Alle cijfers opgehaald op 08-08-2026 uit de bronnen zelf:
-//  - het totaal (9,7 uit 3.638) is de berekening van WebwinkelKeur, niet van ons
-//  - per bron gecontroleerd op webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043
-//  - Trustpilot en Google ook los nagekeken (Trustpilot 4,9/591, Google 4,8/187)
+// Alle cijfers opgehaald op 08-08-2026 uit de bronnen zelf.
+//
+// BEWUST GEEN TOTAALGEMIDDELDE. WebwinkelKeur publiceert een 9,7 over 3.638
+// beoordelingen, maar daar zit een blok van 953 Trusted Shops-reviews in met een
+// score van 10,0. Twee redenen om daar niet op te leunen:
+//  1. Wij zijn niet meer bij Trusted Shops aangesloten, die pagina bestaat niet
+//     meer. Een bezoeker kan die 953 dus nergens nakijken — en de hele opzet van
+//     deze pagina is dat elk cijfer aanklikbaar is.
+//  2. Een 10,0 over 953 beoordelingen is statistisch niet geloofwaardig; dat zou
+//     betekenen dat elke klant de volle score gaf. Vermoedelijk een importartefact
+//     bij WebwinkelKeur. Navragen voor we het ooit weer gebruiken.
+// Zonder dat blok: 9,5 over 2.694 beoordelingen, allemaal aanklikbaar.
+//
+// Wij tellen hier dus alleen het AANTAL op (een feitelijke som) en laten de scores
+// per platform staan zoals ze zijn — geen zelf berekend rapportcijfer.
 // Let op bij bijwerken: WebwinkelKeur loopt een paar dagen achter op Trustpilot.
 
-const OVERALL = { score: '9,7', count: '3.638' };
+const TOTAL_COUNT = '2.694';
 const OVERALL_HREF = 'https://www.webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043';
 
 const sources: { name: string; score: string; count: string; href: string; note: string }[] = [
@@ -21,13 +32,6 @@ const sources: { name: string; score: string; count: string; href: string; note:
     count: '1.893',
     href: 'https://www.webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043/reviews',
     note: 'Keurmerkorganisatie waar wij sinds 2015 bij aangesloten zijn',
-  },
-  {
-    name: 'Trusted Shops',
-    score: '10 / 10',
-    count: '953',
-    href: OVERALL_HREF,
-    note: 'Verzameld in de jaren dat wij daar aangesloten waren',
   },
   {
     name: 'Trustpilot',
@@ -107,42 +111,34 @@ export default function ReviewsPage() {
     <SimplePage
       title="Wat klanten van ons vinden"
       breadcrumb="Beoordelingen"
-      intro="Sinds 2015 hebben ruim 3.600 mensen ons beoordeeld, verspreid over vijf onafhankelijke platformen. Hieronder staan de cijfers met een link naar de bron, en een aantal beoordelingen die iets zeggen over hoe wij werken."
+      intro="Ruim 2.600 mensen hebben ons beoordeeld op vier onafhankelijke platformen. Hieronder staan de cijfers met een link naar de bron, zodat je ze allemaal zelf kunt nalezen."
     >
-      {/* Totaalcijfer. Nadrukkelijk gepresenteerd als de rekensom van WebwinkelKeur:
-          dat maakt het een controleerbaar cijfer van een derde in plaats van ons eigen gemiddelde. */}
-      <a
-        href={OVERALL_HREF}
-        target="_blank"
-        rel="noopener noreferrer"
+      {/* Geen samengesteld rapportcijfer maar het aantal. Optellen hoeveel mensen iets
+          vonden is een feitelijke som; er één cijfer van maken zou een eigen gemiddelde
+          zijn over vier verschillende schalen. Zie de toelichting bovenaan dit bestand. */}
+      <div
         style={{
-          display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '18px 26px',
+          display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '18px 30px',
           background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 16,
-          padding: '24px 26px', textDecoration: 'none', color: 'inherit', margin: '0 0 12px',
+          padding: '24px 26px', margin: '0 0 12px',
         }}
       >
         <div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-            <span style={{ fontSize: 52, fontWeight: 700, lineHeight: 1, color: '#1E2133', fontVariantNumeric: 'tabular-nums' }}>
-              {OVERALL.score}
-            </span>
-            <span style={{ fontSize: 19, color: '#8A8C99' }}>/ 10</span>
+          <div style={{ fontSize: 52, fontWeight: 700, lineHeight: 1, color: '#1E2133', fontVariantNumeric: 'tabular-nums' }}>
+            {TOTAL_COUNT}
           </div>
           <div style={{ fontSize: 13.5, color: 'var(--text-sec)', marginTop: 6 }}>
-            uit {OVERALL.count} beoordelingen
+            beoordelingen sinds 2015
           </div>
         </div>
         <div style={{ flex: '1 1 260px', minWidth: 240 }}>
           <p style={{ fontSize: 14.5, lineHeight: 1.6, margin: 0, color: 'var(--text-sec)' }}>
-            Dit gemiddelde is niet door ons berekend maar door{' '}
-            <strong style={{ color: 'var(--text)' }}>WebwinkelKeur</strong>, die onze beoordelingen op
-            vijf platformen bij elkaar optelt.
+            Wij rekenen ze niet om naar één rapportcijfer. De schalen verschillen per
+            platform, en een gemiddelde dat wij zelf uitrekenen kun je niet nakijken.
+            Daarom staan ze hieronder gewoon los, met een link naar de bron.
           </p>
-          <span style={{ display: 'inline-block', fontSize: 13, color: '#E8692A', fontWeight: 600, marginTop: 10 }}>
-            Bekijk het overzicht bij WebwinkelKeur →
-          </span>
         </div>
-      </a>
+      </div>
 
       <h2 style={h2}>De cijfers per platform</h2>
       <div style={{ overflowX: 'auto', margin: '0 0 10px' }}>
@@ -183,21 +179,23 @@ export default function ReviewsPage() {
         </table>
       </div>
       <p style={{ fontSize: 12.5, color: '#8A8C99', margin: '0 0 8px', lineHeight: 1.6 }}>
-        Cijfers per 8 augustus 2026. De schalen verschillen per platform, dus wij zetten ze er onder
-        elkaar zoals ze zijn in plaats van ze om te rekenen. Klik door voor het actuele beeld.
+        Cijfers per 8 augustus 2026. Klik door voor het actuele beeld.
       </p>
 
-      <h2 style={h2}>Waarom er vijf platformen staan</h2>
+      <h2 style={h2}>Waarom er meerdere platformen staan</h2>
       <p style={p}>
         Omdat wij ondervonden hebben wat er gebeurt als je er één gebruikt. Wij waren jaren aangesloten
-        bij Trusted Shops en hebben daar 953 beoordelingen opgebouwd. Toen wij daar weggingen, verdween
-        die pagina — de beoordelingen zijn nog wel meegeteld door WebwinkelKeur, maar zonder dat waren
-        ze onvindbaar geweest.
+        bij Trusted Shops en hebben daar ruim negenhonderd beoordelingen opgebouwd. Toen wij daar
+        weggingen, verdween die pagina en waren ze in één klap onvindbaar.
       </p>
       <p style={p}>
-        Beoordelingen op een platform zijn dus nooit echt van jou. Daarom staan ze hier bij elkaar, met
-        het aantal erbij. Een 5,0 uit 23 beoordelingen is iets heel anders dan een 9,4 uit 1.893, en dat
-        hoor je te kunnen zien.
+        Wij tellen die beoordelingen hierboven dan ook niet mee. Ze waren echt, maar jij kunt ze nergens
+        meer nalezen, en een cijfer dat je niet kunt controleren hoort niet op deze pagina thuis. Wat er
+        wél staat, staat er met een link erbij.
+      </p>
+      <p style={p}>
+        Om dezelfde reden staat overal het aantal beoordelingen erbij. Een 5,0 uit 23 beoordelingen is
+        iets heel anders dan een 9,4 uit 1.893, en dat hoor je te kunnen zien.
       </p>
 
       <h2 style={h2}>Hoe onze beoordelingen tot stand komen</h2>
