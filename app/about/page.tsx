@@ -6,7 +6,7 @@ const stats = [
   { num: '2011', label: 'Opgericht' },
   { num: '± 2.000', label: 'Op voorraad' },
   { num: '50.000+', label: 'Verkocht' },
-  { num: '2.694', label: 'Beoordelingen' },
+  { num: '9,8', label: 'Score op Trustpilot' },
   { num: 'Hele EU', label: 'Wij verzenden naar' },
 ];
 

@@ -7,23 +7,19 @@ import SimplePage from '@/components/layout/SimplePage';
 //
 // Alle cijfers opgehaald op 08-08-2026 uit de bronnen zelf.
 //
-// BEWUST GEEN TOTAALGEMIDDELDE. WebwinkelKeur publiceert een 9,7 over 3.638
-// beoordelingen, maar daar zit een blok van 953 Trusted Shops-reviews in met een
-// score van 10,0. Twee redenen om daar niet op te leunen:
-//  1. Wij zijn niet meer bij Trusted Shops aangesloten, die pagina bestaat niet
-//     meer. Een bezoeker kan die 953 dus nergens nakijken — en de hele opzet van
-//     deze pagina is dat elk cijfer aanklikbaar is.
-//  2. Een 10,0 over 953 beoordelingen is statistisch niet geloofwaardig; dat zou
-//     betekenen dat elke klant de volle score gaf. Vermoedelijk een importartefact
-//     bij WebwinkelKeur. Navragen voor we het ooit weer gebruiken.
-// Zonder dat blok: 9,5 over 2.694 beoordelingen, allemaal aanklikbaar.
+// KOPCIJFER = 9,8, en dat is de Trustpilot-score: 4,9 van 5 is 9,8 van 10, precies
+// zoals WebwinkelKeur hem ook weergeeft. Bewust die en niet het WebwinkelKeur-totaal
+// van 9,7: dat totaal bevat 953 Trusted Shops-reviews met een score van 10,0, en daar
+// klopt iets niet (een 10,0 over 953 reviews betekent dat élke klant de volle score
+// gaf — vermoedelijk een importartefact; nagevraagd moet nog). Trustpilot is boven-
+// dien hoger, verser en het enige platform waar nu nog dagelijks reviews binnenkomen.
 //
-// Wij tellen hier dus alleen het AANTAL op (een feitelijke som) en laten de scores
-// per platform staan zoals ze zijn — geen zelf berekend rapportcijfer.
-// Let op bij bijwerken: WebwinkelKeur loopt een paar dagen achter op Trustpilot.
+// Getallen zijn allemaal na te lezen bij de bron; niets is door ons omgerekend behalve
+// die schaalconversie. Let op bij bijwerken: WebwinkelKeur loopt een paar dagen achter.
 
+const HEADLINE = { score: '9,8', count: '591', href: 'https://nl.trustpilot.com/review/www.camera-tweedehands.nl' };
+const SOLD = '50.000+';
 const TOTAL_COUNT = '2.694';
-const OVERALL_HREF = 'https://www.webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043';
 
 const sources: { name: string; score: string; count: string; href: string; note: string }[] = [
   {
@@ -111,32 +107,55 @@ export default function ReviewsPage() {
     <SimplePage
       title="Wat klanten van ons vinden"
       breadcrumb="Beoordelingen"
-      intro="Ruim 2.600 mensen hebben ons beoordeeld op vier onafhankelijke platformen. Hieronder staan de cijfers met een link naar de bron, zodat je ze allemaal zelf kunt nalezen."
+      intro="Wij verkopen sinds 2011 tweedehands apparatuur, en onze klanten laten weten wat ze ervan vinden. Hieronder de cijfers, met een link naar de bron zodat je ze zelf kunt nalezen."
     >
-      {/* Geen samengesteld rapportcijfer maar het aantal. Optellen hoeveel mensen iets
-          vonden is een feitelijke som; er één cijfer van maken zou een eigen gemiddelde
-          zijn over vier verschillende schalen. Zie de toelichting bovenaan dit bestand. */}
+      {/* Kopblok: score, volume, aantal beoordelingen. Zie de toelichting bovenaan
+          dit bestand voor waarom het kopcijfer de Trustpilot-score is. */}
       <div
         style={{
-          display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '18px 30px',
-          background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 16,
-          padding: '24px 26px', margin: '0 0 12px',
+          display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit,minmax(190px,1fr))',
+          margin: '0 0 12px',
         }}
       >
-        <div>
-          <div style={{ fontSize: 52, fontWeight: 700, lineHeight: 1, color: '#1E2133', fontVariantNumeric: 'tabular-nums' }}>
-            {TOTAL_COUNT}
+        <a
+          href={HEADLINE.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            background: '#1E2133', borderRadius: 16, padding: '24px 26px',
+            textDecoration: 'none', color: '#fff',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
+            <span style={{ fontSize: 52, fontWeight: 700, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+              {HEADLINE.score}
+            </span>
+            <span style={{ fontSize: 19, color: 'rgba(255,255,255,.55)' }}>/ 10</span>
           </div>
-          <div style={{ fontSize: 13.5, color: 'var(--text-sec)', marginTop: 6 }}>
-            beoordelingen sinds 2015
+          <div style={{ fontSize: 13.5, color: 'rgba(255,255,255,.72)', marginTop: 8, lineHeight: 1.5 }}>
+            Onze score op Trustpilot,<br />uit {HEADLINE.count} beoordelingen
+          </div>
+          <div style={{ fontSize: 13, color: '#FF9A5C', fontWeight: 600, marginTop: 12 }}>
+            Bekijk op Trustpilot →
+          </div>
+        </a>
+
+        <div style={{ background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 16, padding: '24px 26px' }}>
+          <div style={{ fontSize: 44, fontWeight: 700, lineHeight: 1.1, color: '#1E2133', fontVariantNumeric: 'tabular-nums' }}>
+            {SOLD}
+          </div>
+          <div style={{ fontSize: 13.5, color: 'var(--text-sec)', marginTop: 8, lineHeight: 1.5 }}>
+            Producten verkocht<br />sinds 2011
           </div>
         </div>
-        <div style={{ flex: '1 1 260px', minWidth: 240 }}>
-          <p style={{ fontSize: 14.5, lineHeight: 1.6, margin: 0, color: 'var(--text-sec)' }}>
-            Wij rekenen ze niet om naar één rapportcijfer. De schalen verschillen per
-            platform, en een gemiddelde dat wij zelf uitrekenen kun je niet nakijken.
-            Daarom staan ze hieronder gewoon los, met een link naar de bron.
-          </p>
+
+        <div style={{ background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 16, padding: '24px 26px' }}>
+          <div style={{ fontSize: 44, fontWeight: 700, lineHeight: 1.1, color: '#1E2133', fontVariantNumeric: 'tabular-nums' }}>
+            {TOTAL_COUNT}
+          </div>
+          <div style={{ fontSize: 13.5, color: 'var(--text-sec)', marginTop: 8, lineHeight: 1.5 }}>
+            Beoordelingen op vier<br />onafhankelijke platformen
+          </div>
         </div>
       </div>
 
@@ -179,34 +198,21 @@ export default function ReviewsPage() {
         </table>
       </div>
       <p style={{ fontSize: 12.5, color: '#8A8C99', margin: '0 0 8px', lineHeight: 1.6 }}>
-        Cijfers per 8 augustus 2026. Klik door voor het actuele beeld.
-      </p>
-
-      <h2 style={h2}>Waarom er meerdere platformen staan</h2>
-      <p style={p}>
-        Omdat wij ondervonden hebben wat er gebeurt als je er één gebruikt. Wij waren jaren aangesloten
-        bij Trusted Shops en hebben daar ruim negenhonderd beoordelingen opgebouwd. Toen wij daar
-        weggingen, verdween die pagina en waren ze in één klap onvindbaar.
-      </p>
-      <p style={p}>
-        Wij tellen die beoordelingen hierboven dan ook niet mee. Ze waren echt, maar jij kunt ze nergens
-        meer nalezen, en een cijfer dat je niet kunt controleren hoort niet op deze pagina thuis. Wat er
-        wél staat, staat er met een link erbij.
-      </p>
-      <p style={p}>
-        Om dezelfde reden staat overal het aantal beoordelingen erbij. Een 5,0 uit 23 beoordelingen is
-        iets heel anders dan een 9,4 uit 1.893, en dat hoor je te kunnen zien.
+        Cijfers per 8 augustus 2026. Trustpilot en Google werken met een schaal van 5, WebwinkelKeur met
+        een schaal van 10 &mdash; onze 4,9 op Trustpilot is dus dezelfde score als een 9,8. Klik door voor
+        het actuele beeld.
       </p>
 
       <h2 style={h2}>Hoe onze beoordelingen tot stand komen</h2>
       <p style={p}>
         Elke klant krijgt na een aankoop automatisch een uitnodiging. Wij kiezen niet wie er gevraagd
-        wordt, en wij kunnen een beoordeling niet verwijderen of aanpassen — dat is precies waarom een
-        cijfer van een onafhankelijk platform iets waard is.
+        wordt, en wij kunnen een beoordeling niet verwijderen of aanpassen &mdash; dat is precies waarom
+        een cijfer van een onafhankelijk platform iets waard is.
       </p>
       <p style={p}>
         Een winkel die zelf bepaalt welke beoordelingen zichtbaar worden, kan alleen maar goede
-        beoordelingen laten zien. Dan zegt een tien niets meer.
+        beoordelingen laten zien. Dan zegt een tien niets meer. Daarom staan onze beoordelingen bij
+        anderen, staan ze er op meerdere plekken, en staat overal het aantal erbij.
       </p>
 
       <h2 style={h2}>Vijf beoordelingen, vijf vragen</h2>
