@@ -1,4 +1,7 @@
 import SimplePage from '@/components/layout/SimplePage';
+import {
+  WebwinkelKeurLogo, FacebookLogo, GoogleLogo, TrustedShopsLogo, TrustpilotLogo, ScoreStar,
+} from '@/components/ui/PlatformLogos';
 
 // Eigen reviewpagina. Bewust GEEN AggregateRating-markup: Google toont sinds
 // december 2025 geen sterren meer voor reviews die de beoordeelde partij zelf
@@ -7,45 +10,62 @@ import SimplePage from '@/components/layout/SimplePage';
 //
 // Alle cijfers opgehaald op 08-08-2026 uit de bronnen zelf.
 //
-// KOPCIJFER = 9,8, en dat is de Trustpilot-score: 4,9 van 5 is 9,8 van 10, precies
-// zoals WebwinkelKeur hem ook weergeeft. Bewust die en niet het WebwinkelKeur-totaal
-// van 9,7: dat totaal bevat 953 Trusted Shops-reviews met een score van 10,0, en daar
-// klopt iets niet (een 10,0 over 953 reviews betekent dat élke klant de volle score
-// gaf — vermoedelijk een importartefact; nagevraagd moet nog). Trustpilot is boven-
-// dien hoger, verser en het enige platform waar nu nog dagelijks reviews binnenkomen.
+// KOPCIJFER = 9,8, de Trustpilot-score: 4,9 van 5 is 9,8 van 10, precies zoals
+// WebwinkelKeur hem ook weergeeft. Bewust die en niet het WebwinkelKeur-totaal van
+// 9,7 — Trustpilot is hoger, verser en het enige platform waar nu nog dagelijks
+// beoordelingen binnenkomen (WebwinkelKeur staat stil sinds november 2024).
 //
-// Getallen zijn allemaal na te lezen bij de bron; niets is door ons omgerekend behalve
-// die schaalconversie. Let op bij bijwerken: WebwinkelKeur loopt een paar dagen achter.
+// De bronnenlijst volgt de weergave van WebwinkelKeur zelf: logo, aantal, één ster
+// met de score op een schaal van 10. Scores van 5-schaalplatformen zijn lineair
+// omgerekend; dat staat als voetnoot onder de lijst.
+//
+// Let op bij bijwerken: WebwinkelKeur loopt een paar dagen achter op Trustpilot,
+// en hun scores zijn afgerond op één decimaal (een "10" is dus >= 9,95).
 
 const HEADLINE = { score: '9,8', count: '591', href: 'https://nl.trustpilot.com/review/www.camera-tweedehands.nl' };
 const SOLD = '50.000+';
-const TOTAL_COUNT = '2.694';
+const TOTAL_COUNT = '3.638';
 
-const sources: { name: string; score: string; count: string; href: string; note: string }[] = [
+// Scores op een schaal van 10, net zoals WebwinkelKeur ze in hun eigen bronnenlijst
+// toont. Trustpilot, Google en Facebook hanteren zelf een schaal van 5; die is hier
+// lineair omgerekend (4,9/5 = 9,8/10). Staat als voetnoot onder de lijst.
+const sources: { name: string; Logo: (p: { size?: number }) => React.JSX.Element; score: string; count: string; href: string; note: string }[] = [
   {
     name: 'WebwinkelKeur',
-    score: '9,4 / 10',
+    Logo: WebwinkelKeurLogo,
+    score: '9,4',
     count: '1.893',
     href: 'https://www.webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043/reviews',
-    note: 'Keurmerkorganisatie waar wij sinds 2015 bij aangesloten zijn',
+    note: 'Keurmerk waar wij sinds 2015 bij aangesloten zijn',
+  },
+  {
+    name: 'Trusted Shops',
+    Logo: TrustedShopsLogo,
+    score: '10',
+    count: '953',
+    href: 'https://www.webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043',
+    note: 'Opgebouwd in de jaren dat wij daar aangesloten waren',
   },
   {
     name: 'Trustpilot',
-    score: '4,9 / 5',
+    Logo: TrustpilotLogo,
+    score: '9,8',
     count: '591',
     href: 'https://nl.trustpilot.com/review/www.camera-tweedehands.nl',
     note: 'Hier komen op dit moment de meeste nieuwe beoordelingen binnen',
   },
   {
     name: 'Google',
-    score: '4,8 / 5',
+    Logo: GoogleLogo,
+    score: '9,6',
     count: '187',
     href: 'https://www.google.com/search?q=Camera-Tweedehands.nl+Geldermalsen',
-    note: 'Vooral van mensen die in de winkel in Geldermalsen langs zijn geweest',
+    note: 'Vooral van mensen die in de winkel in Geldermalsen zijn geweest',
   },
   {
     name: 'Facebook',
-    score: '5,0 / 5',
+    Logo: FacebookLogo,
+    score: '10',
     count: '23',
     href: 'https://www.facebook.com/cameratweedehands',
     note: 'Ruim 5.100 mensen volgen ons daar',
@@ -100,7 +120,6 @@ const featured: { doubt: string; quote: string; who: string; when: string; where
 
 const h2: React.CSSProperties = { fontSize: 20, fontWeight: 700, margin: '38px 0 10px' };
 const p: React.CSSProperties = { fontSize: 14.5, color: 'var(--text-sec)', margin: '0 0 14px', lineHeight: 1.65 };
-const td: React.CSSProperties = { padding: '11px 14px', borderBottom: '1px solid var(--border)' };
 
 export default function ReviewsPage() {
   return (
@@ -154,53 +173,52 @@ export default function ReviewsPage() {
             {TOTAL_COUNT}
           </div>
           <div style={{ fontSize: 13.5, color: 'var(--text-sec)', marginTop: 8, lineHeight: 1.5 }}>
-            Beoordelingen op vier<br />onafhankelijke platformen
+            Beoordelingen op vijf<br />onafhankelijke platformen
           </div>
         </div>
       </div>
 
       <h2 style={h2}>De cijfers per platform</h2>
-      <div style={{ overflowX: 'auto', margin: '0 0 10px' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, minWidth: 520 }}>
-          <thead>
-            <tr>
-              {['Platform', 'Score', 'Beoordelingen'].map((hd, i) => (
-                <th
-                  key={hd}
-                  style={{
-                    textAlign: i === 0 ? 'left' : 'right', padding: '10px 14px',
-                    background: 'var(--surface)', borderBottom: '1px solid var(--border)', fontWeight: 700,
-                  }}
-                >
-                  {hd}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {sources.map(s => (
-              <tr key={s.name}>
-                <td style={td}>
-                  <a href={s.href} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none' }}>
-                    {s.name}
-                  </a>
-                  <div style={{ fontSize: 12.5, color: '#8A8C99', marginTop: 3, lineHeight: 1.5 }}>{s.note}</div>
-                </td>
-                <td style={{ ...td, textAlign: 'right', fontWeight: 600, whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
-                  {s.score}
-                </td>
-                <td style={{ ...td, textAlign: 'right', whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
-                  {s.count}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div style={{ background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 16, padding: '4px 22px', margin: '0 0 10px' }}>
+        {sources.map((s, i) => (
+          <a
+            key={s.name}
+            href={s.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 16, padding: '17px 0',
+              borderTop: i === 0 ? 'none' : '1px solid #EEEEF2',
+              textDecoration: 'none', color: 'inherit',
+            }}
+          >
+            <span style={{ flex: '0 0 auto', display: 'flex' }}>
+              <s.Logo size={38} />
+            </span>
+            <span style={{ flex: '1 1 auto', minWidth: 0 }}>
+              <span style={{ display: 'block', fontSize: 15.5, fontWeight: 700, color: 'var(--text)' }}>
+                {s.name}
+              </span>
+              <span style={{ display: 'block', fontSize: 13, color: '#8A8C99', marginTop: 2 }}>
+                {s.count} beoordelingen
+              </span>
+              <span style={{ display: 'block', fontSize: 12.5, color: '#A0A2AE', marginTop: 3, lineHeight: 1.45 }}>
+                {s.note}
+              </span>
+            </span>
+            <span style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <ScoreStar size={18} />
+              <span style={{ fontSize: 21, fontWeight: 700, color: 'var(--text)', fontVariantNumeric: 'tabular-nums' }}>
+                {s.score}
+              </span>
+            </span>
+          </a>
+        ))}
       </div>
       <p style={{ fontSize: 12.5, color: '#8A8C99', margin: '0 0 8px', lineHeight: 1.6 }}>
-        Cijfers per 8 augustus 2026. Trustpilot en Google werken met een schaal van 5, WebwinkelKeur met
-        een schaal van 10 &mdash; onze 4,9 op Trustpilot is dus dezelfde score als een 9,8. Klik door voor
-        het actuele beeld.
+        Cijfers per 8 augustus 2026, alle op een schaal van 10. Trustpilot, Google en Facebook werken zelf
+        met een schaal van 5; onze 4,9 op Trustpilot is dus dezelfde score als een 9,8. Klik door voor het
+        actuele beeld.
       </p>
 
       <h2 style={h2}>Hoe onze beoordelingen tot stand komen</h2>
