@@ -19,6 +19,10 @@ const customerCare = [
   { label: 'Payment methods', href: '/payment-methods' },
   { label: 'Warranty & repair', href: '/warranty-repair' },
   { label: 'FAQ', href: '/faq' },
+  // Wettelijk verplicht sinds 19-06-2026 (EU 2023/2673 art. 11a): de
+  // herroepingsfunctie moet duidelijk zichtbaar en gedurende de hele
+  // herroepingstermijn bereikbaar zijn. Vandaar een vaste plek in de footer.
+  { label: 'Bestelling annuleren', href: '/bestelling-annuleren' },
 ];
 
 const social = [
