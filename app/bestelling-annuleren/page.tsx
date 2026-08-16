@@ -57,15 +57,62 @@ export default function BestellingAnnulerenPage() {
           style={{ background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 14, padding: '22px 24px' }}
         >
           {bevestigd ? (
+            /* Stap 2: de logistiek. Bewust NA de bevestiging, want de herroeping is
+               op dat moment al rechtsgeldig. Zou je het aanvinken vóór de bevestiging
+               eisen, dan hang je een voorwaarde aan een wettelijk recht. */
             <div>
-              <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 8 }}>Je herroeping is ontvangen</div>
-              <p style={{ ...p, marginBottom: 10 }}>
-                Wij hebben je melding zojuist vastgelegd en sturen je binnen enkele minuten een
-                bevestiging per e-mail, met de datum en het tijdstip erin.
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 13, fontWeight: 700,
+                color: '#1B7F4B', background: '#E8F5EE', borderRadius: 999, padding: '5px 12px', marginBottom: 12,
+              }}>
+                Herroeping geregistreerd
+              </div>
+              <p style={{ ...p, marginBottom: 18 }}>
+                Je bestelling is herroepen. De bevestiging met datum en tijdstip is onderweg naar je
+                mailbox. <strong style={{ color: 'var(--text)' }}>Vanaf hier is het alleen nog
+                praktisch.</strong>
               </p>
-              <p style={{ ...p, marginBottom: 0 }}>
-                In die mail staat ook het retourlabel en het adres. Je hebt vanaf nu veertien dagen
-                om het pakket terug te sturen.
+
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Wat stuur je terug?</div>
+              <p style={{ ...p, fontSize: 13.5, marginBottom: 12 }}>
+                Vink aan wat er terugkomt, dan maken wij het label en de pakbon voor je klaar.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 16 }}>
+                {[
+                  { naam: 'Canon EOS R6 Mark II', sub: 'Zeer goed · SKU 21326', prijs: '€ 1.999,00' },
+                  { naam: 'Canon RF 24-105mm f/4 L IS USM', sub: 'Goed · SKU 19685', prijs: '€ 699,00' },
+                  { naam: 'SanDisk Extreme Pro 128 GB', sub: 'Nieuw · SKU 20845', prijs: '€ 39,00' },
+                ].map(r => (
+                  <label
+                    key={r.naam}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 12, padding: '11px 12px',
+                      border: '1px solid var(--border)', borderRadius: 10, cursor: 'pointer',
+                    }}
+                  >
+                    <input type="checkbox" defaultChecked style={{ width: 17, height: 17, accentColor: '#E8692A' }} />
+                    <span style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ display: 'block', fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{r.naam}</span>
+                      <span style={{ display: 'block', fontSize: 12.5, color: '#8A8C99', marginTop: 1 }}>{r.sub}</span>
+                    </span>
+                    <span style={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap' }}>{r.prijs}</span>
+                  </label>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                style={{
+                  width: '100%', padding: '13px 18px', fontSize: 15, fontWeight: 700, color: '#fff',
+                  background: '#E8692A', border: 'none', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >
+                Retourlabel aanmaken
+              </button>
+              <p style={{ fontSize: 12.5, color: '#8A8C99', margin: '10px 0 0', lineHeight: 1.55 }}>
+                Sluit je dit scherm? Geen probleem, je herroeping staat al geregistreerd. In de
+                bevestigingsmail zit een link waarmee je hier terugkomt.
               </p>
             </div>
           ) : (
@@ -153,14 +200,19 @@ export default function BestellingAnnulerenPage() {
 
       <h2 style={h2}>Hoe het verder gaat</h2>
       <ol style={{ margin: '0 0 16px', paddingLeft: 20, fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.8 }}>
-        <li>Je krijgt direct een bevestiging per e-mail, met datum en tijdstip.</li>
-        <li>In diezelfde mail zit het retourlabel en het retouradres.</li>
-        <li>Je hebt daarna <strong style={{ color: 'var(--text)' }}>veertien dagen</strong> om het pakket terug te sturen.</li>
+        <li>Je herroeping is geregistreerd zodra je op bevestigen klikt. Daar hangt verder niets aan vast.</li>
+        <li>Je krijgt direct een bevestiging per e-mail, met de datum en het tijdstip erin.</li>
+        <li>Je vinkt aan wat je terugstuurt en wij maken het retourlabel en de pakbon klaar.</li>
+        <li>Je hebt <strong style={{ color: 'var(--text)' }}>veertien dagen</strong> om het pakket op de post te doen.</li>
         <li>Wij betalen binnen veertien dagen na ontvangst terug, inclusief de verzendkosten die je bij de bestelling hebt betaald.</li>
       </ol>
       <p style={p}>
         De kosten van het terugsturen zijn voor jou, tenzij het product defect of verkeerd geleverd is.
         Dan nemen wij ze voor onze rekening.
+      </p>
+      <p style={p}>
+        Heb je een account? Dan kun je ook vanuit je bestelling starten, dan staan je gegevens en de
+        producten al ingevuld. Het is geen voorwaarde &mdash; dit formulier werkt zonder in te loggen.
       </p>
 
       <h2 style={h2}>Wat je met het product mag doen</h2>
