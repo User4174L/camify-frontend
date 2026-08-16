@@ -101,6 +101,33 @@ export default function BestellingAnnulerenPage() {
       image="/images/hero-photographer-2.jpg"
       intro="Van gedachten veranderd? Je hebt veertien dagen na ontvangst om je online aankoop te annuleren, zonder dat je hoeft uit te leggen waarom. Zoek hieronder je bestelling op, dan regelen we het in twee stappen."
     >
+      {/* Het hele proces in één oogopslag, vóór het formulier. Wie weet wat er komt,
+          belt niet halverwege om te vragen hoe het zit. */}
+      <div style={{
+        display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit,minmax(168px,1fr))', margin: '0 0 26px',
+      }}>
+        {[
+          { n: 1, t: 'Opzoeken', d: 'Bestelnummer en e-mailadres' },
+          { n: 2, t: 'Bevestigen', d: 'Kies wat terugkomt' },
+          { n: 3, t: 'Terugsturen', d: 'Met het label uit de mail' },
+          { n: 4, t: 'Geld terug', d: '3 tot 5 werkdagen na controle' },
+        ].map(s => (
+          <div key={s.n} style={{
+            background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 12, padding: '15px 16px',
+          }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22,
+              borderRadius: 999, background: '#FDF1E7', color: '#B85C16', fontSize: 12, fontWeight: 700,
+              marginBottom: 9,
+            }}>
+              {s.n}
+            </div>
+            <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{s.t}</div>
+            <div style={{ fontSize: 12.5, color: '#8A8C99', lineHeight: 1.5 }}>{s.d}</div>
+          </div>
+        ))}
+      </div>
+
       {/* Alleen voor deze referentiepagina: schakelaar om de uitkomsten te tonen. */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 20, fontSize: 12.5, color: '#8A8C99' }}>
         <span style={{ fontWeight: 700 }}>Voorbeeld tonen:</span>
@@ -275,14 +302,18 @@ export default function BestellingAnnulerenPage() {
 
             {uitkomst === 'winkel' && (
               <>
-                <Melding kleur="oranje" titel="Dit toestel is in de showroom gekocht">
-                  ORD000290 is een winkelverkoop in Geldermalsen. De wettelijke bedenktijd geldt alleen
-                  voor aankopen op afstand, dus bij een aankoop in de winkel is die er niet.
+                <Melding kleur="oranje" titel="Dit is een aankoop in de showroom">
+                  ORD000290 is in onze winkel in Geldermalsen afgerekend. De wettelijke bedenktijd geldt
+                  voor aankopen op afstand en niet voor aankopen in een winkel.
                 </Melding>
                 <p style={p}>
-                  Je hebt het toestel in de winkel kunnen bekijken en uitproberen voordat je het meenam.
-                  Maar <strong style={{ color: 'var(--text)' }}>je garantie geldt gewoon</strong>, dus is
-                  er iets mis, dan lossen wij dat op. Loop anders even binnen of bel ons.
+                  Die regel bestaat omdat je bij een online aankoop het product niet vooraf kunt zien.
+                  In de showroom is dat anders, en daarom kent de wet daar geen bedenktijd.
+                </p>
+                <p style={p}>
+                  <strong style={{ color: 'var(--text)' }}>Je garantie geldt onverkort</strong>, dus is er
+                  iets mis met het toestel, dan lossen wij dat op. En loop je ergens tegenaan, kom dan
+                  gerust langs of bel ons even &mdash; we kijken altijd wat er mogelijk is.
                 </p>
                 <ContactRegel />
               </>
@@ -303,7 +334,7 @@ export default function BestellingAnnulerenPage() {
         <li>Je annulering staat geregistreerd op het moment dat je bevestigt.</li>
         <li>De bevestigingsmail gaat er meteen uit, met datum, tijdstip en een pdf met het retouradres en je producten.</li>
         <li>Je stuurt het pakket terug, het liefst meteen en uiterlijk veertien dagen na je aanvraag.</li>
-        <li>Wij betalen binnen <strong style={{ color: 'var(--text)' }}>drie tot vijf werkdagen na ontvangst</strong> terug.</li>
+        <li>Wij controleren het pakket en betalen binnen <strong style={{ color: 'var(--text)' }}>drie tot vijf werkdagen</strong> terug.</li>
       </ol>
       <p style={p}>
         Stuur je je hele bestelling terug, dan krijg je ook de verzendkosten terug die je bij het
@@ -319,20 +350,33 @@ export default function BestellingAnnulerenPage() {
         geen voorwaarde &mdash; dit formulier werkt zonder in te loggen.
       </p>
 
-      <h2 style={h2}>Wat je met het product mag doen</h2>
+      <h2 style={h2}>Hoe het toestel terug moet komen</h2>
       <p style={p}>
-        Uitproberen zoals je in een winkel zou doen: uitpakken, vasthouden, instellen en een aantal
-        opnamen maken. Daar is de bedenktijd voor.
+        Je mag het uitproberen zoals je in een winkel zou doen: uitpakken, vasthouden, instellen en een
+        aantal opnamen maken. Daar is de bedenktijd voor. Verder gaan mag ook, maar dan verrekenen wij
+        de waardevermindering.
       </p>
       <p style={p}>
-        Gebruik je het duidelijk verder dan uitproberen, dan mogen wij de waardevermindering verrekenen.
-        Om daar geen discussie over te krijgen hanteren wij één harde grens: bij een camera rekenen wij
-        <strong style={{ color: 'var(--text)' }}> tot 200 opnamen</strong> als uitproberen. Daarboven
-        brengen wij het verschil in dagwaarde in mindering.
+        Om daar geen discussie over te krijgen hanteren wij één duidelijke grens: bij een camera rekenen
+        wij <strong style={{ color: 'var(--text)' }}>tot 200 opnamen</strong> als uitproberen. Daarboven
+        brengen wij het verschil in dagwaarde in mindering. Datzelfde geldt als er iets ontbreekt of
+        beschadigd is geraakt.
       </p>
+
+      <div style={{ ...kaart, padding: '20px 22px', marginBottom: 16 }}>
+        <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 10 }}>Loop dit even na voor je inpakt</div>
+        <ul style={{ margin: 0, paddingLeft: 20, fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.85 }}>
+          <li>Alles wat erbij zat gaat mee: accu, lader, doppen, riem, kabels en de doos.</li>
+          <li>Het toestel is in dezelfde staat als toen je het kreeg.</li>
+          <li><strong style={{ color: 'var(--text)' }}>Haal je geheugenkaart eruit.</strong> Wij kunnen niet aansprakelijk zijn voor kaarten of foto&rsquo;s die meekomen.</li>
+          <li>Verpak het stevig genoeg om de reis te doorstaan, het liefst in de doos waarin je het ontving.</li>
+          <li>Doe het retourformulier erbij, of print hem uit de bevestigingsmail.</li>
+          <li>Bewaar je verzendbewijs tot het geld op je rekening staat.</li>
+        </ul>
+      </div>
+
       <p style={{ ...p, marginBottom: 0 }}>
-        Stuur het toestel terug met alles wat erbij zat, en verpak het stevig genoeg om de reis te
-        doorstaan. Wat wij per staat hanteren lees je bij{' '}
+        Wat wij per staat hanteren lees je bij{' '}
         <Link href="/quality-grading" style={{ color: 'var(--accent)' }}>productcondities</Link>.
       </p>
     </SimplePage>
