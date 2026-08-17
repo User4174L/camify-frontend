@@ -108,7 +108,7 @@ function RetourInner() {
       </div>
 
       <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 10px' }}>Hoe het werkt</h2>
-      <ul style={{ margin: '0 0 16px', paddingLeft: 20, fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.85 }}>
+      <ul style={{ listStyle: 'disc outside', margin: '0 0 16px', paddingLeft: 22, fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.85 }}>
         <li>Je zoekt je bestelling op met bestelnummer en e-mailadres — inloggen hoeft niet.</li>
         <li>Je vinkt aan wat teruggaat en kiest per artikel de reden. Een foto erbij mag.</li>
         <li>Je kiest: QR-code (geen printer nodig) of label printen. De vervoerder ligt per land vast, zodat het altijd het goedkoopste label is.</li>
