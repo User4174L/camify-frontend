@@ -73,9 +73,22 @@ function RetourInner() {
 
       <div style={{ background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 14, padding: '22px 24px', marginBottom: 22 }}>
         <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 6 }}>Start je retour</div>
-        <p style={{ fontSize: 14, color: 'var(--text-sec)', margin: '0 0 16px', lineHeight: 1.6 }}>
-          Retourkosten: <strong style={{ color: 'var(--text)' }}>€ 6,95 in Nederland, € 12,95 in België, Duitsland en Frankrijk, € 24,95 in de rest van de EU</strong> — precies wat het label ons kost. Is het product defect, beschadigd of verkeerd geleverd, dan betalen wij de verzending.
+        <p style={{ fontSize: 14, color: 'var(--text-sec)', margin: '0 0 10px', lineHeight: 1.6 }}>
+          Retourkosten — precies wat het label ons kost:
         </p>
+        <ul style={{ listStyle: 'none', margin: '0 0 14px', padding: 0, maxWidth: 420 }}>
+          {[
+            ['Nederland', '€ 6,95'],
+            ['België, Duitsland, Frankrijk', '€ 12,95'],
+            ['Overige EU-landen', '€ 24,95'],
+            ['Defect, beschadigd of verkeerd geleverd', 'Gratis'],
+          ].map(([l, b]) => (
+            <li key={l} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '7px 0', borderBottom: '1px solid var(--border)', fontSize: 14 }}>
+              <span style={{ color: 'var(--text-sec)' }}>{l}</span>
+              <strong style={{ color: 'var(--text)', whiteSpace: 'nowrap' }}>{b}</strong>
+            </li>
+          ))}
+        </ul>
         <button type="button" onClick={() => setOpen(true)} style={{ padding: '13px 26px', fontSize: 15, fontWeight: 700, color: '#fff', background: '#E8692A', border: 'none', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit' }}>
           Retourzending aanmaken
         </button>
@@ -95,17 +108,16 @@ function RetourInner() {
       </div>
 
       <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 10px' }}>Hoe het werkt</h2>
-      <ol style={{ margin: '0 0 16px', paddingLeft: 20, fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.8 }}>
+      <ul style={{ margin: '0 0 16px', paddingLeft: 20, fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.85 }}>
         <li>Je zoekt je bestelling op met bestelnummer en e-mailadres — inloggen hoeft niet.</li>
         <li>Je vinkt aan wat teruggaat en kiest per artikel de reden. Een foto erbij mag.</li>
         <li>Je kiest: QR-code (geen printer nodig) of label printen. De vervoerder ligt per land vast, zodat het altijd het goedkoopste label is.</li>
         <li>Je ziet de retourkosten en betaalt die direct (iDEAL, Bancontact, creditcard). Bij een defect of onze fout is het gratis.</li>
-        <li>Je label of QR-code staat meteen klaar; de status volg je in je account.</li>
-      </ol>
-      <p style={{ fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.65 }}>
-        Elke retour is tijdens het vervoer verzekerd, zonder extra kosten. Je hoeft nergens op te wachten: betalen en je label staat klaar.
-        Voor reparaties of retouren buiten de bedenktijd sturen wij je zelf een link — dan staat de reden al ingevuld en betaal je niets.
-      </p>
+        <li>Je label of QR-code staat meteen klaar; je hoeft nergens op te wachten.</li>
+        <li>Elke retour is tijdens het vervoer verzekerd, zonder extra kosten.</li>
+        <li>De status volg je in je account: onderweg, ontvangen, terugbetaald.</li>
+        <li>Reparatie of retour buiten de bedenktijd? Dan sturen wij je een link — reden staat al ingevuld en je betaalt niets.</li>
+      </ul>
       <p style={{ fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.65 }}>
         Wil je alleen je bestelling annuleren (herroepen) en het label later? Dat kan via <Link href="/bestelling-annuleren" style={{ color: 'var(--accent)' }}>bestelling annuleren</Link>.
       </p>
