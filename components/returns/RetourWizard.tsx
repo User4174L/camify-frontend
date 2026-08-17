@@ -43,7 +43,7 @@ export type RetourLinkContext = {
 };
 
 const REDENEN: { code: RedenCode; label: string; gratis: boolean }[] = [
-  { code: 'bedacht',      label: 'Ik heb me bedacht',                          gratis: false },
+  { code: 'bedacht',      label: 'Bedenktijd — geen reden nodig',              gratis: false },
   { code: 'verwachting',  label: 'Voldoet niet aan mijn verwachtingen',        gratis: false },
   { code: 'beschrijving', label: 'Komt niet overeen met de beschrijving',      gratis: true  },
   { code: 'defect',       label: 'Defect of werkt niet',                       gratis: true  },
@@ -145,7 +145,6 @@ export default function RetourWizard({
   const [toelichting, setToelichting] = useState(link?.toelichting ?? '');
   const [fotoNaam, setFotoNaam] = useState<string | null>(null);
   const [methode, setMethode] = useState<'qr' | 'print'>('qr');
-  const [akkoord, setAkkoord] = useState(false);
   const [betaald, setBetaald] = useState(false);
 
   // Bij openen: alles aangevinkt, reden leeg (of vast vanuit de link).
@@ -159,10 +158,10 @@ export default function RetourWizard({
     setZoekFout(null);
     const g: Record<string, boolean> = {};
     const r: Record<string, RedenCode | ''> = {};
-    o?.artikelen.forEach(a => { if (!a.inruil) { g[a.id] = true; r[a.id] = link?.reden ?? ''; } });
+    o?.artikelen.forEach(a => { if (!a.inruil) { g[a.id] = true; r[a.id] = link?.reden ?? 'bedacht'; } });
     setGekozen(g); setReden(r);
     setToelichting(link?.toelichting ?? '');
-    setFotoNaam(null); setMethode('qr'); setAkkoord(false); setBetaald(false);
+    setFotoNaam(null); setMethode('qr'); setBetaald(false);
   }, [open, order, link]);
 
   useEffect(() => {
@@ -195,7 +194,7 @@ export default function RetourWizard({
     const o = DEMO_ORDER_NL({ nummer: nummer.trim().toUpperCase(), email: email.trim() });
     setGevonden(o);
     const g: Record<string, boolean> = {}; const r: Record<string, RedenCode | ''> = {};
-    o.artikelen.forEach(a => { if (!a.inruil) { g[a.id] = true; r[a.id] = ''; } });
+    o.artikelen.forEach(a => { if (!a.inruil) { g[a.id] = true; r[a.id] = 'bedacht'; } });
     setGekozen(g); setReden(r); setZoekFout(null); setStap(1);
   };
 
@@ -268,7 +267,6 @@ export default function RetourWizard({
                           onChange={e => setReden({ ...reden, [a.id]: e.target.value as RedenCode })}
                           style={{ ...input, padding: '9px 11px', fontSize: 14, background: link ? 'var(--surface)' : '#fff' }}
                         >
-                          <option value="">Reden voor retour…</option>
                           {REDENEN.filter(r => link || r.code !== 'reparatie').map(r => <option key={r.code} value={r.code}>{r.label}{r.gratis ? ' — gratis retour' : ''}</option>)}
                         </select>
                       </div>
@@ -344,13 +342,13 @@ export default function RetourWizard({
                 </div>
                 {verzekerd && <div style={{ fontSize: 12.5, color: '#1B7F4B', marginTop: 6, fontWeight: 600 }}>✓ Verzekerd tijdens het vervoer voor {eur(waarde)}, zonder extra kosten.</div>}
               </div>
-              <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13.5, color: 'var(--text-sec)', marginBottom: 16, cursor: 'pointer' }}>
-                <input type="checkbox" checked={akkoord} onChange={e => setAkkoord(e.target.checked)} style={{ marginTop: 3, accentColor: '#E8692A' }} />
-                <span>Ik stuur het compleet en in dezelfde staat terug, uiterlijk {uiterlijk}.</span>
-              </label>
+              <p style={{ ...p, fontSize: 12.5, marginBottom: 14 }}>
+                Hiermee herroep je de koop van deze artikelen. Je krijgt direct een bevestiging per e-mail met datum en tijd — ook als je het label later regelt.
+                Stuur het compleet en in dezelfde staat terug, uiterlijk {uiterlijk}.
+              </p>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <button type="button" style={knopLicht} onClick={() => setStap(2)}>Terug</button>
-                <button type="button" disabled={!akkoord} style={{ ...knop, background: '#E8692A', opacity: akkoord ? 1 : .45 }}
+                <button type="button" style={{ ...knop, background: '#E8692A' }}
                   onClick={() => { setBetaald(!handmatig); setStap(4); }}>
                   {handmatig ? 'Aanvraag indienen' : gratis ? 'Retour bevestigen' : `Betalen ${eur(kosten)} en label ontvangen`}
                 </button>
