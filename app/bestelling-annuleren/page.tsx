@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import SimplePage from '@/components/layout/SimplePage';
+import RetourWizard, { DEMO_ORDER_NL } from '@/components/returns/RetourWizard';
 
 /**
  * Herroepingsfunctie — verplicht sinds 19 juni 2026 (EU 2023/2673, art. 11a).
@@ -83,6 +84,7 @@ function ContactRegel() {
 export default function BestellingAnnulerenPage() {
   const [uitkomst, setUitkomst] = useState<Uitkomst>('geen');
   const [klaar, setKlaar] = useState(false);
+  const [retourOpen, setRetourOpen] = useState(false);
 
   // De uiterste verzenddatum is de dag van de aanvraag plus veertien dagen.
   // In de echte app komt die uit het systeem; hier gerekend vanaf vandaag.
@@ -262,10 +264,17 @@ export default function BestellingAnnulerenPage() {
                   terug, dan kunnen wij het niet meer als annulering verwerken en kunnen wij kosten in
                   rekening brengen.
                 </p>
-                <button type="button" style={knopDonker}>Retourformulier downloaden</button>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  <button type="button" style={{ ...knopDonker, background: '#E8692A' }} onClick={() => setRetourOpen(true)}>
+                    Retourzending aanmaken
+                  </button>
+                  <button type="button" style={{ ...knopDonker, background: '#fff', color: 'var(--text)', border: '1.5px solid var(--border)' }}>Retourformulier downloaden</button>
+                </div>
                 <p style={{ fontSize: 12.5, color: '#8A8C99', margin: '10px 0 0', lineHeight: 1.55 }}>
-                  Zit ook als pdf bij de bevestigingsmail, dus je kunt dit scherm rustig sluiten.
+                  Met &lsquo;Retourzending aanmaken&rsquo; kies je meteen wat teruggaat, betaal je de retourkosten en
+                  krijg je je label of QR-code. Liever later? Het formulier zit ook als pdf bij de bevestigingsmail.
                 </p>
+                <RetourWizard open={retourOpen} onClose={() => setRetourOpen(false)} order={DEMO_ORDER_NL()} />
               </>
             )}
 
