@@ -144,8 +144,7 @@ export default function RetourWizard({
   const [reden, setReden] = useState<Record<string, RedenCode | ''>>({});
   const [toelichting, setToelichting] = useState(link?.toelichting ?? '');
   const [fotoNaam, setFotoNaam] = useState<string | null>(null);
-  const [methode, setMethode] = useState<'qr' | 'print'>('qr');
-  const [betaald, setBetaald] = useState(false);
+  const [methode, setMethode] = useState<'qr' | 'print' | 'zelf' | 'showroom'>('qr');
 
   // Bij openen: alles aangevinkt, reden leeg (of vast vanuit de link).
   useEffect(() => {
@@ -161,7 +160,7 @@ export default function RetourWizard({
     o?.artikelen.forEach(a => { g[a.id] = true; r[a.id] = link?.reden ?? 'bedacht'; });
     setGekozen(g); setReden(r);
     setToelichting(link?.toelichting ?? '');
-    setFotoNaam(null); setMethode('qr'); setBetaald(false);
+    setFotoNaam(null); setMethode('qr');
   }, [open, order, link]);
 
   useEffect(() => {
@@ -180,8 +179,8 @@ export default function RetourWizard({
   /** Iemand koos een gratis reden (defect/beschadigd/verkeerd/beschrijving) → toelichting + foto verplicht. */
   const gratisReden = !link && geselecteerd.some(a => REDENEN.find(r => r.code === reden[a.id])?.gratis);
   const stap1Compleet = alleRedenenGekozen && (!gratisReden || (toelichting.trim().length >= 10 && !!fotoNaam));
-  const kosten = gratis ? 0 : tarief.bedrag;
-  const handmatig = false;
+  const onsLabel = methode === 'qr' || methode === 'print';
+  const kosten = gratis || !onsLabel ? 0 : tarief.bedrag;
   const verzekerd = waarde > 0;
   const uiterlijk = useMemo(() => datumNL(new Date(Date.now() + 14 * 864e5).toISOString()), []);
 
@@ -200,7 +199,7 @@ export default function RetourWizard({
 
   if (!open) return null;
 
-  const laatsteStapTitel = handmatig && !betaald ? 'Aanvraag ingediend' : 'Je retourlabel staat klaar';
+  const laatsteStapTitel = methode === 'showroom' ? 'Je retour is geregistreerd — tot in de showroom' : methode === 'zelf' ? 'Je retour is geregistreerd' : 'Je retourlabel staat klaar';
 
   return (
     <div role="dialog" aria-modal="true" aria-label="Retourzending aanmaken"
@@ -297,16 +296,22 @@ export default function RetourWizard({
             <>
               <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Hoe wil je terugsturen?</div>
               <p style={{ ...p, fontSize: 13.5 }}>Met {tarief.vervoerder}, af te geven bij een afgiftepunt in de buurt.</p>
-              {(['qr', 'print'] as const).map(m => (
+              {([
+                ['qr',       'Afgiftepunt — geen printer nodig',  'QR-code; het afgiftepunt print het label. Verzekerd.',                 gratis ? 'Gratis' : eur(tarief.bedrag)],
+                ['print',    'Afgiftepunt — label zelf printen',  'Label als pdf in je account en per e-mail. Verzekerd.',              gratis ? 'Gratis' : eur(tarief.bedrag)],
+                ['zelf',     'Zelf verzenden',                    'Met je eigen label en vervoerder, op eigen kosten en risico.',       '—'],
+                ['showroom', 'Langsbrengen in de showroom',       'Kerkstraat 47, Geldermalsen · ma–vr 9–17, za 10–16.',              '—'],
+              ] as const).map(([m, titel, sub, prijs]) => (
                 <label key={m} style={{ ...kaartje, display: 'flex', gap: 12, alignItems: 'flex-start', cursor: 'pointer', marginBottom: 8, borderColor: methode === m ? '#E8692A' : 'var(--border)' }}>
                   <input type="radio" name="rw-methode" checked={methode === m} onChange={() => setMethode(m)} style={{ marginTop: 3, accentColor: '#E8692A' }} />
-                  <span>
-                    <span style={{ display: 'block', fontSize: 14, fontWeight: 600 }}>{m === 'qr' ? 'Afgiftepunt — geen printer nodig' : 'Afgiftepunt — label zelf printen'}</span>
-                    <span style={{ fontSize: 12.5, color: '#8A8C99' }}>{m === 'qr' ? 'Je krijgt een QR-code; het afgiftepunt print het label voor je.' : 'Je krijgt het label als pdf in je account en per e-mail.'}</span>
+                  <span style={{ flex: 1 }}>
+                    <span style={{ display: 'block', fontSize: 14, fontWeight: 600 }}>{titel}</span>
+                    <span style={{ fontSize: 12.5, color: '#8A8C99' }}>{sub}</span>
                   </span>
+                  <span style={{ fontSize: 13.5, fontWeight: 700, whiteSpace: 'nowrap' }}>{prijs}</span>
                 </label>
               ))}
-              <p style={{ ...p, fontSize: 12.5 }}>Alles wat erbij zat gaat mee. Haal je geheugenkaart eruit en verpak stevig.</p>
+              <p style={{ ...p, fontSize: 12.5 }}>Alles wat erbij zat gaat mee. Haal je geheugenkaart eruit{methode === 'showroom' ? '.' : ' en verpak stevig.'}</p>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <button type="button" style={knopLicht} onClick={() => setStap(1)}>Terug</button>
                 <button type="button" style={knop} onClick={() => setStap(3)}>Verder</button>
@@ -331,10 +336,12 @@ export default function RetourWizard({
               </div>
               <div style={{ ...kaartje, marginBottom: 12, background: 'var(--surface)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
-                  <span>Retourzending {tarief.zone} · {tarief.vervoerder} · {methode === 'qr' ? 'QR-code' : 'label printen'}</span>
-                  <span style={{ fontWeight: 700 }}>{gratis ? 'Gratis' : eur(kosten)}</span>
+                  <span>{onsLabel ? `Retourzending ${tarief.zone} · ${tarief.vervoerder} · ${methode === 'qr' ? 'QR-code' : 'label printen'}` : methode === 'zelf' ? 'Zelf verzenden' : 'Langsbrengen in de showroom'}</span>
+                  <span style={{ fontWeight: 700 }}>{!onsLabel ? '—' : gratis ? 'Gratis' : eur(kosten)}</span>
                 </div>
-                {verzekerd && <div style={{ fontSize: 12.5, color: '#1B7F4B', marginTop: 6, fontWeight: 600 }}>✓ Verzekerd tijdens het vervoer voor {eur(waarde)}, zonder extra kosten.</div>}
+                {onsLabel && verzekerd && <div style={{ fontSize: 12.5, color: '#1B7F4B', marginTop: 6, fontWeight: 600 }}>✓ Verzekerd tijdens het vervoer voor {eur(waarde)}, zonder extra kosten.</div>}
+                {methode === 'zelf' && <div style={{ fontSize: 12.5, color: '#8A8C99', marginTop: 6 }}>Verzend aangetekend en verzekerd; het pakket is jouw risico tot het bij ons is. Bewaar je verzendbewijs.</div>}
+                {onsLabel && !gratis && <div style={{ fontSize: 12.5, color: '#8A8C99', marginTop: 6 }}>Je ontvangt een factuur voor de retourzending per e-mail.</div>}
               </div>
               <p style={{ ...p, fontSize: 12.5, marginBottom: 14 }}>
                 Hiermee herroep je de koop van deze artikelen. Je krijgt direct een bevestiging per e-mail met datum en tijd — ook als je het label later regelt.
@@ -343,11 +350,11 @@ export default function RetourWizard({
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <button type="button" style={knopLicht} onClick={() => setStap(2)}>Terug</button>
                 <button type="button" style={{ ...knop, background: '#E8692A' }}
-                  onClick={() => { setBetaald(!handmatig); setStap(4); }}>
-                  {handmatig ? 'Aanvraag indienen' : gratis ? 'Retour bevestigen' : `Betalen ${eur(kosten)} en label ontvangen`}
+                  onClick={() => setStap(4)}>
+                  {kosten === 0 ? 'Retour bevestigen' : `Betalen ${eur(kosten)} en label ontvangen`}
                 </button>
               </div>
-              {!gratis && !handmatig && <div style={{ fontSize: 12, color: '#8A8C99', marginTop: 8, textAlign: 'right' }}>iDEAL · Bancontact · creditcard · PayPal (via pay.nl)</div>}
+              {kosten > 0 && <div style={{ fontSize: 12, color: '#8A8C99', marginTop: 8, textAlign: 'right' }}>iDEAL · Bancontact · creditcard · PayPal (via pay.nl)</div>}
             </>
           )}
 
@@ -355,12 +362,21 @@ export default function RetourWizard({
           {stap === 4 && gevonden && (
             <>
               <Melding kleur="groen" titel={laatsteStapTitel}>
-                {betaald || gratis && !handmatig
-                  ? <>Het label {methode === 'qr' ? 'en de QR-code staan' : 'staat'} in je account en in je mail. Lever het pakket af bij een {tarief.vervoerder}-afgiftepunt, uiterlijk {uiterlijk}.</>
-                  : <>We hebben je aanvraag ontvangen. Je hoort binnen één werkdag van ons; daarna staat je label klaar. Je hoeft nu niets te doen.</>}
+                {methode === 'showroom'
+                  ? <>Breng het uiterlijk {uiterlijk} langs op Kerkstraat 47, Geldermalsen (ma–vr 9–17, za 10–16). Neem je bevestigingsmail mee, dan is het zo geregeld.</>
+                  : methode === 'zelf'
+                    ? <>Verstuur het uiterlijk {uiterlijk} naar het retouradres hieronder, aangetekend en verzekerd. Bewaar je verzendbewijs tot het geld op je rekening staat.</>
+                    : <>Het label {methode === 'qr' ? 'en de QR-code staan' : 'staat'} in je account en in je mail. Lever het pakket af bij een {tarief.vervoerder}-afgiftepunt, uiterlijk {uiterlijk}.</>}
               </Melding>
 
-              {(betaald || (gratis && !handmatig)) && (
+              {methode === 'zelf' && (
+                <div style={{ ...kaartje, fontSize: 13.5, lineHeight: 1.6, marginBottom: 14 }}>
+                  <div style={{ fontWeight: 700, marginBottom: 2 }}>Retouradres</div>
+                  Camera-tweedehands.nl B.V. · t.a.v. Retouren {gevonden.nummer}<br />Kerkstraat 47<br />4191 AA Geldermalsen
+                </div>
+              )}
+
+              {onsLabel && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
                   <div style={{ ...kaartje, textAlign: 'center' }}>
                     <div style={{ width: 96, height: 96, margin: '4px auto 8px', borderRadius: 8, background: 'repeating-linear-gradient(90deg,#1E2133 0 6px,#fff 6px 10px), repeating-linear-gradient(0deg,#1E2133 0 6px,#fff 6px 10px)', backgroundBlendMode: 'multiply' }} aria-hidden="true" />
@@ -380,9 +396,8 @@ export default function RetourWizard({
               <ol style={{ listStyle: 'none', margin: '0 0 16px', padding: 0 }}>
                 {[
                   ['Aanvraag ontvangen', true],
-                  [gratis ? 'Geen kosten' : 'Verzendkosten betaald', betaald || gratis && !handmatig],
-                  ['Label aangemaakt', betaald || gratis && !handmatig],
-                  ['Pakket onderweg naar ons', false],
+                  ...(onsLabel ? [[kosten === 0 ? 'Geen kosten' : 'Verzendkosten betaald · factuur gemaild', true], ['Label aangemaakt', true]] : []),
+                  [methode === 'showroom' ? 'Langsgebracht in de showroom' : 'Pakket onderweg naar ons', false],
                   ['Ontvangen en gecontroleerd', false],
                   ['Terugbetaald', false],
                 ].map(([t, done], i) => (
