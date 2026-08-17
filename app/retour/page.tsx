@@ -23,9 +23,9 @@ type Scenario = 'zelf' | 'nl' | 'be' | 'duur' | 'link';
 
 const SCENARIOS: { k: Scenario; l: string; d: string }[] = [
   { k: 'zelf', l: 'Zelf opzoeken',           d: 'Bestelnummer + e-mail, NL, herroeping € 6,95' },
-  { k: 'nl',   l: 'Vanuit bestelling (NL)',   d: 'Order bekend, herroeping, € 6,95, > € 1.000 → check' },
+  { k: 'nl',   l: 'Vanuit bestelling (NL)',   d: 'Order bekend, herroeping, € 6,95, direct betalen' },
   { k: 'be',   l: 'België, defect',           d: 'DHL Parcel Connect, gratis retour' },
-  { k: 'duur', l: 'Dure retour (> € 1.000)',  d: 'Handmatige beoordeling + verzekerd door ons' },
+  { k: 'duur', l: 'Dure retour (€ 2.700)',    d: 'Direct betalen, verzekerd door ons' },
   { k: 'link', l: 'Link van klantenservice',  d: 'Reden reparatie staat vast, € 0' },
 ];
 
@@ -103,7 +103,7 @@ function RetourInner() {
         <li>Je label of QR-code staat meteen klaar; de status volg je in je account.</li>
       </ol>
       <p style={{ fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.65 }}>
-        Elke retour is tijdens het vervoer verzekerd, zonder extra kosten. Boven € 1.000 kijkt een medewerker eerst even mee (binnen één werkdag).
+        Elke retour is tijdens het vervoer verzekerd, zonder extra kosten. Je hoeft nergens op te wachten: betalen en je label staat klaar.
         Voor reparaties of retouren buiten de bedenktijd sturen wij je zelf een link — dan staat de reden al ingevuld en betaal je niets.
       </p>
       <p style={{ fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.65 }}>

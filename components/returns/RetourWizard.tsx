@@ -67,8 +67,8 @@ const TARIEF: Record<RetourOrder['land'], { zone: string; bedrag: number; vervoe
 };
 
 /** Elke retour wordt verzekerd (XCover via Sendcloud, ~0,6% NL / ~1,5% EU van de waarde, op onze kosten).
- *  Boven dit bedrag kijkt een medewerker eerst mee voordat het label uitgaat. */
-const HANDMATIG_VANAF = 1000;
+ *  Geen handmatige goedkeuring: binnen de termijn betaalt de klant en heeft direct het label;
+ *  bij defect/onze fout is het label direct gratis. Nemen we contact op, dan achteraf. */
 
 const eur = (n: number) => '€ ' + n.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const datumNL = (iso: string) => new Date(iso).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -179,7 +179,7 @@ export default function RetourWizard({
   const alleRedenenGekozen = geselecteerd.length > 0 && geselecteerd.every(a => reden[a.id]);
   const gratis = link ? true : geselecteerd.length > 0 && geselecteerd.every(a => REDENEN.find(r => r.code === reden[a.id])?.gratis);
   const kosten = gratis ? 0 : tarief.bedrag;
-  const handmatig = waarde >= HANDMATIG_VANAF && !link;
+  const handmatig = false;
   const verzekerd = waarde > 0;
   const uiterlijk = useMemo(() => datumNL(new Date(Date.now() + 14 * 864e5).toISOString()), []);
 
@@ -344,9 +344,9 @@ export default function RetourWizard({
                 </div>
                 {verzekerd && <div style={{ fontSize: 12.5, color: '#1B7F4B', marginTop: 6, fontWeight: 600 }}>✓ Wij verzekeren deze zending voor {eur(waarde)} tijdens het vervoer — daar betaal je niets extra voor.</div>}
               </div>
-              {handmatig && (
-                <Melding kleur="oranje" titel="Even een extra check">
-                  Bij een retour boven {eur(HANDMATIG_VANAF)} kijkt een medewerker eerst mee (meestal binnen één werkdag). Daarna krijg je een mail met de betaallink en je label. Je kunt de aanvraag nu al indienen.
+              {gratis && !link && (
+                <Melding kleur="grijs">
+                  Je label staat direct klaar. Hebben we nog een vraag over het defect of de schade, dan nemen we contact met je op — dat hoeft je verzending niet op te houden.
                 </Melding>
               )}
               <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13.5, color: 'var(--text-sec)', marginBottom: 16, cursor: 'pointer' }}>
@@ -393,7 +393,6 @@ export default function RetourWizard({
               <ol style={{ listStyle: 'none', margin: '0 0 16px', padding: 0 }}>
                 {[
                   ['Aanvraag ontvangen', true],
-                  ['Goedgekeurd', !handmatig || betaald],
                   [gratis ? 'Geen kosten' : 'Verzendkosten betaald', betaald || gratis && !handmatig],
                   ['Label aangemaakt', betaald || gratis && !handmatig],
                   ['Pakket onderweg naar ons', false],
