@@ -11,7 +11,7 @@ import { useEffect, useMemo, useState } from 'react';
  *
  * Stappen
  *   0  Opzoeken     bestelnummer + e-mailadres (overgeslagen als de order al bekend is)
- *   1  Wat & waarom artikelen aanvinken, reden per artikel, toelichting, foto (optioneel)
+ *   1  Wat & waarom gekochte artikelen aanvinken (inruil staat er niet in: verkocht is verkocht), reden, toelichting, foto
  *   2  Hoe          afgiftepunt met QR (geen printer) of label printen; vervoerder per land vast
  *   3  Overzicht    kosten, voorwaarden, betalen (pay.nl) of bevestigen bij € 0
  *   4  Klaar        label/QR, retouradres, uiterste datum, statushistorie
@@ -26,7 +26,7 @@ import { useEffect, useMemo, useState } from 'react';
  *   (return parcel, evt. met additional_insured_price); status → Sendcloud webhook.
  */
 
-export type RetourArtikel = { id: string; naam: string; sub: string; prijs: number; inruil?: boolean };
+export type RetourArtikel = { id: string; naam: string; sub: string; prijs: number };
 export type RetourOrder = {
   nummer: string;
   email: string;
@@ -158,7 +158,7 @@ export default function RetourWizard({
     setZoekFout(null);
     const g: Record<string, boolean> = {};
     const r: Record<string, RedenCode | ''> = {};
-    o?.artikelen.forEach(a => { if (!a.inruil) { g[a.id] = true; r[a.id] = link?.reden ?? 'bedacht'; } });
+    o?.artikelen.forEach(a => { g[a.id] = true; r[a.id] = link?.reden ?? 'bedacht'; });
     setGekozen(g); setReden(r);
     setToelichting(link?.toelichting ?? '');
     setFotoNaam(null); setMethode('qr'); setBetaald(false);
@@ -194,7 +194,7 @@ export default function RetourWizard({
     const o = DEMO_ORDER_NL({ nummer: nummer.trim().toUpperCase(), email: email.trim() });
     setGevonden(o);
     const g: Record<string, boolean> = {}; const r: Record<string, RedenCode | ''> = {};
-    o.artikelen.forEach(a => { if (!a.inruil) { g[a.id] = true; r[a.id] = 'bedacht'; } });
+    o.artikelen.forEach(a => { g[a.id] = true; r[a.id] = 'bedacht'; });
     setGekozen(g); setReden(r); setZoekFout(null); setStap(1);
   };
 
@@ -247,13 +247,7 @@ export default function RetourWizard({
             <>
               <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Wat stuur je terug?</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
-                {artikelen.map(a => a.inruil ? (
-                  <div key={a.id} style={{ ...kaartje, border: '1px dashed var(--border)', background: 'var(--surface)', display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <span style={{ width: 17, height: 17, borderRadius: 4, border: '1.5px solid #D3D5DE', background: '#F1F2F5', flex: '0 0 auto' }} />
-                    <span style={{ flex: 1 }}><span style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#8A8C99' }}>{a.naam}</span><span style={{ fontSize: 12.5, color: '#A0A2AE' }}>{a.sub} · geen retour mogelijk</span></span>
-                    <span style={{ fontSize: 14, fontWeight: 600, color: '#8A8C99' }}>− {eur(a.prijs)}</span>
-                  </div>
-                ) : (
+                {artikelen.map(a => (
                   <div key={a.id} style={{ ...kaartje, borderColor: gekozen[a.id] ? '#E8692A' : 'var(--border)' }}>
                     <label style={{ display: 'flex', gap: 12, alignItems: 'center', cursor: 'pointer' }}>
                       <input type="checkbox" checked={!!gekozen[a.id]} onChange={e => setGekozen({ ...gekozen, [a.id]: e.target.checked })} style={{ width: 17, height: 17, accentColor: '#E8692A' }} />
@@ -415,7 +409,6 @@ export const DEMO_ORDER_NL = (over: Partial<RetourOrder> = {}): RetourOrder => (
   artikelen: [
     { id: 'a1', naam: 'Canon EOS R6 Mark II', sub: 'Zeer goed · SKU 21326', prijs: 1999 },
     { id: 'a2', naam: 'Canon RF 24-105mm f/4 L IS USM', sub: 'Goed · SKU 19685', prijs: 699 },
-    { id: 'a3', naam: 'Canon EOS 6D Mark II', sub: 'Door jou aan ons verkocht', prijs: 620, inruil: true },
   ],
   ...over,
 });
