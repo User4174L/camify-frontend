@@ -209,11 +209,7 @@ export default function BestellingAnnulerenPage() {
                       <span style={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap' }}>{r.prijs}</span>
                     </label>
                   ))}
-
                 </div>
-                  ))}
-                </div>
-
 
                 <button type="button" onClick={() => setKlaar(true)} style={{ ...knopDonker, background: '#E8692A' }}>
                   Annulering bevestigen
