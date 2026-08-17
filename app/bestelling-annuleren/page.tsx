@@ -22,10 +22,7 @@ import RetourWizard, { DEMO_ORDER_NL } from '@/components/returns/RetourWizard';
  * Nooit hard blokkeren: onder elke afwijzing een route naar de klantenservice.
  * Klopt onze leverdatum niet, dan mag dat iemands recht niet kosten.
  *
- * Inruilregels staan wél in de lijst maar zijn niet aanvinkbaar: die zijn aan
- * ons verkocht, dus daar bestaat geen retour op. Verkoop en inruil worden apart
- * afgerekend, dus bij een herroeping komt er altijd geld terug — nooit het
- * ingeruilde toestel.
+ * Inruilregels staan niet in de lijst: wat aan ons verkocht is, kan niet retour.
  */
 
 type Uitkomst = 'geen' | 'binnen' | 'telaat' | 'zakelijk' | 'winkel';
@@ -33,9 +30,6 @@ type Uitkomst = 'geen' | 'binnen' | 'telaat' | 'zakelijk' | 'winkel';
 const GEKOCHT = [
   { naam: 'Canon EOS R6 Mark II', sub: 'Zeer goed · SKU 21326', prijs: '€ 1.999,00' },
   { naam: 'Canon RF 24-105mm f/4 L IS USM', sub: 'Goed · SKU 19685', prijs: '€ 699,00' },
-];
-const INGERUILD = [
-  { naam: 'Canon EOS 6D Mark II', sub: 'Door jou aan ons verkocht', prijs: '− € 620,00' },
 ];
 
 const h2: React.CSSProperties = { fontSize: 20, fontWeight: 700, margin: '38px 0 10px' };
@@ -216,32 +210,10 @@ export default function BestellingAnnulerenPage() {
                     </label>
                   ))}
 
-                  {/* Inruilregels: zichtbaar maar niet aanvinkbaar. Die zijn aan ons
-                      verkocht, dus daar bestaat geen retour op. */}
-                  {INGERUILD.map(r => (
-                    <div key={r.naam} style={{
-                      display: 'flex', alignItems: 'center', gap: 12, padding: '11px 12px',
-                      border: '1px dashed var(--border)', borderRadius: 10, background: 'var(--surface)',
-                    }}>
-                      <span style={{
-                        width: 17, height: 17, borderRadius: 4, border: '1.5px solid #D3D5DE',
-                        background: '#F1F2F5', flex: '0 0 auto',
-                      }} />
-                      <span style={{ flex: 1, minWidth: 0 }}>
-                        <span style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#8A8C99' }}>{r.naam}</span>
-                        <span style={{ display: 'block', fontSize: 12.5, color: '#A0A2AE', marginTop: 1 }}>{r.sub}</span>
-                      </span>
-                      <span style={{ fontSize: 14, fontWeight: 600, color: '#8A8C99', whiteSpace: 'nowrap' }}>{r.prijs}</span>
-                    </div>
+                </div>
                   ))}
                 </div>
 
-                <p style={{ ...p, fontSize: 13, marginBottom: 18 }}>
-                  Je inruil staat er alleen ter informatie bij. Dat toestel heb je aan ons verkocht, dus
-                  dat valt niet onder je retour. Wij rekenen je aankoop en je inruil los van elkaar af,
-                  dus <strong style={{ color: 'var(--text)' }}>je krijgt altijd geld terug</strong> en
-                  nooit je oude toestel.
-                </p>
 
                 <button type="button" onClick={() => setKlaar(true)} style={{ ...knopDonker, background: '#E8692A' }}>
                   Annulering bevestigen
