@@ -54,7 +54,7 @@ function RetourInner() {
       parent={{ label: 'Klantenservice', href: '/customer-service' }}
       eyebrow="Klantenservice"
       image="/images/hero-photographer-2.jpg"
-      intro="Iets terugsturen? Zoek je bestelling op, kies wat je terugstuurt en waarom, en je hebt binnen een minuut je retourlabel of QR-code. Geen printer nodig."
+      intro="Zoek je bestelling op, kies wat je terugstuurt en je hebt direct je retourlabel of QR-code."
     >
       <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit,minmax(168px,1fr))', margin: '0 0 26px' }}>
         {[
@@ -73,15 +73,13 @@ function RetourInner() {
 
       <div style={{ background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 14, padding: '22px 24px', marginBottom: 22 }}>
         <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 6 }}>Start je retour</div>
-        <p style={{ fontSize: 14, color: 'var(--text-sec)', margin: '0 0 10px', lineHeight: 1.6 }}>
-          Retourkosten — precies wat het label ons kost:
-        </p>
+        <p style={{ fontSize: 14, color: 'var(--text-sec)', margin: '0 0 10px', lineHeight: 1.6 }}>Retourkosten</p>
         <ul style={{ listStyle: 'none', margin: '0 0 14px', padding: 0, maxWidth: 420 }}>
           {[
             ['Nederland', '€ 6,95'],
             ['België, Duitsland, Frankrijk', '€ 12,95'],
             ['Overige EU-landen', '€ 24,95'],
-            ['Defect, beschadigd of verkeerd geleverd', 'Gratis'],
+            ['Defect, beschadigd of verkeerd geleverd (met foto)', 'Gratis'],
           ].map(([l, b]) => (
             <li key={l} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '7px 0', borderBottom: '1px solid var(--border)', fontSize: 14 }}>
               <span style={{ color: 'var(--text-sec)' }}>{l}</span>
@@ -92,7 +90,7 @@ function RetourInner() {
         <button type="button" onClick={() => setOpen(true)} style={{ padding: '13px 26px', fontSize: 15, fontWeight: 700, color: '#fff', background: '#E8692A', border: 'none', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit' }}>
           Retourzending aanmaken
         </button>
-        <span style={{ marginLeft: 14, fontSize: 13, color: '#8A8C99' }}>Ingelogd? Start dan vanuit <Link href="/account" style={{ color: 'var(--accent)' }}>je bestelling</Link>, dan staat alles al klaar.</span>
+        <span style={{ marginLeft: 14, fontSize: 13, color: '#8A8C99' }}>Of start vanuit <Link href="/account" style={{ color: 'var(--accent)' }}>je bestelling</Link>.</span>
       </div>
 
       {/* Alleen voor deze referentiepagina */}
@@ -109,14 +107,12 @@ function RetourInner() {
 
       <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 10px' }}>Hoe het werkt</h2>
       <ul style={{ listStyle: 'disc outside', margin: '0 0 16px', paddingLeft: 22, fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.85 }}>
-        <li>Je zoekt je bestelling op met bestelnummer en e-mailadres — inloggen hoeft niet.</li>
-        <li>Je vinkt aan wat teruggaat en kiest per artikel de reden. Een foto erbij mag.</li>
-        <li>Je kiest: QR-code (geen printer nodig) of label printen. De vervoerder ligt per land vast, zodat het altijd het goedkoopste label is.</li>
-        <li>Je ziet de retourkosten en betaalt die direct (iDEAL, Bancontact, creditcard). Bij een defect of onze fout is het gratis.</li>
-        <li>Je label of QR-code staat meteen klaar; je hoeft nergens op te wachten.</li>
-        <li>Elke retour is tijdens het vervoer verzekerd, zonder extra kosten.</li>
-        <li>De status volg je in je account: onderweg, ontvangen, terugbetaald.</li>
-        <li>Reparatie of retour buiten de bedenktijd? Dan sturen wij je een link — reden staat al ingevuld en je betaalt niets.</li>
+        <li>Bestelnummer en e-mailadres invullen — inloggen hoeft niet.</li>
+        <li>Aanvinken wat teruggaat, reden kiezen. Bij defect of schade: korte toelichting en foto.</li>
+        <li>QR-code (geen printer nodig) of label printen.</li>
+        <li>Betalen met iDEAL, Bancontact of creditcard — je label staat direct klaar.</li>
+        <li>Verzekerd onderweg, zonder extra kosten. Status in je account.</li>
+        <li>Terugbetaling binnen 3 tot 5 werkdagen na ontvangst.</li>
       </ul>
       <p style={{ fontSize: 14.5, color: 'var(--text-sec)', lineHeight: 1.65 }}>
         Wil je alleen je bestelling annuleren (herroepen) en het label later? Dat kan via <Link href="/bestelling-annuleren" style={{ color: 'var(--accent)' }}>bestelling annuleren</Link>.

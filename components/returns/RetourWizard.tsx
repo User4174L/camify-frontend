@@ -178,6 +178,9 @@ export default function RetourWizard({
   const tarief = gevonden ? TARIEF[gevonden.land] : TARIEF.NL;
   const alleRedenenGekozen = geselecteerd.length > 0 && geselecteerd.every(a => reden[a.id]);
   const gratis = link ? true : geselecteerd.length > 0 && geselecteerd.every(a => REDENEN.find(r => r.code === reden[a.id])?.gratis);
+  /** Iemand koos een gratis reden (defect/beschadigd/verkeerd/beschrijving) → toelichting + foto verplicht. */
+  const gratisReden = !link && geselecteerd.some(a => REDENEN.find(r => r.code === reden[a.id])?.gratis);
+  const stap1Compleet = alleRedenenGekozen && (!gratisReden || (toelichting.trim().length >= 10 && !!fotoNaam));
   const kosten = gratis ? 0 : tarief.bedrag;
   const handmatig = false;
   const verzekerd = waarde > 0;
@@ -228,15 +231,14 @@ export default function RetourWizard({
           {/* ---------- 0 opzoeken ---------- */}
           {stap === 0 && (
             <>
-              <p style={p}>Je bestelnummer staat in je bevestigingsmail. We vragen ook je e-mailadres: zo kan niemand anders jouw retour aanmaken, en weten we waar het label heen moet.</p>
               <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))' }}>
                 <div><label style={label} htmlFor="rw-nr">Bestelnummer</label><input id="rw-nr" style={input} placeholder="ORD000481" value={nummer} onChange={e => setNummer(e.target.value)} /></div>
                 <div><label style={label} htmlFor="rw-mail">E-mailadres van de bestelling</label><input id="rw-mail" style={input} type="email" placeholder="jij@example.com" value={email} onChange={e => setEmail(e.target.value)} /></div>
               </div>
               {zoekFout && <div style={{ marginTop: 12 }}><Melding kleur="oranje">{zoekFout}</Melding></div>}
               <div style={{ display: 'flex', gap: 10, marginTop: 16, alignItems: 'center' }}>
-                <button type="button" style={knop} onClick={zoek}>Bestelling opzoeken</button>
-                <span style={{ fontSize: 12.5, color: '#8A8C99' }}>Tip voor de demo: ORD000481 + een e-mailadres.</span>
+                <button type="button" style={knop} onClick={zoek}>Verder</button>
+                <span style={{ fontSize: 12, color: '#C7C9D4' }}>demo: ORD000481 + e-mailadres</span>
               </div>
             </>
           )}
@@ -245,7 +247,6 @@ export default function RetourWizard({
           {stap === 1 && gevonden && (
             <>
               <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Wat stuur je terug?</div>
-              <p style={{ ...p, fontSize: 13.5 }}>Alles staat aangevinkt. Houd je iets, vink het dan af. Kies per artikel de reden — bij een defect, beschadiging of een verkeerd geleverd product zijn de verzendkosten voor ons.</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                 {artikelen.map(a => a.inruil ? (
                   <div key={a.id} style={{ ...kaartje, border: '1px dashed var(--border)', background: 'var(--surface)', display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -276,19 +277,25 @@ export default function RetourWizard({
                 ))}
               </div>
 
-              <label style={label} htmlFor="rw-toel">Toelichting (optioneel)</label>
-              <textarea id="rw-toel" value={toelichting} onChange={e => setToelichting(e.target.value)} rows={2} placeholder="Bijv. sluiter blijft hangen bij 1/1000, zie foto." style={{ ...input, resize: 'vertical' }} />
+              <label style={label} htmlFor="rw-toel">Toelichting{gratisReden && !link ? '' : ' (optioneel)'}</label>
+              <textarea id="rw-toel" value={toelichting} onChange={e => setToelichting(e.target.value)} rows={2}
+                placeholder={gratisReden ? 'Wat is er precies mis? Bijv. sluiter blijft hangen bij 1/1000.' : 'Wil je nog iets kwijt?'} style={{ ...input, resize: 'vertical' }} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10 }}>
                 <label style={{ ...knopLicht, padding: '8px 14px', fontSize: 13.5, display: 'inline-flex', gap: 8, alignItems: 'center' }}>
-                  📎 Foto toevoegen
+                  📎 Foto toevoegen{gratisReden && !link ? '' : ' (optioneel)'}
                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => setFotoNaam(e.target.files?.[0]?.name ?? null)} />
                 </label>
-                <span style={{ fontSize: 12.5, color: '#8A8C99' }}>{fotoNaam ?? 'Handig bij een defect of schade — dan kunnen we sneller beoordelen.'}</span>
+                {fotoNaam && <span style={{ fontSize: 12.5, color: '#8A8C99' }}>{fotoNaam}</span>}
               </div>
+              {gratisReden && !link && (
+                <p style={{ ...p, fontSize: 12.5, margin: '10px 0 0' }}>
+                  Bij een defect, schade of verkeerde levering is de retour gratis. Blijkt bij controle dat het product in orde is, dan verrekenen we de retourkosten ({eur(tarief.bedrag)}) met je terugbetaling.
+                </p>
+              )}
 
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 18 }}>
                 {order ? <span /> : <button type="button" style={knopLicht} onClick={() => setStap(0)}>Terug</button>}
-                <button type="button" style={{ ...knop, opacity: alleRedenenGekozen ? 1 : .45 }} disabled={!alleRedenenGekozen} onClick={() => setStap(2)}>Verder</button>
+                <button type="button" style={{ ...knop, opacity: stap1Compleet ? 1 : .45 }} disabled={!stap1Compleet} onClick={() => setStap(2)}>Verder</button>
               </div>
             </>
           )}
@@ -297,7 +304,7 @@ export default function RetourWizard({
           {stap === 2 && gevonden && (
             <>
               <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Hoe wil je terugsturen?</div>
-              <p style={{ ...p, fontSize: 13.5 }}>Vanuit {tarief.zone} gaat de retour met <strong style={{ color: 'var(--text)' }}>{tarief.vervoerder}</strong> ({tarief.methode}). Je levert het pakket af bij een afgiftepunt bij jou in de buurt.</p>
+              <p style={{ ...p, fontSize: 13.5 }}>Met {tarief.vervoerder}, af te geven bij een afgiftepunt in de buurt.</p>
               {(['qr', 'print'] as const).map(m => (
                 <label key={m} style={{ ...kaartje, display: 'flex', gap: 12, alignItems: 'flex-start', cursor: 'pointer', marginBottom: 8, borderColor: methode === m ? '#E8692A' : 'var(--border)' }}>
                   <input type="radio" name="rw-methode" checked={methode === m} onChange={() => setMethode(m)} style={{ marginTop: 3, accentColor: '#E8692A' }} />
@@ -307,9 +314,7 @@ export default function RetourWizard({
                   </span>
                 </label>
               ))}
-              <Melding kleur="grijs" titel="Zo pak je in">
-                Alles wat erbij zat gaat mee (accu, lader, doppen, riem, doos). <strong style={{ color: 'var(--text)' }}>Haal je geheugenkaart eruit.</strong> Verpak stevig, het liefst in de doos waarin je het ontving.
-              </Melding>
+              <p style={{ ...p, fontSize: 12.5 }}>Alles wat erbij zat gaat mee. Haal je geheugenkaart eruit en verpak stevig.</p>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <button type="button" style={knopLicht} onClick={() => setStap(1)}>Terug</button>
                 <button type="button" style={knop} onClick={() => setStap(3)}>Verder</button>
@@ -337,21 +342,11 @@ export default function RetourWizard({
                   <span>Retourzending {tarief.zone} · {tarief.vervoerder} · {methode === 'qr' ? 'QR-code' : 'label printen'}</span>
                   <span style={{ fontWeight: 700 }}>{gratis ? 'Gratis' : eur(kosten)}</span>
                 </div>
-                <div style={{ fontSize: 12.5, color: '#8A8C99', marginTop: 4 }}>
-                  {gratis
-                    ? 'De verzendkosten zijn voor ons omdat het product defect, beschadigd of verkeerd geleverd is.'
-                    : 'Dit is wat het retourlabel ons kost — niets meer. Betaal je nu, dan staat je label direct klaar.'}
-                </div>
-                {verzekerd && <div style={{ fontSize: 12.5, color: '#1B7F4B', marginTop: 6, fontWeight: 600 }}>✓ Wij verzekeren deze zending voor {eur(waarde)} tijdens het vervoer — daar betaal je niets extra voor.</div>}
+                {verzekerd && <div style={{ fontSize: 12.5, color: '#1B7F4B', marginTop: 6, fontWeight: 600 }}>✓ Verzekerd tijdens het vervoer voor {eur(waarde)}, zonder extra kosten.</div>}
               </div>
-              {gratis && !link && (
-                <Melding kleur="grijs">
-                  Je label staat direct klaar. Hebben we nog een vraag over het defect of de schade, dan nemen we contact met je op — dat hoeft je verzending niet op te houden.
-                </Melding>
-              )}
               <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13.5, color: 'var(--text-sec)', marginBottom: 16, cursor: 'pointer' }}>
                 <input type="checkbox" checked={akkoord} onChange={e => setAkkoord(e.target.checked)} style={{ marginTop: 3, accentColor: '#E8692A' }} />
-                <span>Ik stuur het product compleet en in dezelfde staat terug, uiterlijk {uiterlijk}, en ik weet dat waardevermindering door gebruik verrekend kan worden.</span>
+                <span>Ik stuur het compleet en in dezelfde staat terug, uiterlijk {uiterlijk}.</span>
               </label>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <button type="button" style={knopLicht} onClick={() => setStap(2)}>Terug</button>
@@ -404,7 +399,7 @@ export default function RetourWizard({
                   </li>
                 ))}
               </ol>
-              <p style={{ ...p, fontSize: 12.5 }}>Je vindt deze retour, de status en het label altijd terug onder <strong style={{ color: 'var(--text)' }}>Mijn account › Bestellingen › {gevonden.nummer}</strong>. Terugbetalen doen we binnen 3 tot 5 werkdagen na controle.</p>
+              <p style={{ ...p, fontSize: 12.5 }}>Terugbetaling binnen 3 tot 5 werkdagen na ontvangst. Alles staat ook onder Mijn account › Bestellingen › {gevonden.nummer}.</p>
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button type="button" style={knop} onClick={onClose}>Sluiten</button>
               </div>
