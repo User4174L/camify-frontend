@@ -1,0 +1,32 @@
+{
+  "type": "banner",
+  "role": "banner",
+  "data": {
+    "layout": "compact",
+    "heading_level": "h1",
+    "show_icon": false,
+    "text_align": "left",
+    "image_url": "/static/banners/canon-rf.webp",
+    "image_fit": "cover",
+    "image_position": "right",
+    "overlay_style": "gradient",
+    "text_theme": "dark",
+    "show_trustpilot": false
+  },
+  "content": {
+    "en-eu": {
+      "title_lead": "Canon RF lenses,",
+      "title_accent": "tested and guaranteed",
+      "subtitle": "Every lens checked on glass, AF and mount. 12 months warranty, 14 days to change your mind.",
+      "cta_label": "Sell your RF lens",
+      "cta_href": "/sell"
+    },
+    "nl-nl": {
+      "title_lead": "Canon RF-lenzen,",
+      "title_accent": "getest en met garantie",
+      "subtitle": "Elke lens gecontroleerd op glas, AF en vatting. 12 maanden garantie, 14 dagen bedenktijd.",
+      "cta_label": "Verkoop je RF-lens",
+      "cta_href": "/sell"
+    }
+  }
+}

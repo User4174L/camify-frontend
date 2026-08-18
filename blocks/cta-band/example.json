@@ -1,0 +1,9 @@
+{
+  "type": "cta_band",
+  "role": "cta_band",
+  "data": { "variant": "brand", "align": "left", "compact": false, "section": { "background": "none", "padding": "sm" } },
+  "content": {
+    "en-eu": { "title": "Have a Canon RF lens you no longer use?", "subtitle": "Get a quote in 2 minutes. Free shipping, paid within 2 working days.", "primary_label": "Get a quote", "primary_href": "/sell", "secondary_label": "How trade-in works", "secondary_href": "/how-it-works" },
+    "nl-nl": { "title": "Heb je een Canon RF-lens die je niet meer gebruikt?", "subtitle": "Binnen 2 minuten een bod. Gratis verzending, binnen 2 werkdagen betaald.", "primary_label": "Vraag een bod aan", "primary_href": "/verkopen", "secondary_label": "Zo werkt inruilen", "secondary_href": "/hoe-het-werkt" }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "media_text",
+  "role": "media_text",
+  "data": { "image_url": "/static/content/inspectie.webp", "media_side": "left", "ratio": "1:1", "media_style": "rounded", "heading_level": "h2", "section": { "background": "none", "padding": "md" } },
+  "content": {
+    "en-eu": { "eyebrow": "How we test", "title": "Every RF lens gets the same 6-point check", "body": "Glass and coating under a bright light, autofocus on a Canon R body, image stabiliser, aperture blades, mount and contacts, cosmetics.\n\n- Condition grade you can trust\n- Photos of the actual item\n- 12 months warranty", "cta_label": "Read about our grading", "cta_href": "/quality-grading" },
+    "nl-nl": { "eyebrow": "Zo testen wij", "title": "Elke RF-lens krijgt dezelfde 6-puntscontrole", "body": "Glas en coating onder fel licht, autofocus op een Canon R-body, beeldstabilisatie, diafragmalamellen, vatting en contacten, cosmetische staat.\n\n- Conditie waar je op kunt vertrouwen\n- Foto's van het echte exemplaar\n- 12 maanden garantie", "cta_label": "Lees over onze gradering", "cta_href": "/quality-grading" }
+  }
+}

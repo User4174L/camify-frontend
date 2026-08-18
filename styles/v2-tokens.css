@@ -1,0 +1,148 @@
+/*
+ * V2-design-tokens (kopie van APP-Frontend-V2/styles/tokens.css, 2026-08-18),
+ * GESCOPED op `.v2` zodat ze de tokens van de referentiesite (--surface,
+ * --accent, --border, --text) niet overschrijven. Alles binnen een element met
+ * class "v2" rendert met de kleuren, schaduwen en radius van de echte V2-app.
+ * Utility-namen zijn identiek aan V2: bg-surface-muted, text-brand-500,
+ * text-text-primary, border-border-soft, shadow-elevated, ...
+ */
+
+.v2 {
+  --brand-50: #fff7f2;
+  --brand-100: #fff0e8;
+  --brand-200: #fbd9c6;
+  --brand-300: #f6bc9e;
+  --brand-400: #ef9264;
+  --brand-500: #e8692a;
+  --brand-600: #d15a20;
+  --brand-700: #ad4a1b;
+  --brand-800: #8a3a16;
+  --brand-900: #5e2810;
+  --brand-950: #3a1808;
+
+  --surface: #ffffff;
+  --surface-raised: #f8f8fa;
+  --surface-muted: #eeeef2;
+
+  --border-soft: #eeeef2;
+  --border-strong: #dddde4;
+
+  --text-primary: #1e2133;
+  --text-secondary: #6b6d80;
+  --text-muted: #8b8da8;
+
+  --surface-inverse: #1e2133;
+  --text-inverse: #f4f4f8;
+
+  --success: #166534;
+  --success-bg: #dcfce7;
+  --info: #1e40af;
+  --info-bg: #dbeafe;
+  --warning: #854d0e;
+  --warning-bg: #fef9c3;
+  --error: #991b1b;
+  --error-bg: #fecaca;
+
+  --ring: #e8692a;
+  --accent: #fff0e8;
+
+  --shadow-soft-color: rgba(30, 33, 51, 0.14);
+  --shadow-elevated-color: rgba(30, 33, 51, 0.18);
+  --radius: 0.5rem;
+
+  color: var(--text-primary);
+  background: var(--surface);
+}
+
+.v2[data-theme="dark"],
+[data-theme="dark"] .v2 {
+  --brand-50: #2a1a12;
+  --brand-100: #3a2014;
+  --brand-200: #5e2810;
+  --brand-300: #8a3a16;
+  --brand-400: #c55924;
+  --brand-500: #e8692a;
+  --brand-600: #f1854d;
+  --brand-700: #f6bc9e;
+  --brand-800: #fbd9c6;
+  --brand-900: #fff0e8;
+  --brand-950: #fff7f2;
+
+  --surface: #131525;
+  --surface-raised: #1a1c2e;
+  --surface-muted: #20233a;
+
+  --border-soft: #2e3150;
+  --border-strong: #3a3d5c;
+
+  --text-primary: #f4f4f8;
+  --text-secondary: #a9abc2;
+  --text-muted: #7e80a0;
+
+  --surface-inverse: #20233a;
+  --text-inverse: #f4f4f8;
+
+  --success: #4ade80;
+  --success-bg: #12351f;
+  --info: #93c5fd;
+  --info-bg: #16284a;
+  --warning: #fcd34d;
+  --warning-bg: #3a2e0c;
+  --error: #fca5a5;
+  --error-bg: #3a1618;
+
+  --ring: #e8692a;
+  --accent: #2a2238;
+
+  --shadow-soft-color: rgba(2, 4, 14, 0.45);
+  --shadow-elevated-color: rgba(2, 4, 14, 0.6);
+}
+
+@theme inline {
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-950: var(--brand-950);
+
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-muted: var(--surface-muted);
+  --color-border-soft: var(--border-soft);
+  --color-border-strong: var(--border-strong);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-surface-inverse: var(--surface-inverse);
+  --color-text-inverse: var(--text-inverse);
+
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-error: var(--error);
+  --color-error-bg: var(--error-bg);
+
+  --shadow-soft: 0 18px 36px -20px var(--shadow-soft-color);
+  --shadow-elevated: 0 36px 72px -32px var(--shadow-elevated-color);
+}
+
+/*
+ * De referentiesite heeft een ongelaagde reset (`*{margin:0;padding:0}`,
+ * `button{border:none;background:none}`) die in de cascade boven Tailwind's
+ * @layer utilities staat. Binnen .v2 rollen we die terug naar de gelaagde
+ * stijlen, zodat de V2-utilities (px-4, py-12, rounded-full, border, ...)
+ * gewoon werken zoals in de echte app.
+ */
+.v2 *, .v2 *::before, .v2 *::after { margin: revert-layer; padding: revert-layer; }
+.v2 button { border: revert-layer; background: revert-layer; }
+.v2 img { display: revert-layer; }
+.v2 a { color: revert-layer; }

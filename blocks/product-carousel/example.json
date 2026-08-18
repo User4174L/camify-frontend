@@ -1,0 +1,9 @@
+{
+  "type": "product_rail",
+  "role": "just_added",
+  "data": { "source": "newest", "count": 12, "display": "carousel", "visible": 5, "viewAllHref": "/new", "section": { "background": "none", "padding": "md" } },
+  "content": {
+    "en-eu": { "title": "Just", "titleAccent": "added", "subtitle": "Fresh in the shop this week", "viewAllLabel": "View all" },
+    "nl-nl": { "title": "Net", "titleAccent": "binnen", "subtitle": "Deze week nieuw in de winkel", "viewAllLabel": "Bekijk alles" }
+  }
+}

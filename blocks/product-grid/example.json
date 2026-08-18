@@ -1,0 +1,22 @@
+{
+  "type": "product_grid",
+  "role": "product_grid",
+  "data": {
+    "categories": [412, 418],
+    "brands": ["Canon"],
+    "count": 16,
+    "columns": 4,
+    "filters": [
+      { "categories": [412] },
+      { "categories": [418] },
+      { "product_type": "Lens" }
+    ],
+    "viewAllHref": "/lenses/mirrorless/canon-rf-fit",
+    "heading_level": "h2",
+    "section": { "background": "raised", "padding": "md" }
+  },
+  "content": {
+    "en-eu": { "title": "Canon RF", "titleAccent": "in stock", "subtitle": "Tested, graded and with 12 months warranty.", "viewAllLabel": "View all", "filterLabels": ["Cameras", "Lenses", "All lenses"] },
+    "nl-nl": { "title": "Canon RF", "titleAccent": "op voorraad", "subtitle": "Getest, gegradeerd en met 12 maanden garantie.", "viewAllLabel": "Bekijk alles", "filterLabels": ["Camera's", "Lenzen", "Alle lenzen"] }
+  }
+}
