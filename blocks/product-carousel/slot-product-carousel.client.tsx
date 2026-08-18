@@ -7,7 +7,7 @@ import { Section } from '../_shared/section';
 import type { ProductRailContent, ProductRailData } from './types';
 
 /** product_rail met display=carousel: horizontale scroll-snap, pijlen op desktop. */
-export function SlotProductCarousel({ content, data, products }: { content: ProductRailContent; data: ProductRailData; products: RefProduct[] }) {
+export function ProductCarouselView({ content, data, products }: { content: ProductRailContent; data: ProductRailData; products: RefProduct[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = data.visible ?? 5;
   const scroll = (dir: 1 | -1) => ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' });

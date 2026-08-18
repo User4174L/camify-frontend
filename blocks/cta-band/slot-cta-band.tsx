@@ -10,7 +10,7 @@ const VARIANT = {
 } as const;
 
 /** CTA-band: één boodschap + 1–2 knoppen. Vertaalbaar per markt, presets voor terugkerende oproepen. */
-export function SlotCtaBand({ content, data }: { content: CtaBandContent; data: CtaBandData }) {
+export function CtaBandView({ content, data }: { content: CtaBandContent; data: CtaBandData }) {
   const v = VARIANT[data.variant ?? 'brand'];
   const center = data.align === 'center';
   const compact = data.compact ?? false;

@@ -11,7 +11,7 @@ import type { ProductGridContent, ProductGridData } from './types';
  * filterknoppen. In V2 komt `products` uit de listing-endpoint
  * (catalog/categories/<id>/products/ met brands=/product_type=); hier mock.
  */
-export function SlotProductGrid({ content, data, products, mockFilters }: {
+export function ProductGridView({ content, data, products, mockFilters }: {
   content: ProductGridContent;
   data: ProductGridData;
   products: RefProduct[];

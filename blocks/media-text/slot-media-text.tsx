@@ -11,7 +11,7 @@ const RATIO: Record<NonNullable<MediaTextData['ratio']>, string> = {
 };
 
 /** Beeld + tekst split — de standaard bouwsteen van elke lange pagina. */
-export function SlotMediaText({ content, data }: { content: MediaTextContent; data: MediaTextData }) {
+export function MediaTextView({ content, data }: { content: MediaTextContent; data: MediaTextData }) {
   const right = data.media_side === 'right';
   const ratio = data.ratio ?? '1:1';
   const Heading = data.heading_level ?? 'h2';

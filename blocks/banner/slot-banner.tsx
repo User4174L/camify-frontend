@@ -9,7 +9,7 @@ import type { BannerContent, BannerData } from './types';
  * compact = lage paginakop: min-h 200/220, tekst links, geen icoon,
  *           kopniveau instelbaar, Trustpilot optioneel.
  */
-export function SlotBanner({ content, data }: { content: BannerContent; data: BannerData }) {
+export function BannerView({ content, data }: { content: BannerContent; data: BannerData }) {
   const layout = data.layout ?? 'hero';
   const compact = layout === 'compact';
   const level = data.heading_level ?? 'h1';

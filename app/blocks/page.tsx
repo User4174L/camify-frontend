@@ -4,15 +4,15 @@ import { BLOCKS } from '@/blocks';
 import { BreadcrumbChrome } from '@/blocks/_shared/breadcrumb-chrome';
 import { Container } from '@/blocks/_shared/section';
 import type { SlotField } from '@/blocks/_shared/registry-types';
-import { SlotBanner } from '@/blocks/banner/slot-banner';
+import { BannerView } from '@/blocks/banner/slot-banner';
 import bannerExample from '@/blocks/banner/example.json';
-import { SlotCtaBand } from '@/blocks/cta-band/slot-cta-band';
+import { CtaBandView } from '@/blocks/cta-band/slot-cta-band';
 import ctaExample from '@/blocks/cta-band/example.json';
-import { SlotMediaText } from '@/blocks/media-text/slot-media-text';
+import { MediaTextView } from '@/blocks/media-text/slot-media-text';
 import mediaExample from '@/blocks/media-text/example.json';
-import { SlotProductGrid } from '@/blocks/product-grid/slot-product-grid.client';
+import { ProductGridView } from '@/blocks/product-grid/slot-product-grid.client';
 import gridExample from '@/blocks/product-grid/example.json';
-import { SlotProductCarousel } from '@/blocks/product-carousel/slot-product-carousel.client';
+import { ProductCarouselView } from '@/blocks/product-carousel/slot-product-carousel.client';
 import railExample from '@/blocks/product-carousel/example.json';
 import { MOCK } from '@/blocks/_shared/mock-products';
 import type { BannerData } from '@/blocks/banner/types';
@@ -34,7 +34,7 @@ function FieldsTable({ fields }: { fields: SlotField[] }) {
     <div className="overflow-x-auto rounded-xl border border-border-soft">
       <table className="w-full text-left text-[13px]">
         <thead className="bg-surface-raised text-xs uppercase tracking-wide text-text-muted">
-          <tr><th className="px-3 py-2 font-semibold">key</th><th className="px-3 py-2 font-semibold">label</th><th className="px-3 py-2 font-semibold">type</th><th className="px-3 py-2 font-semibold">waar</th><th className="px-3 py-2 font-semibold">opties / default</th><th className="px-3 py-2 font-semibold">toelichting</th></tr>
+          <tr><th className="px-3 py-2 font-semibold">key</th><th className="px-3 py-2 font-semibold">label</th><th className="px-3 py-2 font-semibold">type</th><th className="px-3 py-2 font-semibold">where</th><th className="px-3 py-2 font-semibold">options / default</th><th className="px-3 py-2 font-semibold">help</th></tr>
         </thead>
         <tbody>
           {fields.map((f) => (
@@ -133,15 +133,18 @@ export default function BlocksPage() {
             </ul>
           </div>
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wide text-text-muted">Stempel-checklist Mike (per blok identiek)</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wide text-text-muted">Stempel-checklist Mike (per nieuw blok identiek)</h2>
             <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-text-secondary">
-              <li><span className="font-mono text-[12px]">ComponentType</span>-entry + allow-list in <span className="font-mono text-[12px]">page_groups.py</span> (nieuw type) — of alleen data-velden (uitbreiding)</li>
-              <li>optioneel serializer in <span className="font-mono text-[12px]">component_schemas.py</span></li>
-              <li>renderer + registry-regel + type overnemen</li>
+              <li>backend: <span className="font-mono text-[12px]">ComponentType</span>-entry + migratie · allow-list in <span className="font-mono text-[12px]">page_groups.py</span> · optioneel serializer in <span className="font-mono text-[12px]">component_schemas.py</span></li>
+              <li>frontend: type-union + content-type in <span className="font-mono text-[12px]">types/storefront-component.ts</span></li>
+              <li>registry-regel overnemen (<span className="font-mono text-[12px]">component-type-registry.tsx</span>) → editor bestaat</li>
+              <li>onze <span className="font-mono text-[12px]">&lt;Naam&gt;View</span> = de pure View; <span className="font-mono text-[12px]">Slot&lt;Naam&gt;</span>-wrapper is de stamp uit <span className="font-mono text-[12px]">slot-tiles.tsx</span></li>
               <li>extractor in <span className="font-mono text-[12px]">storefront-utils.ts</span></li>
-              <li>freeform-handler + registreren op landing/home/catalog-slots</li>
-              <li>tests</li>
+              <li>handler in <span className="font-mono text-[12px]">freeform-slot.client.tsx</span> + toevoegen aan <span className="font-mono text-[12px]">contentBlockHandlers()</span> (geen registratie per pagina nodig)</li>
+              <li>voorbeeldcontent + preview in <span className="font-mono text-[12px]">preset-preview-registry.tsx</span></li>
+              <li>tests · uitbreidingen (banner, rail): alleen data-velden + renderer-branch, geen enum/migratie</li>
             </ol>
+            <p className="mt-3 text-sm text-text-secondary">Alle snippets per bestand staan uitgeschreven in <a href="https://github.com/User4174L/camify-frontend/blob/main/camify-next/blocks/HANDOVER.md" className="font-semibold text-brand-600 hover:underline">blocks/HANDOVER.md</a> (cta_band volledig uitgewerkt, de rest is dezelfde stamp).</p>
           </div>
         </div>
         <div className="mt-6 rounded-2xl border border-border-soft p-6 text-sm text-text-secondary">
@@ -160,47 +163,47 @@ export default function BlocksPage() {
       <Doc id="banner">
         <p className="mx-auto mb-3 max-w-7xl px-4 text-xs font-semibold uppercase tracking-wide text-text-muted sm:px-6 lg:px-8">Compact · h1 · gradient · tekst links (met breadcrumb-chrome erboven)</p>
         <BreadcrumbChrome items={[{ label: 'Lenzen', href: '#' }, { label: 'Canon RF' }]} />
-        <SlotBanner data={{ ...banner.data, image_url: IMG }} content={nl(banner)} />
+        <BannerView data={{ ...banner.data, image_url: IMG }} content={nl(banner)} />
         <p className="mx-auto mb-3 mt-8 max-w-7xl px-4 text-xs font-semibold uppercase tracking-wide text-text-muted sm:px-6 lg:px-8">Compact · h2 · scrim · gecentreerd · Trustpilot aan</p>
-        <SlotBanner data={{ ...banner.data, image_url: IMG2, overlay_style: 'scrim', text_theme: 'light', text_align: 'center', heading_level: 'h2', show_trustpilot: true }} content={{ ...nl(banner), cta_label: '' }} />
+        <BannerView data={{ ...banner.data, image_url: IMG2, overlay_style: 'scrim', text_theme: 'light', text_align: 'center', heading_level: 'h2', show_trustpilot: true }} content={{ ...nl(banner), cta_label: '' }} />
         <p className="mx-auto mb-3 mt-8 max-w-7xl px-4 text-xs font-semibold uppercase tracking-wide text-text-muted sm:px-6 lg:px-8">Compact · geen afbeelding · h1 · zonder knop (kale tekstpagina-kop)</p>
-        <SlotBanner data={{ layout: 'compact', heading_level: 'h1', show_icon: false }} content={{ title_lead: 'Kwaliteit &', title_accent: 'gradering', subtitle: 'Hoe wij de conditie van elke camera en lens bepalen, testen en communiceren.' }} />
+        <BannerView data={{ layout: 'compact', heading_level: 'h1', show_icon: false }} content={{ title_lead: 'Kwaliteit &', title_accent: 'gradering', subtitle: 'Hoe wij de conditie van elke camera en lens bepalen, testen en communiceren.' }} />
         <div className="mt-6"><Example json={bannerExample} /></div>
       </Doc>
 
       {/* ---------------- Section-wrapper ---------------- */}
       <Doc id="section">
-        <SlotCtaBand data={{ variant: 'light', compact: true, section: { background: 'none', padding: 'sm' } }} content={{ title: 'section.background = none', subtitle: 'zelfde blok, andere schil →' }} />
-        <SlotCtaBand data={{ variant: 'light', compact: true, section: { background: 'muted', padding: 'sm' } }} content={{ title: 'section.background = muted · width = full', subtitle: 'achtergrond volle breedte, inhoud in container' }} />
-        <SlotCtaBand data={{ variant: 'light', compact: true, section: { background: 'brand', width: 'container', padding: 'sm' } }} content={{ title: 'section.background = brand · width = container', subtitle: 'alles binnen de container als afgeronde kaart' }} />
-        <SlotCtaBand data={{ variant: 'inverse', compact: true, section: { background: 'inverse', padding: 'md' } }} content={{ title: 'section.background = inverse · padding = md', subtitle: 'donker vlak, meer ruimte' }} />
+        <CtaBandView data={{ variant: 'light', compact: true, section: { background: 'none', padding: 'sm' } }} content={{ title: 'section.background = none', subtitle: 'zelfde blok, andere schil →' }} />
+        <CtaBandView data={{ variant: 'light', compact: true, section: { background: 'muted', padding: 'sm' } }} content={{ title: 'section.background = muted · width = full', subtitle: 'achtergrond volle breedte, inhoud in container' }} />
+        <CtaBandView data={{ variant: 'light', compact: true, section: { background: 'brand', width: 'container', padding: 'sm' } }} content={{ title: 'section.background = brand · width = container', subtitle: 'alles binnen de container als afgeronde kaart' }} />
+        <CtaBandView data={{ variant: 'inverse', compact: true, section: { background: 'inverse', padding: 'md' } }} content={{ title: 'section.background = inverse · padding = md', subtitle: 'donker vlak, meer ruimte' }} />
       </Doc>
 
       {/* ---------------- CTA-band ---------------- */}
       <Doc id="cta-band">
-        <SlotCtaBand data={cta.data} content={nl(cta)} />
-        <SlotCtaBand data={{ variant: 'inverse', align: 'center' }} content={{ title: 'Kom langs in de showroom in Rotterdam', subtitle: 'Bekijk en test voordat je koopt. Ma–za 10:00–17:30.', primary_label: 'Route & openingstijden', primary_href: '#' }} />
-        <SlotCtaBand data={{ variant: 'light', compact: true }} content={{ title: 'Twijfel je welke RF-lens bij je past?', primary_label: 'Chat met ons', primary_href: '#' }} />
+        <CtaBandView data={cta.data} content={nl(cta)} />
+        <CtaBandView data={{ variant: 'inverse', align: 'center' }} content={{ title: 'Kom langs in de showroom in Rotterdam', subtitle: 'Bekijk en test voordat je koopt. Ma–za 10:00–17:30.', primary_label: 'Route & openingstijden', primary_href: '#' }} />
+        <CtaBandView data={{ variant: 'light', compact: true }} content={{ title: 'Twijfel je welke RF-lens bij je past?', primary_label: 'Chat met ons', primary_href: '#' }} />
         <div className="mt-2"><Example json={ctaExample} /></div>
       </Doc>
 
       {/* ---------------- Beeld + tekst ---------------- */}
       <Doc id="media-text">
-        <SlotMediaText data={{ ...media.data, image_url: IMG2 }} content={nl(media)} />
-        <SlotMediaText data={{ image_url: IMG3, media_side: 'right', ratio: '2:3', media_style: 'card', section: { background: 'raised', padding: 'md' } }} content={{ eyebrow: 'Inruilen', title: 'Van oude lens naar nieuwe lens in één stap', body: 'Ruil je huidige glas in en betaal alleen het verschil. Wij regelen de verzending, jij krijgt binnen 2 werkdagen een bod.\n\n- Gratis verzendlabel\n- Betaling binnen 2 werkdagen\n- Ook zonder aankoop', cta_label: 'Zo werkt inruilen', cta_href: '#' }} />
-        <SlotMediaText data={{ image_url: IMG, media_side: 'left', ratio: '3:2', media_style: 'plain', align: 'top', section: { background: 'inverse', padding: 'lg' } }} content={{ eyebrow: 'Garantie', title: '12 maanden garantie op alles wat we verkopen', body: 'Gaat er binnen een jaar iets kapot? Dan repareren, vervangen of vergoeden wij. Zonder kleine lettertjes.', cta_label: 'Garantievoorwaarden', cta_href: '#' }} />
+        <MediaTextView data={{ ...media.data, image_url: IMG2 }} content={nl(media)} />
+        <MediaTextView data={{ image_url: IMG3, media_side: 'right', ratio: '2:3', media_style: 'card', section: { background: 'raised', padding: 'md' } }} content={{ eyebrow: 'Inruilen', title: 'Van oude lens naar nieuwe lens in één stap', body: 'Ruil je huidige glas in en betaal alleen het verschil. Wij regelen de verzending, jij krijgt binnen 2 werkdagen een bod.\n\n- Gratis verzendlabel\n- Betaling binnen 2 werkdagen\n- Ook zonder aankoop', cta_label: 'Zo werkt inruilen', cta_href: '#' }} />
+        <MediaTextView data={{ image_url: IMG, media_side: 'left', ratio: '3:2', media_style: 'plain', align: 'top', section: { background: 'inverse', padding: 'lg' } }} content={{ eyebrow: 'Garantie', title: '12 maanden garantie op alles wat we verkopen', body: 'Gaat er binnen een jaar iets kapot? Dan repareren, vervangen of vergoeden wij. Zonder kleine lettertjes.', cta_label: 'Garantievoorwaarden', cta_href: '#' }} />
         <div className="mt-2"><Example json={mediaExample} /></div>
       </Doc>
 
       {/* ---------------- Product grid ---------------- */}
       <Doc id="product-grid">
-        <SlotProductGrid data={grid.data} content={nl(grid)} products={canon} mockFilters={mockFilters} />
+        <ProductGridView data={grid.data} content={nl(grid)} products={canon} mockFilters={mockFilters} />
         <div className="mt-2"><Example json={gridExample} /></div>
       </Doc>
 
       {/* ---------------- Product carousel ---------------- */}
       <Doc id="product-carousel">
-        <SlotProductCarousel data={rail.data} content={nl(rail)} products={MOCK} />
+        <ProductCarouselView data={rail.data} content={nl(rail)} products={MOCK} />
         <div className="mt-2"><Example json={railExample} /></div>
       </Doc>
     </div>
