@@ -12,7 +12,8 @@ import type { BannerContent, BannerData } from './types';
 export function SlotBanner({ content, data }: { content: BannerContent; data: BannerData }) {
   const layout = data.layout ?? 'hero';
   const compact = layout === 'compact';
-  const Heading = (data.heading_level ?? 'h1') === 'none' ? 'p' : (data.heading_level ?? 'h1');
+  const level = data.heading_level ?? 'h1';
+  const Heading: 'h1' | 'h2' | 'p' = level === 'none' ? 'p' : level;
   const overlay = data.overlay_style ?? 'gradient';
   const theme = data.text_theme ?? (overlay === 'scrim' ? 'light' : 'dark');
   const light = theme === 'light';
