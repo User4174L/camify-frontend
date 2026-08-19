@@ -7,6 +7,9 @@ import type { SlotField } from '@/blocks/_shared/registry-types';
 import { BannerView } from '@/blocks/banner/slot-banner';
 import bannerExample from '@/blocks/banner/example.json';
 import { CtaBandView } from '@/blocks/cta-band/slot-cta-band';
+import { SectionHeaderView } from '@/blocks/section-header/slot-section-header';
+import sectionHeaderExample from '@/blocks/section-header/example.json';
+import { SlotTilesLike } from '@/blocks/_shared/tiles-like';
 import ctaExample from '@/blocks/cta-band/example.json';
 import { MediaTextView } from '@/blocks/media-text/slot-media-text';
 import mediaExample from '@/blocks/media-text/example.json';
@@ -177,6 +180,14 @@ export default function BlocksPage() {
         <CtaBandView data={{ variant: 'light', compact: true, section: { background: 'muted', padding: 'sm' } }} content={{ title: 'section.background = muted · width = full', subtitle: 'achtergrond volle breedte, inhoud in container' }} />
         <CtaBandView data={{ variant: 'light', compact: true, section: { background: 'brand', width: 'container', padding: 'sm' } }} content={{ title: 'section.background = brand · width = container', subtitle: 'alles binnen de container als afgeronde kaart' }} />
         <CtaBandView data={{ variant: 'inverse', compact: true, section: { background: 'inverse', padding: 'md' } }} content={{ title: 'section.background = inverse · padding = md', subtitle: 'donker vlak, meer ruimte' }} />
+      </Doc>
+
+      {/* ---------------- Section header ---------------- */}
+      <Doc id="section-header">
+        <SectionHeaderView data={{ heading_level: 'h2' }} content={{ title: 'Net', titleAccent: 'binnen', subtitle: 'Vers binnengekomen deze week', linkLabel: 'Bekijk alles', linkHref: '#' }} />
+        <SlotTilesLike />
+        <SectionHeaderView data={{ heading_level: 'h2', align: 'center', section: { background: 'muted', padding: 'md' } }} content={{ title: 'Waarom', titleAccent: 'Camify', subtitle: 'Vier redenen om tweedehands bij ons te kopen' }} />
+        <div className="mt-2"><Example json={sectionHeaderExample} /></div>
       </Doc>
 
       {/* ---------------- CTA-band ---------------- */}

@@ -1,0 +1,9 @@
+{
+  "type": "section_header",
+  "role": "section_header",
+  "data": { "heading_level": "h2", "align": "left", "section": { "padding": "sm" } },
+  "content": {
+    "en-eu": { "title": "Just", "titleAccent": "added", "subtitle": "Fresh in the shop this week", "linkLabel": "View all", "linkHref": "/new" },
+    "nl-nl": { "title": "Net", "titleAccent": "binnen", "subtitle": "Vers binnengekomen deze week", "linkLabel": "Bekijk alles", "linkHref": "/nieuw" }
+  }
+}

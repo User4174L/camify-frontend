@@ -51,17 +51,18 @@ Banner uses `bleed` (no container); the compact banner drops the hero's `mb-12` 
     CTA_BAND = "cta_band", _("CTA band")
     MEDIA_TEXT = "media_text", _("Media + text")
     PRODUCT_GRID = "product_grid", _("Product grid")
+    SECTION_HEADER = "section_header", _("Section header")
 ```
 ### 3.2 backend — `page_groups.py`
 ```py
-_EDITORIAL_TYPES = frozenset({..., ComponentType.MEDIA_TEXT})
+_EDITORIAL_TYPES = frozenset({..., ComponentType.MEDIA_TEXT, ComponentType.SECTION_HEADER})
 _MERCH_TYPES = frozenset({..., ComponentType.CTA_BAND, ComponentType.PRODUCT_GRID})
 ```
 (cta_band on every group like the editorial blocks: put it in `_EDITORIAL_TYPES` instead if you prefer it on Information pages too — we want it there.)
 
 ### 3.3 frontend — `types/storefront-component.ts`
 ```ts
-  | "cta_band" | "media_text" | "product_grid"
+  | "cta_band" | "media_text" | "product_grid" | "section_header"
 
 export type CtaBandContent = {
   title?: string; subtitle?: string;
@@ -217,6 +218,8 @@ class CtaBandDataSerializer(CommonComponentDataSerializer):
 **product_rail** (`home-product-rail.tsx`): `data.display: "grid"|"carousel"` (default grid), `data.visible: 4|5|6`. Carousel markup: `blocks/product-carousel/slot-product-carousel.client.tsx` (scroll-snap track, arrows in the header next to "View all"). Same `HomeProductCard`, same header, same source.
 
 **product_grid** data source: `catalog/categories/<id>/products/` already accepts `brands=` and `product_type=`; the grid unions the configured `categories` (phase 1) and each filter button re-queries with its own categories or `product_type` within the grid scope. `count` max 24 = category `PAGE_SIZE`.
+
+**section_header** (new, schema block, same stamp as cta_band): content title/titleAccent/subtitle/linkLabel/linkHref; data heading_level h1|h2|h3, align left|center, section. View = `HomeSectionHeader` markup + heading tag + align; default section padding `sm` and the next block drops its top padding so header + block read as one.
 
 ## 6. Ground rules we propose
 schema blocks only (no bespoke editors) · add fields, never rename · preset/field on an existing block before a new block · every block picks its heading level · breadcrumb is page chrome, not a block.
