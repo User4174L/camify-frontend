@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Container, Section } from '../_shared/section';
 import type { BannerContent, BannerData } from './types';
+import { Countdown } from '../_shared/countdown.client';
 
 /**
  * Banner-renderer met de voorgestelde `layout`-uitbreiding.
@@ -51,6 +52,7 @@ export function BannerView({ content, data }: { content: BannerContent; data: Ba
                 {content.cta_label} →
               </Link>
             )}
+            {data.countdown_until && <Countdown until={data.countdown_until} label={content.countdown_label} light={light} />}
             {data.show_trustpilot && (
               <div className={cn('mt-4 inline-flex items-center gap-2 rounded-lg bg-white/90 px-2.5 py-1.5 text-xs font-semibold text-text-primary shadow-soft')}>
                 <span className="text-[#00b67a]">★★★★★</span> 4,8 op Trustpilot

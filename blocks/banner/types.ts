@@ -13,6 +13,8 @@ export type BannerContent = {
   cta_label?: string;       // (V2)
   cta_href?: string;        // (V2)
   image_alt?: string;       // (V2)
+  /** NIEUW: label bij de aftelling, bv. "Black Friday eindigt over". */
+  countdown_label?: string;
 };
 
 export type BannerData = {
@@ -35,5 +37,8 @@ export type BannerData = {
   /** Het inruil-pijltjes-icoon boven de titel (nu altijd aan). */
   show_icon?: boolean;
   text_align?: 'left' | 'center';
+  /** Optioneel: ISO-datum/tijd; banner toont een aftelling en verbergt de teller (of zichzelf) na afloop. */
+  countdown_until?: string;
+  countdown_hide_after?: boolean;
   section?: SectionSettings;
 };

@@ -10,6 +10,8 @@ import { CtaBandView } from '@/blocks/cta-band/slot-cta-band';
 import { SectionHeaderView } from '@/blocks/section-header/slot-section-header';
 import sectionHeaderExample from '@/blocks/section-header/example.json';
 import { SlotTilesLike } from '@/blocks/_shared/tiles-like';
+import { LinkTilesView } from '@/blocks/link-tiles/slot-link-tiles';
+import linkTilesExample from '@/blocks/link-tiles/example.json';
 import ctaExample from '@/blocks/cta-band/example.json';
 import { MediaTextView } from '@/blocks/media-text/slot-media-text';
 import mediaExample from '@/blocks/media-text/example.json';
@@ -169,6 +171,8 @@ export default function BlocksPage() {
         <BannerView data={{ ...banner.data, image_url: IMG }} content={nl(banner)} />
         <p className="mx-auto mb-3 mt-8 max-w-7xl px-4 text-xs font-semibold uppercase tracking-wide text-text-muted sm:px-6 lg:px-8">Compact · h2 · scrim · gecentreerd · Trustpilot aan</p>
         <BannerView data={{ ...banner.data, image_url: IMG2, overlay_style: 'scrim', text_theme: 'light', text_align: 'center', heading_level: 'h2', show_trustpilot: true }} content={{ ...nl(banner), cta_label: '' }} />
+        <p className="mx-auto mb-3 mt-8 max-w-7xl px-4 text-xs font-semibold uppercase tracking-wide text-text-muted sm:px-6 lg:px-8">Compact · countdown (Black Friday) · h2</p>
+        <BannerView data={{ layout: 'compact', heading_level: 'h2', show_icon: false, image_url: IMG3, image_position: 'right', overlay_style: 'gradient', countdown_until: '2026-11-28T23:59:00+01:00' }} content={{ title_lead: 'Black Friday:', title_accent: 'tot 20% extra inruilbonus', subtitle: 'Alleen deze week op alle Canon RF-lenzen die je bij ons inruilt.', cta_label: 'Vraag je bod aan', cta_href: '#', countdown_label: 'Actie eindigt over' }} />
         <p className="mx-auto mb-3 mt-8 max-w-7xl px-4 text-xs font-semibold uppercase tracking-wide text-text-muted sm:px-6 lg:px-8">Compact · geen afbeelding · h1 · zonder knop (kale tekstpagina-kop)</p>
         <BannerView data={{ layout: 'compact', heading_level: 'h1', show_icon: false }} content={{ title_lead: 'Kwaliteit &', title_accent: 'gradering', subtitle: 'Hoe wij de conditie van elke camera en lens bepalen, testen en communiceren.' }} />
         <div className="mt-6"><Example json={bannerExample} /></div>
@@ -204,6 +208,24 @@ export default function BlocksPage() {
         <MediaTextView data={{ image_url: IMG3, media_side: 'right', ratio: '2:3', media_style: 'card', section: { background: 'raised', padding: 'md' } }} content={{ eyebrow: 'Inruilen', title: 'Van oude lens naar nieuwe lens in één stap', body: 'Ruil je huidige glas in en betaal alleen het verschil. Wij regelen de verzending, jij krijgt binnen 2 werkdagen een bod.\n\n- Gratis verzendlabel\n- Betaling binnen 2 werkdagen\n- Ook zonder aankoop', cta_label: 'Zo werkt inruilen', cta_href: '#' }} />
         <MediaTextView data={{ image_url: IMG, media_side: 'left', ratio: '3:2', media_style: 'plain', align: 'top', section: { background: 'inverse', padding: 'lg' } }} content={{ eyebrow: 'Garantie', title: '12 maanden garantie op alles wat we verkopen', body: 'Gaat er binnen een jaar iets kapot? Dan repareren, vervangen of vergoeden wij. Zonder kleine lettertjes.', cta_label: 'Garantievoorwaarden', cta_href: '#' }} />
         <div className="mt-2"><Example json={mediaExample} /></div>
+      </Doc>
+
+      {/* ---------------- Link tiles ---------------- */}
+      <Doc id="link-tiles">
+        <SectionHeaderView data={{ heading_level: 'h2' }} content={{ title: 'Canon RF', titleAccent: 'per categorie', subtitle: 'Kies waar je naar zoekt' }} />
+        <LinkTilesView data={{ columns: 3, style: 'photo', ratio: '4:3', section: { padding: 'none' } }} items={[
+          { title: "Canon R-camera's", subtitle: 'R5, R6, R8, R7 en meer', href: '#', image_url: '/images/canon-r5.jpg' },
+          { title: 'RF-lenzen', subtitle: 'Van 16 mm tot 800 mm', href: '#', image_url: '/images/canon-rf-24-70mm-f28-l-is-usm.jpg', badge: 'Populair' },
+          { title: 'Accessoires', subtitle: "Accu's, grips, adapters", href: '#', image_url: '/images/hero-photographer-1.jpg' },
+        ]} />
+        <div className="mt-10" />
+        <LinkTilesView data={{ columns: 4, style: 'overlay', ratio: '1:1', section: { background: 'muted', padding: 'md' } }} items={[
+          { title: 'Shuttercount uitgelegd', subtitle: 'Gids · 4 min', href: '#', image_url: '/images/nikon-z8.jpg' },
+          { title: 'Conditiegradering', subtitle: 'Gids · 3 min', href: '#', image_url: '/images/fujifilm-x-t4.jpg' },
+          { title: 'Mirrorless vs DSLR', subtitle: 'Vergelijking · 6 min', href: '#', image_url: '/images/sony-a7-iv.jpg' },
+          { title: 'Welke adapter voor EF op RF?', subtitle: 'Gids · 2 min', href: '#', image_url: '/images/hero-photographer-2.jpg', badge: 'Nieuw' },
+        ]} />
+        <div className="mt-2"><Example json={linkTilesExample} /></div>
       </Doc>
 
       {/* ---------------- Product grid ---------------- */}

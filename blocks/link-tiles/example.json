@@ -1,0 +1,9 @@
+{
+  "type": "link_tiles",
+  "role": "link_tiles",
+  "data": { "columns": 3, "style": "photo", "ratio": "4:3", "items": [ { "image_url": "/static/tiles/canon-r.webp", "href": "/cameras/mirrorless/canon-r" }, { "image_url": "/static/tiles/canon-rf.webp", "href": "/lenses/mirrorless/canon-rf-fit" }, { "image_url": "/static/tiles/canon-acc.webp", "href": "/accessories/for-canon" } ], "section": { "padding": "md" } },
+  "content": {
+    "en-eu": { "items": [ { "title": "Canon R cameras", "subtitle": "R5, R6, R8, R7 and more", "href": "/cameras/mirrorless/canon-r" }, { "title": "RF lenses", "subtitle": "From 16 mm to 800 mm", "href": "/lenses/mirrorless/canon-rf-fit" }, { "title": "Accessories", "subtitle": "Batteries, grips, adapters", "href": "/accessories/for-canon" } ] },
+    "nl-nl": { "items": [ { "title": "Canon R-camera's", "subtitle": "R5, R6, R8, R7 en meer", "href": "/cameras/mirrorless/canon-r" }, { "title": "RF-lenzen", "subtitle": "Van 16 mm tot 800 mm", "href": "/lenses/mirrorless/canon-rf-fit" }, { "title": "Accessoires", "subtitle": "Accu's, grips, adapters", "href": "/accessories/for-canon" } ] }
+  }
+}

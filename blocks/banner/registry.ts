@@ -50,6 +50,9 @@ export const bannerRegistry: RegistryEntry = {
         { value: 'center', label: 'Centered' },
       ],
     },
+    { key: 'countdown_until', label: 'Countdown until (date/time)', type: 'text', help: 'Optional ISO date-time. Shows "2d 14h 05m" next to the CTA (hero and compact). For campaigns like Black Friday.' },
+    { key: 'countdown_label', label: 'Countdown label', type: 'text', translatable: true, perMarket: true, help: 'e.g. "Black Friday ends in".' },
+    { key: 'countdown_hide_after', label: 'Hide banner after countdown ends', type: 'boolean', default: false },
     ...SECTION_FIELDS,
   ],
 };

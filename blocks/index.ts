@@ -15,6 +15,7 @@ import { mediaTextRegistry } from './media-text/registry';
 import { productGridRegistry } from './product-grid/registry';
 import { productRailRegistry } from './product-carousel/registry';
 import { sectionHeaderRegistry } from './section-header/registry';
+import { linkTilesRegistry } from './link-tiles/registry';
 import type { RegistryEntry } from './_shared/registry-types';
 
 export type BlockMeta = {
@@ -32,6 +33,7 @@ export const BLOCKS: BlockMeta[] = [
   { id: 'section-header', registry: sectionHeaderRegistry, status: 'nieuw', summary: 'De rail/grid-kop (titel + accentwoord + subregel + "Bekijk alles →") als los blok, boven elk ander blok. Kopniveau en uitlijning instelbaar.', folder: 'blocks/section-header' },
   { id: 'cta-band', registry: ctaBandRegistry, status: 'nieuw', summary: 'Eén oproep + 1–2 knoppen. Drie varianten, smalle of normale band. Presets voor terugkerende oproepen.', folder: 'blocks/cta-band' },
   { id: 'media-text', registry: mediaTextRegistry, status: 'nieuw', summary: 'Beeld naast tekst; links/rechts, verhouding, beeldstijl, markdown-tekst en een link. Wisselend stapelen = lange-pagina-ritme.', folder: 'blocks/media-text' },
+  { id: 'link-tiles', registry: linkTilesRegistry, status: 'nieuw', summary: 'Foto-tegels die naar categorie, landingspagina of artikel linken (2–4 kolommen, tekst eronder of op de foto). Navigatiesectie voor merk-/systeempagina\'s en kennisbank.', folder: 'blocks/link-tiles' },
   { id: 'product-grid', registry: productGridRegistry, status: 'nieuw', summary: 'Grid uit meerdere categorieën met filterknoppen (categorieën-multi óf product_type). Uiterlijk + schema hier; data-koppeling via bestaande listing-endpoint.', ticket: '#429', folder: 'blocks/product-grid' },
   { id: 'product-carousel', registry: productRailRegistry, status: 'uitbreiding', summary: 'Bestaande product_rail krijgt display grid|carousel. Zelfde kaart, kop en bron.', folder: 'blocks/product-carousel' },
 ];

@@ -9,3 +9,5 @@
 **Compact-gedrag:** band 200/220 px i.p.v. 320/400, tekstkolom `max-w-2xl`, geen icoon, geen `mb-12` eronder (de section-padding regelt de ruimte), accentregel loopt door op dezelfde regel. Breadcrumb komt NIET uit de banner maar uit de pagina-chrome erboven.
 
 **Wat Mike doet:** `layout`/`heading_level`/`show_icon`/`text_align` toevoegen aan `BannerData` + `BannerPreset`-serializer, renderer-branch in `trade-in-hero.tsx` (zie slot-banner.tsx), 4 velden in het preset-editor-schema. Geen migratie (JSON-data).
+
+**Aanvulling 19-08 — countdown:** `data.countdown_until` (ISO) + `content.countdown_label` (per markt) + `countdown_hide_after`. Toont "2d 14u 05m" naast de knop in hero én compact; teller verdwijnt na afloop, optioneel de hele banner. Bedoeld voor Black Friday/actieweken; geen apart blok.
