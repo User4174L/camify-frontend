@@ -16,7 +16,8 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   const [state, update, ready] = useWizardState(variant);
   const { items, picks } = state;
   const [q, setQ] = useState('');
-  const [expanded, setExpanded] = useState<string | null>(null);
+  /** Aangeklikt product: dan tonen we alléén de varianten daarvan, niet de hele resultatenlijst. */
+  const [openId, setOpenId] = useState<string | null>(null);
   /** null = nog niets gekozen, true = wil kopen, false = alleen verkopen */
   const [wants, setWants] = useState<boolean | null>(null);
 
@@ -34,16 +35,18 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
     return BUY_PRODUCTS.filter(p => t.every(w => (p.name + ' ' + p.category + ' ' + p.variants.map(v => v.sku).join(' ')).toLowerCase().includes(w))).slice(0, 8);
   }, [q]);
 
-  const togglePick = (p: BuyProduct, v: BuyVariant) => update(s => ({
-    ...s,
-    picks: s.picks.some(x => x.id === v.id) ? s.picks.filter(x => x.id !== v.id) : [...s.picks, { ...v, name: p.name, productId: p.id }],
-  }));
+  const openProduct = openId ? BUY_PRODUCTS.find(p => p.id === openId) ?? null : null;
+  /** Variant kiezen = meteen toevoegen en de zoeker sluiten — geen open dropdown met meervoudige selectie. */
+  const addPick = (p: BuyProduct, v: BuyVariant) => {
+    update(s => (s.picks.some(x => x.id === v.id) ? s : { ...s, picks: [...s.picks, { ...v, name: p.name, productId: p.id }] }));
+    setOpenId(null); setQ('');
+  };
   const buyTotal = picks.reduce((s, p) => s + p.price, 0);
 
   const choose = (yes: boolean) => {
     setWants(yes);
     update(s => ({ ...s, buySkipped: !yes, picks: yes ? s.picks : [] }));
-    if (!yes) { setQ(''); setExpanded(null); }
+    if (!yes) { setQ(''); setOpenId(null); }
   };
 
   return (
@@ -108,48 +111,59 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
         {/* Voorraadzoeker */}
         {wants && (
           <div style={{ ...card, padding: 18, marginTop: picks.length ? 4 : 26 }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: C.text, marginBottom: 10 }}>Zoek in onze voorraad</div>
-            <input value={q} onChange={e => { setQ(e.target.value); setExpanded(null); }} placeholder="Zoek op merk, model of SKU…" autoComplete="off" style={input} />
-            {q.trim().length >= 2 && (
-              <div style={{ marginTop: 10, border: `1px solid ${C.border}`, borderRadius: 12, overflow: 'hidden' }}>
-                {results.length ? results.map((p, i) => {
-                  const prices = p.variants.map(v => v.price); const open = expanded === p.id;
+            {!openProduct ? (
+              <>
+                <div style={{ fontWeight: 700, fontSize: 14, color: C.text, marginBottom: 10 }}>Zoek in onze voorraad</div>
+                <input value={q} onChange={e => setQ(e.target.value)} placeholder="Zoek op merk, model of SKU…" autoComplete="off" style={input} />
+                {q.trim().length >= 2 && (
+                  <div style={{ marginTop: 10, border: `1px solid ${C.border}`, borderRadius: 12, overflow: 'hidden' }}>
+                    {results.length ? results.map((p, i) => {
+                      const prices = p.variants.map(v => v.price);
+                      return (
+                        <div key={p.id} onClick={() => setOpenId(p.id)} className="tiw-hit" style={{ borderBottom: i < results.length - 1 ? `1px solid ${C.border}` : 'none' }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 600, fontSize: 14, color: C.text }}>{p.name}</div>
+                            <div style={{ fontSize: 12, color: C.sec }}>{p.category}</div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: 12, color: C.sec }}>{p.variants.length} op voorraad</div>
+                            <div style={{ fontWeight: 700, fontSize: 14.5, color: C.text }}>{fmt(Math.min(...prices))}{prices.length > 1 ? ` – ${fmt(Math.max(...prices))}` : ''}</div>
+                          </div>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.sec} strokeWidth="2"><path d="M9 6l6 6-6 6" /></svg>
+                        </div>
+                      );
+                    }) : <div style={{ padding: 14, fontSize: 13.5, color: C.sec }}>Niets gevonden in onze voorraad.</div>}
+                  </div>
+                )}
+              </>
+            ) : (
+              /* Eén product gekozen → alleen de varianten daarvan */
+              <>
+                <button onClick={() => setOpenId(null)} style={{ background: 'none', border: 'none', padding: 0, fontSize: 13, color: C.sec, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 6 }}>← Andere resultaten</button>
+                <div style={{ marginTop: 12, marginBottom: 4 }}>
+                  <div style={{ fontWeight: 800, fontSize: 16, color: C.text }}>{openProduct.name}</div>
+                  <div style={{ fontSize: 13, color: C.sec, marginTop: 2 }}>
+                    {openProduct.variants.length} exemplaar{openProduct.variants.length > 1 ? 'en' : ''} op voorraad — kies er één om toe te voegen.
+                  </div>
+                </div>
+                {openProduct.variants.map(v => {
+                  const chosen = picks.some(x => x.id === v.id);
                   return (
-                    <div key={p.id} style={{ borderBottom: i < results.length - 1 ? `1px solid ${C.border}` : 'none' }}>
-                      <div onClick={() => setExpanded(open ? null : p.id)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', cursor: 'pointer', background: open ? C.tint : '#fff' }}>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: 600, fontSize: 14, color: C.text }}>{p.name}</div>
-                          <div style={{ fontSize: 12, color: C.sec }}>{p.category}</div>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: 12, color: C.sec }}>{p.variants.length} op voorraad</div>
-                          <div style={{ fontWeight: 700, fontSize: 14.5, color: C.text }}>{fmt(Math.min(...prices))}{prices.length > 1 ? ` – ${fmt(Math.max(...prices))}` : ''}</div>
-                        </div>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.sec} strokeWidth="2" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}><path d="M6 9l6 6 6-6" /></svg>
+                    <div
+                      key={v.id}
+                      onClick={() => !chosen && addPick(openProduct, v)}
+                      className={chosen ? 'tiw-var is-chosen' : 'tiw-var'}
+                    >
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13.5, color: C.text }}><strong>{v.condition}</strong> <span style={{ color: C.sec }}>· SKU {v.sku}{v.shutterCount !== undefined ? ` · ${v.shutterCount.toLocaleString('nl-NL')} clicks` : ''}</span></div>
+                        <div style={{ fontSize: 12, color: C.sec, marginTop: 3 }}>Incl. {v.accessories.join(', ')}</div>
                       </div>
-                      {open && (
-                        <div style={{ padding: '4px 12px 12px', background: C.tint }}>
-                          {p.variants.map(v => {
-                            const sel = picks.some(x => x.id === v.id);
-                            return (
-                              <div key={v.id} onClick={() => togglePick(p, v)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', marginTop: 6, borderRadius: 10, border: `1.5px solid ${sel ? C.text : C.border}`, background: '#fff', cursor: 'pointer' }}>
-                                <div style={{ flex: 1 }}>
-                                  <div style={{ fontSize: 13.5, color: C.text }}><strong>{v.condition}</strong> <span style={{ color: C.sec }}>· SKU {v.sku}{v.shutterCount !== undefined ? ` · ${v.shutterCount.toLocaleString('nl-NL')} clicks` : ''}</span></div>
-                                  <div style={{ fontSize: 12, color: C.sec, marginTop: 3 }}>Incl. {v.accessories.join(', ')}</div>
-                                </div>
-                                <div style={{ fontWeight: 800, fontSize: 16, color: C.text }}>{fmt(v.price)}</div>
-                                <span style={{ width: 20, height: 20, borderRadius: '50%', border: `2px solid ${sel ? C.text : C.border}`, background: sel ? C.text : '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                                  {sel && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>}
-                                </span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                      <div style={{ fontWeight: 800, fontSize: 16, color: C.text }}>{fmt(v.price)}</div>
+                      <span className="tiw-var-cta">{chosen ? 'Toegevoegd ✓' : 'Kies deze'}</span>
                     </div>
                   );
-                }) : <div style={{ padding: 14, fontSize: 13.5, color: C.sec }}>Niets gevonden in onze voorraad.</div>}
-              </div>
+                })}
+              </>
             )}
             <div style={{ marginTop: 12, fontSize: 12.5, color: C.sec, lineHeight: 1.6 }}>
               Je zit nergens aan vast: we leggen het voor je apart en je beslist definitief zodra je {hasBid(variant) ? 'het bod' : 'ons bod'} accepteert.
@@ -188,6 +202,15 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
         .tiw-choice-btn--yes:hover{box-shadow:0 10px 24px rgba(232,105,42,.18)}
         .tiw-choice-btn--yes.is-on{border-color:#E8692A;box-shadow:0 8px 22px rgba(232,105,42,.22)}
         .tiw-choice-btn--yes .tiw-choice-check{background:#E8692A}
+
+        .tiw-hit{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;background:#fff;transition:background .12s}
+        .tiw-hit:hover{background:#FFFBF7}
+        .tiw-var{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-top:8px;border-radius:12px;border:1.5px solid #EEEEF2;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+        .tiw-var:hover{border-color:#E8692A;box-shadow:0 5px 16px rgba(232,105,42,.14);transform:translateY(-1px)}
+        .tiw-var-cta{flex-shrink:0;border-radius:999px;border:1.5px solid #E8692A;color:#E8692A;font-size:12.5px;font-weight:700;padding:7px 14px;white-space:nowrap}
+        .tiw-var:hover .tiw-var-cta{background:#E8692A;color:#fff}
+        .tiw-var.is-chosen{cursor:default;border-color:#22c55e;background:#F3FBF5;transform:none;box-shadow:none}
+        .tiw-var.is-chosen .tiw-var-cta{border-color:#22c55e;color:#16A34A;background:transparent}
 
         /* Nee = rustig blauw, zodat het geen tweede CTA lijkt */
         .tiw-choice-btn--no{background:linear-gradient(140deg,#F5F7FD 0%,#E9EDF9 100%);border-color:#D9DFF0}
