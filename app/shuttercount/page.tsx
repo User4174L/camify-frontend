@@ -117,6 +117,16 @@ export default function ShuttercountPage() {
         <Link href="/quality-grading" style={{ color: 'var(--accent)' }}>productcondities</Link>.
       </p>
 
+      <h2 style={h2}>Zelf je shuttercount checken?</h2>
+      <p style={p}>
+        Bij Nikon, Sony en Pentax/Ricoh staat de teller verborgen in elke originele foto &mdash; en
+        die lees je gratis uit met onze browser-check. Voor Canon, Fujifilm, Olympus en Panasonic
+        leggen we per model uit waar je het getal vindt.{' '}
+        <Link href="/shuttercount-checken" style={{ color: 'var(--accent)', fontWeight: 700 }}>
+          Naar de gratis shuttercount-check &rarr;
+        </Link>
+      </p>
+
       <h2 style={h2}>Twijfel je over een specifiek toestel?</h2>
       <p style={{ ...p, marginBottom: 0 }}>
         Bel ons op <a href="tel:+31853018332" style={{ color: 'var(--accent)' }}>085 301 83 32</a>. Wij
