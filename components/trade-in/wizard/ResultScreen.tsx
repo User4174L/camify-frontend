@@ -89,7 +89,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                 </>
               )}
             </p>
-            <button style={btnGhost} onClick={() => { clearWizardState(variant); router.push(base(variant)); }}>Nog een aanvraag</button>
+            <button className="tiw-add" style={btnGhost} onClick={() => { clearWizardState(variant); router.push(base(variant)); }}>Nog een aanvraag</button>
           </div>
         </Page>
       </>
@@ -157,7 +157,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                   </div>
                 ))}
                 <div style={{ display: 'flex', justifyContent: 'center', margin: '6px 0 26px' }}>
-                  <button onClick={() => router.push(base(variant))} style={btnGhost}>Nog een item verkopen <span style={{ fontSize: 18, lineHeight: 1 }}>+</span></button>
+                  <button onClick={() => router.push(base(variant))} className="tiw-add" style={btnGhost}>Nog een item verkopen <span style={{ fontSize: 18, lineHeight: 1 }}>+</span></button>
                 </div>
 
                 {/* Wat je koopt (gekozen in stap 2) */}
@@ -176,7 +176,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                         </div>
                       ))}
                       <div style={{ display: 'flex', justifyContent: 'center', margin: '6px 0 0' }}>
-                        <button onClick={() => router.push(`${base(variant)}/kopen`)} style={btnGhost}>Iets anders kiezen</button>
+                        <button onClick={() => router.push(`${base(variant)}/kopen`)} className="tiw-add" style={btnGhost}>Iets anders kiezen</button>
                       </div>
                     </>
                   ) : (

@@ -105,7 +105,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
         {/* Grote zoekbalk — altijd zichtbaar zolang er geen product gekozen is */}
         {!picked && visibleItems.length > 0 && !searchOpen && (
           <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 0' }}>
-            <button onClick={() => setSearchOpen(true)} style={btnGhost}><span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Nog een product toevoegen</button>
+            <button onClick={() => setSearchOpen(true)} className="tiw-add" style={btnGhost}><span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Nog een product toevoegen</button>
           </div>
         )}
         {!picked && (visibleItems.length === 0 || searchOpen) && (
@@ -194,8 +194,8 @@ export default function SellScreen({ variant }: { variant: Variant }) {
             )}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginTop: 20 }}>
-              <button disabled={!canAdd} onClick={addItem} style={{ ...btnGhost, opacity: canAdd ? 1 : 0.45, cursor: canAdd ? 'pointer' : 'default' }}>
-                {editId ? 'Wijziging opslaan' : 'Voeg dit item toe'} <span style={{ fontSize: 18, lineHeight: 1 }}>+</span>
+              <button disabled={!canAdd} onClick={addItem} className="tiw-add" style={{ ...btnGhost, opacity: canAdd ? 1 : 0.45, cursor: canAdd ? 'pointer' : 'default' }}>
+                {editId ? 'Wijziging opslaan' : <>Voeg dit item toe <span style={{ fontSize: 18, lineHeight: 1 }}>+</span></>}
               </button>
             </div>
           </div>

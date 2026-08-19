@@ -101,7 +101,8 @@ export const btnPrimary: React.CSSProperties = { background: C.accent, color: '#
 export const btnDark: React.CSSProperties = { ...btnPrimary, background: C.text };
 /** Primaire CTA van de flow (groen: onderscheidt zich van al het oranje op de site) */
 export const btnCta: React.CSSProperties = { ...btnPrimary, background: '#16A34A' };
-export const btnGhost: React.CSSProperties = { background: '#fff', color: C.text, border: `1.5px solid ${C.text}`, borderRadius: 999, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 8 };
+/** Secundaire CTA (item toevoegen, nog een product, iets anders kiezen) — merkoranje outline. */
+export const btnGhost: React.CSSProperties = { background: '#fff', color: C.accent, border: `1.5px solid ${C.accent}`, borderRadius: 999, padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 8 };
 export const btnLight: React.CSSProperties = { ...btnGhost, border: `1px solid ${C.border}`, fontWeight: 600 };
 /** Kaart op een witte pagina: dunne rand in plaats van schaduw op grijs. */
 export const card: React.CSSProperties = { background: '#fff', borderRadius: 14, padding: 20, border: `1px solid ${C.border}` };
@@ -181,6 +182,10 @@ export function Page({ children, width = 880 }: { children: React.ReactNode; wid
   return (
     <div style={{ background: '#fff', padding: '32px 0 88px' }}>
       <div style={{ maxWidth: width, margin: '0 auto', padding: '0 24px' }}>{children}</div>
+      <style>{`
+        .tiw-add{transition:background .15s ease,box-shadow .15s ease,transform .15s ease}
+        .tiw-add:not(:disabled):hover{background:#FFF4EE;box-shadow:0 5px 16px rgba(232,105,42,.2);transform:translateY(-1px)}
+      `}</style>
     </div>
   );
 }
