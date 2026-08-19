@@ -8,7 +8,7 @@ import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import ShutterHelp from '@/components/trade-in/ShutterHelp';
 import { SELL_PRODUCTS, SHUTTER_RANGES } from '@/data/trade-in-mock';
 import {
-  useWizardState, WizardBanner, TrustBar, Page, PageTitle, StickyBar, Thumb, IconBtn,
+  useWizardState, WizardBanner, Page, PageTitle, StickyBar, Thumb, IconBtn,
   CONDITIONS, C, input, card, btnGhost, base, hasBid, type SellItem, type Variant,
 } from './shared';
 
@@ -76,7 +76,6 @@ export default function SellScreen({ variant }: { variant: Variant }) {
     <>
       <VersionSwitch active={variant} />
       <WizardBanner variant={variant} step={1} />
-      <TrustBar variant={variant} />
       <ShutterHelp open={shutterHelp} onClose={() => setShutterHelp(false)} />
 
       <Page>

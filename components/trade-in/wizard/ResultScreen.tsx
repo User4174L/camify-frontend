@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { estimateBid } from '@/data/trade-in-mock';
 import {
-  useWizardState, clearWizardState, WizardBanner, TrustBar, Page, PageTitle, BackLink, Thumb, IconBtn,
+  useWizardState, clearWizardState, WizardBanner, Page, PageTitle, BackLink, Thumb, IconBtn,
   INCLUDED, C, card, btnCta, btnGhost, fmt, vatLineFor, NON_EU, base, hasBid, type SellItem, type Variant,
 } from './shared';
 
@@ -66,7 +66,6 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
       <>
         <VersionSwitch active={variant} />
         <WizardBanner variant={variant} step={4} />
-        <TrustBar variant={variant} />
         <Page width={680}>
           <div style={{ ...card, padding: 32, textAlign: 'center', marginTop: 20 }}>
             <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#22c55e', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
@@ -101,7 +100,6 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
     <>
       <VersionSwitch active={variant} />
       <WizardBanner variant={variant} step={4} />
-      <TrustBar variant={variant} />
 
       <Page width={1080}>
         {loading ? (

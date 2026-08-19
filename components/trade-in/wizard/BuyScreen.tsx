@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { BUY_PRODUCTS, type BuyProduct, type BuyVariant } from '@/data/trade-in-mock';
 import {
-  useWizardState, WizardBanner, TrustBar, Page, PageTitle, StickyBar, BackLink, IconBtn,
+  useWizardState, WizardBanner, Page, PageTitle, StickyBar, BackLink, IconBtn,
   C, input, card, fmt, base, hasBid, type Variant,
 } from './shared';
 
@@ -50,7 +50,6 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
     <>
       <VersionSwitch active={variant} />
       <WizardBanner variant={variant} step={2} />
-      <TrustBar variant={variant} />
 
       <Page>
         <BackLink href={base(variant)} label="Terug naar je items" />
@@ -63,22 +62,28 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
 
         {/* Keuze */}
         <div className="tiw-choice">
-          <button onClick={() => choose(true)} className="tiw-choice-btn" style={{ borderColor: wants === true ? C.accent : C.border, background: wants === true ? C.accentSoft : '#fff' }}>
-            <span className="tiw-choice-ico" style={{ background: wants === true ? C.accent : C.tint, color: wants === true ? '#fff' : C.text }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><path d="M3 6h18M16 10a4 4 0 0 1-8 0" /></svg>
+          <button onClick={() => choose(true)} className={`tiw-choice-btn tiw-choice-btn--yes${wants === true ? ' is-on' : ''}`}>
+            <span className="tiw-choice-ico">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><path d="M3 6h18M16 10a4 4 0 0 1-8 0" /></svg>
             </span>
-            <span>
+            <span className="tiw-choice-text">
               <strong>Ja, laat zien wat jullie hebben</strong>
               <span>Ruim 2.000 gecontroleerde tweedehands items, met garantie.</span>
             </span>
-          </button>
-          <button onClick={() => choose(false)} className="tiw-choice-btn" style={{ borderColor: wants === false ? C.text : C.border, background: wants === false ? C.tint : '#fff' }}>
-            <span className="tiw-choice-ico" style={{ background: wants === false ? C.text : C.tint, color: wants === false ? '#fff' : C.text }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+            <span className="tiw-choice-check" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
             </span>
-            <span>
+          </button>
+          <button onClick={() => choose(false)} className={`tiw-choice-btn tiw-choice-btn--no${wants === false ? ' is-on' : ''}`}>
+            <span className="tiw-choice-ico">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+            </span>
+            <span className="tiw-choice-text">
               <strong>Nee, ik wil alleen verkopen</strong>
               <span>Je krijgt het bedrag gewoon op je rekening.</span>
+            </span>
+            <span className="tiw-choice-check" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
             </span>
           </button>
         </div>
@@ -165,13 +170,31 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
       />
 
       <style>{`
-        .tiw-choice{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .tiw-choice{display:grid;grid-template-columns:1fr 1fr;gap:14px}
         @media(max-width:760px){.tiw-choice{grid-template-columns:1fr}}
-        .tiw-choice-btn{display:flex;align-items:flex-start;gap:14px;text-align:left;border:1.5px solid #EEEEF2;border-radius:14px;padding:18px;cursor:pointer;font-family:inherit;transition:all .15s}
-        .tiw-choice-btn:hover{border-color:#C9CAD3}
-        .tiw-choice-btn strong{display:block;font-size:15px;font-weight:700;color:#1E2133;margin-bottom:3px}
-        .tiw-choice-btn span span{display:block;font-size:13px;color:#6B6D80;line-height:1.5}
-        .tiw-choice-ico{width:40px;height:40px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+        .tiw-choice-btn{position:relative;display:flex;align-items:flex-start;gap:15px;text-align:left;border:2px solid transparent;border-radius:16px;padding:20px;cursor:pointer;font-family:inherit;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;overflow:hidden}
+        .tiw-choice-btn:hover{transform:translateY(-2px)}
+        .tiw-choice-text{display:block;min-width:0}
+        .tiw-choice-btn strong{display:block;font-size:15.5px;font-weight:800;color:#1E2133;margin-bottom:4px;letter-spacing:-.01em}
+        .tiw-choice-text span{display:block;font-size:13px;color:#6B6D80;line-height:1.5}
+        .tiw-choice-ico{width:46px;height:46px;border-radius:13px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;transition:transform .16s ease}
+        .tiw-choice-btn:hover .tiw-choice-ico{transform:scale(1.06)}
+        .tiw-choice-check{position:absolute;top:14px;right:14px;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;opacity:0;transform:scale(.6);transition:all .18s ease}
+        .tiw-choice-btn.is-on .tiw-choice-check{opacity:1;transform:scale(1)}
+
+        /* Ja = merkoranje */
+        .tiw-choice-btn--yes{background:linear-gradient(140deg,#FFF6F1 0%,#FFEADD 100%);border-color:#F7D9C6}
+        .tiw-choice-btn--yes .tiw-choice-ico{background:linear-gradient(140deg,#F2833F 0%,#E8692A 100%);box-shadow:0 5px 14px rgba(232,105,42,.32)}
+        .tiw-choice-btn--yes:hover{box-shadow:0 10px 24px rgba(232,105,42,.18)}
+        .tiw-choice-btn--yes.is-on{border-color:#E8692A;box-shadow:0 8px 22px rgba(232,105,42,.22)}
+        .tiw-choice-btn--yes .tiw-choice-check{background:#E8692A}
+
+        /* Nee = rustig blauw, zodat het geen tweede CTA lijkt */
+        .tiw-choice-btn--no{background:linear-gradient(140deg,#F5F7FD 0%,#E9EDF9 100%);border-color:#D9DFF0}
+        .tiw-choice-btn--no .tiw-choice-ico{background:linear-gradient(140deg,#3D4468 0%,#252943 100%);box-shadow:0 5px 14px rgba(37,41,67,.26)}
+        .tiw-choice-btn--no:hover{box-shadow:0 10px 24px rgba(37,41,67,.14)}
+        .tiw-choice-btn--no.is-on{border-color:#252943;box-shadow:0 8px 22px rgba(37,41,67,.18)}
+        .tiw-choice-btn--no .tiw-choice-check{background:#252943}
       `}</style>
     </>
   );

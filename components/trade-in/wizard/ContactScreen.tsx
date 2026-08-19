@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import {
-  useWizardState, WizardBanner, TrustBar, Page, PageTitle, BackLink,
+  useWizardState, WizardBanner, Page, PageTitle, BackLink,
   C, input, card, btnCta, NON_EU, vatLineFor, base, hasBid, lastPath, type Variant,
 } from './shared';
 
@@ -27,7 +27,6 @@ export default function ContactScreen({ variant }: { variant: Variant }) {
     <>
       <VersionSwitch active={variant} />
       <WizardBanner variant={variant} step={3} />
-      <TrustBar variant={variant} />
 
       <Page width={680}>
         <BackLink href={`${base(variant)}/kopen`} label="Terug" />

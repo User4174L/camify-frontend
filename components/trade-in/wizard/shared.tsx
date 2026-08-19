@@ -13,6 +13,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Breadcrumb from '@/components/layout/Breadcrumb';
 import type { BuyVariant } from '@/data/trade-in-mock';
 
 export type Variant = 2 | 3;
@@ -122,147 +123,54 @@ export function IconBtn({ onClick, title, kind }: { onClick: () => void; title: 
   );
 }
 
-/* ── Banner met stappen ── */
+/* ── Banner ── */
 export type Step = 1 | 2 | 3 | 4;
 
 /**
- * Donkere banner in de stijl van versie 1, met de vier wizard-stappen als
- * genummerde bollen. Afgerond = groen vinkje en klikbaar terug, actief = oranje.
+ * Lichte foto-header in de stijl van Quality & grading, met een subtiele
+ * stappenindicator. Afgeronde stappen zijn klikbaar terug.
  */
 export function WizardBanner({ variant, step }: { variant: Variant; step: Step }) {
   const b = base(variant);
-  const steps: { label: string; desc: string; href: string }[] = [
-    { label: 'Wat verkoop je', desc: 'Product, conditie en shuttercount.', href: b },
-    { label: 'Wil je iets kopen', desc: 'Optioneel — we verrekenen het direct.', href: `${b}/kopen` },
-    { label: 'Je gegevens', desc: 'Zodat we je kunnen bereiken.', href: `${b}/gegevens` },
-    hasBid(variant)
-      ? { label: 'Je bod', desc: 'Direct in beeld, 7 dagen geldig.', href: `${b}/bod` }
-      : { label: 'Aanvraag klaar', desc: 'Je bod volgt per e-mail.', href: `${b}/aanvraag` },
+  const steps: { label: string; href: string }[] = [
+    { label: 'Wat verkoop je', href: b },
+    { label: 'Wil je iets kopen', href: `${b}/kopen` },
+    { label: 'Je gegevens', href: `${b}/gegevens` },
+    { label: hasBid(variant) ? 'Je bod' : 'Je aanvraag', href: `${b}/${lastPath(variant)}` },
   ];
 
   return (
-    <section className="tiw-banner">
-      <div className="tiw-glow" />
-      <svg className="tiw-deco" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="30" y="60" width="140" height="100" rx="16" stroke="white" strokeWidth="3" />
-        <circle cx="100" cy="110" r="30" stroke="white" strokeWidth="3" />
-        <circle cx="100" cy="110" r="18" stroke="white" strokeWidth="2" />
-        <rect x="60" y="45" width="40" height="20" rx="6" stroke="white" strokeWidth="2" />
-        <circle cx="145" cy="78" r="6" stroke="white" strokeWidth="2" />
-      </svg>
-
-      <div className="tiw-inner">
-        <span className="tiw-badge"><span className="tiw-dot" /> Inruilen &amp; verkopen</span>
-        <h1 className="tiw-title">Verkoop je gear <span style={{ color: '#FF8A4C' }}>snel en eerlijk</span></h1>
-        <p className={`tiw-sub${step > 1 ? ' tiw-sub--hide-mobile' : ''}`}>
-          {hasBid(variant)
-            ? 'Zoek je product, kies de conditie en zie meteen wat wij ervoor betalen. Gratis verzekerd verzenden, geld binnen 3 werkdagen.'
-            : 'Zoek je product en kies de conditie. Onze experts kijken ernaar en sturen je binnen 2 werkdagen een persoonlijk bod. Gratis verzekerd verzenden.'}
-        </p>
-
-        {/* Mobiel: één regel in plaats van vier gestapelde blokken */}
-        <div className="tiw-steps-mini" aria-hidden="true">
-          <div className="tiw-mini-dots">
+    <div className="svc-header svc-header--photo" style={{ marginBottom: 0 }}>
+      <div className="svc-header__photo" style={{ backgroundImage: 'url(/images/hero-photographer-1.jpg)' }} aria-hidden="true" />
+      <div className="container">
+        <div className="svc-header__inner">
+          <Breadcrumb items={[{ label: 'Inruilen & verkopen' }]} />
+          <div className="svc-eyebrow">Inruilen &amp; verkopen</div>
+          <h1 className="svc-title">Verkoop je gear <span style={{ color: C.accent }}>snel en eerlijk</span></h1>
+          <div style={{ display: 'flex', gap: 6, marginTop: 20, flexWrap: 'wrap' }}>
             {steps.map((s, i) => {
               const n = (i + 1) as Step;
-              return <span key={s.label} className={`tiw-mini-dot${n === step ? ' is-active' : ''}${n < step ? ' is-done' : ''}`} />;
+              const active = n === step; const done = n < step;
+              const style: React.CSSProperties = {
+                display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 6px', borderRadius: 999,
+                background: active ? C.text : '#fff', color: active ? '#fff' : done ? C.text : C.sec,
+                border: `1px solid ${active ? C.text : C.border}`, fontSize: 12.5, fontWeight: 700, textDecoration: 'none',
+              };
+              const inner = (
+                <>
+                  <span style={{ width: 20, height: 20, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, background: done ? '#22c55e' : active ? C.accent : C.tint, color: done || active ? '#fff' : C.sec }}>
+                    {done ? '✓' : n}
+                  </span>
+                  {s.label}
+                </>
+              );
+              return done
+                ? <Link key={s.label} href={s.href} style={style}>{inner}</Link>
+                : <span key={s.label} style={style} aria-current={active ? 'step' : undefined}>{inner}</span>;
             })}
           </div>
-          <div className="tiw-mini-label"><strong>Stap {step} van {steps.length}</strong> · {steps[step - 1].label}</div>
         </div>
-
-        <ol className="tiw-steps">
-          {steps.map((s, i) => {
-            const n = (i + 1) as Step;
-            const done = n < step;
-            const active = n === step;
-            const inner = (
-              <>
-                <span className={`tiw-num${active ? ' is-active' : ''}${done ? ' is-done' : ''}`}>
-                  {done ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg> : n}
-                </span>
-                <span className="tiw-step-text">
-                  <span className={`tiw-step-label${active ? ' is-active' : ''}`}>{s.label}</span>
-                  <span className="tiw-step-desc">{s.desc}</span>
-                </span>
-                {i < steps.length - 1 && <span className="tiw-line" aria-hidden="true" />}
-              </>
-            );
-            return (
-              <li key={s.label} className="tiw-step" aria-current={active ? 'step' : undefined}>
-                {done ? <Link href={s.href} className="tiw-step-link">{inner}</Link> : <span className="tiw-step-link">{inner}</span>}
-              </li>
-            );
-          })}
-        </ol>
       </div>
-
-      <style>{`
-        .tiw-banner{position:relative;overflow:hidden;background:linear-gradient(135deg,#1B1E2E 0%,#262A45 55%,#3A2519 100%)}
-        .tiw-glow{position:absolute;top:-120px;right:-80px;width:420px;height:420px;background:radial-gradient(circle,rgba(232,105,42,.35) 0%,rgba(232,105,42,0) 70%);pointer-events:none}
-        .tiw-deco{position:absolute;top:-30px;right:-30px;width:340px;height:340px;opacity:.05;pointer-events:none}
-        .tiw-inner{position:relative;z-index:1;max-width:940px;margin:0 auto;padding:34px 24px 30px;text-align:center}
-        .tiw-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:999px;background:rgba(232,105,42,.14);border:1px solid rgba(232,105,42,.3);color:#FF8A4C;font-size:12px;font-weight:600;letter-spacing:.02em;margin-bottom:14px}
-        .tiw-dot{width:6px;height:6px;border-radius:50%;background:#FF8A4C;box-shadow:0 0 0 3px rgba(255,138,76,.25)}
-        .tiw-title{color:#fff;font-size:clamp(26px,4.4vw,38px);font-weight:700;letter-spacing:-.03em;line-height:1.08;margin:0 0 12px}
-        .tiw-sub{color:rgba(255,255,255,.62);font-size:14.5px;line-height:1.6;max-width:600px;margin:0 auto 26px}
-        .tiw-steps{display:flex;gap:0;max-width:860px;margin:0 auto;padding:0;list-style:none}
-        .tiw-step{flex:1;position:relative;min-width:0}
-        .tiw-step-link{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 8px;text-decoration:none;color:inherit}
-        a.tiw-step-link:hover .tiw-step-label{color:#fff}
-        .tiw-num{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;margin-bottom:11px;font-size:16px;font-weight:700;color:rgba(255,255,255,.5);flex-shrink:0;transition:all .2s}
-        .tiw-num.is-active{background:#E8692A;border-color:#E8692A;color:#fff;box-shadow:0 0 0 5px rgba(232,105,42,.18)}
-        .tiw-num.is-done{background:#22c55e;border-color:#22c55e;color:#fff}
-        .tiw-step-text{display:block;min-width:0}
-        .tiw-step-label{display:block;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.62);margin-bottom:3px;transition:color .2s}
-        .tiw-step-label.is-active{color:#fff}
-        .tiw-step-desc{display:block;font-size:11.5px;color:rgba(255,255,255,.38);line-height:1.45}
-        .tiw-line{position:absolute;top:21px;left:calc(50% + 28px);width:calc(100% - 56px);height:1.5px;background:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,.04))}
-        .tiw-steps-mini{display:none}
-        .tiw-mini-dots{display:flex;justify-content:center;gap:7px;margin-bottom:10px}
-        .tiw-mini-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.18);transition:all .2s}
-        .tiw-mini-dot.is-done{background:#22c55e}
-        .tiw-mini-dot.is-active{background:#E8692A;width:26px;border-radius:999px}
-        .tiw-mini-label{font-size:13px;color:rgba(255,255,255,.6)}
-        .tiw-mini-label strong{color:#fff;font-weight:700}
-        @media(max-width:760px){
-          .tiw-inner{padding:22px 20px 20px}
-          .tiw-deco{width:220px;height:220px}
-          .tiw-title{margin-bottom:10px}
-          .tiw-sub{font-size:13.5px;margin-bottom:18px}
-          .tiw-sub--hide-mobile{display:none}
-          .tiw-steps{display:none}
-          .tiw-steps-mini{display:block}
-        }
-      `}</style>
-    </section>
-  );
-}
-
-/** Smalle vertrouwensbalk direct onder de banner. */
-export function TrustBar({ variant }: { variant: Variant }) {
-  const usps = hasBid(variant)
-    ? ['Bod direct in beeld', 'Gratis verzekerd verzenden', 'Geld binnen 3 werkdagen', 'Niet akkoord? Gratis retour']
-    : ['Persoonlijk bod van een expert', 'Gratis verzekerd verzenden', 'Geld binnen 3 werkdagen', 'Niet akkoord? Gratis retour'];
-  return (
-    <div style={{ borderBottom: `1px solid ${C.border}`, background: '#fff' }}>
-      <div className="tiw-trust">
-        {usps.map((u, i) => (
-          <span key={u} className={i > 1 ? 'tiw-usp tiw-usp--desktop' : 'tiw-usp'}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-            {u}
-          </span>
-        ))}
-      </div>
-      <style>{`
-        .tiw-trust{max-width:940px;margin:0 auto;padding:12px 24px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 26px}
-        .tiw-usp{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:#6B6D80;font-weight:500}
-        @media(max-width:760px){
-          .tiw-trust{gap:6px 16px;padding:10px 20px}
-          .tiw-usp{font-size:12px}
-          .tiw-usp--desktop{display:none}
-        }
-      `}</style>
     </div>
   );
 }
