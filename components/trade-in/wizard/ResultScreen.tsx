@@ -12,7 +12,7 @@ import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { estimateBid } from '@/data/trade-in-mock';
 import {
   useWizardState, clearWizardState, WizardBanner, Page, PageTitle, BackLink, Thumb, IconBtn,
-  INCLUDED, C, card, btnCta, btnGhost, fmt, vatLineFor, NON_EU, base, hasBid, type SellItem, type Variant,
+  INCLUDED, C, card, btnCta, btnGhost, fmt, vatLineFor, NON_EU, base, hasBid, LEAD_TIME, type SellItem, type Variant,
 } from './shared';
 
 function ItemBid({ it }: { it: SellItem }) {
@@ -83,8 +83,8 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                 </>
               ) : (
                 <>
-                  Een van onze experts kijkt naar je {items.length === 1 ? 'item' : `${items.length} items`} en stuurt je persoonlijke bod <strong style={{ color: C.text }}>binnen 2 werkdagen</strong> naar <strong style={{ color: C.text }}>{contact.email}</strong>.
-                  {picks.length > 0 && <> We leggen de {picks.length} gekozen item{picks.length > 1 ? 's' : ''} uit onze voorraad zolang voor je apart.</>}
+                  Een van onze experts kijkt naar je {items.length === 1 ? 'item' : `${items.length} items`} en stuurt je persoonlijke bod <strong style={{ color: C.text }}>binnen {LEAD_TIME}</strong> naar <strong style={{ color: C.text }}>{contact.email}</strong>.
+                  {picks.length > 0 && <> {picks.length === 1 ? 'Het gekozen item' : `De ${picks.length} gekozen items`} uit onze voorraad leggen we zolang voor je apart.</>}
                   {' '}Ga je akkoord, dan krijg je meteen een gratis verzekerd verzendlabel. Zo niet, dan houdt het daar op — je zit nergens aan vast.
                 </>
               )}
@@ -150,7 +150,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                         <div style={{ marginTop: 10, padding: '14px 16px', background: C.accentSoft, borderRadius: 10, lineHeight: 1.7 }}>
                           <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>We verwachten {withBid ? 'bij dit bod' : 'hierbij'}:</div>
                           <ul style={{ margin: 0, paddingLeft: 18, listStyle: 'disc' }}>{(INCLUDED[it.category] ?? INCLUDED.accessory).map(a => <li key={a}>{a}</li>)}</ul>
-                          <div style={{ marginTop: 10 }}>Ontbreekt iets of wijkt de conditie/shuttercount af? Dan passen we het bod aan volgens onze vaste staffel. Jij beslist daarna — niet akkoord is gratis retour.</div>
+                          <div style={{ marginTop: 10 }}>Ontbreekt iets of wijkt de conditie/shuttercount af? Dan {withBid ? 'passen we het bod aan' : 'houden we daar rekening mee'} volgens onze vaste staffel. Jij beslist daarna — niet akkoord is gratis retour.</div>
                         </div>
                       )}
                     </div>
@@ -200,7 +200,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                   ) : (
                     <div style={{ background: 'linear-gradient(135deg, #1B1E2E 0%, #2A2D45 60%, #3A2519 100%)', color: '#fff', padding: '18px 24px' }}>
                       <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#FF8A4C' }}>Je persoonlijke bod</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1.15, marginTop: 4 }}>Binnen 2 werkdagen</div>
+                      <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1.15, marginTop: 4 }}>Binnen {LEAD_TIME}</div>
                       <div style={{ fontSize: 12.5, opacity: .8, marginTop: 2 }}>per e-mail, opgesteld door een expert</div>
                     </div>
                   )}
@@ -228,7 +228,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 14 }}>
                       {(withBid
                         ? [['Gratis & verzekerd', 'verzenden'], ['7 dagen', 'bod vast'], ['3 werkdagen', 'uitbetaling']]
-                        : [['Gratis & verzekerd', 'verzenden'], ['2 werkdagen', 'je bod'], ['Nergens aan', 'vast']]
+                        : [['Gratis & verzekerd', 'verzenden'], [LEAD_TIME, 'je bod'], ['Nergens aan', 'vast']]
                       ).map(([a, b]) => (
                         <div key={a} style={{ textAlign: 'center', fontSize: 11.5, color: C.sec, lineHeight: 1.35 }}>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block', margin: '0 auto 4px' }}><polyline points="20 6 9 17 4 12" /></svg>

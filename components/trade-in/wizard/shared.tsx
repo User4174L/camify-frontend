@@ -17,6 +17,9 @@ import Breadcrumb from '@/components/layout/Breadcrumb';
 import type { BuyVariant } from '@/data/trade-in-mock';
 
 export type Variant = 2 | 3;
+/** Beloofde doorlooptijd voor een handmatig bod (variant 2). Eén plek, zodat 2↔3 werkdagen makkelijk te wijzigen is. */
+export const LEAD_TIME = '2 tot 3 werkdagen';
+
 /** Toont deze variant een bod vóór verzending? */
 export const hasBid = (v: Variant) => v === 3;
 export const base = (v: Variant) => `/trade-in/v${v}`;

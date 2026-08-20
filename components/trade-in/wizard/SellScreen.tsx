@@ -173,7 +173,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
                     <span style={{ color: C.sec }}>{c.criteria}</span>
                   </div>
                 ))}
-                <div style={{ fontSize: 12, color: C.sec, padding: '10px 0 8px' }}>Twijfel je? Kies de lagere conditie — bij ontvangst beoordelen we eerlijk en passen we het bod zo nodig omhoog aan.</div>
+                <div style={{ fontSize: 12, color: C.sec, padding: '10px 0 8px' }}>Twijfel je? Kies de lagere conditie — bij ontvangst beoordelen we eerlijk en {hasBid(variant) ? 'passen we het bod zo nodig omhoog aan' : 'valt het bod zo nodig hoger uit'}.</div>
               </div>
             )}
 

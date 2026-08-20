@@ -174,7 +174,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
 
       <StickyBar
         note={picks.length
-          ? <><strong style={{ color: C.text }}>{picks.length} item{picks.length > 1 ? 's' : ''}</strong> gekozen — {fmt(buyTotal)} wordt verrekend met je bod.</>
+          ? <><strong style={{ color: C.text }}>{picks.length} item{picks.length > 1 ? 's' : ''}</strong> gekozen — {fmt(buyTotal)} {hasBid(variant) ? 'wordt verrekend met je bod' : 'verrekenen we met het bod dat je krijgt'}.</>
           : wants === false ? 'Prima — je krijgt het bedrag op je rekening.'
             : wants ? 'Zoek iets uit onze voorraad, of ga gewoon verder — je kunt het later nog toevoegen.'
             : 'Kies hierboven of je iets wilt terugkopen.'}
