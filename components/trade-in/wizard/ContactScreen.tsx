@@ -73,7 +73,7 @@ export default function ContactScreen({ variant }: { variant: Variant }) {
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 22 }}>
             <button disabled={!ok} onClick={() => router.push(`${base(variant)}/${lastPath(variant)}`)} style={{ ...btnCta, opacity: ok ? 1 : 0.45, cursor: ok ? 'pointer' : 'default' }}>
-              {hasBid(variant) ? 'Ontvang je bod' : 'Verstuur je aanvraag'} →
+              {hasBid(variant) ? 'Ontvang je bod' : 'Naar het overzicht'} →
             </button>
           </div>
         </div>

@@ -71,7 +71,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
             <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#22c55e', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
             </div>
-            <h2 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 8px', color: C.text }}>{withBid ? 'Verzending geregeld' : 'Aanvraag ontvangen'}</h2>
+            <h2 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 8px', color: C.text }}>{withBid ? 'Verzending geregeld' : 'Bedankt voor je aanvraag'}</h2>
             <p style={{ color: C.sec, margin: '0 auto 18px', maxWidth: 480, fontSize: 14.5, lineHeight: 1.6 }}>
               {withBid ? (
                 <>
@@ -223,7 +223,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                     )}
                     {contact.isBusiness && <div style={{ fontSize: 12, color: C.sec, marginTop: 2 }}>{vatLineFor(contact)}{!NON_EU.includes(contact.country) && contact.vat ? ` · ${contact.vat.toUpperCase()}` : ''}</div>}
                     <button onClick={() => setDone(true)} style={{ ...btnCta, width: '100%', justifyContent: 'center', marginTop: 16, padding: '15px 20px' }}>
-                      {withBid ? 'Regel de verzending' : 'Verstuur je aanvraag'}
+                      {withBid ? 'Akkoord, regel de verzending' : 'Verstuur je aanvraag'}
                     </button>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 14 }}>
                       {(withBid
