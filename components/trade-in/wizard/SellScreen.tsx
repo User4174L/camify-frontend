@@ -6,13 +6,22 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import ShutterHelp from '@/components/trade-in/ShutterHelp';
-import { SELL_PRODUCTS, SHUTTER_RANGES } from '@/data/trade-in-mock';
+import { SELL_PRODUCTS, SHUTTER_RANGES, OPERATION_HOURS_RANGES } from '@/data/trade-in-mock';
 import {
   useWizardState, WizardBanner, Page, PageTitle, StickyBar, Thumb, IconBtn,
-  CONDITIONS, C, input, card, btnGhost, base, hasBid, type SellItem, type Variant,
+  CONDITIONS, C, input, card, btnGhost, base, hasBid, wearLine, type SellItem, type Variant,
 } from './shared';
 
-const DEFAULT_SHUTTER = SHUTTER_RANGES[0].label; // "Tot 25.000"
+const DEFAULT_SHUTTER = SHUTTER_RANGES[0].label;          // "Tot 25.000"
+const DEFAULT_HOURS = OPERATION_HOURS_RANGES[0].label;   // "Tot 500 uur"
+
+/** Camera's tellen sluiterkliks, cinema-camera's draaiuren — zelfde plek in de flow. */
+function wearFor(category?: string) {
+  if (category === 'cinema') {
+    return { ranges: OPERATION_HOURS_RANGES, title: 'Draaiuren', hint: 'Staat in het menu van je camera onder "operation hours".', fallback: 'max. 500 uur' };
+  }
+  return { ranges: SHUTTER_RANGES, title: 'Shuttercount', hint: 'Weet je ’m niet? Laat "Tot 25.000" staan.', fallback: 'max. 25.000' };
+}
 
 export default function SellScreen({ variant }: { variant: Variant }) {
   const router = useRouter();
@@ -57,7 +66,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
 
   const pick = (p: { name: string; category: string }) => {
     setPicked(p); setQ(''); setShowResults(false); setCondition(''); setShowHelp(false);
-    setShutter(p.category === 'camera' ? DEFAULT_SHUTTER : undefined);
+    setShutter(p.category === 'camera' ? DEFAULT_SHUTTER : p.category === 'cinema' ? DEFAULT_HOURS : undefined);
   };
   const reset = () => { setQ(''); setPicked(null); setCondition(''); setShutter(undefined); setShowHelp(false); setEditId(null); };
   const canAdd = !!picked && !!condition;
@@ -69,7 +78,8 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   };
   const removeItem = (id: number) => update(s => ({ ...s, items: s.items.filter(i => i.id !== id) }));
   const editItem = (it: SellItem) => { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setQ(''); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-  const isCamera = picked?.category === 'camera';
+  const hasWear = picked?.category === 'camera' || picked?.category === 'cinema';
+  const wear = wearFor(picked?.category);
   const visibleItems = items.filter(i => i.id !== editId);
 
   return (
@@ -94,7 +104,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               <div style={{ fontWeight: 700, fontSize: 15, color: C.text }}>{it.name}</div>
               <div style={{ fontSize: 13.5, color: C.sec, marginTop: 2 }}>
                 Conditie: <strong style={{ color: C.text }}>{it.condition}</strong>
-                {it.category === 'camera' && <> · Shuttercount: <strong style={{ color: C.text }}>{it.shutter ?? 'onbekend'}</strong>{!it.shutter && <span style={{ color: C.sec }}> (we gaan uit van max. 25.000)</span>}</>}
+                {wearLine(it)}
               </div>
             </div>
             <IconBtn kind="edit" title="Wijzigen" onClick={() => editItem(it)} />
@@ -169,7 +179,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               <div style={{ marginTop: 12, border: `1px solid ${C.border}`, borderRadius: 12, padding: '4px 16px', background: C.tint }}>
                 {CONDITIONS.map((c, i) => (
                   <div key={c.label} style={{ display: 'grid', gridTemplateColumns: '150px 1fr', gap: 12, padding: '10px 0', borderBottom: i < CONDITIONS.length - 1 ? `1px solid ${C.border}` : 'none', fontSize: 13, lineHeight: 1.55 }}>
-                    <strong style={{ color: C.text }}>{c.label}{isCamera && <span style={{ display: 'block', fontSize: 11.5, color: C.accent, fontWeight: 700 }}>{c.maxClicks}</span>}</strong>
+                    <strong style={{ color: C.text }}>{c.label}{picked?.category === 'camera' && <span style={{ display: 'block', fontSize: 11.5, color: C.accent, fontWeight: 700 }}>{c.maxClicks}</span>}</strong>
                     <span style={{ color: C.sec }}>{c.criteria}</span>
                   </div>
                 ))}
@@ -177,15 +187,17 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               </div>
             )}
 
-            {isCamera && (
+            {hasWear && (
               <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>Shuttercount</span>
-                  <span style={{ fontSize: 12.5, color: C.sec }}>Weet je ’m niet? Laat “Tot 25.000” staan.</span>
-                  <button onClick={() => setShutterHelp(true)} style={{ background: 'none', border: 'none', padding: 0, fontSize: 12.5, color: C.accent, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', marginLeft: 'auto' }}>Hoe vind ik dit?</button>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{wear.title}</span>
+                  <span style={{ fontSize: 12.5, color: C.sec }}>{wear.hint}</span>
+                  {picked?.category === 'camera' && (
+                    <button onClick={() => setShutterHelp(true)} style={{ background: 'none', border: 'none', padding: 0, fontSize: 12.5, color: C.accent, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', marginLeft: 'auto' }}>Hoe vind ik dit?</button>
+                  )}
                 </div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {SHUTTER_RANGES.map(r => {
+                  {wear.ranges.map(r => {
                     const sel = shutter === r.label;
                     return <button key={r.label} onClick={() => setShutter(r.label)} style={{ border: `1.5px solid ${sel ? C.accent : C.border}`, background: sel ? C.accentSoft : '#fff', color: C.text, borderRadius: 999, padding: '9px 16px', fontSize: 13, fontWeight: sel ? 700 : 600, cursor: 'pointer', fontFamily: 'inherit', boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>{r.label}</button>;
                   })}

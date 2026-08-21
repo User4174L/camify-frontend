@@ -35,6 +35,13 @@ export const SELL_PRODUCTS = [
   { name: 'Canon RF 24-70mm f/2.8L IS USM', category: 'lens' },
   { name: 'Canon RF 70-200mm f/2.8L IS USM', category: 'lens' },
   { name: 'Canon RF 50mm f/1.2L USM', category: 'lens' },
+  /* Cinema — draaiuren in plaats van shuttercount */
+  { name: 'Canon EOS C300 Mark III', category: 'cinema' },
+  { name: 'Canon EOS C70', category: 'cinema' },
+  { name: 'Sony FX6', category: 'cinema' },
+  { name: 'Sony FX9', category: 'cinema' },
+  { name: 'RED Komodo 6K', category: 'cinema' },
+  { name: 'Blackmagic URSA Mini Pro 12K', category: 'cinema' },
   /* Overig */
   { name: 'Fujifilm X-T5', category: 'camera' },
 ];
@@ -298,6 +305,13 @@ export const BUY_PRODUCTS: BuyProduct[] = [
 export type BidCoverage = 'instant' | 'minutes' | 'manual';
 
 export const SELL_PRICING: Record<string, { coverage: BidCoverage; basePrice?: number }> = {
+  /* Cinema — nog geen automatisch bod: het prijsmodel heeft geen draaiuren-curve */
+  'Canon EOS C300 Mark III': { coverage: 'manual' },
+  'Canon EOS C70': { coverage: 'manual' },
+  'Sony FX6': { coverage: 'manual' },
+  'Sony FX9': { coverage: 'manual' },
+  'RED Komodo 6K': { coverage: 'manual' },
+  'Blackmagic URSA Mini Pro 12K': { coverage: 'manual' },
   'Sony A7 IV': { coverage: 'instant', basePrice: 1450 },
   'Sony A7R V': { coverage: 'instant', basePrice: 2550 },
   'Sony A1': { coverage: 'instant', basePrice: 3900 },
@@ -341,6 +355,19 @@ export const CONDITION_FACTOR: Record<string, number> = {
 };
 
 /* Shutter-staffel (mock) — bereik → factor */
+/* Draaiuren voor cinema-camera's. Verdubbelingsreeks, zelfde logica als de
+   shutterstaffel: slijtage telt relatief, niet absoluut. Het prijsmodel doet er
+   nog niets mee (geen operation-hours-curve) — we leggen het nu vast zodat het
+   later meegenomen kan worden; de factors hieronder zijn een werkaanname. */
+export const OPERATION_HOURS_RANGES: { label: string; factor: number }[] = [
+  { label: 'Tot 500 uur', factor: 1.0 },
+  { label: '500 – 1.000 uur', factor: 0.96 },
+  { label: '1.000 – 2.000 uur', factor: 0.92 },
+  { label: '2.000 – 4.000 uur', factor: 0.86 },
+  { label: '4.000 – 8.000 uur', factor: 0.78 },
+  { label: 'Meer dan 8.000 uur', factor: 0.7 },
+];
+
 /* Staffels afgestemd op de grenzen die het prijsmodel echt gebruikt
    (market-intelligence/pricing_rules.json → shutter_staffel). Elke stap
    levert een ander bod op; fijner splitsen onder 25.000 heeft geen effect. */
@@ -356,7 +383,11 @@ export function estimateBid(name: string, condition: string, shutterLabel?: stri
   const p = SELL_PRICING[name] ?? { coverage: 'manual' as BidCoverage };
   if (p.coverage !== 'instant' || !p.basePrice) return { coverage: p.coverage };
   const cf = CONDITION_FACTOR[condition] ?? 0.85;
-  const sf = shutterLabel ? (SHUTTER_RANGES.find(r => r.label === shutterLabel)?.factor ?? 1) : 1;
+  const sf = shutterLabel
+    ? (SHUTTER_RANGES.find(r => r.label === shutterLabel)?.factor
+       ?? OPERATION_HOURS_RANGES.find(r => r.label === shutterLabel)?.factor
+       ?? 1)
+    : 1;
   // niet dubbel tellen: slijtage = MIN(conditie, shutter)
   const wear = Math.min(cf, sf);
   const price = Math.round((p.basePrice * wear) / 5) * 5;

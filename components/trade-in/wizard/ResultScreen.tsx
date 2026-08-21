@@ -12,7 +12,7 @@ import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { estimateBid } from '@/data/trade-in-mock';
 import {
   useWizardState, clearWizardState, WizardBanner, Page, PageTitle, BackLink, StickyBar, Thumb, IconBtn,
-  INCLUDED, C, card, btnGhost, fmt, vatLineFor, NON_EU, base, hasBid, LEAD_TIME, type SellItem, type Variant,
+  INCLUDED, C, card, btnGhost, fmt, vatLineFor, NON_EU, base, hasBid, LEAD_TIME, wearLine, type SellItem, type Variant,
 } from './shared';
 
 function ItemBid({ it }: { it: SellItem }) {
@@ -128,7 +128,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                         <div style={{ fontWeight: 700, fontSize: 16, color: C.text }}>{it.name}</div>
                         <div style={{ fontSize: 14, color: C.sec, marginTop: 6 }}>
                           Conditie: <strong style={{ color: C.text }}>{it.condition}</strong>
-                          {it.category === 'camera' && <> · Shuttercount: <strong style={{ color: C.text }}>{it.shutter ?? 'onbekend'}</strong>{!it.shutter && <span style={{ color: C.sec }}> (we gaan uit van max. 25.000)</span>}</>}
+                          {wearLine(it)}
                         </div>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>

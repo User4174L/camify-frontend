@@ -147,6 +147,19 @@ export function photoFor(name: string, category?: string): string {
   return pool[hash % pool.length];
 }
 
+/** Slijtageregel per type: camera's tellen kliks, cinema-camera's draaiuren. */
+export function wearLine(item: { category: string; shutter?: string }) {
+  if (item.category !== 'camera' && item.category !== 'cinema') return null;
+  const cinema = item.category === 'cinema';
+  const label = cinema ? 'Draaiuren' : 'Shuttercount';
+  const aanname = cinema ? 'max. 500 uur' : 'max. 25.000';
+  return (
+    <> · {label}: <strong style={{ color: C.text }}>{item.shutter ?? 'onbekend'}</strong>
+      {!item.shutter && <span style={{ color: C.sec }}> (we gaan uit van {aanname})</span>}
+    </>
+  );
+}
+
 /* ── Kleine componenten ── */
 export function Thumb({ category, name, size = 44 }: { category: string; name?: string; size?: number }) {
   const fallback = category === 'lens' ? '/images/placeholder-lens.svg' : '/images/placeholder-camera.svg';
