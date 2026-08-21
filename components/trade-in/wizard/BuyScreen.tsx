@@ -63,9 +63,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
         <BackLink href={base(variant)} label="Terug naar je items" />
         <PageTitle
           title="Wil je er iets voor terug?"
-          sub={hasBid(variant)
-            ? 'We verrekenen het direct met je bod. Je zit nergens aan vast — we leggen het voor je apart en je beslist pas als je het bod accepteert.'
-            : 'We verrekenen het met het bod dat je van ons krijgt. Je zit nergens aan vast — we leggen het voor je apart en je beslist pas als je het bod accepteert.'}
+          sub={hasBid(variant) ? 'We verrekenen het direct met je bod.' : 'We verrekenen het met het bod dat je krijgt.'}
         />
 
         {/* Keuze */}
@@ -97,6 +95,12 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
           </button>
           )}
         </div>
+
+        {wants === null && (
+          <p style={{ margin: '14px 0 0', fontSize: 13, color: C.sec, lineHeight: 1.6 }}>
+            Je zit nergens aan vast: we leggen het voor je apart en je beslist pas als je het bod accepteert.
+          </p>
+        )}
 
         {/* Gekozen items */}
         {wants && picks.length > 0 && (
@@ -212,7 +216,6 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
            onder — anders opent die op mobiel onder de vouw en zie je niet dat er iets
            gebeurt. Terugweg staat als tekstlink onderaan. */
         .tiw-choice--single{grid-template-columns:1fr}
-        @media(max-width:760px){.tiw-choice{grid-template-columns:1fr}}
         .tiw-choice-btn{position:relative;display:flex;align-items:flex-start;gap:15px;text-align:left;border:2px solid transparent;border-radius:16px;padding:20px;cursor:pointer;font-family:inherit;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;overflow:hidden}
         .tiw-choice-btn:hover{transform:translateY(-2px)}
         .tiw-choice-text{display:block;min-width:0}
@@ -245,6 +248,16 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
         .tiw-choice-btn--no:hover{box-shadow:0 10px 24px rgba(37,41,67,.14)}
         .tiw-choice-btn--no.is-on{border-color:#252943;box-shadow:0 8px 22px rgba(37,41,67,.18)}
         .tiw-choice-btn--no .tiw-choice-check{background:#252943}
+
+        @media(max-width:760px){
+          /* Compacter, zodat beide opties zonder scrollen in beeld komen. */
+          .tiw-choice{grid-template-columns:1fr;gap:10px}
+          .tiw-choice-btn{padding:14px;gap:12px;border-radius:14px}
+          .tiw-choice-btn strong{font-size:15px;margin-bottom:2px}
+          .tiw-choice-text span{font-size:12.5px;line-height:1.4}
+          .tiw-choice-ico{width:38px;height:38px;border-radius:11px}
+          .tiw-choice-ico svg{width:19px;height:19px}
+        }
       `}</style>
     </>
   );
