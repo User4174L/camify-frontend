@@ -122,7 +122,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                 <div className="svc-eyebrow" style={{ margin: '0 0 12px' }}>Wat je verkoopt</div>
                 {items.map(it => (
                   <div key={it.id} style={{ ...card, padding: 22, marginBottom: 14, borderLeft: `4px solid ${C.accent}`, lineHeight: 1.6 }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                    <div className="tiw-item-row">
                       <Thumb category={it.category} name={it.name} size={56} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontWeight: 700, fontSize: 16, color: C.text }}>{it.name}</div>
@@ -131,7 +131,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                           {wearLine(it)}
                         </div>
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
+                      <div className="tiw-item-side">
                         {withBid && <ItemBid it={it} />}
                         <div style={{ display: 'flex', gap: 6 }}>
                           <IconBtn kind="edit" title="Wijzigen" onClick={() => editItem(it.id)} />
@@ -258,6 +258,13 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
       )}
 
       <style>{`
+        .tiw-item-row{display:flex;align-items:flex-start;gap:14px}
+        .tiw-item-side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+        @media(max-width:760px){
+          /* Prijs naast de tekst knijpt de productregel tot drie regels; onder elkaar leest beter. */
+          .tiw-item-row{flex-wrap:wrap}
+          .tiw-item-side{flex-direction:row;align-items:center;justify-content:space-between;width:100%;margin-top:4px}
+        }
         .tiw-result-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
         @media(max-width:900px){.tiw-result-grid{grid-template-columns:1fr}}
         .tiw-line{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #EEEEF2;font-size:14px;color:#1E2133;line-height:1.5}

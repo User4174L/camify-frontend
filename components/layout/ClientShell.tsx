@@ -70,8 +70,14 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
+  /* De inruilwizard is een taakflow, net als checkout. Op mobiel kosten de
+     uspbalk, header en footer samen bijna een derde van het scherm en leiden
+     ze af van de stap waar je in zit — daar draaien we hem zonder. Op desktop
+     is er ruimte zat en houden we de normale chrome. */
+  const focusFlow = pathname?.startsWith('/trade-in');
+
   return (
-    <>
+    <div className={focusFlow ? 'focus-flow' : undefined}>
       <UspBar />
       <Header />
       <main>{children}</main>
@@ -89,7 +95,14 @@ function ShellInner({ children }: { children: React.ReactNode }) {
           }}
         />
       )}
-    </>
+      <style>{`
+        @media(max-width:760px){
+          .focus-flow > .usp-bar,
+          .focus-flow > header,
+          .focus-flow > footer{display:none}
+        }
+      `}</style>
+    </div>
   );
 }
 

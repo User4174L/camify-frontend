@@ -99,7 +99,7 @@ export function vatLineFor(c: { isBusiness: boolean; country: string }) {
 
 /* ── Styles ── */
 export const C = { text: '#1E2133', sec: '#6B6D80', border: '#EEEEF2', tint: '#FAFAFC', accent: '#E8692A', accentSoft: '#FFF4EE' };
-export const input: React.CSSProperties = { width: '100%', padding: '12px 16px', border: `1.5px solid ${C.border}`, borderRadius: 10, fontSize: 14, fontFamily: 'inherit', outline: 'none', background: '#fff', boxSizing: 'border-box', color: C.text };
+export const input: React.CSSProperties = { width: '100%', padding: '12px 16px', border: `1.5px solid ${C.border}`, borderRadius: 10, fontSize: 16, fontFamily: 'inherit', outline: 'none', background: '#fff', boxSizing: 'border-box', color: C.text, scrollMarginBlock: 110 };
 export const btnPrimary: React.CSSProperties = { background: C.accent, color: '#fff', border: 'none', borderRadius: 999, padding: '14px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 8 };
 export const btnDark: React.CSSProperties = { ...btnPrimary, background: C.text };
 /** Primaire CTA van de flow (groen: onderscheidt zich van al het oranje op de site) */
@@ -160,6 +160,15 @@ export function wearLine(item: { category: string; shutter?: string }) {
   );
 }
 
+/** Zet een invoerveld midden in beeld zodra het toetsenbord opkomt. Zonder dit
+ *  scrollt de browser het veld tot net boven het toetsenbord — en met onze
+ *  onderbalk erbij valt het er dan half achter. De vertraging wacht de
+ *  toetsenbord-animatie af. */
+export function centerOnFocus(e: React.FocusEvent<HTMLElement>) {
+  const el = e.currentTarget;
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 280);
+}
+
 /** Scroll een element in beeld nádat de nieuwe layout staat. Eén requestAnimationFrame
  *  is te vroeg: de kaart is dan nog niet weg en je schiet voorbij het doel. */
 export function scrollIntoViewSoon(el: HTMLElement | null) {
@@ -217,6 +226,18 @@ export function WizardBanner({ variant, step, back }: { variant: Variant; step: 
   ];
 
   return (
+    <>
+      {/* Op mobiel draait de wizard zonder site-header; deze balk houdt het merk
+          zichtbaar en biedt een weg terug naar de winkel. */}
+      <div className="tiw-topbar">
+        <Link href="/" className="tiw-topbar-logo">
+          <img src="/images/logo-black.png" alt="Camera-tweedehands.nl" height={22} />
+        </Link>
+        <Link href="/" className="tiw-topbar-close" aria-label="Terug naar de webshop">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+        </Link>
+      </div>
+
     <div className="svc-header svc-header--photo tiw-header" style={{ marginBottom: 0 }}>
       <div className="svc-header__photo" style={{ backgroundImage: 'url(/images/hero-photographer-1.jpg)' }} aria-hidden="true" />
       <div className="container">
@@ -286,8 +307,16 @@ export function WizardBanner({ variant, step, back }: { variant: Variant; step: 
           .tiw-mini-label strong{color:#1E2133;font-weight:700}
           .tiw-mini-back{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin:-4px 0 -4px -6px;border-radius:50%;color:#1E2133;text-decoration:none;flex-shrink:0}
         }
+        .tiw-topbar{display:none}
+        @media(max-width:760px){
+          .tiw-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid ${C.border}}
+          .tiw-topbar-logo{display:inline-flex;align-items:center}
+          .tiw-topbar-logo img{height:22px;width:auto}
+          .tiw-topbar-close{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-right:-8px;border-radius:50%;color:${C.sec};text-decoration:none}
+        }
       `}</style>
     </div>
+    </>
   );
 }
 
@@ -346,13 +375,26 @@ export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880
 }) {
   return (
     <div style={{ position: 'sticky', bottom: 0, background: '#fff', borderTop: `1px solid ${C.border}`, padding: '14px 24px', zIndex: 15, boxShadow: '0 -6px 20px rgba(30,33,51,.05)' }}>
-      <div style={{ maxWidth: width, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ fontSize: 13.5, color: C.sec }}>{note}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="tiw-bar" style={{ maxWidth: width }}>
+        <div className="tiw-bar-note">{note}</div>
+        <div className="tiw-bar-actions">
           {secondary}
-          <button disabled={disabled} onClick={onClick} style={{ ...btnCta, opacity: disabled ? 0.45 : 1, cursor: disabled ? 'default' : 'pointer', padding: '15px 30px' }}>{cta} {add ? '+' : '→'}</button>
+          <button disabled={disabled} onClick={onClick} className="tiw-bar-cta" style={{ ...btnCta, opacity: disabled ? 0.45 : 1, cursor: disabled ? 'default' : 'pointer' }}>{cta} {add ? '+' : '→'}</button>
         </div>
       </div>
+      <style>{`
+        .tiw-bar{margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+        .tiw-bar-note{font-size:13.5px;color:${C.sec}}
+        .tiw-bar-actions{display:flex;align-items:center;gap:12px}
+        .tiw-bar-cta{padding:15px 30px;white-space:nowrap}
+        @media(max-width:760px){
+          /* Naast elkaar liepen de knoppen over elkaar heen op smalle schermen. */
+          .tiw-bar{gap:8px}
+          .tiw-bar-note{font-size:13px;width:100%}
+          .tiw-bar-actions{width:100%;flex-direction:row-reverse;justify-content:space-between;gap:10px}
+          .tiw-bar-cta{flex:1;justify-content:center;padding:14px 18px;font-size:14.5px}
+        }
+      `}</style>
     </div>
   );
 }

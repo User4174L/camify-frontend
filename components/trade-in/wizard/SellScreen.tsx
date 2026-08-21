@@ -9,7 +9,7 @@ import ShutterHelp from '@/components/trade-in/ShutterHelp';
 import { SELL_PRODUCTS, SHUTTER_RANGES, OPERATION_HOURS_RANGES } from '@/data/trade-in-mock';
 import {
   useWizardState, WizardBanner, Page, PageTitle, StickyBar, Thumb, IconBtn,
-  CONDITIONS, C, input, card, btnGhost, base, hasBid, wearLine, scrollIntoViewSoon, type SellItem, type Variant,
+  CONDITIONS, C, input, card, btnGhost, base, hasBid, wearLine, scrollIntoViewSoon, centerOnFocus, type SellItem, type Variant,
 } from './shared';
 
 const DEFAULT_SHUTTER = SHUTTER_RANGES[0].label;          // "Tot 25.000"
@@ -84,6 +84,8 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   };
   const removeItem = (id: number) => update(s => ({ ...s, items: s.items.filter(i => i.id !== id) }));
   const editItem = (it: SellItem) => { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setQ(''); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  /** Tijdens het zoeken staat de resultatenlijst open; de onderbalk zou eroverheen vallen. */
+  const zoekActief = !picked && showResults && q.trim().length >= 2;
   const hasWear = picked?.category === 'camera' || picked?.category === 'cinema';
   const wear = wearFor(picked?.category);
   const visibleItems = items.filter(i => i.id !== editId);
@@ -132,7 +134,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               autoFocus
               value={q}
               onChange={e => { setQ(e.target.value); setShowResults(true); }}
-              onFocus={() => setShowResults(true)}
+              onFocus={e => { setShowResults(true); centerOnFocus(e); }}
               onBlur={() => setTimeout(() => setShowResults(false), 180)}
               placeholder="Zoek je product…"
               autoComplete="off"
@@ -142,7 +144,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               <svg width="18" height="18" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
             </div>
             {showResults && q.trim().length >= 2 && (
-              <div style={{ position: 'absolute', left: 8, right: 8, top: 'calc(100% + 8px)', zIndex: 20, background: '#fff', borderRadius: 14, boxShadow: '0 12px 32px rgba(45,48,71,.16)', overflow: 'hidden' }}>
+              <div className="tiw-results" style={{ position: 'absolute', left: 8, right: 8, top: 'calc(100% + 8px)', zIndex: 20, background: '#fff', borderRadius: 14, boxShadow: '0 12px 32px rgba(45,48,71,.16)', overflowY: 'auto' }}>
                 {results.length ? results.map((p, i) => (
                   <div key={p.name} onMouseDown={() => pick(p)} className="tiw-row" style={{ borderBottom: i < results.length - 1 ? `1px solid ${C.border}` : 'none' }}>
                     <Thumb category={p.category} name={p.name} size={40} />
@@ -166,12 +168,12 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: 16, color: C.text }}>{picked.name}</div>
               </div>
-              <button onClick={reset} style={{ background: 'none', border: 'none', color: C.sec, cursor: 'pointer', fontSize: 12.5, textDecoration: 'underline', fontFamily: 'inherit' }}>ander product</button>
+              <button onClick={reset} className="tiw-textlink" style={{ background: 'none', border: 'none', color: C.sec, cursor: 'pointer', fontSize: 12.5, textDecoration: 'underline', fontFamily: 'inherit' }}>ander product</button>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '20px 0 8px' }}>
               <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>Wat is de conditie?</span>
-              <button onClick={() => setShowHelp(h => !h)} style={{ background: 'none', border: 'none', color: C.accent, fontSize: 12.5, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit' }}>Help me kiezen</button>
+              <button onClick={() => setShowHelp(h => !h)} className="tiw-textlink" style={{ background: 'none', border: 'none', color: C.accent, fontSize: 12.5, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit' }}>Help me kiezen</button>
             </div>
             <div className="tiw-cond-grid">
               {CONDITIONS.map(c => {
@@ -202,7 +204,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
                   <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{wear.title}</span>
                   <span style={{ fontSize: 12.5, color: C.sec }}>{wear.hint}</span>
                   {picked?.category === 'camera' && (
-                    <button onClick={() => setShutterHelp(true)} style={{ background: 'none', border: 'none', padding: 0, fontSize: 12.5, color: C.accent, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', marginLeft: 'auto' }}>Hoe vind ik dit?</button>
+                    <button onClick={() => setShutterHelp(true)} className="tiw-textlink" style={{ background: 'none', border: 'none', fontSize: 12.5, color: C.accent, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', marginLeft: 'auto' }}>Hoe vind ik dit?</button>
                   )}
                 </div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -221,9 +223,9 @@ export default function SellScreen({ variant }: { variant: Variant }) {
       {/* Eén knop onderin die meeloopt met wat je nu moet doen: eerst het item
           afronden, daarna pas de volgende stap. Anders staat "Voeg dit item toe"
           op mobiel onder de vouw terwijl "Verder" grijs is, en weet niemand wat te doen. */}
-      {picked ? (
+      {zoekActief ? null : picked ? (
         <StickyBar
-          add
+          add={!editId}
           note={!condition
             ? 'Kies hierboven de conditie.'
             : hasWear
@@ -250,7 +252,12 @@ export default function SellScreen({ variant }: { variant: Variant }) {
       )}
 
       <style>{`
-        .tiw-row{display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer}
+        /* Zonder maximum liep de resultatenlijst honderden pixels buiten beeld. */
+        .tiw-results{max-height:min(46vh,320px)}
+        @media(max-width:760px){.tiw-results{max-height:min(52vh,300px)}}
+        /* Raakvlak van tekstlinks: 19px is te klein om betrouwbaar te tikken. */
+        .tiw-textlink{display:inline-flex;align-items:center;min-height:36px;padding:0 2px}
+        .tiw-row{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer}
         .tiw-row:hover{background:#FFFBF7}
         .tiw-cond-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
         .tiw-cond{border:1.5px solid #EEEEF2;border-radius:12px;padding:14px 8px;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center;line-height:1.2}
