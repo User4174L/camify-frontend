@@ -196,7 +196,7 @@ export function useIsMobile() {
  * beeld — geen kop, geen onderbalk, geen halve resultatenlijst achter het
  * toetsenbord. Sluit zodra je iets kiest.
  */
-export function SearchSheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+export function SearchSheet({ title, onClose, children, footer }: { title: string; onClose: () => void; children: React.ReactNode; footer?: React.ReactNode }) {
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -211,11 +211,13 @@ export function SearchSheet({ title, onClose, children }: { title: string; onClo
         </button>
       </div>
       <div className="tiw-sheet-body">{children}</div>
+      {footer && <div className="tiw-sheet-foot">{footer}</div>}
       <style>{`
         .tiw-sheet{position:fixed;inset:0;z-index:60;background:#fff;display:flex;flex-direction:column}
         .tiw-sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:${C.text};color:#fff;font-size:15px;font-weight:700;flex-shrink:0}
         .tiw-sheet-close{background:none;border:none;color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-right:-8px;padding:0}
         .tiw-sheet-body{flex:1;overflow-y:auto;padding:18px 20px 24px;-webkit-overflow-scrolling:touch}
+        .tiw-sheet-foot{flex-shrink:0;border-top:1px solid ${C.border};background:#fff;padding:12px 20px calc(12px + env(safe-area-inset-bottom))}
       `}</style>
     </div>
   );

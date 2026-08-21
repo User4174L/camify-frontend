@@ -9,7 +9,7 @@ import ShutterHelp from '@/components/trade-in/ShutterHelp';
 import { SELL_PRODUCTS, SHUTTER_RANGES, OPERATION_HOURS_RANGES } from '@/data/trade-in-mock';
 import {
   useWizardState, WizardBanner, Page, PageTitle, StickyBar, Thumb, IconBtn,
-  CONDITIONS, C, input, card, btnGhost, base, hasBid, wearLine, scrollIntoViewSoon, centerOnFocus, useIsMobile, SearchSheet, type SellItem, type Variant,
+  CONDITIONS, C, input, card, btnGhost, btnCta, base, hasBid, wearLine, scrollIntoViewSoon, centerOnFocus, useIsMobile, SearchSheet, type SellItem, type Variant,
 } from './shared';
 
 const DEFAULT_SHUTTER = SHUTTER_RANGES[0].label;          // "Tot 25.000"
@@ -53,6 +53,10 @@ export default function SellScreen({ variant }: { variant: Variant }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
 
+  /* Een gekozen product hoort op mobiel in het venster; anders zou het formulier
+     nergens zichtbaar zijn (de kaart in de pagina is desktop-only). */
+  useEffect(() => { if (isMobile && picked && !sheet) setSheet(true); }, [isMobile, picked, sheet]);
+
   /* Prefill vanaf bv. de shuttercount-check: /trade-in/v3?product=Nikon%20Z8 */
   useEffect(() => {
     if (!ready) return;
@@ -72,7 +76,9 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   }, [q]);
 
   const pick = (p: { name: string; category: string }) => {
-    setPicked(p); setQ(''); setShowResults(false); setSheet(false); setCondition(''); setShowHelp(false);
+    setPicked(p); setQ(''); setShowResults(false); setCondition(''); setShowHelp(false);
+    // op mobiel blijft het venster open: conditie en shuttercount horen bij dezelfde handeling
+    setSheet(isMobile);
     setShutter(p.category === 'camera' ? DEFAULT_SHUTTER : p.category === 'cinema' ? DEFAULT_HOURS : undefined);
   };
   const reset = () => { setQ(''); setPicked(null); setCondition(''); setShutter(undefined); setShowHelp(false); setEditId(null); };
@@ -81,16 +87,76 @@ export default function SellScreen({ variant }: { variant: Variant }) {
     if (!picked || !condition) return;
     const item: SellItem = { id: editId ?? Date.now(), name: picked.name, category: picked.category, condition, shutter };
     update(s => ({ ...s, items: editId ? s.items.map(i => (i.id === editId ? item : i)) : [...s.items, item] }));
-    reset(); setSearchOpen(false);
+    reset(); setSearchOpen(false); setSheet(false);
     scrollIntoViewSoon(listRef.current);
   };
   const removeItem = (id: number) => update(s => ({ ...s, items: s.items.filter(i => i.id !== id) }));
-  const editItem = (it: SellItem) => { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setQ(''); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const editItem = (it: SellItem) => { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setQ(''); if (isMobile) setSheet(true); else window.scrollTo({ top: 0, behavior: 'smooth' }); };
   /** Tijdens het zoeken staat de resultatenlijst open; de onderbalk zou eroverheen vallen. */
   const zoekActief = !picked && showResults && q.trim().length >= 2;
   const hasWear = picked?.category === 'camera' || picked?.category === 'cinema';
   const wear = wearFor(picked?.category);
   const visibleItems = items.filter(i => i.id !== editId);
+
+  /** Alles wat je over één product invult. Op mobiel staat dit in het
+   *  zoekvenster, op desktop als kaart in de pagina — zelfde inhoud. */
+  const productForm = () => picked && (
+    <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <Thumb category={picked.category} name={picked.name} size={44} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, fontSize: 16, color: C.text }}>{picked.name}</div>
+              </div>
+              <button onClick={reset} className="tiw-textlink" style={{ background: 'none', border: 'none', color: C.sec, cursor: 'pointer', fontSize: 12.5, textDecoration: 'underline', fontFamily: 'inherit' }}>ander product</button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '20px 0 8px' }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>Wat is de conditie?</span>
+              <button onClick={() => setShowHelp(h => !h)} className="tiw-textlink" style={{ background: 'none', border: 'none', color: C.accent, fontSize: 12.5, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit' }}>Help me kiezen</button>
+            </div>
+            <div className="tiw-cond-grid">
+              {CONDITIONS.map(c => {
+                const sel = condition === c.label;
+                return (
+                  <button key={c.label} onClick={() => { const first = !condition; setCondition(c.label); if (first) scrollIntoViewSoon(wearRef.current); }} className="tiw-cond" style={{ borderColor: sel ? C.accent : C.border, background: sel ? C.accentSoft : '#fff', color: C.text, boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>
+                    <span style={{ fontWeight: 700 }}>{c.label}</span>
+                    <span className="tiw-cond-short">{c.short}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {showHelp && (
+              <div style={{ marginTop: 12, border: `1px solid ${C.border}`, borderRadius: 12, padding: '4px 16px', background: C.tint }}>
+                {CONDITIONS.map((c, i) => (
+                  <div key={c.label} style={{ display: 'grid', gridTemplateColumns: '150px 1fr', gap: 12, padding: '10px 0', borderBottom: i < CONDITIONS.length - 1 ? `1px solid ${C.border}` : 'none', fontSize: 13, lineHeight: 1.55 }}>
+                    <strong style={{ color: C.text }}>{c.label}{picked?.category === 'camera' && <span style={{ display: 'block', fontSize: 11.5, color: C.accent, fontWeight: 700 }}>{c.maxClicks}</span>}</strong>
+                    <span style={{ color: C.sec }}>{c.criteria}</span>
+                  </div>
+                ))}
+                <div style={{ fontSize: 12, color: C.sec, padding: '10px 0 8px' }}>Twijfel je? Kies de lagere conditie — bij ontvangst beoordelen we eerlijk en {hasBid(variant) ? 'passen we het bod zo nodig omhoog aan' : 'valt het bod zo nodig hoger uit'}.</div>
+              </div>
+            )}
+
+            {hasWear && (
+              <div ref={wearRef} style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{wear.title}</span>
+                  <span style={{ fontSize: 12.5, color: C.sec }}>{wear.hint}</span>
+                  {picked?.category === 'camera' && (
+                    <button onClick={() => setShutterHelp(true)} className="tiw-textlink" style={{ background: 'none', border: 'none', fontSize: 12.5, color: C.accent, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', marginLeft: 'auto' }}>Hoe vind ik dit?</button>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {wear.ranges.map(r => {
+                    const sel = shutter === r.label;
+                    return <button key={r.label} onClick={() => setShutter(r.label)} style={{ border: `1.5px solid ${sel ? C.accent : C.border}`, background: sel ? C.accentSoft : '#fff', color: C.text, borderRadius: 999, padding: '9px 16px', fontSize: 13, fontWeight: sel ? 700 : 600, cursor: 'pointer', fontFamily: 'inherit', boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>{r.label}</button>;
+                  })}
+                </div>
+              </div>
+            )}
+
+    </>
+  );
 
   /** Zelfde lijst in het venster (mobiel) en in de dropdown (desktop). */
   const resultaten = () => (
@@ -154,19 +220,6 @@ export default function SellScreen({ variant }: { variant: Variant }) {
                   <svg width="18" height="18" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
                 </span>
               </button>
-              {sheet && (
-                <SearchSheet title="Wat verkoop je?" onClose={() => { setSheet(false); setQ(''); }}>
-                  <input
-                    autoFocus
-                    value={q}
-                    onChange={e => setQ(e.target.value)}
-                    placeholder="Zoek je product…"
-                    autoComplete="off"
-                    style={{ ...input, borderRadius: 999, padding: '16px 22px', fontSize: 16 }}
-                  />
-                  <div style={{ marginTop: 14 }}>{resultaten()}</div>
-                </SearchSheet>
-              )}
             </>
           ) : (
           <div style={{ position: 'relative', margin: visibleItems.length ? '14px 0 0' : 0 }}>
@@ -192,70 +245,46 @@ export default function SellScreen({ variant }: { variant: Variant }) {
           )
         )}
 
-        {/* Kaart: gekozen product → conditie + shuttercount + toevoegen */}
-        {picked && (
+        {/* Gekozen product: op desktop als kaart, op mobiel in het zoekvenster */}
+        {picked && !isMobile && (
           <div style={{ ...card, padding: 22, marginTop: visibleItems.length ? 14 : 0, marginBottom: 12, border: `1.5px solid ${C.accent}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Thumb category={picked.category} name={picked.name} size={44} />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 16, color: C.text }}>{picked.name}</div>
-              </div>
-              <button onClick={reset} className="tiw-textlink" style={{ background: 'none', border: 'none', color: C.sec, cursor: 'pointer', fontSize: 12.5, textDecoration: 'underline', fontFamily: 'inherit' }}>ander product</button>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '20px 0 8px' }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>Wat is de conditie?</span>
-              <button onClick={() => setShowHelp(h => !h)} className="tiw-textlink" style={{ background: 'none', border: 'none', color: C.accent, fontSize: 12.5, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit' }}>Help me kiezen</button>
-            </div>
-            <div className="tiw-cond-grid">
-              {CONDITIONS.map(c => {
-                const sel = condition === c.label;
-                return (
-                  <button key={c.label} onClick={() => { const first = !condition; setCondition(c.label); if (first) scrollIntoViewSoon(wearRef.current); }} className="tiw-cond" style={{ borderColor: sel ? C.accent : C.border, background: sel ? C.accentSoft : '#fff', color: C.text, boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>
-                    <span style={{ fontWeight: 700 }}>{c.label}</span>
-                    <span className="tiw-cond-short">{c.short}</span>
-                  </button>
-                );
-              })}
-            </div>
-            {showHelp && (
-              <div style={{ marginTop: 12, border: `1px solid ${C.border}`, borderRadius: 12, padding: '4px 16px', background: C.tint }}>
-                {CONDITIONS.map((c, i) => (
-                  <div key={c.label} style={{ display: 'grid', gridTemplateColumns: '150px 1fr', gap: 12, padding: '10px 0', borderBottom: i < CONDITIONS.length - 1 ? `1px solid ${C.border}` : 'none', fontSize: 13, lineHeight: 1.55 }}>
-                    <strong style={{ color: C.text }}>{c.label}{picked?.category === 'camera' && <span style={{ display: 'block', fontSize: 11.5, color: C.accent, fontWeight: 700 }}>{c.maxClicks}</span>}</strong>
-                    <span style={{ color: C.sec }}>{c.criteria}</span>
-                  </div>
-                ))}
-                <div style={{ fontSize: 12, color: C.sec, padding: '10px 0 8px' }}>Twijfel je? Kies de lagere conditie — bij ontvangst beoordelen we eerlijk en {hasBid(variant) ? 'passen we het bod zo nodig omhoog aan' : 'valt het bod zo nodig hoger uit'}.</div>
-              </div>
-            )}
-
-            {hasWear && (
-              <div ref={wearRef} style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{wear.title}</span>
-                  <span style={{ fontSize: 12.5, color: C.sec }}>{wear.hint}</span>
-                  {picked?.category === 'camera' && (
-                    <button onClick={() => setShutterHelp(true)} className="tiw-textlink" style={{ background: 'none', border: 'none', fontSize: 12.5, color: C.accent, fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', marginLeft: 'auto' }}>Hoe vind ik dit?</button>
-                  )}
-                </div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {wear.ranges.map(r => {
-                    const sel = shutter === r.label;
-                    return <button key={r.label} onClick={() => setShutter(r.label)} style={{ border: `1.5px solid ${sel ? C.accent : C.border}`, background: sel ? C.accentSoft : '#fff', color: C.text, borderRadius: 999, padding: '9px 16px', fontSize: 13, fontWeight: sel ? 700 : 600, cursor: 'pointer', fontFamily: 'inherit', boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>{r.label}</button>;
-                  })}
-                </div>
-              </div>
-            )}
-
+            {productForm()}
           </div>
         )}
       </Page>
 
+      {/* Het venster staat los van het zoekblok: het blijft open terwijl je
+          conditie en shuttercount invult, en sluit pas als het item erin staat. */}
+      {sheet && (
+        <SearchSheet
+          title={picked ? (editId ? 'Item wijzigen' : 'Product toevoegen') : 'Wat verkoop je?'}
+          onClose={() => { setSheet(false); reset(); }}
+          footer={picked ? (
+            <button disabled={!canAdd} onClick={addItem} style={{ ...btnCta, width: '100%', justifyContent: 'center', padding: '15px 20px', opacity: canAdd ? 1 : 0.45, cursor: canAdd ? 'pointer' : 'default' }}>
+              {editId ? 'Wijziging opslaan' : 'Voeg dit item toe +'}
+            </button>
+          ) : undefined}
+        >
+          {picked ? productForm() : (
+            <>
+              <input
+                autoFocus
+                value={q}
+                onChange={e => setQ(e.target.value)}
+                placeholder="Zoek je product…"
+                autoComplete="off"
+                style={{ ...input, borderRadius: 999, padding: '16px 22px', fontSize: 16 }}
+              />
+              <div style={{ marginTop: 14 }}>{resultaten()}</div>
+            </>
+          )}
+        </SearchSheet>
+      )}
+
       {/* Eén knop onderin die meeloopt met wat je nu moet doen: eerst het item
           afronden, daarna pas de volgende stap. Anders staat "Voeg dit item toe"
           op mobiel onder de vouw terwijl "Verder" grijs is, en weet niemand wat te doen. */}
-      {zoekActief ? null : picked ? (
+      {zoekActief || (isMobile && sheet) ? null : picked && !isMobile ? (
         <StickyBar
           add={!editId}
           note={!condition
