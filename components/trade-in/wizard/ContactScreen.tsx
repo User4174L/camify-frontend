@@ -6,8 +6,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import {
-  useWizardState, WizardBanner, Page, PageTitle, BackLink,
-  C, input, card, btnCta, NON_EU, vatLineFor, base, hasBid, lastPath, type Variant,
+  useWizardState, WizardBanner, Page, PageTitle, BackLink, StickyBar,
+  C, input, card, NON_EU, vatLineFor, base, hasBid, lastPath, type Variant,
 } from './shared';
 
 const COUNTRIES: [string, string][] = [['NL', 'Nederland'], ['BE', 'België'], ['DE', 'Duitsland'], ['FR', 'Frankrijk'], ['LU', 'Luxemburg'], ['AT', 'Oostenrijk'], ['ES', 'Spanje'], ['IT', 'Italië'], ['PL', 'Polen'], ['DK', 'Denemarken'], ['SE', 'Zweden'], ['GB', 'Verenigd Koninkrijk'], ['CH', 'Zwitserland'], ['NO', 'Noorwegen'], ['US', 'Verenigde Staten'], ['NON_EU', 'Ander land buiten de EU']];
@@ -70,14 +70,18 @@ export default function ContactScreen({ variant }: { variant: Variant }) {
               </div>
             </div>
           )}
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 22 }}>
-            <button disabled={!ok} onClick={() => router.push(`${base(variant)}/${lastPath(variant)}`)} style={{ ...btnCta, opacity: ok ? 1 : 0.45, cursor: ok ? 'pointer' : 'default' }}>
-              {hasBid(variant) ? 'Ontvang je bod' : 'Naar het overzicht'} →
-            </button>
-          </div>
         </div>
       </Page>
+
+      <StickyBar
+        width={680}
+        note={ok
+          ? (hasBid(variant) ? 'Alles compleet — we rekenen je bod uit.' : <>Je aanvraag is <strong style={{ color: C.text }}>nog niet verstuurd</strong> — je controleert hem eerst.</>)
+          : 'Vul je naam en e-mailadres in om verder te gaan.'}
+        cta={hasBid(variant) ? 'Ontvang je bod' : 'Naar het overzicht'}
+        disabled={!ok}
+        onClick={() => router.push(`${base(variant)}/${lastPath(variant)}`)}
+      />
 
       <style>{`
         .tiw-label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#1E2133}

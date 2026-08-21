@@ -11,8 +11,8 @@ import { useRouter } from 'next/navigation';
 import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { estimateBid } from '@/data/trade-in-mock';
 import {
-  useWizardState, clearWizardState, WizardBanner, Page, PageTitle, BackLink, Thumb, IconBtn,
-  INCLUDED, C, card, btnCta, btnGhost, fmt, vatLineFor, NON_EU, base, hasBid, LEAD_TIME, type SellItem, type Variant,
+  useWizardState, clearWizardState, WizardBanner, Page, PageTitle, BackLink, StickyBar, Thumb, IconBtn,
+  INCLUDED, C, card, btnGhost, fmt, vatLineFor, NON_EU, base, hasBid, LEAD_TIME, type SellItem, type Variant,
 } from './shared';
 
 function ItemBid({ it }: { it: SellItem }) {
@@ -123,7 +123,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                 {items.map(it => (
                   <div key={it.id} style={{ ...card, padding: 22, marginBottom: 14, borderLeft: `4px solid ${C.accent}`, lineHeight: 1.6 }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                      <Thumb category={it.category} size={56} />
+                      <Thumb category={it.category} name={it.name} size={56} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontWeight: 700, fontSize: 16, color: C.text }}>{it.name}</div>
                         <div style={{ fontSize: 14, color: C.sec, marginTop: 6 }}>
@@ -223,10 +223,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                       </>
                     )}
                     {contact.isBusiness && <div style={{ fontSize: 12, color: C.sec, marginTop: 2 }}>{vatLineFor(contact)}{!NON_EU.includes(contact.country) && contact.vat ? ` · ${contact.vat.toUpperCase()}` : ''}</div>}
-                    <button onClick={() => setDone(true)} style={{ ...btnCta, width: '100%', justifyContent: 'center', marginTop: 16, padding: '15px 20px' }}>
-                      {withBid ? 'Akkoord, regel de verzending' : 'Verstuur je aanvraag'}
-                    </button>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 14 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 18 }}>
                       {(withBid
                         ? [['Gratis & verzekerd', 'verzenden'], ['7 dagen', 'bod vast'], ['3 werkdagen', 'uitbetaling']]
                         : [['Gratis & verzekerd', 'verzenden'], [LEAD_TIME, 'je bod'], ['Nergens aan', 'vast']]
@@ -248,6 +245,17 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
           </>
         )}
       </Page>
+
+      {!loading && (
+        <StickyBar
+          width={1080}
+          note={withBid
+            ? <>Je bod van <strong style={{ color: C.text }}>{fmt(Math.abs(net))}</strong> staat 7 dagen vast — gratis verzekerd verzenden.</>
+            : <>Je aanvraag is <strong style={{ color: C.text }}>nog niet verstuurd</strong>. Klopt alles? Dan gaat hij naar onze expert.</>}
+          cta={withBid ? 'Akkoord, regel de verzending' : 'Verstuur je aanvraag'}
+          onClick={() => setDone(true)}
+        />
+      )}
 
       <style>{`
         .tiw-result-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}

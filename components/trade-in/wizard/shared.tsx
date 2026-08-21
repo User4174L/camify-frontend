@@ -151,14 +151,18 @@ export function photoFor(name: string, category?: string): string {
 export function Thumb({ category, name, size = 44 }: { category: string; name?: string; size?: number }) {
   const fallback = category === 'lens' ? '/images/placeholder-lens.svg' : '/images/placeholder-camera.svg';
   const src = name ? photoFor(name, category) : fallback;
+  /* Fallback via state, niet door src imperatief te overschrijven: dat laatste
+     maakt de DOM inconsistent met React en blijft dan op de placeholder hangen. */
+  const [failed, setFailed] = useState(false);
+  useEffect(() => { setFailed(false); }, [src]);
   return (
     <img
-      src={src}
+      src={failed ? fallback : src}
       alt=""
       width={size}
       height={size}
       loading="lazy"
-      onError={e => { (e.currentTarget as HTMLImageElement).src = fallback; }}
+      onError={() => setFailed(true)}
       style={{ width: size, height: size, objectFit: 'cover', borderRadius: 8, background: C.tint, flexShrink: 0 }}
     />
   );
@@ -254,12 +258,12 @@ export function BackLink({ href, label }: { href: string; label: string }) {
 }
 
 /** Sticky onderbalk met de enige primaire CTA van het scherm. */
-export function StickyBar({ note, cta, disabled, onClick, secondary }: {
-  note: React.ReactNode; cta: string; disabled?: boolean; onClick: () => void; secondary?: React.ReactNode;
+export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880 }: {
+  note: React.ReactNode; cta: string; disabled?: boolean; onClick: () => void; secondary?: React.ReactNode; width?: number;
 }) {
   return (
     <div style={{ position: 'sticky', bottom: 0, background: '#fff', borderTop: `1px solid ${C.border}`, padding: '14px 24px', zIndex: 15, boxShadow: '0 -6px 20px rgba(30,33,51,.05)' }}>
-      <div style={{ maxWidth: 880, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+      <div style={{ maxWidth: width, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <div style={{ fontSize: 13.5, color: C.sec }}>{note}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {secondary}
