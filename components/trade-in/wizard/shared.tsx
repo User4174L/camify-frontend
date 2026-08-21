@@ -178,6 +178,49 @@ export function scrollIntoViewSoon(el: HTMLElement | null) {
   }));
 }
 
+/** Is dit een mobiel scherm? Bepaalt of zoeken in een schermvullend venster gaat. */
+export function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width:760px)');
+    const sync = () => setMobile(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+  return mobile;
+}
+
+/**
+ * Schermvullend zoekvenster voor mobiel. Zolang je zoekt is er niets anders in
+ * beeld — geen kop, geen onderbalk, geen halve resultatenlijst achter het
+ * toetsenbord. Sluit zodra je iets kiest.
+ */
+export function SearchSheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+  return (
+    <div className="tiw-sheet">
+      <div className="tiw-sheet-head">
+        <span>{title}</span>
+        <button onClick={onClose} aria-label="Sluiten" className="tiw-sheet-close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div className="tiw-sheet-body">{children}</div>
+      <style>{`
+        .tiw-sheet{position:fixed;inset:0;z-index:60;background:#fff;display:flex;flex-direction:column}
+        .tiw-sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:${C.text};color:#fff;font-size:15px;font-weight:700;flex-shrink:0}
+        .tiw-sheet-close{background:none;border:none;color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-right:-8px;padding:0}
+        .tiw-sheet-body{flex:1;overflow-y:auto;padding:18px 20px 24px;-webkit-overflow-scrolling:touch}
+      `}</style>
+    </div>
+  );
+}
+
 /* ── Kleine componenten ── */
 export function Thumb({ category, name, size = 44 }: { category: string; name?: string; size?: number }) {
   const fallback = category === 'lens' ? '/images/placeholder-lens.svg' : '/images/placeholder-camera.svg';

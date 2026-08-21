@@ -8,7 +8,7 @@ import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { BUY_PRODUCTS, type BuyProduct, type BuyVariant } from '@/data/trade-in-mock';
 import {
   useWizardState, WizardBanner, Page, PageTitle, StickyBar, BackLink, IconBtn,
-  C, input, card, btnGhost, fmt, base, hasBid, Thumb, scrollIntoViewSoon, type Variant,
+  C, input, card, btnGhost, fmt, base, hasBid, Thumb, scrollIntoViewSoon, useIsMobile, SearchSheet, type Variant,
 } from './shared';
 
 export default function BuyScreen({ variant }: { variant: Variant }) {
@@ -20,6 +20,8 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   const [openId, setOpenId] = useState<string | null>(null);
   /** Net als in stap 1: zodra er iets gekozen is verschijnt eerst een knop, niet meteen het zoekveld. */
   const [searchOpen, setSearchOpen] = useState(false);
+  const [sheet, setSheet] = useState(false);
+  const isMobile = useIsMobile();
   /** Na "Ja" moet de zoeker in beeld springen; anders opent hij ongemerkt onder de vouw. */
   const searchRef = useRef<HTMLDivElement>(null);
   /** null = nog niets gekozen, true = wil kopen, false = alleen verkopen */
@@ -43,16 +45,63 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   /** Variant kiezen = meteen toevoegen en de zoeker sluiten — geen open dropdown met meervoudige selectie. */
   const addPick = (p: BuyProduct, v: BuyVariant) => {
     update(s => (s.picks.some(x => x.id === v.id) ? s : { ...s, picks: [...s.picks, { ...v, name: p.name, productId: p.id }] }));
-    setOpenId(null); setQ(''); setSearchOpen(false);
+    setOpenId(null); setQ(''); setSearchOpen(false); setSheet(false);
   };
   const buyTotal = picks.reduce((s, p) => s + p.price, 0);
 
   const choose = (yes: boolean) => {
     setWants(yes);
     update(s => ({ ...s, buySkipped: !yes, picks: yes ? s.picks : [] }));
-    if (!yes) { setQ(''); setOpenId(null); setSearchOpen(false); return; }
+    if (!yes) { setQ(''); setOpenId(null); setSearchOpen(false); setSheet(false); return; }
     scrollIntoViewSoon(searchRef.current);
   };
+
+  /** Zoekresultaten: zelfde lijst in het mobiele venster en in de kaart op desktop. */
+  const resultaten = () => (
+    results.length ? results.map((p, i) => {
+      const prices = p.variants.map(v => v.price);
+      return (
+        <div key={p.id} onClick={() => setOpenId(p.id)} className="tiw-hit" style={{ borderBottom: i < results.length - 1 ? `1px solid ${C.border}` : 'none' }}>
+          <Thumb category={p.category.toLowerCase().includes('lenzen') ? 'lens' : 'camera'} name={p.name} size={40} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 600, fontSize: 14, color: C.text }}>{p.name}</div>
+            <div style={{ fontSize: 12, color: C.sec }}>{p.category}</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: 12, color: C.sec }}>{p.variants.length} op voorraad</div>
+            <div style={{ fontWeight: 700, fontSize: 14.5, color: C.text }}>{fmt(Math.min(...prices))}{prices.length > 1 ? ` – ${fmt(Math.max(...prices))}` : ''}</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.sec} strokeWidth="2"><path d="M9 6l6 6-6 6" /></svg>
+        </div>
+      );
+    }) : <div style={{ padding: 14, fontSize: 13.5, color: C.sec }}>Niets gevonden in onze voorraad.</div>
+  );
+
+  /** Varianten van het gekozen product — ook gedeeld tussen venster en kaart. */
+  const varianten = () => openProduct && (
+    <>
+      <div style={{ marginBottom: 4 }}>
+        <div style={{ fontWeight: 800, fontSize: 16, color: C.text }}>{openProduct.name}</div>
+        <div style={{ fontSize: 13, color: C.sec, marginTop: 2 }}>
+          {openProduct.variants.length} exemplaar{openProduct.variants.length > 1 ? 'en' : ''} op voorraad — kies er één om toe te voegen.
+        </div>
+      </div>
+      {openProduct.variants.map(v => {
+        const chosen = picks.some(x => x.id === v.id);
+        return (
+          <div key={v.id} onClick={() => !chosen && addPick(openProduct, v)} className={chosen ? 'tiw-var is-chosen' : 'tiw-var'}>
+            <Thumb category={openProduct.category.toLowerCase().includes('lenzen') ? 'lens' : 'camera'} name={openProduct.name} size={40} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13.5, color: C.text }}><strong>{v.condition}</strong> <span style={{ color: C.sec }}>· SKU {v.sku}{v.shutterCount !== undefined ? ` · ${v.shutterCount.toLocaleString('nl-NL')} clicks` : ''}</span></div>
+              <div style={{ fontSize: 12, color: C.sec, marginTop: 3 }}>Incl. {v.accessories.join(', ')}</div>
+            </div>
+            <div style={{ fontWeight: 800, fontSize: 16, color: C.text }}>{fmt(v.price)}</div>
+            <span className="tiw-var-cta">{chosen ? 'Toegevoegd ✓' : 'Kies deze'}</span>
+          </div>
+        );
+      })}
+    </>
+  );
 
   return (
     <>
@@ -129,8 +178,43 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
           </div>
         )}
 
-        {/* Voorraadzoeker */}
+        {/* Voorraadzoeker: op mobiel schermvullend, op desktop in een kaart */}
         {wants && (picks.length === 0 || searchOpen || openProduct) && (
+          isMobile ? (
+            <>
+              <button onClick={() => setSheet(true)} className="tiw-fakefield" style={{ marginTop: picks.length ? 4 : 14 }}>
+                <span>Zoek op merk, model of SKU…</span>
+                <span className="tiw-fakefield-ico">
+                  <svg width="18" height="18" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
+                </span>
+              </button>
+              {sheet && (
+                <SearchSheet
+                  title={openProduct ? openProduct.name : 'Zoek in onze voorraad'}
+                  onClose={() => { setSheet(false); setOpenId(null); setQ(''); }}
+                >
+                  {openProduct ? (
+                    <>
+                      <button onClick={() => setOpenId(null)} style={{ background: 'none', border: 'none', padding: 0, fontSize: 13, color: C.sec, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 6, minHeight: 36 }}>← Andere resultaten</button>
+                      {varianten()}
+                    </>
+                  ) : (
+                    <>
+                      <input
+                        autoFocus
+                        value={q}
+                        onChange={e => setQ(e.target.value)}
+                        placeholder="Zoek op merk, model of SKU…"
+                        autoComplete="off"
+                        style={{ ...input, borderRadius: 999, padding: '16px 22px' }}
+                      />
+                      <div style={{ marginTop: 14 }}>{q.trim().length >= 2 && resultaten()}</div>
+                    </>
+                  )}
+                </SearchSheet>
+              )}
+            </>
+          ) : (
           <div ref={searchRef} style={{ ...card, padding: 18, marginTop: picks.length ? 4 : 14 }}>
             {!openProduct ? (
               <>
@@ -138,58 +222,20 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
                 <input value={q} onChange={e => setQ(e.target.value)} placeholder="Zoek op merk, model of SKU…" autoComplete="off" style={input} />
                 {q.trim().length >= 2 && (
                   <div style={{ marginTop: 10, border: `1px solid ${C.border}`, borderRadius: 12, overflow: 'hidden' }}>
-                    {results.length ? results.map((p, i) => {
-                      const prices = p.variants.map(v => v.price);
-                      return (
-                        <div key={p.id} onClick={() => setOpenId(p.id)} className="tiw-hit" style={{ borderBottom: i < results.length - 1 ? `1px solid ${C.border}` : 'none' }}>
-                          <Thumb category={p.category.toLowerCase().includes('lenzen') ? 'lens' : 'camera'} name={p.name} size={40} />
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontWeight: 600, fontSize: 14, color: C.text }}>{p.name}</div>
-                            <div style={{ fontSize: 12, color: C.sec }}>{p.category}</div>
-                          </div>
-                          <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: 12, color: C.sec }}>{p.variants.length} op voorraad</div>
-                            <div style={{ fontWeight: 700, fontSize: 14.5, color: C.text }}>{fmt(Math.min(...prices))}{prices.length > 1 ? ` – ${fmt(Math.max(...prices))}` : ''}</div>
-                          </div>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.sec} strokeWidth="2"><path d="M9 6l6 6-6 6" /></svg>
-                        </div>
-                      );
-                    }) : <div style={{ padding: 14, fontSize: 13.5, color: C.sec }}>Niets gevonden in onze voorraad.</div>}
+                    {resultaten()}
                   </div>
                 )}
               </>
             ) : (
-              /* Eén product gekozen → alleen de varianten daarvan */
               <>
                 <button onClick={() => { setOpenId(null); setSearchOpen(true); }} style={{ background: 'none', border: 'none', padding: 0, fontSize: 13, color: C.sec, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 6 }}>← Andere resultaten</button>
-                <div style={{ marginTop: 12, marginBottom: 4 }}>
-                  <div style={{ fontWeight: 800, fontSize: 16, color: C.text }}>{openProduct.name}</div>
-                  <div style={{ fontSize: 13, color: C.sec, marginTop: 2 }}>
-                    {openProduct.variants.length} exemplaar{openProduct.variants.length > 1 ? 'en' : ''} op voorraad — kies er één om toe te voegen.
-                  </div>
-                </div>
-                {openProduct.variants.map(v => {
-                  const chosen = picks.some(x => x.id === v.id);
-                  return (
-                    <div
-                      key={v.id}
-                      onClick={() => !chosen && addPick(openProduct, v)}
-                      className={chosen ? 'tiw-var is-chosen' : 'tiw-var'}
-                    >
-                      <Thumb category={openProduct.category.toLowerCase().includes('lenzen') ? 'lens' : 'camera'} name={openProduct.name} size={40} />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13.5, color: C.text }}><strong>{v.condition}</strong> <span style={{ color: C.sec }}>· SKU {v.sku}{v.shutterCount !== undefined ? ` · ${v.shutterCount.toLocaleString('nl-NL')} clicks` : ''}</span></div>
-                        <div style={{ fontSize: 12, color: C.sec, marginTop: 3 }}>Incl. {v.accessories.join(', ')}</div>
-                      </div>
-                      <div style={{ fontWeight: 800, fontSize: 16, color: C.text }}>{fmt(v.price)}</div>
-                      <span className="tiw-var-cta">{chosen ? 'Toegevoegd ✓' : 'Kies deze'}</span>
-                    </div>
-                  );
-                })}
+                <div style={{ marginTop: 12 }}>{varianten()}</div>
               </>
             )}
           </div>
+          )
         )}
+
         {wants === true && (
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
             <button onClick={() => choose(false)} style={{ background: 'none', border: 'none', padding: 0, fontSize: 13.5, color: C.sec, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit' }}>
@@ -233,6 +279,8 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
         .tiw-choice-btn--yes.is-on{border-color:#E8692A;box-shadow:0 8px 22px rgba(232,105,42,.22)}
         .tiw-choice-btn--yes .tiw-choice-check{background:#E8692A}
 
+        .tiw-fakefield{display:flex;align-items:center;justify-content:space-between;width:100%;border:1.5px solid #EEEEF2;border-radius:999px;background:#fff;padding:12px 8px 12px 24px;font-family:inherit;font-size:16px;color:#6B6D80;cursor:pointer;text-align:left}
+        .tiw-fakefield-ico{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#E8692A;flex-shrink:0}
         .tiw-hit{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;background:#fff;transition:background .12s}
         .tiw-hit:hover{background:#FFFBF7}
         .tiw-var{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-top:8px;border-radius:12px;border:1.5px solid #EEEEF2;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}

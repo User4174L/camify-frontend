@@ -9,7 +9,7 @@ import ShutterHelp from '@/components/trade-in/ShutterHelp';
 import { SELL_PRODUCTS, SHUTTER_RANGES, OPERATION_HOURS_RANGES } from '@/data/trade-in-mock';
 import {
   useWizardState, WizardBanner, Page, PageTitle, StickyBar, Thumb, IconBtn,
-  CONDITIONS, C, input, card, btnGhost, base, hasBid, wearLine, scrollIntoViewSoon, centerOnFocus, type SellItem, type Variant,
+  CONDITIONS, C, input, card, btnGhost, base, hasBid, wearLine, scrollIntoViewSoon, centerOnFocus, useIsMobile, SearchSheet, type SellItem, type Variant,
 } from './shared';
 
 const DEFAULT_SHUTTER = SHUTTER_RANGES[0].label;          // "Tot 25.000"
@@ -37,6 +37,8 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   const [showResults, setShowResults] = useState(false);
   const [shutterHelp, setShutterHelp] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false); // na eerste item: zoekbalk pas na '+ Nog een product'
+  const [sheet, setSheet] = useState(false);
+  const isMobile = useIsMobile();
   /** Na toevoegen springt de kaart weg; zonder dit blijf je op mobiel onderaan een leeg scherm staan. */
   const listRef = useRef<HTMLDivElement>(null);
   /** Na de eerste conditiekeuze de vervolgvraag in beeld brengen; die staat op
@@ -70,7 +72,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   }, [q]);
 
   const pick = (p: { name: string; category: string }) => {
-    setPicked(p); setQ(''); setShowResults(false); setCondition(''); setShowHelp(false);
+    setPicked(p); setQ(''); setShowResults(false); setSheet(false); setCondition(''); setShowHelp(false);
     setShutter(p.category === 'camera' ? DEFAULT_SHUTTER : p.category === 'cinema' ? DEFAULT_HOURS : undefined);
   };
   const reset = () => { setQ(''); setPicked(null); setCondition(''); setShutter(undefined); setShowHelp(false); setEditId(null); };
@@ -89,6 +91,20 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   const hasWear = picked?.category === 'camera' || picked?.category === 'cinema';
   const wear = wearFor(picked?.category);
   const visibleItems = items.filter(i => i.id !== editId);
+
+  /** Zelfde lijst in het venster (mobiel) en in de dropdown (desktop). */
+  const resultaten = () => (
+    results.length ? results.map((p, i) => (
+      <div key={p.name} onMouseDown={() => pick(p)} className="tiw-row" style={{ borderBottom: i < results.length - 1 ? `1px solid ${C.border}` : 'none' }}>
+        <Thumb category={p.category} name={p.name} size={40} />
+        <span style={{ flex: 1, fontWeight: 600, fontSize: 14.5, color: C.text }}>{p.name}</span>
+      </div>
+    )) : q.trim().length >= 2 ? (
+      <div style={{ padding: 16, fontSize: 13.5, color: C.sec }}>
+        Niet gevonden. <button onMouseDown={() => pick({ name: q.trim(), category: 'camera' })} style={{ background: 'none', border: 'none', color: C.accent, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>“{q.trim()}” toch toevoegen</button> — we beoordelen het handmatig.
+      </div>
+    ) : null
+  );
 
   return (
     <>
@@ -128,13 +144,37 @@ export default function SellScreen({ variant }: { variant: Variant }) {
           </div>
         )}
         </div>
+        {/* Resultaten: op mobiel in een schermvullend venster, op desktop als lijst onder het veld */}
         {!picked && (visibleItems.length === 0 || searchOpen) && (
+          isMobile ? (
+            <>
+              <button onClick={() => setSheet(true)} className="tiw-fakefield" style={{ margin: visibleItems.length ? '14px 0 0' : 0 }}>
+                <span>Zoek je product…</span>
+                <span className="tiw-fakefield-ico">
+                  <svg width="18" height="18" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
+                </span>
+              </button>
+              {sheet && (
+                <SearchSheet title="Wat verkoop je?" onClose={() => { setSheet(false); setQ(''); }}>
+                  <input
+                    autoFocus
+                    value={q}
+                    onChange={e => setQ(e.target.value)}
+                    placeholder="Zoek je product…"
+                    autoComplete="off"
+                    style={{ ...input, borderRadius: 999, padding: '16px 22px', fontSize: 16 }}
+                  />
+                  <div style={{ marginTop: 14 }}>{resultaten()}</div>
+                </SearchSheet>
+              )}
+            </>
+          ) : (
           <div style={{ position: 'relative', margin: visibleItems.length ? '14px 0 0' : 0 }}>
             <input
               autoFocus
               value={q}
               onChange={e => { setQ(e.target.value); setShowResults(true); }}
-              onFocus={e => { setShowResults(true); centerOnFocus(e); }}
+              onFocus={() => setShowResults(true)}
               onBlur={() => setTimeout(() => setShowResults(false), 180)}
               placeholder="Zoek je product…"
               autoComplete="off"
@@ -145,19 +185,11 @@ export default function SellScreen({ variant }: { variant: Variant }) {
             </div>
             {showResults && q.trim().length >= 2 && (
               <div className="tiw-results" style={{ position: 'absolute', left: 8, right: 8, top: 'calc(100% + 8px)', zIndex: 20, background: '#fff', borderRadius: 14, boxShadow: '0 12px 32px rgba(45,48,71,.16)', overflowY: 'auto' }}>
-                {results.length ? results.map((p, i) => (
-                  <div key={p.name} onMouseDown={() => pick(p)} className="tiw-row" style={{ borderBottom: i < results.length - 1 ? `1px solid ${C.border}` : 'none' }}>
-                    <Thumb category={p.category} name={p.name} size={40} />
-                    <span style={{ flex: 1, fontWeight: 600, fontSize: 14.5, color: C.text }}>{p.name}</span>
-                  </div>
-                )) : (
-                  <div style={{ padding: 16, fontSize: 13.5, color: C.sec }}>
-                    Niet gevonden. <button onMouseDown={() => pick({ name: q.trim(), category: 'camera' })} style={{ background: 'none', border: 'none', color: C.accent, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>“{q.trim()}” toch toevoegen</button> — we beoordelen het handmatig.
-                  </div>
-                )}
+                {resultaten()}
               </div>
             )}
           </div>
+          )
         )}
 
         {/* Kaart: gekozen product → conditie + shuttercount + toevoegen */}
@@ -257,6 +289,8 @@ export default function SellScreen({ variant }: { variant: Variant }) {
         @media(max-width:760px){.tiw-results{max-height:min(52vh,300px)}}
         /* Raakvlak van tekstlinks: 19px is te klein om betrouwbaar te tikken. */
         .tiw-textlink{display:inline-flex;align-items:center;min-height:36px;padding:0 2px}
+        .tiw-fakefield{display:flex;align-items:center;justify-content:space-between;width:100%;border:1.5px solid ${'#EEEEF2'};border-radius:999px;background:#fff;padding:12px 8px 12px 24px;font-family:inherit;font-size:16px;color:#6B6D80;cursor:pointer;text-align:left}
+        .tiw-fakefield-ico{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#E8692A;flex-shrink:0}
         .tiw-row{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer}
         .tiw-row:hover{background:#FFFBF7}
         .tiw-cond-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
