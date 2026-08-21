@@ -341,11 +341,15 @@ export const CONDITION_FACTOR: Record<string, number> = {
 };
 
 /* Shutter-staffel (mock) — bereik → factor */
+/* Staffels afgestemd op de grenzen die het prijsmodel echt gebruikt
+   (market-intelligence/pricing_rules.json → shutter_staffel). Elke stap
+   levert een ander bod op; fijner splitsen onder 25.000 heeft geen effect. */
 export const SHUTTER_RANGES: { label: string; factor: number }[] = [
   { label: 'Tot 25.000', factor: 1.0 },
-  { label: '25.000 – 75.000', factor: 0.93 },
-  { label: '75.000 – 150.000', factor: 0.84 },
-  { label: 'Meer dan 150.000', factor: 0.7 },
+  { label: '25.000 – 50.000', factor: 0.98 },
+  { label: '50.000 – 100.000', factor: 0.95 },
+  { label: '100.000 – 200.000', factor: 0.89 },
+  { label: 'Meer dan 200.000', factor: 0.78 },
 ];
 
 export function estimateBid(name: string, condition: string, shutterLabel?: string): { coverage: BidCoverage; price?: number } {
