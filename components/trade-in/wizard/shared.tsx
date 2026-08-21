@@ -171,11 +171,15 @@ export function centerOnFocus(e: React.FocusEvent<HTMLElement>) {
 
 /** Scroll een element in beeld nádat de nieuwe layout staat. Eén requestAnimationFrame
  *  is te vroeg: de kaart is dan nog niet weg en je schiet voorbij het doel. */
-export function scrollIntoViewSoon(el: HTMLElement | null) {
-  if (!el) return;
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }));
+export function scrollIntoViewSoon(target: HTMLElement | null | React.RefObject<HTMLElement | null>) {
+  // Wachten tot de nieuwe layout staat én het zoekvenster de scroll-lock op body
+  // heeft losgelaten; anders wordt de scroll genegeerd.
+  setTimeout(() => {
+    // Ref pas hier uitlezen: het doel bestaat vaak nog niet op het moment van aanroepen
+    // (de knop verschijnt juist door dezelfde state-wijziging).
+    const el = target && 'current' in target ? target.current : target;
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 80);
 }
 
 /** Is dit een mobiel scherm? Bepaalt of zoeken in een schermvullend venster gaat. */

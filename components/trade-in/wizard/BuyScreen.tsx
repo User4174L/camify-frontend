@@ -24,6 +24,9 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   const isMobile = useIsMobile();
   /** Na "Ja" moet de zoeker in beeld springen; anders opent hij ongemerkt onder de vouw. */
   const searchRef = useRef<HTMLDivElement>(null);
+  /** Na het toevoegen richten we op de knop "Nog een product toevoegen": dan
+   *  staat je keuze er nét boven en zie je meteen hoe je verder kunt. */
+  const picksRef = useRef<HTMLDivElement>(null);
   /** null = nog niets gekozen, true = wil kopen, false = alleen verkopen */
   const [wants, setWants] = useState<boolean | null>(null);
 
@@ -46,6 +49,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   const addPick = (p: BuyProduct, v: BuyVariant) => {
     update(s => (s.picks.some(x => x.id === v.id) ? s : { ...s, picks: [...s.picks, { ...v, name: p.name, productId: p.id }] }));
     setOpenId(null); setQ(''); setSearchOpen(false); setSheet(false);
+    scrollIntoViewSoon(picksRef);
   };
   const buyTotal = picks.reduce((s, p) => s + p.price, 0);
 
@@ -53,7 +57,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
     setWants(yes);
     update(s => ({ ...s, buySkipped: !yes, picks: yes ? s.picks : [] }));
     if (!yes) { setQ(''); setOpenId(null); setSearchOpen(false); setSheet(false); return; }
-    scrollIntoViewSoon(searchRef.current);
+    scrollIntoViewSoon(searchRef);
   };
 
   /** Zoekresultaten: zelfde lijst in het mobiele venster en in de kaart op desktop. */
@@ -111,11 +115,13 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
       <Page>
         <BackLink href={base(variant)} label="Terug naar je items" />
         <PageTitle
-          title="Wil je er iets voor terug?"
-          sub={hasBid(variant) ? 'We verrekenen het direct met je bod.' : 'We verrekenen het met het bod dat je krijgt.'}
+          title={picks.length ? 'Wat je meeneemt' : 'Wil je er iets voor terug?'}
+          sub={picks.length ? undefined : hasBid(variant) ? 'We verrekenen het direct met je bod.' : 'We verrekenen het met het bod dat je krijgt.'}
         />
 
-        {/* Keuze */}
+        {/* Keuze — verdwijnt zodra er iets gekozen is: de vraag is dan beantwoord
+            en de ruimte hoort bij je lijst en de knop om nog iets toe te voegen. */}
+        {picks.length === 0 && (
         <div className={wants === true ? 'tiw-choice tiw-choice--single' : 'tiw-choice'}>
           <button onClick={() => choose(true)} className={`tiw-choice-btn tiw-choice-btn--yes${wants === true ? ' is-on' : ''}`}>
             <span className="tiw-choice-ico">
@@ -144,6 +150,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
           </button>
           )}
         </div>
+        )}
 
         {wants === null && (
           <p style={{ margin: '14px 0 0', fontSize: 13, color: C.sec, lineHeight: 1.6 }}>
@@ -153,8 +160,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
 
         {/* Gekozen items */}
         {wants && picks.length > 0 && (
-          <div style={{ marginTop: 26 }}>
-            <div className="svc-eyebrow" style={{ margin: '0 0 12px' }}>Wat je meeneemt</div>
+          <div style={{ marginTop: 4 }}>
             {picks.map(p => (
               <div key={p.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', marginBottom: 10 }}>
                 <Thumb category="camera" name={p.name} />
@@ -171,7 +177,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
 
         {/* Na een eerste keuze eerst een knop — consistent met stap 1 */}
         {wants && picks.length > 0 && !searchOpen && !openProduct && (
-          <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 0' }}>
+          <div ref={picksRef} style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 0' }}>
             <button onClick={() => setSearchOpen(true)} className="tiw-add" style={btnGhost}>
               <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Nog een product toevoegen
             </button>

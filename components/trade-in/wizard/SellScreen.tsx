@@ -88,7 +88,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
     const item: SellItem = { id: editId ?? Date.now(), name: picked.name, category: picked.category, condition, shutter };
     update(s => ({ ...s, items: editId ? s.items.map(i => (i.id === editId ? item : i)) : [...s.items, item] }));
     reset(); setSearchOpen(false); setSheet(false);
-    scrollIntoViewSoon(listRef.current);
+    scrollIntoViewSoon(listRef);
   };
   const removeItem = (id: number) => update(s => ({ ...s, items: s.items.filter(i => i.id !== id) }));
   const editItem = (it: SellItem) => { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setQ(''); if (isMobile) setSheet(true); else window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -118,7 +118,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               {CONDITIONS.map(c => {
                 const sel = condition === c.label;
                 return (
-                  <button key={c.label} onClick={() => { const first = !condition; setCondition(c.label); if (first) scrollIntoViewSoon(wearRef.current); }} className="tiw-cond" style={{ borderColor: sel ? C.accent : C.border, background: sel ? C.accentSoft : '#fff', color: C.text, boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>
+                  <button key={c.label} onClick={() => { const first = !condition; setCondition(c.label); if (first) scrollIntoViewSoon(wearRef); }} className="tiw-cond" style={{ borderColor: sel ? C.accent : C.border, background: sel ? C.accentSoft : '#fff', color: C.text, boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>
                     <span style={{ fontWeight: 700 }}>{c.label}</span>
                     <span className="tiw-cond-short">{c.short}</span>
                   </button>
