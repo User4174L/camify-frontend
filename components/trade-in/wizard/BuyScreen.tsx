@@ -2,7 +2,7 @@
 
 /** Wizard scherm 2 — Wil je er iets voor terug? Optionele koopstap uit onze eigen voorraad. */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { BUY_PRODUCTS, type BuyProduct, type BuyVariant } from '@/data/trade-in-mock';
@@ -20,6 +20,8 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   const [openId, setOpenId] = useState<string | null>(null);
   /** Net als in stap 1: zodra er iets gekozen is verschijnt eerst een knop, niet meteen het zoekveld. */
   const [searchOpen, setSearchOpen] = useState(false);
+  /** Na "Ja" moet de zoeker in beeld springen; anders opent hij ongemerkt onder de vouw. */
+  const searchRef = useRef<HTMLDivElement>(null);
   /** null = nog niets gekozen, true = wil kopen, false = alleen verkopen */
   const [wants, setWants] = useState<boolean | null>(null);
 
@@ -48,7 +50,8 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   const choose = (yes: boolean) => {
     setWants(yes);
     update(s => ({ ...s, buySkipped: !yes, picks: yes ? s.picks : [] }));
-    if (!yes) { setQ(''); setOpenId(null); setSearchOpen(false); }
+    if (!yes) { setQ(''); setOpenId(null); setSearchOpen(false); return; }
+    requestAnimationFrame(() => searchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
   };
 
   return (
@@ -66,7 +69,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
         />
 
         {/* Keuze */}
-        <div className="tiw-choice">
+        <div className={wants === true ? 'tiw-choice tiw-choice--single' : 'tiw-choice'}>
           <button onClick={() => choose(true)} className={`tiw-choice-btn tiw-choice-btn--yes${wants === true ? ' is-on' : ''}`}>
             <span className="tiw-choice-ico">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><path d="M3 6h18M16 10a4 4 0 0 1-8 0" /></svg>
@@ -79,6 +82,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
             </span>
           </button>
+          {wants !== true && (
           <button onClick={() => choose(false)} className={`tiw-choice-btn tiw-choice-btn--no${wants === false ? ' is-on' : ''}`}>
             <span className="tiw-choice-ico">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
@@ -91,6 +95,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
             </span>
           </button>
+          )}
         </div>
 
         {/* Gekozen items */}
@@ -122,7 +127,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
 
         {/* Voorraadzoeker */}
         {wants && (picks.length === 0 || searchOpen || openProduct) && (
-          <div style={{ ...card, padding: 18, marginTop: picks.length ? 4 : 26 }}>
+          <div ref={searchRef} style={{ ...card, padding: 18, marginTop: picks.length ? 4 : 14 }}>
             {!openProduct ? (
               <>
                 <div style={{ fontWeight: 700, fontSize: 14, color: C.text, marginBottom: 10 }}>Zoek in onze voorraad</div>
@@ -181,6 +186,13 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
             )}
           </div>
         )}
+        {wants === true && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
+            <button onClick={() => choose(false)} style={{ background: 'none', border: 'none', padding: 0, fontSize: 13.5, color: C.sec, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit' }}>
+              Toch alleen verkopen
+            </button>
+          </div>
+        )}
       </Page>
 
       <StickyBar
@@ -196,6 +208,10 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
 
       <style>{`
         .tiw-choice{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+        /* Zodra "ja" gekozen is verdwijnt de tweede kaart en komt de zoeker er direct
+           onder — anders opent die op mobiel onder de vouw en zie je niet dat er iets
+           gebeurt. Terugweg staat als tekstlink onderaan. */
+        .tiw-choice--single{grid-template-columns:1fr}
         @media(max-width:760px){.tiw-choice{grid-template-columns:1fr}}
         .tiw-choice-btn{position:relative;display:flex;align-items:flex-start;gap:15px;text-align:left;border:2px solid transparent;border-radius:16px;padding:20px;cursor:pointer;font-family:inherit;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;overflow:hidden}
         .tiw-choice-btn:hover{transform:translateY(-2px)}

@@ -2,7 +2,7 @@
 
 /** Wizard scherm 1 — Wat verkoop je? Zoekbalk → kaart met conditie + shuttercount → item toevoegen. */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import ShutterHelp from '@/components/trade-in/ShutterHelp';
@@ -37,6 +37,8 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   const [showResults, setShowResults] = useState(false);
   const [shutterHelp, setShutterHelp] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false); // na eerste item: zoekbalk pas na '+ Nog een product'
+  /** Na toevoegen springt de kaart weg; zonder dit blijf je op mobiel onderaan een leeg scherm staan. */
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ready || !state.editingId) return;
@@ -75,6 +77,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
     const item: SellItem = { id: editId ?? Date.now(), name: picked.name, category: picked.category, condition, shutter };
     update(s => ({ ...s, items: editId ? s.items.map(i => (i.id === editId ? item : i)) : [...s.items, item] }));
     reset(); setSearchOpen(false);
+    requestAnimationFrame(() => listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
   };
   const removeItem = (id: number) => update(s => ({ ...s, items: s.items.filter(i => i.id !== id) }));
   const editItem = (it: SellItem) => { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setQ(''); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -97,6 +100,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
         />
 
         {/* Toegevoegde items */}
+        <div ref={listRef}>
         {visibleItems.map(it => (
           <div key={it.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', marginBottom: 10 }}>
             <Thumb category={it.category} name={it.name} />
@@ -118,6 +122,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
             <button onClick={() => setSearchOpen(true)} className="tiw-add" style={btnGhost}><span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Nog een product toevoegen</button>
           </div>
         )}
+        </div>
         {!picked && (visibleItems.length === 0 || searchOpen) && (
           <div style={{ position: 'relative', margin: visibleItems.length ? '14px 0 0' : 0 }}>
             <input
