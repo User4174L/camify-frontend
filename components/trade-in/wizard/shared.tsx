@@ -377,7 +377,7 @@ export function Page({ children, width = 880 }: { children: React.ReactNode; wid
       <div style={{ maxWidth: width, margin: '0 auto', padding: '0 24px' }}>{children}</div>
       <style>{`
         .tiw-page{padding:32px 0 88px}
-        @media(max-width:760px){.tiw-page{padding:8px 0 72px}}
+        @media(max-width:760px){.tiw-page{padding:8px 0 150px}}
         .tiw-add{transition:background .15s ease,box-shadow .15s ease,transform .15s ease}
         .tiw-add:not(:disabled):hover{background:#FFF4EE;box-shadow:0 5px 16px rgba(232,105,42,.2);transform:translateY(-1px)}
       `}</style>
@@ -423,7 +423,7 @@ export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880
   add?: boolean;
 }) {
   return (
-    <div style={{ position: 'sticky', bottom: 0, background: '#fff', borderTop: `1px solid ${C.border}`, padding: '14px 24px', zIndex: 15, boxShadow: '0 -6px 20px rgba(30,33,51,.05)' }}>
+    <div className="tiw-barwrap">
       <div className="tiw-bar" style={{ maxWidth: width }}>
         <div className="tiw-bar-note">{note}</div>
         <div className="tiw-bar-actions">
@@ -432,6 +432,12 @@ export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880
         </div>
       </div>
       <style>{`
+        .tiw-barwrap{position:sticky;bottom:0;background:#fff;border-top:1px solid ${C.border};padding:14px 24px;z-index:15;box-shadow:0 -6px 20px rgba(30,33,51,.05)}
+        @media(max-width:760px){
+          /* Sticky plakt pas onderaan als de pagina langer is dan het scherm; op korte
+             stappen zweeft hij dan middenin. Vastzetten dus. */
+          .tiw-barwrap{position:fixed;left:0;right:0;bottom:0;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+        }
         .tiw-bar{margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
         .tiw-bar-note{font-size:13.5px;color:${C.sec}}
         .tiw-bar-actions{display:flex;align-items:center;gap:12px}
