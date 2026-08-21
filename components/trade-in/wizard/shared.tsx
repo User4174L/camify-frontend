@@ -207,7 +207,7 @@ export type Step = 1 | 2 | 3 | 4;
  * Lichte foto-header in de stijl van Quality & grading, met een subtiele
  * stappenindicator. Afgeronde stappen zijn klikbaar terug.
  */
-export function WizardBanner({ variant, step }: { variant: Variant; step: Step }) {
+export function WizardBanner({ variant, step, back }: { variant: Variant; step: Step; back?: string }) {
   const b = base(variant);
   const steps: { label: string; href: string }[] = [
     { label: 'Wat verkoop je', href: b },
@@ -223,11 +223,16 @@ export function WizardBanner({ variant, step }: { variant: Variant; step: Step }
         <div className="svc-header__inner">
           <div className="tiw-only-desktop"><Breadcrumb items={[{ label: 'Inruilen & verkopen' }]} /></div>
           <div className="svc-eyebrow tiw-only-desktop">Inruilen &amp; verkopen</div>
-          <h1 className="svc-title tiw-title">Verkoop je gear <span style={{ color: C.accent }}>snel en eerlijk</span></h1>
+          <h1 className={`svc-title tiw-title${step > 1 ? ' tiw-title--step' : ''}`}>Verkoop je gear <span style={{ color: C.accent }}>snel en eerlijk</span></h1>
 
           {/* Mobiel: één regel in plaats van vier pills — anders staat het zoekveld onder de vouw */}
-          <div className="tiw-steps-mini" aria-hidden="true">
-            <span className="tiw-mini-dots">
+          <div className="tiw-steps-mini">
+            {back && (
+              <Link href={back} className="tiw-mini-back" aria-label="Vorige stap">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+              </Link>
+            )}
+            <span className="tiw-mini-dots" aria-hidden="true">
               {steps.map((x, i) => {
                 const n = (i + 1) as Step;
                 return <span key={x.label} className={`tiw-mini-dot${n === step ? ' is-active' : ''}${n < step ? ' is-done' : ''}`} />;
@@ -268,6 +273,9 @@ export function WizardBanner({ variant, step }: { variant: Variant; step: Step }
           .tiw-header .svc-header__inner{padding-top:18px;padding-bottom:16px}
           .tiw-only-desktop{display:none}
           .tiw-header .tiw-title{font-size:23px;line-height:1.15;margin:0}
+          /* Vanaf stap 2 ben je al binnen: de wervende kop kost dan alleen ruimte. */
+          .tiw-header .tiw-title--step{display:none}
+          .tiw-header .tiw-title--step + .tiw-steps-mini{margin-top:0}
           .tiw-steps-full{display:none !important}
           .tiw-steps-mini{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
           .tiw-mini-dots{display:inline-flex;gap:6px}
@@ -276,6 +284,7 @@ export function WizardBanner({ variant, step }: { variant: Variant; step: Step }
           .tiw-mini-dot.is-active{background:#E8692A;width:22px;border-radius:999px}
           .tiw-mini-label{font-size:12.5px;color:#6B6D80}
           .tiw-mini-label strong{color:#1E2133;font-weight:700}
+          .tiw-mini-back{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin:-4px 0 -4px -6px;border-radius:50%;color:#1E2133;text-decoration:none;flex-shrink:0}
         }
       `}</style>
     </div>
@@ -290,7 +299,7 @@ export function Page({ children, width = 880 }: { children: React.ReactNode; wid
       <div style={{ maxWidth: width, margin: '0 auto', padding: '0 24px' }}>{children}</div>
       <style>{`
         .tiw-page{padding:32px 0 88px}
-        @media(max-width:760px){.tiw-page{padding:18px 0 72px}}
+        @media(max-width:760px){.tiw-page{padding:8px 0 72px}}
         .tiw-add{transition:background .15s ease,box-shadow .15s ease,transform .15s ease}
         .tiw-add:not(:disabled):hover{background:#FFF4EE;box-shadow:0 5px 16px rgba(232,105,42,.2);transform:translateY(-1px)}
       `}</style>
@@ -308,7 +317,7 @@ export function PageTitle({ title, sub }: { title: string; sub?: string }) {
         .tiw-page-sub{color:${C.sec};margin:6px 0 22px;font-size:15px;line-height:1.6}
         @media(max-width:760px){
           .tiw-page-title{font-size:22px;margin:2px 0 0}
-          .tiw-page-sub{font-size:14px;margin:5px 0 16px;line-height:1.5}
+          .tiw-page-sub{font-size:14px;margin:4px 0 12px;line-height:1.45}
         }
       `}</style>
     </>
@@ -316,7 +325,16 @@ export function PageTitle({ title, sub }: { title: string; sub?: string }) {
 }
 
 export function BackLink({ href, label }: { href: string; label: string }) {
-  return <Link href={href} style={{ fontSize: 13.5, color: C.sec, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>← {label}</Link>;
+  return (
+    <>
+      <Link href={href} className="tiw-backlink">← {label}</Link>
+      <style>{`
+        .tiw-backlink{font-size:13.5px;color:${C.sec};text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+        /* Op mobiel staat de terugweg als pijl in de stapregel — scheelt 30px. */
+        @media(max-width:760px){.tiw-backlink{display:none}}
+      `}</style>
+    </>
+  );
 }
 
 /** Sticky onderbalk met de enige primaire CTA van het scherm. */

@@ -99,7 +99,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
   return (
     <>
       <VersionSwitch active={variant} />
-      <WizardBanner variant={variant} step={4} />
+      <WizardBanner variant={variant} step={4} back={`${base(variant)}/gegevens`} />
 
       <Page width={1080}>
         {loading ? (

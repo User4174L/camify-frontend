@@ -26,7 +26,7 @@ export default function ContactScreen({ variant }: { variant: Variant }) {
   return (
     <>
       <VersionSwitch active={variant} />
-      <WizardBanner variant={variant} step={3} />
+      <WizardBanner variant={variant} step={3} back={`${base(variant)}/kopen`} />
 
       <Page width={680}>
         <BackLink href={`${base(variant)}/kopen`} label="Terug" />

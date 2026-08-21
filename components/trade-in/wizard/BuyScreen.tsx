@@ -57,7 +57,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   return (
     <>
       <VersionSwitch active={variant} />
-      <WizardBanner variant={variant} step={2} />
+      <WizardBanner variant={variant} step={2} back={base(variant)} />
 
       <Page>
         <BackLink href={base(variant)} label="Terug naar je items" />
@@ -74,7 +74,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
             </span>
             <span className="tiw-choice-text">
               <strong>Ja, kies iets uit onze voorraad</strong>
-              <span>Zoek direct in ruim 2.000 gecontroleerde items, met garantie.</span>
+              <span>Ruim 2.000 gecontroleerde items, met garantie.</span>
             </span>
             <span className="tiw-choice-check" aria-hidden="true">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
@@ -251,7 +251,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
 
         @media(max-width:760px){
           /* Compacter, zodat beide opties zonder scrollen in beeld komen. */
-          .tiw-choice{grid-template-columns:1fr;gap:10px}
+          .tiw-choice{grid-template-columns:1fr;gap:8px}
           .tiw-choice-btn{padding:14px;gap:12px;border-radius:14px}
           .tiw-choice-btn strong{font-size:15px;margin-bottom:2px}
           .tiw-choice-text span{font-size:12.5px;line-height:1.4}
