@@ -8,7 +8,7 @@ import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { BUY_PRODUCTS, type BuyProduct, type BuyVariant } from '@/data/trade-in-mock';
 import {
   useWizardState, WizardBanner, Page, PageTitle, StickyBar, BackLink, IconBtn,
-  C, input, card, btnGhost, fmt, base, hasBid, Thumb, type Variant,
+  C, input, card, btnGhost, fmt, base, hasBid, Thumb, scrollIntoViewSoon, type Variant,
 } from './shared';
 
 export default function BuyScreen({ variant }: { variant: Variant }) {
@@ -51,7 +51,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
     setWants(yes);
     update(s => ({ ...s, buySkipped: !yes, picks: yes ? s.picks : [] }));
     if (!yes) { setQ(''); setOpenId(null); setSearchOpen(false); return; }
-    requestAnimationFrame(() => searchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    scrollIntoViewSoon(searchRef.current);
   };
 
   return (

@@ -9,7 +9,7 @@ import ShutterHelp from '@/components/trade-in/ShutterHelp';
 import { SELL_PRODUCTS, SHUTTER_RANGES, OPERATION_HOURS_RANGES } from '@/data/trade-in-mock';
 import {
   useWizardState, WizardBanner, Page, PageTitle, StickyBar, Thumb, IconBtn,
-  CONDITIONS, C, input, card, btnGhost, base, hasBid, wearLine, type SellItem, type Variant,
+  CONDITIONS, C, input, card, btnGhost, base, hasBid, wearLine, scrollIntoViewSoon, type SellItem, type Variant,
 } from './shared';
 
 const DEFAULT_SHUTTER = SHUTTER_RANGES[0].label;          // "Tot 25.000"
@@ -39,6 +39,9 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   const [searchOpen, setSearchOpen] = useState(false); // na eerste item: zoekbalk pas na '+ Nog een product'
   /** Na toevoegen springt de kaart weg; zonder dit blijf je op mobiel onderaan een leeg scherm staan. */
   const listRef = useRef<HTMLDivElement>(null);
+  /** Na de eerste conditiekeuze de vervolgvraag in beeld brengen; die staat op
+   *  mobiel onder de vouw en wordt anders overgeslagen. */
+  const wearRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ready || !state.editingId) return;
@@ -77,7 +80,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
     const item: SellItem = { id: editId ?? Date.now(), name: picked.name, category: picked.category, condition, shutter };
     update(s => ({ ...s, items: editId ? s.items.map(i => (i.id === editId ? item : i)) : [...s.items, item] }));
     reset(); setSearchOpen(false);
-    requestAnimationFrame(() => listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    scrollIntoViewSoon(listRef.current);
   };
   const removeItem = (id: number) => update(s => ({ ...s, items: s.items.filter(i => i.id !== id) }));
   const editItem = (it: SellItem) => { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setQ(''); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -174,7 +177,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               {CONDITIONS.map(c => {
                 const sel = condition === c.label;
                 return (
-                  <button key={c.label} onClick={() => setCondition(c.label)} className="tiw-cond" style={{ borderColor: sel ? C.accent : C.border, background: sel ? C.accentSoft : '#fff', color: C.text, boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>
+                  <button key={c.label} onClick={() => { const first = !condition; setCondition(c.label); if (first) scrollIntoViewSoon(wearRef.current); }} className="tiw-cond" style={{ borderColor: sel ? C.accent : C.border, background: sel ? C.accentSoft : '#fff', color: C.text, boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>
                     <span style={{ fontWeight: 700 }}>{c.label}</span>
                     <span className="tiw-cond-short">{c.short}</span>
                   </button>
@@ -194,7 +197,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
             )}
 
             {hasWear && (
-              <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
+              <div ref={wearRef} style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
                   <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{wear.title}</span>
                   <span style={{ fontSize: 12.5, color: C.sec }}>{wear.hint}</span>
@@ -211,23 +214,40 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               </div>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginTop: 20 }}>
-              <button disabled={!canAdd} onClick={addItem} className="tiw-add" style={{ ...btnGhost, opacity: canAdd ? 1 : 0.45, cursor: canAdd ? 'pointer' : 'default' }}>
-                {editId ? 'Wijziging opslaan' : <>Voeg dit item toe <span style={{ fontSize: 18, lineHeight: 1 }}>+</span></>}
-              </button>
-            </div>
           </div>
         )}
       </Page>
 
-      <StickyBar
-        note={items.length
-          ? <><strong style={{ color: C.text }}>{items.length} item{items.length > 1 ? 's' : ''}</strong> — geen verkoopkosten, gratis verzekerd verzenden.</>
-          : 'Voeg minimaal één item toe om verder te gaan.'}
-        cta="Verder"
-        disabled={!items.length}
-        onClick={() => router.push(`${base(variant)}/kopen`)}
-      />
+      {/* Eén knop onderin die meeloopt met wat je nu moet doen: eerst het item
+          afronden, daarna pas de volgende stap. Anders staat "Voeg dit item toe"
+          op mobiel onder de vouw terwijl "Verder" grijs is, en weet niemand wat te doen. */}
+      {picked ? (
+        <StickyBar
+          accent
+          note={!condition
+            ? 'Kies hierboven de conditie.'
+            : hasWear
+              ? <>Klopt de {wear.title.toLowerCase()}? Dan kun je dit item toevoegen.</>
+              : <>Klaar — voeg dit item toe aan je aanvraag.</>}
+          cta={editId ? 'Wijziging opslaan' : 'Voeg dit item toe'}
+          disabled={!canAdd}
+          onClick={addItem}
+          secondary={visibleItems.length > 0 || editId ? (
+            <button onClick={reset} style={{ background: 'none', border: 'none', padding: 0, fontSize: 13.5, color: C.sec, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit' }}>
+              Annuleren
+            </button>
+          ) : undefined}
+        />
+      ) : (
+        <StickyBar
+          note={items.length
+            ? <><strong style={{ color: C.text }}>{items.length} item{items.length > 1 ? 's' : ''}</strong> — geen verkoopkosten, gratis verzekerd verzenden.</>
+            : 'Voeg minimaal één item toe om verder te gaan.'}
+          cta="Verder"
+          disabled={!items.length}
+          onClick={() => router.push(`${base(variant)}/kopen`)}
+        />
+      )}
 
       <style>{`
         .tiw-row{display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer}

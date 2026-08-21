@@ -160,6 +160,15 @@ export function wearLine(item: { category: string; shutter?: string }) {
   );
 }
 
+/** Scroll een element in beeld nádat de nieuwe layout staat. Eén requestAnimationFrame
+ *  is te vroeg: de kaart is dan nog niet weg en je schiet voorbij het doel. */
+export function scrollIntoViewSoon(el: HTMLElement | null) {
+  if (!el) return;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }));
+}
+
 /* ── Kleine componenten ── */
 export function Thumb({ category, name, size = 44 }: { category: string; name?: string; size?: number }) {
   const fallback = category === 'lens' ? '/images/placeholder-lens.svg' : '/images/placeholder-camera.svg';
@@ -271,8 +280,10 @@ export function BackLink({ href, label }: { href: string; label: string }) {
 }
 
 /** Sticky onderbalk met de enige primaire CTA van het scherm. */
-export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880 }: {
+export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880, accent = false }: {
   note: React.ReactNode; cta: string; disabled?: boolean; onClick: () => void; secondary?: React.ReactNode; width?: number;
+  /** Oranje in plaats van groen: een tussenstap afronden, niet de stap zelf. */
+  accent?: boolean;
 }) {
   return (
     <div style={{ position: 'sticky', bottom: 0, background: '#fff', borderTop: `1px solid ${C.border}`, padding: '14px 24px', zIndex: 15, boxShadow: '0 -6px 20px rgba(30,33,51,.05)' }}>
@@ -280,7 +291,7 @@ export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880
         <div style={{ fontSize: 13.5, color: C.sec }}>{note}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {secondary}
-          <button disabled={disabled} onClick={onClick} style={{ ...btnCta, opacity: disabled ? 0.45 : 1, cursor: disabled ? 'default' : 'pointer', padding: '15px 30px' }}>{cta} →</button>
+          <button disabled={disabled} onClick={onClick} style={{ ...(accent ? btnPrimary : btnCta), opacity: disabled ? 0.45 : 1, cursor: disabled ? 'default' : 'pointer', padding: '15px 30px' }}>{cta} {accent ? '+' : '→'}</button>
         </div>
       </div>
     </div>
