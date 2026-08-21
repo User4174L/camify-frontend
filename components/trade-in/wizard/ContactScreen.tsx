@@ -70,14 +70,19 @@ export default function ContactScreen({ variant }: { variant: Variant }) {
               </div>
             </div>
           )}
+          {!ok && (
+            <p style={{ margin: '14px 0 0', fontSize: 13, color: C.sec }}>
+              Vul je voornaam, achternaam en e-mailadres in om verder te gaan.
+            </p>
+          )}
         </div>
       </Page>
 
       <StickyBar
         width={680}
-        note={ok
-          ? (hasBid(variant) ? 'Alles compleet — we rekenen je bod uit.' : <>Je aanvraag is <strong style={{ color: C.text }}>nog niet verstuurd</strong> — je controleert hem eerst.</>)
-          : 'Vul je naam en e-mailadres in om verder te gaan.'}
+        note={hasBid(variant)
+          ? 'Hierna rekenen we je bod uit.'
+          : <>Je aanvraag is <strong style={{ color: C.text }}>nog niet verstuurd</strong> — je controleert hem eerst.</>}
         cta={hasBid(variant) ? 'Ontvang je bod' : 'Naar het overzicht'}
         disabled={!ok}
         onClick={() => router.push(`${base(variant)}/${lastPath(variant)}`)}

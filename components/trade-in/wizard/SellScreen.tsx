@@ -171,6 +171,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
                 return (
                   <button key={c.label} onClick={() => setCondition(c.label)} className="tiw-cond" style={{ borderColor: sel ? C.accent : C.border, background: sel ? C.accentSoft : '#fff', color: C.text, boxShadow: sel ? `inset 0 0 0 1px ${C.accent}` : 'none' }}>
                     <span style={{ fontWeight: 700 }}>{c.label}</span>
+                    <span className="tiw-cond-short">{c.short}</span>
                   </button>
                 );
               })}
@@ -227,9 +228,18 @@ export default function SellScreen({ variant }: { variant: Variant }) {
         .tiw-row{display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer}
         .tiw-row:hover{background:#FFFBF7}
         .tiw-cond-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-        @media(max-width:760px){.tiw-cond-grid{grid-template-columns:repeat(2,1fr)}}
         .tiw-cond{border:1.5px solid #EEEEF2;border-radius:12px;padding:14px 8px;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center;line-height:1.2}
         .tiw-cond:hover{border-color:#E8692A}
+        /* Desktop: vijf kolommen, label is genoeg. De omschrijving staat in "Help me kiezen". */
+        .tiw-cond-short{display:none}
+        /* Mobiel: één kolom met de omschrijving erbij. Vijf knoppen in twee kolommen
+           breekt de lange labels en laat de vijfde alleen staan; een dropdown (zoals MPB)
+           verbergt juist de belangrijkste vraag van het scherm. */
+        @media(max-width:760px){
+          .tiw-cond-grid{grid-template-columns:1fr;gap:6px}
+          .tiw-cond{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px 14px}
+          .tiw-cond-short{display:block;font-size:12.5px;color:#6B6D80;font-weight:500}
+        }
       `}</style>
     </>
   );

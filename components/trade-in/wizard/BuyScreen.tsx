@@ -61,8 +61,8 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
         <PageTitle
           title="Wil je er iets voor terug?"
           sub={hasBid(variant)
-            ? 'Kies iets uit onze voorraad en we verrekenen het direct met je bod. Liever alleen verkopen? Ook prima.'
-            : 'Kies iets uit onze voorraad en we verrekenen het met het bod dat je van ons krijgt. Liever alleen verkopen? Ook prima.'}
+            ? 'We verrekenen het direct met je bod. Je zit nergens aan vast — we leggen het voor je apart en je beslist pas als je het bod accepteert.'
+            : 'We verrekenen het met het bod dat je van ons krijgt. Je zit nergens aan vast — we leggen het voor je apart en je beslist pas als je het bod accepteert.'}
         />
 
         {/* Keuze */}
@@ -72,8 +72,8 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><path d="M3 6h18M16 10a4 4 0 0 1-8 0" /></svg>
             </span>
             <span className="tiw-choice-text">
-              <strong>Ja, laat zien wat jullie hebben</strong>
-              <span>Ruim 2.000 gecontroleerde tweedehands items, met garantie.</span>
+              <strong>Ja, kies iets uit onze voorraad</strong>
+              <span>Zoek direct in ruim 2.000 gecontroleerde items, met garantie.</span>
             </span>
             <span className="tiw-choice-check" aria-hidden="true">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
@@ -179,9 +179,6 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
                 })}
               </>
             )}
-            <div style={{ marginTop: 12, fontSize: 12.5, color: C.sec, lineHeight: 1.6 }}>
-              Je zit nergens aan vast: we leggen het voor je apart en je beslist definitief zodra je {hasBid(variant) ? 'het bod' : 'ons bod'} accepteert.
-            </div>
           </div>
         )}
       </Page>
@@ -190,7 +187,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
         note={picks.length
           ? <><strong style={{ color: C.text }}>{picks.length} item{picks.length > 1 ? 's' : ''}</strong> gekozen — {fmt(buyTotal)} {hasBid(variant) ? 'wordt verrekend met je bod' : 'verrekenen we met het bod dat je krijgt'}.</>
           : wants === false ? 'Prima — je krijgt het bedrag op je rekening.'
-            : wants ? 'Zoek iets uit onze voorraad, of ga gewoon verder — je kunt het later nog toevoegen.'
+            : wants ? 'Je kunt dit later ook nog toevoegen.'
             : 'Kies hierboven of je iets wilt terugkopen.'}
         cta="Verder"
         disabled={wants === null}
