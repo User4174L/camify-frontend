@@ -111,10 +111,57 @@ export const btnLight: React.CSSProperties = { ...btnGhost, border: `1px solid $
 export const card: React.CSSProperties = { background: '#fff', borderRadius: 14, padding: 20, border: `1px solid ${C.border}` };
 export const fmt = (n: number) => `€ ${n.toLocaleString('nl-NL')}`;
 
+/* ── Productfoto's ──
+ * Mockdata: waar we een echte foto hebben koppelen we die op naam, de rest krijgt
+ * een vaste foto uit de pool van hetzelfde type. Zo heeft elk zoekresultaat beeld
+ * en blijft dezelfde regel altijd dezelfde foto houden. */
+const PHOTO_BY_NAME: Record<string, string> = {
+  'sony a7 iv': '/images/sony-a7-iv.jpg',
+  'sony a7r v': '/images/sony-a7r-v.jpg',
+  'sony a1': '/images/sony-a1.jpg',
+  'nikon z8': '/images/nikon-z8.jpg',
+  'nikon zf': '/images/nikon-zf.jpg',
+  'canon eos r5': '/images/canon-r5.jpg',
+  'fujifilm x-t5': '/images/fujifilm-x-t4.jpg',
+  'sony fe 24-70mm f/2.8 gm ii': '/images/sony-fe-24-70mm-f28-gm.jpg',
+  'sony fe 70-200mm f/2.8 gm ii': '/images/sony-fe-70-200mm-f28-gm-oss-ii.jpg',
+  'canon rf 24-70mm f/2.8l is usm': '/images/canon-rf-24-70mm-f28-l-is-usm.jpg',
+  'canon rf 70-200mm f/2.8l is usm': '/images/lenses/canon-rf-70-200-f28.webp',
+};
+
+const POOL: Record<string, string[]> = {
+  camera: ['/images/canon-r5.jpg', '/images/nikon-z8.jpg', '/images/nikon-zf.jpg', '/images/sony-a1.jpg', '/images/sony-a7-iv.jpg', '/images/sony-a7r-v.jpg', '/images/fujifilm-x-t4.jpg', '/images/hasselblad-x2d-100c.jpg'],
+  lens: ['/images/lenses/canon-rf-24-105-f4.webp', '/images/lenses/canon-rf-28-70-f2.webp', '/images/lenses/canon-rf-70-200-f28.webp', '/images/lenses/canon-rf-200-800.webp', '/images/lenses/sony-fe-24-105-f4.webp', '/images/lenses/sony-fe-100-400-gm.webp', '/images/lenses/leica-50-f24.webp', '/images/lenses/leica-90-f2.webp', '/images/lenses/zeiss-batis-40-f2.webp'],
+  accessory: ['/images/upsell-battery.png', '/images/upsell-sd-card.png', '/images/upsell-adapter.png'],
+};
+
+/** Stabiele keuze uit de pool: dezelfde naam levert altijd dezelfde foto. */
+export function photoFor(name: string, category?: string): string {
+  const key = name.trim().toLowerCase();
+  if (PHOTO_BY_NAME[key]) return PHOTO_BY_NAME[key];
+
+  const cat = (category ?? '').toLowerCase();
+  const pool = POOL[cat] ?? (/lens|mm|f\/|objectief/.test(key) ? POOL.lens : POOL.camera);
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+  return pool[hash % pool.length];
+}
+
 /* ── Kleine componenten ── */
-export function Thumb({ category, size = 44 }: { category: string; size?: number }) {
-  const src = category === 'lens' ? '/images/placeholder-lens.svg' : '/images/placeholder-camera.svg';
-  return <img src={src} alt="" width={size} height={size} style={{ width: size, height: size, objectFit: 'contain', borderRadius: 8, background: C.tint, flexShrink: 0 }} />;
+export function Thumb({ category, name, size = 44 }: { category: string; name?: string; size?: number }) {
+  const fallback = category === 'lens' ? '/images/placeholder-lens.svg' : '/images/placeholder-camera.svg';
+  const src = name ? photoFor(name, category) : fallback;
+  return (
+    <img
+      src={src}
+      alt=""
+      width={size}
+      height={size}
+      loading="lazy"
+      onError={e => { (e.currentTarget as HTMLImageElement).src = fallback; }}
+      style={{ width: size, height: size, objectFit: 'cover', borderRadius: 8, background: C.tint, flexShrink: 0 }}
+    />
+  );
 }
 
 export function IconBtn({ onClick, title, kind }: { onClick: () => void; title: string; kind: 'edit' | 'trash' | 'close' }) {

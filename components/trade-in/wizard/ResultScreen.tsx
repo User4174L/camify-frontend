@@ -167,6 +167,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                     <>
                       {picks.map(p => (
                         <div key={p.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', marginBottom: 10 }}>
+                          <Thumb category="camera" name={p.name} />
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontWeight: 700, fontSize: 15, color: C.text }}>{p.name}</div>
                             <div style={{ fontSize: 13, color: C.sec }}>{p.condition} · SKU {p.sku}{p.shutterCount !== undefined ? ` · ${p.shutterCount.toLocaleString('nl-NL')} clicks` : ''} · incl. {p.accessories.join(', ')}</div>

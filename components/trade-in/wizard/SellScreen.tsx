@@ -89,7 +89,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
         {/* Toegevoegde items */}
         {visibleItems.map(it => (
           <div key={it.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', marginBottom: 10 }}>
-            <Thumb category={it.category} />
+            <Thumb category={it.category} name={it.name} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 700, fontSize: 15, color: C.text }}>{it.name}</div>
               <div style={{ fontSize: 13.5, color: C.sec, marginTop: 2 }}>
@@ -127,7 +127,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               <div style={{ position: 'absolute', left: 8, right: 8, top: 'calc(100% + 8px)', zIndex: 20, background: '#fff', borderRadius: 14, boxShadow: '0 12px 32px rgba(45,48,71,.16)', overflow: 'hidden' }}>
                 {results.length ? results.map((p, i) => (
                   <div key={p.name} onMouseDown={() => pick(p)} className="tiw-row" style={{ borderBottom: i < results.length - 1 ? `1px solid ${C.border}` : 'none' }}>
-                    <Thumb category={p.category} size={40} />
+                    <Thumb category={p.category} name={p.name} size={40} />
                     <span style={{ flex: 1, fontWeight: 600, fontSize: 14.5, color: C.text }}>{p.name}</span>
                   </div>
                 )) : (
@@ -144,7 +144,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
         {picked && (
           <div style={{ ...card, padding: 22, marginTop: visibleItems.length ? 14 : 0, marginBottom: 12, border: `1.5px solid ${C.accent}` }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Thumb category={picked.category} size={44} />
+              <Thumb category={picked.category} name={picked.name} size={44} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: 16, color: C.text }}>{picked.name}</div>
               </div>

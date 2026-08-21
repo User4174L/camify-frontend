@@ -8,7 +8,7 @@ import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { BUY_PRODUCTS, type BuyProduct, type BuyVariant } from '@/data/trade-in-mock';
 import {
   useWizardState, WizardBanner, Page, PageTitle, StickyBar, BackLink, IconBtn,
-  C, input, card, btnGhost, fmt, base, hasBid, type Variant,
+  C, input, card, btnGhost, fmt, base, hasBid, Thumb, type Variant,
 } from './shared';
 
 export default function BuyScreen({ variant }: { variant: Variant }) {
@@ -99,6 +99,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
             <div className="svc-eyebrow" style={{ margin: '0 0 12px' }}>Wat je meeneemt</div>
             {picks.map(p => (
               <div key={p.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', marginBottom: 10 }}>
+                <Thumb category="camera" name={p.name} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: 15, color: C.text }}>{p.name}</div>
                   <div style={{ fontSize: 13, color: C.sec, marginTop: 2 }}>{p.condition} · SKU {p.sku}{p.shutterCount !== undefined ? ` · ${p.shutterCount.toLocaleString('nl-NL')} clicks` : ''} · incl. {p.accessories.join(', ')}</div>
@@ -132,6 +133,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
                       const prices = p.variants.map(v => v.price);
                       return (
                         <div key={p.id} onClick={() => setOpenId(p.id)} className="tiw-hit" style={{ borderBottom: i < results.length - 1 ? `1px solid ${C.border}` : 'none' }}>
+                          <Thumb category={p.category.toLowerCase().includes('lenzen') ? 'lens' : 'camera'} name={p.name} size={40} />
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontWeight: 600, fontSize: 14, color: C.text }}>{p.name}</div>
                             <div style={{ fontSize: 12, color: C.sec }}>{p.category}</div>
@@ -165,6 +167,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
                       onClick={() => !chosen && addPick(openProduct, v)}
                       className={chosen ? 'tiw-var is-chosen' : 'tiw-var'}
                     >
+                      <Thumb category={openProduct.category.toLowerCase().includes('lenzen') ? 'lens' : 'camera'} name={openProduct.name} size={40} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13.5, color: C.text }}><strong>{v.condition}</strong> <span style={{ color: C.sec }}>· SKU {v.sku}{v.shutterCount !== undefined ? ` · ${v.shutterCount.toLocaleString('nl-NL')} clicks` : ''}</span></div>
                         <div style={{ fontSize: 12, color: C.sec, marginTop: 3 }}>Incl. {v.accessories.join(', ')}</div>
