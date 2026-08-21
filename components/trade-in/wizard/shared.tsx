@@ -280,10 +280,11 @@ export function BackLink({ href, label }: { href: string; label: string }) {
 }
 
 /** Sticky onderbalk met de enige primaire CTA van het scherm. */
-export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880, accent = false }: {
+export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880, add = false }: {
   note: React.ReactNode; cta: string; disabled?: boolean; onClick: () => void; secondary?: React.ReactNode; width?: number;
-  /** Oranje in plaats van groen: een tussenstap afronden, niet de stap zelf. */
-  accent?: boolean;
+  /** Toevoeg-actie: plusje in plaats van pijl. Kleur blijft groen — dat is de knop
+   *  die je verder helpt, en één vaste CTA-kleur leest rustiger. */
+  add?: boolean;
 }) {
   return (
     <div style={{ position: 'sticky', bottom: 0, background: '#fff', borderTop: `1px solid ${C.border}`, padding: '14px 24px', zIndex: 15, boxShadow: '0 -6px 20px rgba(30,33,51,.05)' }}>
@@ -291,7 +292,7 @@ export function StickyBar({ note, cta, disabled, onClick, secondary, width = 880
         <div style={{ fontSize: 13.5, color: C.sec }}>{note}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {secondary}
-          <button disabled={disabled} onClick={onClick} style={{ ...(accent ? btnPrimary : btnCta), opacity: disabled ? 0.45 : 1, cursor: disabled ? 'default' : 'pointer', padding: '15px 30px' }}>{cta} {accent ? '+' : '→'}</button>
+          <button disabled={disabled} onClick={onClick} style={{ ...btnCta, opacity: disabled ? 0.45 : 1, cursor: disabled ? 'default' : 'pointer', padding: '15px 30px' }}>{cta} {add ? '+' : '→'}</button>
         </div>
       </div>
     </div>

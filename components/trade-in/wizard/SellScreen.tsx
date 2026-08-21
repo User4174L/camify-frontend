@@ -223,7 +223,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
           op mobiel onder de vouw terwijl "Verder" grijs is, en weet niemand wat te doen. */}
       {picked ? (
         <StickyBar
-          accent
+          add
           note={!condition
             ? 'Kies hierboven de conditie.'
             : hasWear
