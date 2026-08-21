@@ -8,7 +8,7 @@ import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { BUY_PRODUCTS, type BuyProduct, type BuyVariant } from '@/data/trade-in-mock';
 import {
   useWizardState, WizardBanner, Page, PageTitle, StickyBar, BackLink, IconBtn,
-  C, input, card, fmt, base, hasBid, type Variant,
+  C, input, card, btnGhost, fmt, base, hasBid, type Variant,
 } from './shared';
 
 export default function BuyScreen({ variant }: { variant: Variant }) {
@@ -18,6 +18,8 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   const [q, setQ] = useState('');
   /** Aangeklikt product: dan tonen we alléén de varianten daarvan, niet de hele resultatenlijst. */
   const [openId, setOpenId] = useState<string | null>(null);
+  /** Net als in stap 1: zodra er iets gekozen is verschijnt eerst een knop, niet meteen het zoekveld. */
+  const [searchOpen, setSearchOpen] = useState(false);
   /** null = nog niets gekozen, true = wil kopen, false = alleen verkopen */
   const [wants, setWants] = useState<boolean | null>(null);
 
@@ -39,14 +41,14 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
   /** Variant kiezen = meteen toevoegen en de zoeker sluiten — geen open dropdown met meervoudige selectie. */
   const addPick = (p: BuyProduct, v: BuyVariant) => {
     update(s => (s.picks.some(x => x.id === v.id) ? s : { ...s, picks: [...s.picks, { ...v, name: p.name, productId: p.id }] }));
-    setOpenId(null); setQ('');
+    setOpenId(null); setQ(''); setSearchOpen(false);
   };
   const buyTotal = picks.reduce((s, p) => s + p.price, 0);
 
   const choose = (yes: boolean) => {
     setWants(yes);
     update(s => ({ ...s, buySkipped: !yes, picks: yes ? s.picks : [] }));
-    if (!yes) { setQ(''); setOpenId(null); }
+    if (!yes) { setQ(''); setOpenId(null); setSearchOpen(false); }
   };
 
   return (
@@ -108,8 +110,17 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
           </div>
         )}
 
+        {/* Na een eerste keuze eerst een knop — consistent met stap 1 */}
+        {wants && picks.length > 0 && !searchOpen && !openProduct && (
+          <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 0' }}>
+            <button onClick={() => setSearchOpen(true)} className="tiw-add" style={btnGhost}>
+              <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Nog een product toevoegen
+            </button>
+          </div>
+        )}
+
         {/* Voorraadzoeker */}
-        {wants && (
+        {wants && (picks.length === 0 || searchOpen || openProduct) && (
           <div style={{ ...card, padding: 18, marginTop: picks.length ? 4 : 26 }}>
             {!openProduct ? (
               <>
@@ -139,7 +150,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
             ) : (
               /* Eén product gekozen → alleen de varianten daarvan */
               <>
-                <button onClick={() => setOpenId(null)} style={{ background: 'none', border: 'none', padding: 0, fontSize: 13, color: C.sec, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 6 }}>← Andere resultaten</button>
+                <button onClick={() => { setOpenId(null); setSearchOpen(true); }} style={{ background: 'none', border: 'none', padding: 0, fontSize: 13, color: C.sec, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 6 }}>← Andere resultaten</button>
                 <div style={{ marginTop: 12, marginBottom: 4 }}>
                   <div style={{ fontWeight: 800, fontSize: 16, color: C.text }}>{openProduct.name}</div>
                   <div style={{ fontSize: 13, color: C.sec, marginTop: 2 }}>
