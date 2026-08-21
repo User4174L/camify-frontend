@@ -217,14 +217,26 @@ export function WizardBanner({ variant, step }: { variant: Variant; step: Step }
   ];
 
   return (
-    <div className="svc-header svc-header--photo" style={{ marginBottom: 0 }}>
+    <div className="svc-header svc-header--photo tiw-header" style={{ marginBottom: 0 }}>
       <div className="svc-header__photo" style={{ backgroundImage: 'url(/images/hero-photographer-1.jpg)' }} aria-hidden="true" />
       <div className="container">
         <div className="svc-header__inner">
-          <Breadcrumb items={[{ label: 'Inruilen & verkopen' }]} />
-          <div className="svc-eyebrow">Inruilen &amp; verkopen</div>
-          <h1 className="svc-title">Verkoop je gear <span style={{ color: C.accent }}>snel en eerlijk</span></h1>
-          <div style={{ display: 'flex', gap: 6, marginTop: 20, flexWrap: 'wrap' }}>
+          <div className="tiw-only-desktop"><Breadcrumb items={[{ label: 'Inruilen & verkopen' }]} /></div>
+          <div className="svc-eyebrow tiw-only-desktop">Inruilen &amp; verkopen</div>
+          <h1 className="svc-title tiw-title">Verkoop je gear <span style={{ color: C.accent }}>snel en eerlijk</span></h1>
+
+          {/* Mobiel: één regel in plaats van vier pills — anders staat het zoekveld onder de vouw */}
+          <div className="tiw-steps-mini" aria-hidden="true">
+            <span className="tiw-mini-dots">
+              {steps.map((x, i) => {
+                const n = (i + 1) as Step;
+                return <span key={x.label} className={`tiw-mini-dot${n === step ? ' is-active' : ''}${n < step ? ' is-done' : ''}`} />;
+              })}
+            </span>
+            <span className="tiw-mini-label"><strong>Stap {step} van {steps.length}</strong> · {steps[step - 1].label}</span>
+          </div>
+
+          <div className="tiw-steps-full" style={{ display: 'flex', gap: 6, marginTop: 20, flexWrap: 'wrap' }}>
             {steps.map((s, i) => {
               const n = (i + 1) as Step;
               const active = n === step; const done = n < step;
@@ -248,6 +260,24 @@ export function WizardBanner({ variant, step }: { variant: Variant; step: Step }
           </div>
         </div>
       </div>
+
+      <style>{`
+        .tiw-steps-mini{display:none}
+        @media(max-width:760px){
+          /* Kop zo klein mogelijk houden: het zoekveld moet zonder scrollen in beeld. */
+          .tiw-header .svc-header__inner{padding-top:18px;padding-bottom:16px}
+          .tiw-only-desktop{display:none}
+          .tiw-header .tiw-title{font-size:23px;line-height:1.15;margin:0}
+          .tiw-steps-full{display:none !important}
+          .tiw-steps-mini{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+          .tiw-mini-dots{display:inline-flex;gap:6px}
+          .tiw-mini-dot{width:8px;height:8px;border-radius:50%;background:rgba(30,33,51,.16)}
+          .tiw-mini-dot.is-done{background:#22c55e}
+          .tiw-mini-dot.is-active{background:#E8692A;width:22px;border-radius:999px}
+          .tiw-mini-label{font-size:12.5px;color:#6B6D80}
+          .tiw-mini-label strong{color:#1E2133;font-weight:700}
+        }
+      `}</style>
     </div>
   );
 }
@@ -256,9 +286,11 @@ export function WizardBanner({ variant, step }: { variant: Variant; step: Step }
 export function Page({ children, width = 880 }: { children: React.ReactNode; width?: number }) {
   useEffect(() => { window.scrollTo({ top: 0 }); }, []);
   return (
-    <div style={{ background: '#fff', padding: '32px 0 88px' }}>
+    <div className="tiw-page" style={{ background: '#fff' }}>
       <div style={{ maxWidth: width, margin: '0 auto', padding: '0 24px' }}>{children}</div>
       <style>{`
+        .tiw-page{padding:32px 0 88px}
+        @media(max-width:760px){.tiw-page{padding:18px 0 72px}}
         .tiw-add{transition:background .15s ease,box-shadow .15s ease,transform .15s ease}
         .tiw-add:not(:disabled):hover{background:#FFF4EE;box-shadow:0 5px 16px rgba(232,105,42,.2);transform:translateY(-1px)}
       `}</style>
@@ -269,8 +301,16 @@ export function Page({ children, width = 880 }: { children: React.ReactNode; wid
 export function PageTitle({ title, sub }: { title: string; sub?: string }) {
   return (
     <>
-      <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-.02em', margin: '10px 0 0', color: C.text }}>{title}</h2>
-      {sub && <p style={{ color: C.sec, margin: '6px 0 22px', fontSize: 15, lineHeight: 1.6 }}>{sub}</p>}
+      <h2 className="tiw-page-title">{title}</h2>
+      {sub && <p className="tiw-page-sub">{sub}</p>}
+      <style>{`
+        .tiw-page-title{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:10px 0 0;color:${C.text}}
+        .tiw-page-sub{color:${C.sec};margin:6px 0 22px;font-size:15px;line-height:1.6}
+        @media(max-width:760px){
+          .tiw-page-title{font-size:22px;margin:2px 0 0}
+          .tiw-page-sub{font-size:14px;margin:5px 0 16px;line-height:1.5}
+        }
+      `}</style>
     </>
   );
 }
