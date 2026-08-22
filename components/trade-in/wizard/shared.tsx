@@ -99,7 +99,7 @@ export function vatLineFor(c: { isBusiness: boolean; country: string }) {
 
 /* ── Styles ── */
 export const C = { text: '#1E2133', sec: '#6B6D80', border: '#EEEEF2', tint: '#FAFAFC', accent: '#E8692A', accentSoft: '#FFF4EE' };
-export const input: React.CSSProperties = { width: '100%', padding: '12px 16px', border: `1.5px solid ${C.border}`, borderRadius: 10, fontSize: 16, fontFamily: 'inherit', outline: 'none', background: '#fff', boxSizing: 'border-box', color: C.text, scrollMarginBlock: 110 };
+export const input: React.CSSProperties = { width: '100%', padding: '12px 16px', border: `1.5px solid ${C.border}`, borderRadius: 10, fontSize: 16, fontFamily: 'inherit', outline: 'none', background: '#fff', boxSizing: 'border-box', color: C.text, scrollMarginBlock: 14 };
 export const btnPrimary: React.CSSProperties = { background: C.accent, color: '#fff', border: 'none', borderRadius: 999, padding: '14px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 8 };
 export const btnDark: React.CSSProperties = { ...btnPrimary, background: C.text };
 /** Primaire CTA van de flow (groen: onderscheidt zich van al het oranje op de site) */
@@ -160,13 +160,14 @@ export function wearLine(item: { category: string; shutter?: string }) {
   );
 }
 
-/** Zet een invoerveld midden in beeld zodra het toetsenbord opkomt. Zonder dit
- *  scrollt de browser het veld tot net boven het toetsenbord — en met onze
- *  onderbalk erbij valt het er dan half achter. De vertraging wacht de
+/** Zet het veld waar je in typt bovenaan in beeld — inclusief zijn label. Niet
+ *  centreren: dan valt het volgende veld in de onderste helft en verdwijnt het
+ *  achter het toetsenbord of de suggestiebalk. Bovenaan houdt de rest van het
+ *  formulier bruikbaar zonder te scrollen. De vertraging wacht de
  *  toetsenbord-animatie af. */
 export function centerOnFocus(e: React.FocusEvent<HTMLElement>) {
-  const el = e.currentTarget;
-  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 280);
+  const el = e.currentTarget.closest('label') ?? e.currentTarget;
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 280);
 }
 
 /** Scroll een element in beeld nádat de nieuwe layout staat. Eén requestAnimationFrame

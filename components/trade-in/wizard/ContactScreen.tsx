@@ -84,7 +84,7 @@ export default function ContactScreen({ variant }: { variant: Variant }) {
       />
 
       <style>{`
-        .tiw-label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#1E2133}
+        .tiw-label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#1E2133;scroll-margin-top:14px}
         .tiw-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
         @media(max-width:620px){.tiw-form-grid{grid-template-columns:1fr}}
       `}</style>
