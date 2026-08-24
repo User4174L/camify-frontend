@@ -31,6 +31,18 @@ function StartKnop({ klein = false }: { klein?: boolean }) {
   );
 }
 
+/* Aandelen uit onze eigen inkoop: 940 ingeruilde items, maart t/m augustus 2026.
+   Merknamen staan er ook om SEO-redenen: "canon camera inruilen", "nikon lens
+   verkopen" en "sony lens verkopen" zijn zoektermen waarop we nu misgrijpen. */
+const MERKEN = [
+  { m: 'Nikon', f: '/images/nikon-z8.jpg' },
+  { m: 'Canon', f: '/images/canon-r5.jpg' },
+  { m: 'Sony', f: '/images/sony-a7-iv.jpg' },
+  { m: 'Fujifilm', f: '/images/fujifilm-x-t4.jpg' },
+  { m: 'Leica', f: '/images/lenses/leica-50-f24.webp' },
+  { m: 'Hasselblad', f: '/images/hasselblad-x2d-100c.jpg' },
+];
+
 const STAPPEN = [
   { n: 1, t: 'Vraag een bod aan', d: 'Vul in welk toestel je hebt en in welke staat. Twee minuten werk, ook voor meerdere items tegelijk. Je hoort binnen 2 tot 3 werkdagen van ons.' },
   { n: 2, t: 'Stuur het gratis op', d: 'Ga je akkoord, dan krijg je een verzendlabel van ons. Verzenden is gratis en het pakket is bij ons verzekerd — onderweg iets kwijt is ons probleem, niet dat van jou.' },
@@ -141,11 +153,36 @@ export default function InruilLandingPage() {
         </div>
       </section>
 
-      {/* Eerlijk over het bod — transparantie als argument */}
+      {/* Waarde — "wat is mijn camera waard" is een veelgezochte term waarop we nu niet ranken */}
       <section className="lp-band">
-        <div className="lp-wrap lp-section lp-split">
-          <div>
-            <h2>Waarom een bod pas definitief is na controle</h2>
+        <div className="lp-wrap lp-section">
+          <h2>Wat is je camera waard?</h2>
+          <p className="lp-sub">
+            Dat hangt af van drie dingen: welk model je hebt, in welke staat het is en — bij camera’s — hoeveel opnamen ermee zijn
+            gemaakt. Wij vergelijken met wat vergelijkbare exemplaren op dit moment écht opbrengen, niet met een lijstprijs van jaren
+            geleden. Je krijgt een bod van een expert, geen automaat.
+          </p>
+          <div className="lp-merken">
+            {MERKEN.map(b => (
+              <div key={b.m} className="lp-merk">
+                <img src={b.f} alt="" loading="lazy" />
+                <span>{b.m}</span>
+              </div>
+            ))}
+          </div>
+          <p className="lp-after">
+            Dit zijn de merken die we het vaakst inkopen. Nikon, Canon en Sony vormen samen ruim de helft, maar ook Fujifilm en Leica
+            komen veel langs — en middenformaat van Hasselblad, Phase One of Mamiya kun je bij ons gewoon kwijt.
+            Ook <strong>losse lenzen</strong> kopen we in: bijna de helft van wat wij inkopen is glas.
+          </p>
+          <div className="lp-ctarow"><StartKnop /></div>
+        </div>
+      </section>
+
+      {/* Eerlijk over het bod — transparantie als argument */}
+      <section className="lp-wrap lp-section lp-split lp-split--foto">
+        <div>
+          <h2>Waarom een bod pas definitief is na controle</h2>
             <p>
               Ons eerste bod is gebaseerd op wat jij opgeeft: het model en de conditie. Dat is een schatting, geen vaststelling —
               we hebben je toestel dan nog niet gezien.
@@ -154,23 +191,22 @@ export default function InruilLandingPage() {
               Pas als het bij ons ligt, kunnen we vaststellen wat het werkelijk waard is. Komt alles overeen met je omschrijving,
               dan bevestigen we het oorspronkelijke bod. Wijkt het af, dan krijg je een aangepast bod te zien <strong>met de reden erbij</strong>.
             </p>
-            <p>
-              Dat aangepaste bod mag je gewoon weigeren. Dan sturen we je apparatuur kosteloos terug.
-            </p>
-          </div>
-          <aside className="lp-card">
-            <h3>Goed om te weten</h3>
+          <p>
+            Dat aangepaste bod mag je gewoon weigeren. Dan sturen we je apparatuur kosteloos terug.
+          </p>
+        </div>
+        <aside className="lp-card">
+          <h3>Goed om te weten</h3>
             <dl>
               <dt>Bod geldig</dt><dd>7 dagen</dd>
               <dt>Verzenden</dt><dd>Gratis en verzekerd, ons risico</dd>
               <dt>Uitbetaling</dt><dd>Binnen 3 werkdagen na goedkeuring</dd>
               <dt>Niet akkoord</dt><dd>Gratis retour</dd>
             </dl>
-            <p className="lp-card__note">
-              We controleren elk serienummer bij StopHeling. Zo weet jij zeker dat je bij een handelaar bent die het netjes doet.
-            </p>
-          </aside>
-        </div>
+          <p className="lp-card__note">
+            We controleren elk serienummer bij StopHeling. Zo weet jij zeker dat je bij een handelaar bent die het netjes doet.
+          </p>
+        </aside>
       </section>
 
       {/* Wat we inkopen */}
@@ -234,7 +270,10 @@ export default function InruilLandingPage() {
 
       {/* Showroom */}
       <section className="lp-band">
-        <div className="lp-wrap lp-section lp-split">
+        <div className="lp-wrap lp-section lp-split lp-split--omgekeerd">
+          <div className="lp-foto">
+            <img src="/images/hero-photographer-2.jpg" alt="Onze showroom in Geldermalsen" loading="lazy" />
+          </div>
           <div>
             <h2>Liever langskomen?</h2>
             <p>
@@ -378,7 +417,20 @@ export default function InruilLandingPage() {
         .lp-linkcard strong{display:block;font-size:15px;font-weight:800;margin-bottom:3px}
         .lp-linkcard span{font-size:13.5px;color:${C.sec};line-height:1.5}
 
+        .lp-merken{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:6px}
+        .lp-merk{border:1px solid ${C.border};border-radius:14px;padding:14px 10px;text-align:center;background:#fff}
+        .lp-merk img{width:100%;height:64px;object-fit:contain;display:block;margin-bottom:8px}
+        .lp-merk span{font-size:13.5px;font-weight:700}
+        .lp-ctarow{margin-top:24px}
+
+        .lp-split--foto{align-items:center}
+        .lp-foto img{width:100%;height:100%;max-height:320px;object-fit:cover;border-radius:16px;display:block}
+        .lp-split--omgekeerd{grid-template-columns:1fr 1.3fr}
+
         @media(max-width:900px){
+          .lp-merken{grid-template-columns:repeat(3,1fr)}
+          .lp-split--omgekeerd{grid-template-columns:1fr}
+          .lp-foto{order:2}
           .lp-steps{grid-template-columns:repeat(2,1fr)}
           .lp-split{grid-template-columns:1fr;gap:24px}
           .lp-grid3,.lp-links{grid-template-columns:repeat(2,1fr)}
