@@ -43,6 +43,32 @@ const MERKEN = [
   { m: 'Hasselblad', f: '/images/hasselblad-x2d-100c.jpg' },
 ];
 
+/* Populairste inruilmodellen per merk, uit onze eigen quotes (maart-augustus 2026).
+   Staat er als uitklapbare lijst: modelnamen zijn zoektermen ("nikon z8 inruilen",
+   "sony lens verkopen") en elke regel linkt naar de aanvraag met dat model al
+   ingevuld. Onderhoud: dit hoort in V2 uit de catalogus te komen, niet handmatig. */
+const MODELLEN: Record<string, string[]> = {
+  Nikon: ['Nikon Z50 II', 'Nikon Z8', 'Nikon Z6 III', 'Nikon Zf', 'Nikon Z7 II', 'Nikon Z9',
+          'Nikon Z 70-200mm f/2.8 VR S', 'Nikon Z 180-600mm f/5.6-6.3 VR', 'Nikon AF-S 105mm f/2.8 Micro', 'Nikon AF-S 24-120mm f/4 ED VR'],
+  Canon: ['Canon EOS R5', 'Canon EOS R7', 'Canon EOS 5D Mark IV', 'Canon RF 70-200mm f/2.8 L IS USM',
+          'Canon RF 24-70mm f/2.8 L IS USM', 'Canon RF 24-105mm f/4 L IS USM', 'Canon RF 100-500mm f/4.5-7.1 L IS USM',
+          'Canon RF 100mm f/2.8 L Macro IS USM', 'Canon EF 24-70mm f/2.8 L USM II', 'Canon Speedlite 580EX II'],
+  Sony: ['Sony A7 IV', 'Sony A7C II', 'Sony A7S III', 'Sony A1 II', 'Sony RX10 IV',
+         'Sony FE 200-600mm f/5.6-6.3 G OSS', 'Sony FE 70-200mm f/2.8 GM OSS II', 'Sony FE 24-105mm f/4 G OSS',
+         'Sony FE 100-400mm f/4.5-5.6 GM OSS', 'Sony FE 28-70mm f/2 GM'],
+  Fujifilm: ['Fujifilm X-T5', 'Fujifilm X-T4', 'Fujifilm X-H2', 'Fujifilm X-Pro 2', 'Fujifilm GFX 100S',
+             'Fujifilm XF 16mm f/1.4 R WR', 'Fujifilm XF 23mm f/2.8 R WR', 'Fujifilm XF 35mm f/1.4 R',
+             'Fujifilm XF 56mm f/1.2 R', 'Fujifilm XF 56mm f/1.2 R WR'],
+  Leica: ['Leica Q2', 'Leica Q2 Monochrom', 'Leica Q (Typ 116)', 'Leica M11-P', 'Leica M10-P', 'Leica M-P (Typ 240)',
+          'Leica SL (Typ 601)', 'Leica 50mm f/1.4 Summilux-M', 'Leica 50mm f/2 Summicron-R', 'Leica 24-90mm f/2.8-4 Vario-Elmarit-SL'],
+  'Middenformaat en klassiek': ['Hasselblad X2D 100C', 'Hasselblad 500C', 'Hasselblad 503CW', 'Hasselblad XCD 45mm f/4 P',
+          'Hasselblad XCD 90mm f/2.5 V', 'Mamiya 645', 'Mamiya RZ67', 'Phase One digitale achterwand',
+          'Hasselblad H3DII-31', 'Hasselblad Film Magazine A12'],
+  'Sigma, Tamron en Panasonic': ['Sigma 35mm f/1.4 DG HSM Art', 'Sigma 24-70mm f/2.8 DG DN Art', 'Sigma 150-600mm f/5-6.3 DG OS HSM',
+          'Sigma 85mm f/1.4 DG DN Art', 'Tamron 28-75mm f/2.8 Di III VXD', 'Panasonic Lumix DC-S5',
+          'Panasonic Lumix DC-GH5', 'Panasonic Lumix S 50mm f/1.8', 'Panasonic Lumix S 20-60mm f/3.5-5.6', 'Panasonic HC-X1'],
+};
+
 const STAPPEN = [
   { n: 1, t: 'Vraag een bod aan', d: 'Vul in welk toestel je hebt en in welke staat. Twee minuten werk, ook voor meerdere items tegelijk. Je hoort binnen 2 tot 3 werkdagen van ons.' },
   { n: 2, t: 'Stuur het gratis op', d: 'Ga je akkoord, dan krijg je een verzendlabel van ons. Verzenden is gratis en het pakket is bij ons verzekerd — onderweg iets kwijt is ons probleem, niet dat van jou.' },
@@ -109,6 +135,7 @@ const LINKS = [
 
 export default function InruilLandingPage() {
   const [open, setOpen] = useState<number | null>(0);
+  const [merk, setMerk] = useState<string | null>('Nikon');
 
   return (
     <div className="lp">
@@ -176,6 +203,37 @@ export default function InruilLandingPage() {
             Ook <strong>losse lenzen</strong> kopen we in: bijna de helft van wat wij inkopen is glas.
           </p>
           <div className="lp-ctarow"><StartKnop /></div>
+        </div>
+      </section>
+
+      {/* Modellen per merk — modelnamen zijn zoektermen en elke regel start de aanvraag ingevuld */}
+      <section className="lp-wrap lp-section">
+        <h2>Welke camera’s en lenzen kopen we in?</h2>
+        <p className="lp-sub">
+          Dit zijn de modellen die het vaakst bij ons worden aangeboden. Staat de jouwe er niet bij? Dat zegt niets — we kopen ruim
+          vijftienduizend producten in en beoordelen alles wat we niet kennen met de hand. Klik een model aan om je aanvraag
+          ingevuld te starten.
+        </p>
+        <div className="lp-merklijst">
+          {Object.entries(MODELLEN).map(([naam, lijst]) => {
+            const uit = merk === naam;
+            return (
+              <div key={naam} className={uit ? 'lp-merkblok is-open' : 'lp-merkblok'}>
+                <button onClick={() => setMerk(uit ? null : naam)} aria-expanded={uit}>
+                  {naam} <span>{lijst.length} populaire modellen</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 9l6 6 6-6" /></svg>
+                </button>
+                {/* Altijd in de HTML, alleen visueel verborgen: anders ziet Google deze modelnamen niet */}
+                <ul hidden={!uit}>
+                  {lijst.map(m => (
+                    <li key={m}>
+                      <Link href={`${START}?product=${encodeURIComponent(m)}`}>{m}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -309,12 +367,11 @@ export default function InruilLandingPage() {
                 {f.v}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 9l6 6 6-6" /></svg>
               </button>
-              {open === i && (
-                <div className="lp-faq__body">
-                  <p>{f.a}</p>
-                  {f.link && <Link href={f.link.href} className="lp-link">{f.link.t} →</Link>}
-                </div>
-              )}
+              {/* Antwoord blijft in de HTML staan, ook ingeklapt — anders telt het niet mee voor zoekresultaten */}
+              <div className="lp-faq__body" hidden={open !== i}>
+                <p>{f.a}</p>
+                {f.link && <Link href={f.link.href} className="lp-link">{f.link.t} →</Link>}
+              </div>
             </div>
           ))}
         </div>
@@ -417,6 +474,16 @@ export default function InruilLandingPage() {
         .lp-linkcard strong{display:block;font-size:15px;font-weight:800;margin-bottom:3px}
         .lp-linkcard span{font-size:13.5px;color:${C.sec};line-height:1.5}
 
+        .lp-merklijst{border-top:1px solid ${C.border}}
+        .lp-merkblok{border-bottom:1px solid ${C.border}}
+        .lp-merkblok > button{width:100%;display:flex;align-items:center;gap:12px;background:none;border:none;padding:15px 0;font-family:inherit;font-size:15.5px;font-weight:800;color:${C.text};cursor:pointer;text-align:left}
+        .lp-merkblok > button span{font-weight:500;font-size:13.5px;color:${C.sec};margin-right:auto}
+        .lp-merkblok > button svg{flex-shrink:0;transition:transform .2s}
+        .lp-merkblok.is-open > button svg{transform:rotate(180deg)}
+        .lp-merkblok ul{list-style:none;margin:0;padding:0 0 16px;display:grid;grid-template-columns:repeat(2,1fr);gap:2px 20px}
+        .lp-merkblok li a{display:block;padding:9px 0;font-size:14.5px;color:${C.sec};text-decoration:none;border-bottom:1px solid ${C.tint}}
+        .lp-merkblok li a:hover{color:${C.accent}}
+
         .lp-merken{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:6px}
         .lp-merk{border:1px solid ${C.border};border-radius:14px;padding:14px 10px;text-align:center;background:#fff}
         .lp-merk img{width:100%;height:64px;object-fit:contain;display:block;margin-bottom:8px}
@@ -429,6 +496,7 @@ export default function InruilLandingPage() {
 
         @media(max-width:900px){
           .lp-merken{grid-template-columns:repeat(3,1fr)}
+          .lp-merkblok ul{grid-template-columns:1fr}
           .lp-split--omgekeerd{grid-template-columns:1fr}
           .lp-foto{order:2}
           .lp-steps{grid-template-columns:repeat(2,1fr)}
