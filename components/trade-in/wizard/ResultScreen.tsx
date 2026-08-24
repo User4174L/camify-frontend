@@ -11,8 +11,8 @@ import { useRouter } from 'next/navigation';
 import VersionSwitch from '@/components/trade-in/VersionSwitch';
 import { estimateBid } from '@/data/trade-in-mock';
 import {
-  useWizardState, clearWizardState, WizardBanner, Page, PageTitle, BackLink, StickyBar, Thumb, IconBtn,
-  INCLUDED, C, card, btnGhost, fmt, vatLineFor, NON_EU, base, hasBid, LEAD_TIME, wearLine, type SellItem, type Variant,
+  useWizardState, clearWizardState, WizardBanner, Page, PageTitle, BackLink, StickyBar, Thumb, IconBtn, useIsMobile,
+  INCLUDED, C, card, btnCta, btnGhost, fmt, vatLineFor, NON_EU, base, hasBid, LEAD_TIME, wearLine, type SellItem, type Variant,
 } from './shared';
 
 function ItemBid({ it }: { it: SellItem }) {
@@ -38,6 +38,7 @@ function ItemBid({ it }: { it: SellItem }) {
 export default function ResultScreen({ variant }: { variant: Variant }) {
   const router = useRouter();
   const withBid = hasBid(variant);
+  const isMobile = useIsMobile();
   const [state, update, ready] = useWizardState(variant);
   const { items, picks, contact } = state;
   const [loading, setLoading] = useState(withBid);
@@ -223,6 +224,16 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                       </>
                     )}
                     {contact.isBusiness && <div style={{ fontSize: 12, color: C.sec, marginTop: 2 }}>{vatLineFor(contact)}{!NON_EU.includes(contact.country) && contact.vat ? ` · ${contact.vat.toUpperCase()}` : ''}</div>}
+                    {!isMobile && (
+                      <>
+                        <button onClick={() => setDone(true)} style={{ ...btnCta, width: '100%', justifyContent: 'center', marginTop: 16, padding: '15px 20px' }}>
+                          {withBid ? 'Akkoord, regel de verzending' : 'Verstuur je aanvraag'}
+                        </button>
+                        <p style={{ fontSize: 12.5, color: C.sec, textAlign: 'center', margin: '10px 0 0' }}>
+                          {withBid ? 'Je bod staat 7 dagen vast.' : 'Je aanvraag is nog niet verstuurd.'}
+                        </p>
+                      </>
+                    )}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 18 }}>
                       {(withBid
                         ? [['Gratis & verzekerd', 'verzenden'], ['7 dagen', 'bod vast'], ['3 werkdagen', 'uitbetaling']]
@@ -246,7 +257,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
         )}
       </Page>
 
-      {!loading && (
+      {!loading && isMobile && (
         <StickyBar
           width={1080}
           note={withBid
