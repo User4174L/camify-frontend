@@ -258,6 +258,15 @@ export default function AcceptFlowReference() {
               <div style={{ fontSize: 13, color: C.sec, marginTop: 6 }}>Ons bod voor je spullen <strong style={{ color: C.text }}>{money(1000)}</strong>{verlegd && <> · BTW <strong style={{ color: C.text }}>{money(173.55)}</strong> verlegd</>} · je aankoop − {money(69)}</div>
             </div>
 
+            {verlegd && (
+              <div style={{ ...card, background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '14px 16px', marginBottom: 14, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
+                <div style={{ fontSize: 13, color: '#1e3a8a', lineHeight: 1.6 }}>
+                  <strong>Bij deze inruil is de BTW verlegd (reverse charge).</strong> Ons bod is {money(1000)}, maar omdat de BTW ({money(173.55)}) wordt verlegd keren we exclusief BTW uit. Je ontvangt <strong>{money(jeOntvangt)}</strong> ({money(826.45)} min je aankoop van {money(69)}). De verlegde BTW verwerk je zelf in je aangifte.
+                </div>
+              </div>
+            )}
+
             <div style={{ ...card, padding: 24 }}>
               <div className="svc-eyebrow" style={{ margin: 0 }}>Overzicht</div>
               <div style={{ fontSize: 22, fontWeight: 800, color: C.text, margin: '2px 0 18px' }}>{QTE}</div>
@@ -307,11 +316,6 @@ export default function AcceptFlowReference() {
                   <strong style={{ color: '#15803d', fontSize: 15 }}>Je ontvangt</strong>
                   <strong style={{ color: '#15803d', fontSize: 18 }}>{money(jeOntvangt)}</strong>
                 </div>
-                {verlegd && (
-                  <div style={{ padding: '12px 18px', borderTop: `1px solid ${C.border}`, fontSize: 12.5, color: C.sec, lineHeight: 1.55 }}>
-                    <strong style={{ color: C.text }}>BTW verlegd naar jou als ondernemer</strong> (reverse charge). Ons bod van {money(1000)} is inclusief {money(173.55)} BTW; die wordt verlegd, dus we betalen {money(826.45)} exclusief BTW uit. Je verwerkt de verlegde BTW zelf in je aangifte.
-                  </div>
-                )}
               </div>
 
               <div style={{ ...card, background: C.tint, padding: '14px 18px', marginTop: 16, fontSize: 13.5, lineHeight: 1.55 }}>
