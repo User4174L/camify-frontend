@@ -182,6 +182,17 @@ export default function AcceptFlowReference() {
   const [rejectOther, setRejectOther] = useState('');
   const [rejectDone, setRejectDone] = useState(false);
   const rejectInvalid = !rejectReason || (rejectReason === 'other' && !rejectOther.trim());
+  // Reden-afhankelijke bedanktekst (net als V2), bij "beter aanbod" met ons e-mailadres.
+  const rejectThanks: React.ReactNode =
+    rejectReason === 'better-offer'
+      ? <>We proberen altijd de beste prijs te bieden. Stuur de ontvangen offerte gerust naar <a href="mailto:klantenservice@camera-tweedehands.nl" style={{ color: C.accent, fontWeight: 600 }}>klantenservice@camera-tweedehands.nl</a> — dan kijken we of we je een betere prijs kunnen bieden.</>
+      : rejectReason === 'self-sell'
+        ? 'Succes met de verkoop! Mocht je later toch interesse hebben, laat het ons gerust weten.'
+        : rejectReason === 'doubt'
+          ? 'Geen probleem, neem gerust de tijd. Mocht je besluiten te verkopen, dan horen we het graag.'
+          : rejectReason === 'price'
+            ? 'Bedankt voor je feedback. We proberen altijd de beste prijs te bieden.'
+            : 'Bedankt voor je feedback.';
 
   const isLangsbrengen = method === 'langsbrengen';
   const labels = isLangsbrengen ? STEPS.slice(0, 3) : STEPS;
@@ -497,7 +508,7 @@ export default function AcceptFlowReference() {
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
                 </div>
                 <h2 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 8px', color: C.text }}>Bedankt!</h2>
-                <p style={{ color: C.sec, fontSize: 14, lineHeight: 1.6, margin: '0 0 18px' }}>Dank voor je feedback. Mocht je later toch interesse hebben, laat het ons dan gerust weten.</p>
+                <p style={{ color: C.sec, fontSize: 14, lineHeight: 1.6, margin: '0 0 18px' }}>{rejectThanks}</p>
                 <Link href="/" style={{ ...btnGhost, border: `1px solid ${C.border}`, color: C.text, fontWeight: 600, textDecoration: 'none' }}>Terug naar homepage</Link>
               </div>
             ) : (
