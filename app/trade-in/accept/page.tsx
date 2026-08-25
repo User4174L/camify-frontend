@@ -23,7 +23,7 @@ import {
 /* ── Mockdata (uit de V2-screenshots) ── */
 const QTE = 'QTE000013';
 const SELL = { name: 'Sony 70-200mm f/2.8 G SSM - Sony A', condition: 'Heavily used', price: 1000, category: 'lens' };
-const BUY = { name: 'Canon 430EX II Speedlite', price: 69, category: 'accessory' };
+const BUY = { name: 'Canon 430EX II Speedlite', price: 69, category: 'accessory', condition: 'Goed', sku: '430211' };
 const SHOWROOM = 'Kerkstraat 47 Bis, 4191 AA Geldermalsen';
 const SLOTS = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];
 
@@ -159,6 +159,8 @@ export default function AcceptFlowReference() {
   const [slot, setSlot] = useState<string | null>(null);
   const [showDate, setShowDate] = useState(false);
   const [done, setDone] = useState(false);
+  const [bankConfirmed, setBankConfirmed] = useState(false);
+  const [bankError, setBankError] = useState(false);
 
   const isLangsbrengen = method === 'langsbrengen';
   const labels = isLangsbrengen ? STEPS.slice(0, 3) : STEPS;
@@ -230,6 +232,16 @@ export default function AcceptFlowReference() {
       {step === 1 && (
         <>
           <Body width={720}>
+            {/* Variatie: groot bod-/uitbetaalbedrag bovenaan zodat meteen duidelijk is
+                wat wij bieden én wat de klant ontvangt. */}
+            <div style={{ ...card, padding: 0, overflow: 'hidden', marginBottom: 14, border: 'none', background: 'linear-gradient(135deg, #1B1E2E 0%, #2A2D45 60%, #3A2519 100%)' }}>
+              <div style={{ padding: '20px 24px', color: '#fff' }}>
+                <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#FF8A4C' }}>Je ontvangt</div>
+                <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, marginTop: 4 }}>{money(931)}</div>
+                <div style={{ fontSize: 13, opacity: .82, marginTop: 6 }}>Ons bod voor je spullen {money(1000)} · je aankoop − {money(69)}</div>
+              </div>
+            </div>
+
             <div style={{ ...card, padding: 24 }}>
               <div className="svc-eyebrow" style={{ margin: 0 }}>Overzicht</div>
               <div style={{ fontSize: 22, fontWeight: 800, color: C.text, margin: '2px 0 18px' }}>{QTE}</div>
@@ -247,7 +259,10 @@ export default function AcceptFlowReference() {
               <div style={{ fontSize: 13, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>Kopen</div>
               <div className="acc-item" style={{ ...card, borderLeft: `4px solid ${C.accent}`, padding: '14px 18px', marginBottom: 18 }}>
                 <Thumb category={BUY.category} name={BUY.name} />
-                <div style={{ flex: '1 1 150px', minWidth: 0, fontWeight: 700, fontSize: 15, color: C.text }}>{BUY.name}</div>
+                <div style={{ flex: '1 1 150px', minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: C.text }}>{BUY.name}</div>
+                  <div style={{ fontSize: 13, color: C.sec, marginTop: 4 }}>Conditie: <strong style={{ color: C.text }}>{BUY.condition}</strong> · SKU {BUY.sku}</div>
+                </div>
                 <div className="acc-item-price">{money(BUY.price)}</div>
               </div>
               <style>{`
@@ -263,16 +278,16 @@ export default function AcceptFlowReference() {
               <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
                 <div style={{ padding: '12px 18px', borderBottom: `1px solid ${C.border}` }} className="svc-eyebrow">Overzicht</div>
                 <div style={{ padding: '4px 18px' }}>
-                  <Row label="Subtotaal inkoop" value={money(826.45)} />
-                  <Row label={<>BTW 0% 21% (over {money(1000)}) <span style={{ color: C.sec }}>reversed charged</span></>} value={money(173.55)} muted />
-                  <Row label="Totaal inkoop" value={money(826.45)} bold />
+                  <Row label="Subtotaal inkoop" value={money(1000)} />
+                  <Row label={<>BTW 0% <span style={{ color: C.sec }}>· verlegd</span></>} value={money(0)} muted />
+                  <Row label="Totaal inkoop" value={money(1000)} bold />
                   <Row label="Subtotaal aankoop" value={money(69)} top />
-                  <Row label={<>BTW 0% 0% (over {money(69)})</>} value={money(0)} muted />
+                  <Row label={<>BTW 0% <span style={{ color: C.sec }}>· marge</span></>} value={money(0)} muted />
                   <Row label="Totaal aankoop" value={money(69)} bold />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F0FDF4', padding: '14px 18px', borderTop: `1px solid ${C.border}` }}>
                   <strong style={{ color: '#15803d', fontSize: 15 }}>Je ontvangt</strong>
-                  <strong style={{ color: '#15803d', fontSize: 18 }}>{money(757.45)}</strong>
+                  <strong style={{ color: '#15803d', fontSize: 18 }}>{money(931)}</strong>
                 </div>
               </div>
 
@@ -342,13 +357,24 @@ export default function AcceptFlowReference() {
               <p style={{ color: C.sec, fontSize: 14, margin: '0 0 16px' }}>Vul hieronder je bankgegevens in zodat we het bedrag kunnen overmaken.</p>
               <Field label="Naam rekeninghouder" req full><input style={input} defaultValue="jan frankrijk" /></Field>
               <Field label="IBAN" req full><input style={input} placeholder="NL00 BANK 0000 0000 00" /></Field>
-              <div style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '12px 16px', marginTop: 6 }}>
-                <span style={{ fontSize: 13.5, color: C.sec }}>Bevestig dat je bankgegevens kloppen.</span>
-                <button style={{ ...btnCta, padding: '10px 18px', fontSize: 14 }}>Gegevens kloppen</button>
+              <div style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '12px 16px', marginTop: 6, border: `1.5px solid ${bankConfirmed ? '#22c55e' : bankError ? '#dc2626' : C.border}` }}>
+                <span style={{ fontSize: 13.5, color: bankConfirmed ? C.text : C.sec }}>
+                  {bankConfirmed ? 'Je bankgegevens zijn bevestigd.' : 'Bevestig dat je bankgegevens kloppen.'}
+                </span>
+                {bankConfirmed ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#15803d', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>Bevestigd
+                  </span>
+                ) : (
+                  <button onClick={() => { setBankConfirmed(true); setBankError(false); }} style={{ ...btnCta, padding: '10px 18px', fontSize: 14 }}>Gegevens kloppen</button>
+                )}
               </div>
+              {bankError && !bankConfirmed && (
+                <p style={{ margin: '8px 2px 0', fontSize: 13, color: '#dc2626', fontWeight: 600 }}>Bevestig eerst dat je bankgegevens kloppen om verder te gaan.</p>
+              )}
             </div>
           </Body>
-          <FooterBar back={() => setStep(1)} primary="Naar verzendmethode" onPrimary={() => setStep(3)} />
+          <FooterBar back={() => setStep(1)} primary="Naar verzendmethode" onPrimary={() => { if (!bankConfirmed) { setBankError(true); return; } setStep(3); }} />
         </>
       )}
 
