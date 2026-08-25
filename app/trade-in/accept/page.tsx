@@ -120,7 +120,9 @@ function Body({ children, width = 720 }: { children: React.ReactNode; width?: nu
   return (
     <div style={{ background: '#fff' }} className="acc-body">
       <div style={{ maxWidth: width, margin: '0 auto', padding: '0 24px' }}>{children}</div>
-      <style>{`.acc-body{padding:28px 0 40px}@media(max-width:760px){.acc-body{padding:16px 0 40px}}`}</style>
+      {/* Ruime bodem-padding op mobiel: de vaste onderbalk overlapt anders de laatste
+          content (o.a. de voorwaarden-checkbox). */}
+      <style>{`.acc-body{padding:28px 0 48px}@media(max-width:760px){.acc-body{padding:16px 0 168px}}`}</style>
     </div>
   );
 }
