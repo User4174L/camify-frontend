@@ -236,9 +236,9 @@ export default function AcceptFlowReference() {
                 wat wij bieden én wat de klant ontvangt. */}
             <div style={{ ...card, padding: 0, overflow: 'hidden', marginBottom: 14, border: 'none', background: 'linear-gradient(135deg, #1B1E2E 0%, #2A2D45 60%, #3A2519 100%)' }}>
               <div style={{ padding: '20px 24px', color: '#fff' }}>
-                <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#FF8A4C' }}>Je ontvangt</div>
-                <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, marginTop: 4 }}>{money(931)}</div>
-                <div style={{ fontSize: 13, opacity: .82, marginTop: 6 }}>Ons bod voor je spullen {money(1000)} · je aankoop − {money(69)}</div>
+                <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,.65)' }}>Je ontvangt</div>
+                <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, marginTop: 4, color: '#34d399' }}>{money(931)}</div>
+                <div style={{ fontSize: 13, opacity: .82, marginTop: 6 }}>Ons bod voor je spullen <strong style={{ color: '#fff' }}>{money(1000)}</strong> · je aankoop − {money(69)}</div>
               </div>
             </div>
 
@@ -251,7 +251,7 @@ export default function AcceptFlowReference() {
                 <Thumb category={SELL.category} name={SELL.name} />
                 <div style={{ flex: '1 1 150px', minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: 15, color: C.text }}>{SELL.name}</div>
-                  <div style={{ fontSize: 13, color: C.sec, marginTop: 6, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>Conditie: <span style={{ background: '#FEE2E2', color: '#b91c1c', borderRadius: 999, padding: '2px 10px', fontWeight: 700, fontSize: 12 }}>{SELL.condition}</span></div>
+                  <div style={{ fontSize: 13, color: C.sec, marginTop: 6, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>Conditie: <CondPill condition={SELL.condition} /></div>
                 </div>
                 <div className="acc-item-price">{money(SELL.price)}</div>
               </div>
@@ -261,7 +261,7 @@ export default function AcceptFlowReference() {
                 <Thumb category={BUY.category} name={BUY.name} />
                 <div style={{ flex: '1 1 150px', minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: 15, color: C.text }}>{BUY.name}</div>
-                  <div style={{ fontSize: 13, color: C.sec, marginTop: 4 }}>Conditie: <strong style={{ color: C.text }}>{BUY.condition}</strong> · SKU {BUY.sku}</div>
+                  <div style={{ fontSize: 13, color: C.sec, marginTop: 4, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>Conditie: <CondPill condition={BUY.condition} /> <span>· SKU {BUY.sku}</span></div>
                 </div>
                 <div className="acc-item-price">{money(BUY.price)}</div>
               </div>
@@ -278,8 +278,8 @@ export default function AcceptFlowReference() {
               <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
                 <div style={{ padding: '12px 18px', borderBottom: `1px solid ${C.border}` }} className="svc-eyebrow">Overzicht</div>
                 <div style={{ padding: '4px 18px' }}>
-                  <Row label="Subtotaal inkoop" value={money(1000)} />
-                  <Row label={<>BTW 0% <span style={{ color: C.sec }}>· verlegd</span></>} value={money(0)} muted />
+                  <Row label="Subtotaal inkoop" value={money(826.45)} />
+                  <Row label={<>BTW 21% <span style={{ color: C.sec }}>(over {money(826.45)})</span></>} value={money(173.55)} muted />
                   <Row label="Totaal inkoop" value={money(1000)} bold />
                   <Row label="Subtotaal aankoop" value={money(69)} top />
                   <Row label={<>BTW 0% <span style={{ color: C.sec }}>· marge</span></>} value={money(0)} muted />
@@ -446,6 +446,15 @@ export default function AcceptFlowReference() {
       )}
     </>
   );
+}
+
+/** Conditie als label, kleur per kwaliteit — zo staan verkoop- en koopproduct consistent. */
+function CondPill({ condition }: { condition: string }) {
+  const c = condition.toLowerCase();
+  const t = /zwaar|heavily/.test(c) ? { bg: '#FEE2E2', color: '#b91c1c' }
+    : /gebruikt|used/.test(c) ? { bg: '#FEF3C7', color: '#b45309' }
+    : { bg: '#DCFCE7', color: '#15803d' };
+  return <span style={{ background: t.bg, color: t.color, borderRadius: 999, padding: '2px 10px', fontWeight: 700, fontSize: 12 }}>{condition}</span>;
 }
 
 function Row({ label, value, muted, bold, top }: { label: React.ReactNode; value: string; muted?: boolean; bold?: boolean; top?: boolean }) {
