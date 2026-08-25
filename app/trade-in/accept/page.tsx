@@ -234,12 +234,10 @@ export default function AcceptFlowReference() {
           <Body width={720}>
             {/* Variatie: groot bod-/uitbetaalbedrag bovenaan zodat meteen duidelijk is
                 wat wij bieden én wat de klant ontvangt. */}
-            <div style={{ ...card, padding: 0, overflow: 'hidden', marginBottom: 14, border: 'none', background: 'linear-gradient(135deg, #1B1E2E 0%, #2A2D45 60%, #3A2519 100%)' }}>
-              <div style={{ padding: '20px 24px', color: '#fff' }}>
-                <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,.65)' }}>Je ontvangt</div>
-                <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, marginTop: 4, color: '#34d399' }}>{money(931)}</div>
-                <div style={{ fontSize: 13, opacity: .82, marginTop: 6 }}>Ons bod voor je spullen <strong style={{ color: '#fff' }}>{money(1000)}</strong> · je aankoop − {money(69)}</div>
-              </div>
+            <div style={{ ...card, padding: '20px 24px', marginBottom: 14, background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#15803d' }}>Je ontvangt</div>
+              <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, marginTop: 4, color: '#15803d' }}>{money(931)}</div>
+              <div style={{ fontSize: 13, color: C.sec, marginTop: 6 }}>Ons bod voor je spullen <strong style={{ color: C.text }}>{money(1000)}</strong> · je aankoop − {money(69)}</div>
             </div>
 
             <div style={{ ...card, padding: 24 }}>
