@@ -17,7 +17,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  C, card, input, btnCta, btnGhost, Thumb,
+  C, card, input, btnCta, btnGhost, Thumb, centerOnFocus,
 } from '@/components/trade-in/wizard/shared';
 
 /* ── Mockdata (uit de V2-screenshots) ── */
@@ -360,30 +360,30 @@ export default function AcceptFlowReference() {
               <p style={{ color: C.sec, fontSize: 14, margin: '0 0 18px' }}>We gebruiken deze gegevens voor de afhandeling.</p>
 
               <div className="acc-grid">
-                <Field label="E-mailadres" req><input style={input} defaultValue="j***k@gmail.com" /></Field>
-                <Field label="Telefoonnummer" req><input style={input} defaultValue="+31 615894922" /></Field>
+                <Field label="E-mailadres" req><input style={input} onFocus={centerOnFocus} defaultValue="j***k@gmail.com" /></Field>
+                <Field label="Telefoonnummer" req><input style={input} onFocus={centerOnFocus} defaultValue="+31 615894922" /></Field>
               </div>
               <Field label="Land" req full>
-                <select style={input} defaultValue="FR"><option value="FR">Frankrijk</option><option value="NL">Nederland</option><option value="BE">België</option></select>
+                <select style={input} onFocus={centerOnFocus} defaultValue="FR"><option value="FR">Frankrijk</option><option value="NL">Nederland</option><option value="BE">België</option></select>
               </Field>
               <div className="acc-grid-3">
-                <Field label="Postcode" req><input style={input} defaultValue="71190" /></Field>
-                <Field label="Huisnr." req><input style={input} defaultValue="1" /></Field>
-                <Field label="Toev."><input style={input} placeholder="A" /></Field>
+                <Field label="Postcode" req><input style={input} onFocus={centerOnFocus} defaultValue="71190" /></Field>
+                <Field label="Huisnr." req><input style={input} onFocus={centerOnFocus} defaultValue="1" /></Field>
+                <Field label="Toev."><input style={input} onFocus={centerOnFocus} placeholder="A" /></Field>
               </div>
               <p style={{ fontSize: 12.5, color: C.sec, margin: '2px 0 14px' }}>Dit adres is niet geverifieerd — controleer de gegevens goed.</p>
-              <Field label="Straat" req full><input style={input} defaultValue="Rue du Mont Fran" /></Field>
-              <Field label="Plaats" req full><input style={input} defaultValue="Dettey" /></Field>
+              <Field label="Straat" req full><input style={input} onFocus={centerOnFocus} defaultValue="Rue du Mont Fran" /></Field>
+              <Field label="Plaats" req full><input style={input} onFocus={centerOnFocus} defaultValue="Dettey" /></Field>
               <div className="acc-grid">
-                <Field label="KVK nummer"><input style={input} defaultValue="12345678" /></Field>
-                <Field label="BTW nummer"><input style={input} defaultValue="FR10402571889" /></Field>
+                <Field label="KVK nummer"><input style={input} onFocus={centerOnFocus} defaultValue="12345678" /></Field>
+                <Field label="BTW nummer"><input style={input} onFocus={centerOnFocus} defaultValue="FR10402571889" /></Field>
               </div>
 
               <div style={{ borderTop: `1px solid ${C.border}`, margin: '20px 0 18px' }} />
               <h3 style={{ fontSize: 16, fontWeight: 800, margin: '0 0 4px', color: C.text }}>Bankgegevens</h3>
               <p style={{ color: C.sec, fontSize: 14, margin: '0 0 16px' }}>Vul hieronder je bankgegevens in zodat we het bedrag kunnen overmaken.</p>
-              <Field label="Naam rekeninghouder" req full><input style={input} defaultValue="jan frankrijk" /></Field>
-              <Field label="IBAN" req full><input style={input} placeholder="NL00 BANK 0000 0000 00" /></Field>
+              <Field label="Naam rekeninghouder" req full><input style={input} onFocus={centerOnFocus} defaultValue="jan frankrijk" /></Field>
+              <Field label="IBAN" req full><input style={input} onFocus={centerOnFocus} placeholder="NL00 BANK 0000 0000 00" /></Field>
               <div style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '12px 16px', marginTop: 6, border: `1.5px solid ${bankConfirmed ? '#22c55e' : bankError ? '#dc2626' : C.border}` }}>
                 <span style={{ fontSize: 13.5, color: bankConfirmed ? C.text : C.sec }}>
                   {bankConfirmed ? 'Je bankgegevens zijn bevestigd.' : 'Bevestig dat je bankgegevens kloppen.'}
@@ -455,16 +455,16 @@ export default function AcceptFlowReference() {
             <div style={{ ...card, padding: 24 }}>
               <h2 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 4px', color: C.text }}>Verzendadres</h2>
               <p style={{ color: C.sec, fontSize: 14, margin: '0 0 18px' }}>We sturen een gratis verzekerd verzendlabel naar dit adres.</p>
-              <Field label="Naam" req full><input style={input} defaultValue="jan frankrijk" /></Field>
+              <Field label="Naam" req full><input style={input} onFocus={centerOnFocus} defaultValue="jan frankrijk" /></Field>
               <div className="acc-grid-3">
-                <Field label="Postcode" req><input style={input} defaultValue="71190" /></Field>
-                <Field label="Huisnr." req><input style={input} defaultValue="1" /></Field>
-                <Field label="Toev."><input style={input} placeholder="A" /></Field>
+                <Field label="Postcode" req><input style={input} onFocus={centerOnFocus} defaultValue="71190" /></Field>
+                <Field label="Huisnr." req><input style={input} onFocus={centerOnFocus} defaultValue="1" /></Field>
+                <Field label="Toev."><input style={input} onFocus={centerOnFocus} placeholder="A" /></Field>
               </div>
-              <Field label="Straat" req full><input style={input} defaultValue="Rue du Mont Fran" /></Field>
-              <Field label="Plaats" req full><input style={input} defaultValue="Dettey" /></Field>
+              <Field label="Straat" req full><input style={input} onFocus={centerOnFocus} defaultValue="Rue du Mont Fran" /></Field>
+              <Field label="Plaats" req full><input style={input} onFocus={centerOnFocus} defaultValue="Dettey" /></Field>
               <Field label="Land" req full>
-                <select style={input} defaultValue="FR"><option value="FR">Frankrijk</option><option value="NL">Nederland</option></select>
+                <select style={input} onFocus={centerOnFocus} defaultValue="FR"><option value="FR">Frankrijk</option><option value="NL">Nederland</option></select>
               </Field>
             </div>
           </Body>
