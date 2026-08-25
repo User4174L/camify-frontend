@@ -164,8 +164,11 @@ export function wearLine(item: { category: string; shutter?: string }) {
  *  centreren: dan valt het volgende veld in de onderste helft en verdwijnt het
  *  achter het toetsenbord of de suggestiebalk. Bovenaan houdt de rest van het
  *  formulier bruikbaar zonder te scrollen. De vertraging wacht de
- *  toetsenbord-animatie af. */
+ *  toetsenbord-animatie af.
+ *  Alleen op mobiel: daar verdringt het toetsenbord het veld. Op desktop is er
+ *  geen toetsenbord en voelt de sprong bij elke focus juist storend. */
 export function centerOnFocus(e: React.FocusEvent<HTMLElement>) {
+  if (!window.matchMedia('(max-width:760px)').matches) return;
   const el = e.currentTarget.closest('label') ?? e.currentTarget;
   setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 280);
 }
