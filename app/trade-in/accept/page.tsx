@@ -161,6 +161,8 @@ export default function AcceptFlowReference() {
   const [done, setDone] = useState(false);
   const [bankConfirmed, setBankConfirmed] = useState(false);
   const [bankError, setBankError] = useState(false);
+  const [btwMode, setBtwMode] = useState<'regulier' | 'verlegd'>('regulier');
+  const verlegd = btwMode === 'verlegd';
 
   const isLangsbrengen = method === 'langsbrengen';
   const labels = isLangsbrengen ? STEPS.slice(0, 3) : STEPS;
@@ -232,12 +234,22 @@ export default function AcceptFlowReference() {
       {step === 1 && (
         <>
           <Body width={720}>
+            {/* Preview-schakelaar zodat je de BTW-weergave kunt vergelijken (alleen voor deze referentie). */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, fontSize: 12.5, color: C.sec, flexWrap: 'wrap' }}>
+              <span>Voorbeeld BTW:</span>
+              {(['regulier', 'verlegd'] as const).map(m => (
+                <button key={m} onClick={() => setBtwMode(m)} style={{ padding: '5px 12px', borderRadius: 999, border: `1px solid ${btwMode === m ? C.text : C.border}`, background: btwMode === m ? C.text : '#fff', color: btwMode === m ? '#fff' : C.sec, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}>
+                  {m === 'regulier' ? 'Regulier (21% / marge)' : 'BTW verlegd'}
+                </button>
+              ))}
+            </div>
+
             {/* Variatie: groot bod-/uitbetaalbedrag bovenaan zodat meteen duidelijk is
                 wat wij bieden én wat de klant ontvangt. */}
             <div style={{ ...card, padding: '20px 24px', marginBottom: 14, background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
               <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#15803d' }}>Je ontvangt</div>
               <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, marginTop: 4, color: '#15803d' }}>{money(931)}</div>
-              <div style={{ fontSize: 13, color: C.sec, marginTop: 6 }}>Ons bod voor je spullen <strong style={{ color: C.text }}>{money(1000)}</strong> · je aankoop − {money(69)}</div>
+              <div style={{ fontSize: 13, color: C.sec, marginTop: 6 }}>Ons bod voor je spullen <strong style={{ color: C.text }}>{money(1000)}</strong> · je aankoop − {money(69)}{verlegd && ' · BTW verlegd'}</div>
             </div>
 
             <div style={{ ...card, padding: 24 }}>
@@ -276,17 +288,26 @@ export default function AcceptFlowReference() {
               <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
                 <div style={{ padding: '12px 18px', borderBottom: `1px solid ${C.border}` }} className="svc-eyebrow">Overzicht</div>
                 <div style={{ padding: '4px 18px' }}>
-                  <Row label="Subtotaal inkoop" value={money(826.45)} />
-                  <Row label={<>BTW 21% <span style={{ color: C.sec }}>(over {money(826.45)})</span></>} value={money(173.55)} muted />
+                  <Row label="Subtotaal inkoop" value={money(verlegd ? 1000 : 826.45)} />
+                  <Row label={verlegd
+                    ? <>BTW <span style={{ color: C.sec }}>· verlegd (reverse charge)</span></>
+                    : <>BTW 21% <span style={{ color: C.sec }}>(over {money(826.45)})</span></>} value={money(verlegd ? 0 : 173.55)} muted />
                   <Row label="Totaal inkoop" value={money(1000)} bold />
                   <Row label="Subtotaal aankoop" value={money(69)} top />
-                  <Row label={<>BTW 0% <span style={{ color: C.sec }}>· marge</span></>} value={money(0)} muted />
+                  <Row label={verlegd
+                    ? <>BTW <span style={{ color: C.sec }}>· verlegd (reverse charge)</span></>
+                    : <>BTW 0% <span style={{ color: C.sec }}>· marge</span></>} value={money(0)} muted />
                   <Row label="Totaal aankoop" value={money(69)} bold />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F0FDF4', padding: '14px 18px', borderTop: `1px solid ${C.border}` }}>
                   <strong style={{ color: '#15803d', fontSize: 15 }}>Je ontvangt</strong>
                   <strong style={{ color: '#15803d', fontSize: 18 }}>{money(931)}</strong>
                 </div>
+                {verlegd && (
+                  <div style={{ padding: '12px 18px', borderTop: `1px solid ${C.border}`, fontSize: 12.5, color: C.sec, lineHeight: 1.55 }}>
+                    <strong style={{ color: C.text }}>BTW verlegd naar jou als ondernemer</strong> (reverse charge). Ons bod is exclusief BTW; je ontvangt het bedrag zonder BTW en verwerkt de verlegde BTW zelf in je aangifte.
+                  </div>
+                )}
               </div>
 
               <div style={{ ...card, background: C.tint, padding: '14px 18px', marginTop: 16, fontSize: 13.5, lineHeight: 1.55 }}>
