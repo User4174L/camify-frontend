@@ -163,6 +163,10 @@ export default function AcceptFlowReference() {
   const [bankError, setBankError] = useState(false);
   const [btwMode, setBtwMode] = useState<'regulier' | 'verlegd'>('regulier');
   const verlegd = btwMode === 'verlegd';
+  // Bij verlegging betalen we het bedrag exclusief BTW uit: de €173,55 wordt verlegd,
+  // dus totaal inkoop = het subtotaal (826,45) en je ontvangt 826,45 − 69 = 757,45.
+  const totaalInkoop = verlegd ? 826.45 : 1000;
+  const jeOntvangt = verlegd ? 757.45 : 931;
 
   const isLangsbrengen = method === 'langsbrengen';
   const labels = isLangsbrengen ? STEPS.slice(0, 3) : STEPS;
@@ -248,8 +252,8 @@ export default function AcceptFlowReference() {
                 wat wij bieden én wat de klant ontvangt. */}
             <div style={{ ...card, padding: '20px 24px', marginBottom: 14, background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
               <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#15803d' }}>Je ontvangt</div>
-              <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, marginTop: 4, color: '#15803d' }}>{money(931)}</div>
-              <div style={{ fontSize: 13, color: C.sec, marginTop: 6 }}>Ons bod voor je spullen <strong style={{ color: C.text }}>{money(1000)}</strong> · je aankoop − {money(69)}{verlegd && ' · BTW verlegd'}</div>
+              <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, marginTop: 4, color: '#15803d' }}>{money(jeOntvangt)}</div>
+              <div style={{ fontSize: 13, color: C.sec, marginTop: 6 }}>Ons bod voor je spullen <strong style={{ color: C.text }}>{money(1000)}</strong>{verlegd && <> · BTW <strong style={{ color: C.text }}>{money(173.55)}</strong> verlegd</>} · je aankoop − {money(69)}</div>
             </div>
 
             <div style={{ ...card, padding: 24 }}>
@@ -288,24 +292,22 @@ export default function AcceptFlowReference() {
               <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
                 <div style={{ padding: '12px 18px', borderBottom: `1px solid ${C.border}` }} className="svc-eyebrow">Overzicht</div>
                 <div style={{ padding: '4px 18px' }}>
-                  <Row label="Subtotaal inkoop" value={money(verlegd ? 1000 : 826.45)} />
+                  <Row label="Subtotaal inkoop" value={money(826.45)} />
                   <Row label={verlegd
-                    ? <>BTW <span style={{ color: C.sec }}>· verlegd (reverse charge)</span></>
-                    : <>BTW 21% <span style={{ color: C.sec }}>(over {money(826.45)})</span></>} value={money(verlegd ? 0 : 173.55)} muted />
-                  <Row label="Totaal inkoop" value={money(1000)} bold />
+                    ? <>BTW 21% <span style={{ color: C.sec }}>· verlegd (reverse charge)</span></>
+                    : <>BTW 21% <span style={{ color: C.sec }}>(over {money(826.45)})</span></>} value={verlegd ? <>{money(173.55)} <span style={{ color: C.sec, fontWeight: 400 }}>verlegd</span></> : money(173.55)} muted />
+                  <Row label="Totaal inkoop" value={money(totaalInkoop)} bold />
                   <Row label="Subtotaal aankoop" value={money(69)} top />
-                  <Row label={verlegd
-                    ? <>BTW <span style={{ color: C.sec }}>· verlegd (reverse charge)</span></>
-                    : <>BTW 0% <span style={{ color: C.sec }}>· marge</span></>} value={money(0)} muted />
+                  <Row label={<>BTW 0% <span style={{ color: C.sec }}>· marge</span></>} value={money(0)} muted />
                   <Row label="Totaal aankoop" value={money(69)} bold />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F0FDF4', padding: '14px 18px', borderTop: `1px solid ${C.border}` }}>
                   <strong style={{ color: '#15803d', fontSize: 15 }}>Je ontvangt</strong>
-                  <strong style={{ color: '#15803d', fontSize: 18 }}>{money(931)}</strong>
+                  <strong style={{ color: '#15803d', fontSize: 18 }}>{money(jeOntvangt)}</strong>
                 </div>
                 {verlegd && (
                   <div style={{ padding: '12px 18px', borderTop: `1px solid ${C.border}`, fontSize: 12.5, color: C.sec, lineHeight: 1.55 }}>
-                    <strong style={{ color: C.text }}>BTW verlegd naar jou als ondernemer</strong> (reverse charge). Ons bod is exclusief BTW; je ontvangt het bedrag zonder BTW en verwerkt de verlegde BTW zelf in je aangifte.
+                    <strong style={{ color: C.text }}>BTW verlegd naar jou als ondernemer</strong> (reverse charge). Ons bod van {money(1000)} is inclusief {money(173.55)} BTW; die wordt verlegd, dus we betalen {money(826.45)} exclusief BTW uit. Je verwerkt de verlegde BTW zelf in je aangifte.
                   </div>
                 )}
               </div>
@@ -476,7 +478,7 @@ function CondPill({ condition }: { condition: string }) {
   return <span style={{ background: t.bg, color: t.color, borderRadius: 999, padding: '2px 10px', fontWeight: 700, fontSize: 12 }}>{condition}</span>;
 }
 
-function Row({ label, value, muted, bold, top }: { label: React.ReactNode; value: string; muted?: boolean; bold?: boolean; top?: boolean }) {
+function Row({ label, value, muted, bold, top }: { label: React.ReactNode; value: React.ReactNode; muted?: boolean; bold?: boolean; top?: boolean }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '8px 0', fontSize: 13.5, color: muted ? C.sec : C.text, fontWeight: bold ? 700 : 400, borderTop: top ? `1px solid ${C.border}` : undefined, marginTop: top ? 6 : 0, paddingTop: top ? 14 : 8 }}>
       <span>{label}</span><span style={{ whiteSpace: 'nowrap' }}>{value}</span>
