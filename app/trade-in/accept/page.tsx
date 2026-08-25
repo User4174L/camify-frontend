@@ -26,6 +26,14 @@ const SELL = { name: 'Sony 70-200mm f/2.8 G SSM - Sony A', condition: 'Heavily u
 const BUY = { name: 'Canon 430EX II Speedlite', price: 69, category: 'accessory', condition: 'Goed', sku: '430211' };
 const SHOWROOM = 'Kerkstraat 47 Bis, 4191 AA Geldermalsen';
 const SLOTS = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];
+// Afwijsredenen: exact overgenomen uit V2 (quote-bid reject-flow).
+const REJECT_REASONS: [string, string][] = [
+  ['price', 'Ik vind de geboden prijs te laag'],
+  ['better-offer', 'Ik heb een beter aanbod van een andere partij'],
+  ['self-sell', 'Ik wil het eerst zelf proberen te verkopen'],
+  ['doubt', 'Ik twijfel nog over de verkoop'],
+  ['other', 'Anders, namelijk:'],
+];
 
 type Method = 'verzending' | 'langsbrengen' | null;
 
@@ -135,13 +143,13 @@ function FooterBar({ back, backLabel = 'Terug', primary, onPrimary, disabled, wi
     <div className="acc-barwrap">
       <div className="acc-bar" style={{ maxWidth: width }}>
         {back ? <button onClick={back} style={{ ...btnGhost, border: `1px solid ${C.border}`, color: C.text, fontWeight: 600 }}>← {backLabel}</button> : <span />}
-        <button disabled={disabled} onClick={onPrimary} style={{ ...btnCta, opacity: disabled ? 0.45 : 1, cursor: disabled ? 'default' : 'pointer' }}>{primary} →</button>
+        <button disabled={disabled} onClick={onPrimary} style={{ ...btnCta, opacity: disabled ? 0.45 : 1, cursor: disabled ? 'default' : 'pointer' }}>{primary}<span className="acc-arrow"> →</span></button>
       </div>
       <style>{`
         .acc-barwrap{position:sticky;bottom:0;background:#fff;border-top:1px solid ${C.border};padding:14px 24px;z-index:15;box-shadow:0 -6px 20px rgba(30,33,51,.05)}
         @media(max-width:760px){.acc-barwrap{position:fixed;left:0;right:0;bottom:0;padding-bottom:calc(14px + env(safe-area-inset-bottom))}}
         .acc-bar{margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
-        @media(max-width:760px){.acc-bar>button{flex:1;justify-content:center}}
+        @media(max-width:760px){.acc-bar>button{flex:1;justify-content:center;padding:13px 16px!important;line-height:1.2}.acc-arrow{display:none}}
       `}</style>
     </div>
   );
@@ -169,6 +177,11 @@ export default function AcceptFlowReference() {
   // dus totaal inkoop = het subtotaal (826,45) en je ontvangt 826,45 − 69 = 757,45.
   const totaalInkoop = verlegd ? 826.45 : 1000;
   const jeOntvangt = verlegd ? 757.45 : 931;
+  const [rejectOpen, setRejectOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState<string | null>(null);
+  const [rejectOther, setRejectOther] = useState('');
+  const [rejectDone, setRejectDone] = useState(false);
+  const rejectInvalid = !rejectReason || (rejectReason === 'other' && !rejectOther.trim());
 
   const isLangsbrengen = method === 'langsbrengen';
   const labels = isLangsbrengen ? STEPS.slice(0, 3) : STEPS;
@@ -340,14 +353,14 @@ export default function AcceptFlowReference() {
 
           <div className="acc-barwrap-1">
             <div className="acc-bar-1">
-              <button style={{ ...btnGhost, border: `1px solid ${C.border}`, color: C.text, fontWeight: 600 }}>Afwijzen</button>
-              <button disabled={!agree} onClick={() => setStep(2)} style={{ ...btnCta, opacity: agree ? 1 : 0.45, cursor: agree ? 'pointer' : 'default' }}>Naar contactgegevens →</button>
+              <button onClick={() => setRejectOpen(true)} style={{ ...btnGhost, border: `1px solid ${C.border}`, color: C.text, fontWeight: 600 }}>Afwijzen</button>
+              <button disabled={!agree} onClick={() => setStep(2)} style={{ ...btnCta, opacity: agree ? 1 : 0.45, cursor: agree ? 'pointer' : 'default' }}>Naar contactgegevens<span className="acc-arrow"> →</span></button>
             </div>
             <style>{`
               .acc-barwrap-1{position:sticky;bottom:0;background:#fff;border-top:1px solid ${C.border};padding:14px 24px;z-index:15;box-shadow:0 -6px 20px rgba(30,33,51,.05)}
               @media(max-width:760px){.acc-barwrap-1{position:fixed;left:0;right:0;bottom:0;padding-bottom:calc(14px + env(safe-area-inset-bottom))}}
               .acc-bar-1{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
-              @media(max-width:760px){.acc-bar-1>button{flex:1;justify-content:center}}
+              @media(max-width:760px){.acc-bar-1>button{flex:1;justify-content:center;padding:13px 16px!important;line-height:1.2}.acc-arrow{display:none}}
             `}</style>
           </div>
         </>
@@ -472,6 +485,47 @@ export default function AcceptFlowReference() {
           </Body>
           <FooterBar back={() => setStep(3)} primary="Bevestigen" onPrimary={() => setDone(true)} />
         </>
+      )}
+
+      {/* Afwijzen: reden-modal (overgenomen uit V2). Afwijzen mag altijd, los van de voorwaarden. */}
+      {rejectOpen && (
+        <div onClick={() => !rejectDone && setRejectOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'rgba(20,22,34,.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ ...card, width: '100%', maxWidth: 440, padding: 24, maxHeight: '90vh', overflowY: 'auto' }}>
+            {rejectDone ? (
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#22c55e', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
+                </div>
+                <h2 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 8px', color: C.text }}>Bedankt!</h2>
+                <p style={{ color: C.sec, fontSize: 14, lineHeight: 1.6, margin: '0 0 18px' }}>Dank voor je feedback. Mocht je later toch interesse hebben, laat het ons dan gerust weten.</p>
+                <Link href="/" style={{ ...btnGhost, border: `1px solid ${C.border}`, color: C.text, fontWeight: 600, textDecoration: 'none' }}>Terug naar homepage</Link>
+              </div>
+            ) : (
+              <>
+                <h2 style={{ fontSize: 19, fontWeight: 800, margin: '0 0 6px', color: C.text }}>Jammer dat je ons bod afwijst</h2>
+                <p style={{ color: C.sec, fontSize: 14, lineHeight: 1.55, margin: '0 0 16px' }}>Om onze service te verbeteren horen we graag waarom je niet akkoord bent gegaan.</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {REJECT_REASONS.map(([v, l]) => {
+                    const on = rejectReason === v;
+                    return (
+                      <label key={v} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', borderRadius: 10, border: `1.5px solid ${on ? C.text : C.border}`, background: on ? C.tint : '#fff', cursor: 'pointer', fontSize: 14, color: C.text }}>
+                        <input type="radio" name="rejectReason" checked={on} onChange={() => setRejectReason(v)} style={{ accentColor: C.accent }} />
+                        {l}
+                      </label>
+                    );
+                  })}
+                </div>
+                {rejectReason === 'other' && (
+                  <textarea value={rejectOther} onChange={e => setRejectOther(e.target.value)} placeholder="Vul hier je reden in…" style={{ ...input, minHeight: 84, marginTop: 10, resize: 'vertical' }} />
+                )}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 18 }}>
+                  <button onClick={() => setRejectOpen(false)} style={{ ...btnGhost, border: `1px solid ${C.border}`, color: C.text, fontWeight: 600 }}>Annuleren</button>
+                  <button disabled={rejectInvalid} onClick={() => setRejectDone(true)} style={{ ...btnCta, opacity: rejectInvalid ? 0.45 : 1, cursor: rejectInvalid ? 'default' : 'pointer' }}>Versturen</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       )}
     </>
   );
