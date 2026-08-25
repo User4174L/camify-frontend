@@ -262,7 +262,7 @@ export default function AcceptFlowReference() {
               <div style={{ ...card, background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '14px 16px', marginBottom: 14, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
                 <div style={{ fontSize: 13, color: '#1e3a8a', lineHeight: 1.6 }}>
-                  <strong>Bij deze inruil is de BTW verlegd (reverse charge).</strong> Ons bod is {money(1000)}, maar omdat de BTW ({money(173.55)}) wordt verlegd keren we exclusief BTW uit. Je ontvangt <strong>{money(jeOntvangt)}</strong> ({money(826.45)} min je aankoop van {money(69)}). De verlegde BTW verwerk je zelf in je aangifte.
+                  <strong>Bij deze inruil is de BTW verlegd (reverse charge).</strong> Je ontvangt het bedrag exclusief BTW en verwerkt de verlegde BTW zelf in je aangifte.
                 </div>
               </div>
             )}
