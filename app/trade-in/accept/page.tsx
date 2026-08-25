@@ -238,9 +238,11 @@ export default function AcceptFlowReference() {
       {step === 1 && (
         <>
           <Body width={720}>
-            {/* Preview-schakelaar zodat je de BTW-weergave kunt vergelijken (alleen voor deze referentie). */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, fontSize: 12.5, color: C.sec, flexWrap: 'wrap' }}>
-              <span>Voorbeeld BTW:</span>
+            {/* Preview-schakelaar — ALLEEN voor deze referentie, staat niet in de echte flow.
+                In productie bepaalt de klantdata (zakelijk/land/BTW-nummer) de weergave. */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, fontSize: 12, color: C.sec, flexWrap: 'wrap', padding: '9px 12px', border: `1px dashed ${C.border}`, borderRadius: 10, background: C.tint }}>
+              <span style={{ fontWeight: 800, color: C.accent, textTransform: 'uppercase', letterSpacing: '.06em', fontSize: 10.5 }}>Preview</span>
+              <span>BTW-weergave (niet in de echte flow — daar bepaalt de klantdata dit):</span>
               {(['regulier', 'verlegd'] as const).map(m => (
                 <button key={m} onClick={() => setBtwMode(m)} style={{ padding: '5px 12px', borderRadius: 999, border: `1px solid ${btwMode === m ? C.text : C.border}`, background: btwMode === m ? C.text : '#fff', color: btwMode === m ? '#fff' : C.sec, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}>
                   {m === 'regulier' ? 'Regulier (21% / marge)' : 'BTW verlegd'}
