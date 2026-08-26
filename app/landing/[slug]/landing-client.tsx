@@ -38,10 +38,48 @@ function SeoText({ source }: { source: string }) {
   return <div style={{ maxWidth: 800 }}>{out}</div>;
 }
 
+const ITEMS_PER_PAGE = 16;
+
+/* Zelfde kaartontwerp als de categoriepagina */
+function Kaart({ p }: { p: import('@/data/landing-content').LandingProduct }) {
+  return (
+    <Link href={p.href ?? '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ position: 'relative', background: '#fff', aspectRatio: '1', overflow: 'hidden', borderRadius: '11px 11px 0 0' }}>
+          <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', padding: '12%' }} />
+          <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }}>
+            <div style={{ background: '#fff', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }}>
+              <svg width="16" height="16" fill="none" stroke="#888" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: '12px 14px 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div style={{ fontSize: 15, fontWeight: 600, color: '#111', lineHeight: 1.3 }}>{p.name}</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>
+            <span style={{ fontSize: 13, fontWeight: 400, color: '#6b7280', marginRight: 4 }}>Vanaf</span>
+            &euro;{formatPrice(p.price)}
+            {p.priceMax !== p.price && <> &ndash; &euro;{formatPrice(p.priceMax)}</>}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+            {p.stock <= 2 ? (
+              <><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} /><span style={{ fontSize: 13, fontWeight: 600, color: '#ef4444' }}>{p.stock === 1 ? 'Laatste!' : `Nog ${p.stock} op voorraad!`}</span></>
+            ) : p.stock <= 5 ? (
+              <><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }} /><span style={{ fontSize: 13, fontWeight: 600, color: '#f59e0b' }}>Nog {p.stock} op voorraad</span></>
+            ) : (
+              <><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} /><span style={{ fontSize: 13, color: '#6b7280' }}>{p.stock} op voorraad</span></>
+            )}
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function LandingClient({ content: c }: { content: LandingContent }) {
   const [openFilter, setOpenFilter] = useState<string | null>(null);
   const [filterSelections, setFilterSelections] = useState<Record<string, string[]>>({});
   const [sortBy, setSortBy] = useState('relevance');
+  const [currentPage, setCurrentPage] = useState(1);
   const filterBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,6 +100,12 @@ export default function LandingClient({ content: c }: { content: LandingContent 
     else if (sortBy === 'price-high') list.sort((a, b) => b.price - a.price);
     return list;
   }, [c.producten, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(producten.length / ITEMS_PER_PAGE));
+  const paginated = producten.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const firstHalf = paginated.slice(0, 8);
+  const secondHalf = paginated.slice(8);
+  const goToPage = (p: number) => { setCurrentPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
   return (
     <div className="container">
@@ -135,40 +179,39 @@ export default function LandingClient({ content: c }: { content: LandingContent 
         </div>
       </div>
 
-      {/* Productkaarten — zelfde kaartontwerp als de categoriepagina */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 48 }}>
-        {producten.map(p => (
-          <Link key={p.id} href={p.href ?? '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div style={{ borderRadius: 12, overflow: 'hidden', background: '#fff', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ position: 'relative', background: '#fff', aspectRatio: '1', overflow: 'hidden', borderRadius: '11px 11px 0 0' }}>
-                <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', padding: '12%' }} />
-                <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }}>
-                  <div style={{ background: '#fff', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }}>
-                    <svg width="16" height="16" fill="none" stroke="#888" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
-                  </div>
-                </div>
-              </div>
-              <div style={{ padding: '12px 14px 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <div style={{ fontSize: 15, fontWeight: 600, color: '#111', lineHeight: 1.3 }}>{p.name}</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>
-                  <span style={{ fontSize: 13, fontWeight: 400, color: '#6b7280', marginRight: 4 }}>Vanaf</span>
-                  &euro;{formatPrice(p.price)}
-                  {p.priceMax !== p.price && <> &ndash; &euro;{formatPrice(p.priceMax)}</>}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
-                  {p.stock <= 2 ? (
-                    <><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} /><span style={{ fontSize: 13, fontWeight: 600, color: '#ef4444' }}>{p.stock === 1 ? 'Laatste!' : `Nog ${p.stock} op voorraad!`}</span></>
-                  ) : p.stock <= 5 ? (
-                    <><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }} /><span style={{ fontSize: 13, fontWeight: 600, color: '#f59e0b' }}>Nog {p.stock} op voorraad</span></>
-                  ) : (
-                    <><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} /><span style={{ fontSize: 13, color: '#6b7280' }}>{p.stock} op voorraad</span></>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Link>
-        ))}
+      {/* Productkaarten — zelfde kaartontwerp en aantal (16/pagina) als de categoriepagina */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+        {firstHalf.map(p => <Kaart key={p.id} p={p} />)}
       </div>
+
+      {/* USP trust band tussen rij 2 en 3 — zelfde als de categoriepagina */}
+      {secondHalf.length > 0 && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 32, padding: '28px 0', margin: '24px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', flexWrap: 'wrap' }}>
+            {['12 maanden garantie', 'Professioneel getest', 'Gratis verzending vanaf €50', '14 dagen bedenktijd'].map(text => (
+              <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="10" /></svg>
+                {text}
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+            {secondHalf.map(p => <Kaart key={p.id} p={p} />)}
+          </div>
+        </>
+      )}
+
+      {/* Paginering — zelfde als de categoriepagina */}
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, margin: '32px 0 48px' }}>
+          <button onClick={() => currentPage > 1 && goToPage(currentPage - 1)} disabled={currentPage <= 1} style={{ width: 36, height: 36, borderRadius: 8, border: '1.5px solid var(--border)', background: 'transparent', cursor: currentPage <= 1 ? 'default' : 'pointer', color: currentPage <= 1 ? 'var(--text-tertiary, #ccc)' : 'var(--text)', opacity: currentPage <= 1 ? 0.4 : 1, fontSize: 15 }}>&lsaquo;</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <button key={page} onClick={() => goToPage(page)} style={{ width: 36, height: 36, borderRadius: 8, border: page === currentPage ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: page === currentPage ? 'var(--accent)' : 'transparent', color: page === currentPage ? '#fff' : 'var(--text)', cursor: 'pointer', fontSize: 14, fontWeight: page === currentPage ? 600 : 400 }}>{page}</button>
+          ))}
+          <button onClick={() => currentPage < totalPages && goToPage(currentPage + 1)} disabled={currentPage >= totalPages} style={{ width: 36, height: 36, borderRadius: 8, border: '1.5px solid var(--border)', background: 'transparent', cursor: currentPage >= totalPages ? 'default' : 'pointer', color: currentPage >= totalPages ? 'var(--text-tertiary, #ccc)' : 'var(--text)', opacity: currentPage >= totalPages ? 0.4 : 1, fontSize: 15 }}>&rsaquo;</button>
+        </div>
+      )}
+      {totalPages <= 1 && <div style={{ marginBottom: 48 }} />}
 
       {/* SEO-tekst onderaan */}
       <div style={{ borderTop: '1px solid var(--border)', paddingTop: 32, marginBottom: 40 }}>
