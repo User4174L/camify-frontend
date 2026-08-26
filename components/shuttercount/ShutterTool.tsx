@@ -11,6 +11,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { readShutterCount, friendlyCameraName, type ShutterResult } from '@/lib/shuttercount';
+import { sendTelemetry, shareMetadata } from '@/lib/shuttercount-telemetry';
 
 const C = { text: '#1E2133', sec: '#6B6D80', border: '#EEEEF2', surface: '#F4F4F7', accent: '#E8692A', ok: '#16A34A' };
 
@@ -66,22 +67,35 @@ export default function ShutterTool() {
   const [busy, setBusy] = useState(false);
   const [res, setRes] = useState<ShutterResult | null>(null);
   const [fileName, setFileName] = useState('');
+  const [shared, setShared] = useState<'idle' | 'busy' | 'done' | 'failed'>('idle');
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<File | null>(null);
 
   const handle = useCallback(async (file: File) => {
-    setBusy(true); setRes(null); setFileName(file.name);
+    setBusy(true); setRes(null); setFileName(file.name); setShared('idle');
+    fileRef.current = file;
     const started = Date.now();
     try {
       const slice = file.size > 8 * 1024 * 1024 ? file.slice(0, 8 * 1024 * 1024) : file;
       const buf = await slice.arrayBuffer();
       const r = readShutterCount(buf);
+      sendTelemetry({ status: r.status, make: r.make, model: r.model, fileKind: r.fileKind, count: r.shutterCount });
       // korte minimumduur zodat de analyse-animatie niet "flitst"
       const wait = Math.max(0, 900 - (Date.now() - started));
       setTimeout(() => { setRes(r); setBusy(false); }, wait);
     } catch {
+      sendTelemetry({ status: 'unreadable' });
       setRes({ status: 'unreadable', message: 'Kon dit bestand niet lezen.' }); setBusy(false);
     }
   }, []);
+
+  const share = useCallback(async () => {
+    const f = fileRef.current;
+    if (!f || !res) return;
+    setShared('busy');
+    const ok = await shareMetadata(f, { status: res.status, make: res.make, model: res.model, fileKind: res.fileKind });
+    setShared(ok ? 'done' : 'failed');
+  }, [res]);
 
   const camera = useMemo(() => (res ? friendlyCameraName(res.make, res.model) : undefined), [res]);
   const sellHref = camera ? `/trade-in/v3?product=${encodeURIComponent(camera)}` : '/trade-in/v3';
@@ -166,6 +180,26 @@ export default function ShutterTool() {
                         </li>
                       ))}
                     </ul>
+                  )}
+                  {!['png', 'webp', 'video'].includes(res.fileKind ?? '') && (
+                    <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px dashed ${C.border}` }}>
+                      {shared === 'done' ? (
+                        <div style={{ fontSize: 12.5, color: C.ok, fontWeight: 700 }}>Dank! De cameragegevens zijn gedeeld — hiermee kunnen we dit model mogelijk toevoegen.</div>
+                      ) : (
+                        <>
+                          <button
+                            onClick={share}
+                            disabled={shared === 'busy'}
+                            style={{ background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 999, padding: '8px 16px', fontSize: 12.5, fontWeight: 700, color: C.text, cursor: shared === 'busy' ? 'progress' : 'pointer', fontFamily: 'inherit' }}
+                          >
+                            {shared === 'busy' ? 'Versturen…' : shared === 'failed' ? 'Versturen mislukte — probeer opnieuw' : 'Help ons dit model toevoegen: deel de cameragegevens'}
+                          </button>
+                          <div style={{ fontSize: 11.5, color: C.sec, marginTop: 5, lineHeight: 1.5 }}>
+                            Deelt alleen het technische metadata-blok van dit bestand — nooit de foto zelf. Gebeurt uitsluitend als je hierop klikt.
+                          </div>
+                        </>
+                      )}
+                    </div>
                   )}
                 </>
               )}
