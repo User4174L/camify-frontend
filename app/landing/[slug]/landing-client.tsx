@@ -115,12 +115,12 @@ export default function LandingClient({ content: c }: { content: LandingContent 
       <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', marginBottom: 20, minHeight: 150, display: 'flex', alignItems: 'center', background: '#1a1a2e' }}>
         <img src={c.banner_image} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center right' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(10,10,20,0.85) 0%, rgba(10,10,20,0.55) 45%, rgba(10,10,20,0.1) 100%)' }} />
-        <div style={{ position: 'relative', padding: '26px 32px', maxWidth: 640 }}>
-          <h1 style={{ fontSize: 28, fontWeight: 800, color: '#fff', margin: 0, lineHeight: 1.2 }}>
+        <div style={{ position: 'relative', padding: 'clamp(18px, 4vw, 32px)', maxWidth: 640 }}>
+          <h1 style={{ fontSize: 'clamp(21px, 5.5vw, 28px)', fontWeight: 800, color: '#fff', margin: 0, lineHeight: 1.2 }}>
             {c.banner_title_lead} <span style={{ color: 'var(--accent, #E8692A)' }}>{c.banner_title_accent}</span>
           </h1>
           {c.banner_subtitle && (
-            <p style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.85)', margin: '8px 0 0' }}>{c.banner_subtitle}</p>
+            <p style={{ fontSize: 'clamp(13px, 3.5vw, 14px)', lineHeight: 1.6, color: 'rgba(255,255,255,0.85)', margin: '8px 0 0' }}>{c.banner_subtitle}</p>
           )}
         </div>
       </div>
@@ -161,7 +161,7 @@ export default function LandingClient({ content: c }: { content: LandingContent 
       </div>
 
       {/* Results bar + sort */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', marginBottom: 20, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, padding: '12px 0', marginBottom: 20, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
           <span>Toont <strong style={{ color: 'var(--text)' }}>{producten.length}</strong> van {c.aanbod.toLocaleString('nl-NL')} resultaten</span>
           {totalActive > 0 && (
@@ -180,7 +180,7 @@ export default function LandingClient({ content: c }: { content: LandingContent 
       </div>
 
       {/* Productkaarten — zelfde kaartontwerp en aantal (16/pagina) als de categoriepagina */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+      <div className="product-grid-responsive">
         {firstHalf.map(p => <Kaart key={p.id} p={p} />)}
       </div>
 
@@ -195,7 +195,7 @@ export default function LandingClient({ content: c }: { content: LandingContent 
               </div>
             ))}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <div className="product-grid-responsive">
             {secondHalf.map(p => <Kaart key={p.id} p={p} />)}
           </div>
         </>
