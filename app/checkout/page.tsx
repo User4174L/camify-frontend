@@ -632,12 +632,19 @@ function CheckoutPageInner() {
               <ErrorMsg field="phone" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={labelStyle}>Klanttype</label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', height: 44 }}>
-                <input type="checkbox" checked={customerType === 'business'} onChange={e => setCustomerType(e.target.checked ? 'business' : 'private')}
-                  style={{ width: 17, height: 17, accentColor: CSS.accent, cursor: 'pointer' }} />
-                <span style={{ fontSize: 14, color: CSS.textSec }}>Ik koop zakelijk</span>
-              </label>
+              <label style={labelStyle}>Ik koop als</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 18, height: 44 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
+                  <input type="radio" name="customerType" checked={customerType === 'private'} onChange={() => setCustomerType('private')}
+                    style={{ width: 16, height: 16, accentColor: CSS.accent, cursor: 'pointer' }} />
+                  <span style={{ fontSize: 14, color: CSS.textSec }}>Particulier</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
+                  <input type="radio" name="customerType" checked={customerType === 'business'} onChange={() => setCustomerType('business')}
+                    style={{ width: 16, height: 16, accentColor: CSS.accent, cursor: 'pointer' }} />
+                  <span style={{ fontSize: 14, color: CSS.textSec }}>Zakelijk</span>
+                </label>
+              </div>
             </div>
           </div>
 
