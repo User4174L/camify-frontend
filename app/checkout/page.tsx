@@ -305,7 +305,7 @@ function CheckoutPageInner() {
         if (!street.trim()) errs.street = 'Vul postcode + huisnummer in';
         if (customerType === 'business') {
           if (!companyName.trim()) errs.companyName = 'Verplicht';
-          if (!kvkNumber.trim()) errs.kvkNumber = 'Verplicht';
+          if (!vatNumber.trim()) errs.vatNumber = 'Verplicht';
         }
         if (shipOption === 'different') {
           if (!shipAttn.trim()) errs.shipAttn = 'Verplicht';
@@ -632,11 +632,12 @@ function CheckoutPageInner() {
               <ErrorMsg field="phone" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={labelStyle}>Klanttype <span style={{ color: '#ef4444' }}>*</span></label>
-              <select style={selectStyle} value={customerType} onChange={e => setCustomerType(e.target.value as 'private' | 'business')}>
-                <option value="private">Particulier</option>
-                <option value="business">Zakelijk</option>
-              </select>
+              <label style={labelStyle}>Klanttype</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', height: 44 }}>
+                <input type="checkbox" checked={customerType === 'business'} onChange={e => setCustomerType(e.target.checked ? 'business' : 'private')}
+                  style={{ width: 17, height: 17, accentColor: CSS.accent, cursor: 'pointer' }} />
+                <span style={{ fontSize: 14, color: CSS.textSec }}>Ik koop zakelijk</span>
+              </label>
             </div>
           </div>
 
@@ -654,15 +655,15 @@ function CheckoutPageInner() {
               </div>
               <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <label style={labelStyle}>KVK-nummer <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input style={{ ...inputStyle, ...errorBorder('kvkNumber') }} type="text" placeholder="12345678" value={kvkNumber} onChange={e => { setKvkNumber(e.target.value); setErrors(prev => { const n = {...prev}; delete n.kvkNumber; return n; }); }}
+                  <label style={labelStyle}>BTW-nummer <span style={{ color: '#ef4444' }}>*</span></label>
+                  <input style={{ ...inputStyle, ...errorBorder('vatNumber') }} type="text" placeholder="NL123456789B01" value={vatNumber} onChange={e => { setVatNumber(e.target.value); setErrors(prev => { const n = {...prev}; delete n.vatNumber; return n; }); }}
                     onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
-                    onBlur={e => { (e.target as HTMLInputElement).style.borderColor = errors.kvkNumber ? '#ef4444' : CSS.border; }} />
-                  <ErrorMsg field="kvkNumber" />
+                    onBlur={e => { (e.target as HTMLInputElement).style.borderColor = errors.vatNumber ? '#ef4444' : CSS.border; }} />
+                  <ErrorMsg field="vatNumber" />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <label style={labelStyle}>BTW-nummer</label>
-                  <input style={inputStyle} type="text" placeholder="NL123456789B01" value={vatNumber} onChange={e => setVatNumber(e.target.value)}
+                  <label style={labelStyle}>KVK-nummer</label>
+                  <input style={inputStyle} type="text" placeholder="12345678" value={kvkNumber} onChange={e => setKvkNumber(e.target.value)}
                     onFocus={e => { (e.target as HTMLInputElement).style.borderColor = CSS.accent; }}
                     onBlur={e => { (e.target as HTMLInputElement).style.borderColor = CSS.border; }} />
                 </div>
