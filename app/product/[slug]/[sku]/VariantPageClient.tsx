@@ -569,7 +569,7 @@ export default function VariantDetailPage() {
               <span style={{ fontSize: 32, fontWeight: 700, color: '#1f2937' }}>&euro; {formattedPrice}</span>
               {priceDrop && (
                 <>
-                  <span style={{ fontSize: 20, fontWeight: 600, color: '#9ca3af', textDecoration: 'line-through' }}>
+                  <span style={{ fontSize: 20, fontWeight: 600, color: '#ef4444', textDecoration: 'line-through' }}>
                     &euro; {priceDrop.was.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                   <span style={{ background: '#dcfce7', color: '#15803d', borderRadius: 999, padding: '3px 10px', fontSize: 12, fontWeight: 700 }}>
