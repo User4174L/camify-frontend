@@ -15,6 +15,23 @@ import StockNotifier, { usageMetricForCategory } from '@/components/ui/StockNoti
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
+
+/* Was/nu-prijs: alleen bij een echte verlaging (>=5% of >= EUR 20 t.o.v. de
+   laagste prijs van de 30 dagen ervoor) en maximaal 14 dagen na de verlaging.
+   Daarna is de nieuwe prijs gewoon de prijs. Verhogingen tonen nooit iets. */
+const PRICE_DROP_MIN_PCT = 0.05;
+const PRICE_DROP_MIN_EUR = 20;
+const PRICE_DROP_SHOW_DAYS = 14;
+
+function activePriceDrop(v: { price: number; previousPrice?: number; priceDroppedAt?: string }): { was: number; pct: number } | null {
+  if (!v.previousPrice || !v.priceDroppedAt || v.previousPrice <= v.price) return null;
+  const drop = v.previousPrice - v.price;
+  if (drop < PRICE_DROP_MIN_EUR && drop / v.previousPrice < PRICE_DROP_MIN_PCT) return null;
+  const days = (Date.now() - new Date(v.priceDroppedAt).getTime()) / 86400000;
+  if (days > PRICE_DROP_SHOW_DAYS) return null;
+  return { was: v.previousPrice, pct: Math.round((drop / v.previousPrice) * 100) };
+}
+
 function conditionColor(condition: string): string {
   switch (condition) {
     case 'as-new':
@@ -350,6 +367,7 @@ export default function VariantDetailPage() {
   const specsEntries = product.specs ? Object.entries(product.specs) : [];
 
   const formattedPrice = variant.price.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const priceDrop = activePriceDrop(variant);
 
   const handleAddToCart = () => {
     addItem(
@@ -547,7 +565,24 @@ export default function VariantDetailPage() {
           {/* Price */}
           {!oosPreview && (
           <div style={{ marginBottom: 12 }}>
-            <span style={{ fontSize: 32, fontWeight: 700, color: '#1f2937' }}>&euro; {formattedPrice}</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 32, fontWeight: 700, color: '#1f2937' }}>&euro; {formattedPrice}</span>
+              {priceDrop && (
+                <>
+                  <span style={{ fontSize: 20, fontWeight: 600, color: '#9ca3af', textDecoration: 'line-through' }}>
+                    &euro; {priceDrop.was.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                  <span style={{ background: '#dcfce7', color: '#15803d', borderRadius: 999, padding: '3px 10px', fontSize: 12, fontWeight: 700 }}>
+                    Price drop &minus;{priceDrop.pct}%
+                  </span>
+                </>
+              )}
+            </div>
+            {priceDrop && (
+              <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>
+                Crossed-out price: our lowest price in the 30 days before this reduction.
+              </div>
+            )}
           </div>
           )}
 
