@@ -12,7 +12,14 @@ export interface ProductVariant {
   images: string[];
   inclVat?: boolean;
   badges?: ('outlet' | 'new' | 'sale' | 'vat')[];
+  /** Was/nu-referentie: laagste prijs in de 30 dagen vóór de laatste verlaging (Omnibus). */
+  previousPrice?: number;
+  /** Datum van de laatste prijsverlaging; weergave dooft na 14 dagen. */
+  priceDroppedAt?: string;
 }
+
+/** Demo-datums relatief aan vandaag, zodat het referentievoorbeeld blijft werken. */
+const daysAgo = (n: number) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
 
 export interface Product {
   id: string;
@@ -44,11 +51,11 @@ export const products: Product[] = [
     badge: 'vat',
     description: 'Full-frame mirrorless camera with 33MP sensor',
     variants: [
-      { sku: '257962', price: 1749, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 12400, cosmeticRemark: 'On the back screen is a small scratch — does not impact display quality or functionality.', sensorCleaned: true, firmwareVersion: '2.01', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap'], images: ['/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg'], inclVat: true, badges: ['vat'] },
+      { sku: '257962', price: 1749, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 12400, cosmeticRemark: 'On the back screen is a small scratch — does not impact display quality or functionality.', sensorCleaned: true, firmwareVersion: '2.01', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap'], images: ['/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg', '/images/sony-a7-iv.jpg'], inclVat: true, badges: ['vat'], previousPrice: 1759, priceDroppedAt: daysAgo(1) },
       { sku: '257999', price: 1649, condition: 'good', conditionLabel: 'Good', shutterCount: 34200, cosmeticRemark: 'Light wear marks on the top plate and bottom plate. Fully functional.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100'], images: ['/images/sony-a7-iv.jpg'], inclVat: true, badges: ['outlet', 'vat'] },
-      { sku: '258040', price: 1499, condition: 'used', conditionLabel: 'Used', shutterCount: 67800, cosmeticRemark: 'Visible wear on body edges and grip rubber. LCD has minor scratches. All functions work perfectly.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap'], images: ['/images/sony-a7-iv.jpg'] },
+      { sku: '258040', price: 1499, condition: 'used', conditionLabel: 'Used', shutterCount: 67800, cosmeticRemark: 'Visible wear on body edges and grip rubber. LCD has minor scratches. All functions work perfectly.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap'], images: ['/images/sony-a7-iv.jpg'], previousPrice: 1699, priceDroppedAt: daysAgo(40) },
       { sku: '258041', price: 1849, condition: 'as-new', conditionLabel: 'As New', shutterCount: 980, sensorCleaned: true, firmwareVersion: '2.01', boxIncluded: true, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger', 'Strap', 'USB-C cable', 'Box'], images: ['/images/sony-a7-iv.jpg'], inclVat: true, badges: ['new'] },
-      { sku: '258042', price: 1699, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 18500, cosmeticRemark: 'Tiny mark on the hot shoe — cosmetic only.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger'], images: ['/images/sony-a7-iv.jpg'], inclVat: true, badges: ['vat'] },
+      { sku: '258042', price: 1699, condition: 'excellent', conditionLabel: 'Excellent', shutterCount: 18500, cosmeticRemark: 'Tiny mark on the hot shoe — cosmetic only.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100', 'Charger'], images: ['/images/sony-a7-iv.jpg'], inclVat: true, badges: ['vat'], previousPrice: 1849, priceDroppedAt: daysAgo(2) },
       { sku: '258043', price: 1599, condition: 'good', conditionLabel: 'Good', shutterCount: 41200, cosmeticRemark: 'General wear on grip and dials. Screen in good condition.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap', 'Battery NP-FZ100'], images: ['/images/sony-a7-iv.jpg'], badges: ['outlet'] },
       { sku: '258044', price: 1549, condition: 'good', conditionLabel: 'Good', shutterCount: 52000, cosmeticRemark: 'Wear marks on bottom plate and edges.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap'], images: ['/images/sony-a7-iv.jpg'], inclVat: true, badges: ['vat'] },
       { sku: '258045', price: 1399, condition: 'used', conditionLabel: 'Used', shutterCount: 89000, cosmeticRemark: 'Heavy use visible. Brassing on edges, grip wear. Fully functional.', sensorCleaned: true, firmwareVersion: '1.06', boxIncluded: false, accessories: ['Body cap'], images: ['/images/sony-a7-iv.jpg'] },
