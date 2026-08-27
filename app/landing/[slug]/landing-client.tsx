@@ -6,9 +6,8 @@ import Breadcrumb from '@/components/layout/Breadcrumb';
 import type { LandingContent } from '@/data/landing-content';
 
 /**
- * Landingspagina = categoriepagina + eigen smalle banner + SEO-tekst onderaan.
- * Zelfde filtergrid, results-bar en productkaarten als /lenses en /cameras;
- * het enige extra is de banner bovenaan en de teksten er omheen.
+ * Landingspagina = categoriepagina (H1 + intro, filtergrid, results-bar,
+ * productkaarten zoals /lenses en /cameras) met SEO-tekst + FAQ onderaan.
  */
 
 function formatPrice(p: number) { return p.toLocaleString('nl-NL'); }
@@ -111,28 +110,13 @@ export default function LandingClient({ content: c }: { content: LandingContent 
     <div className="container">
       <Breadcrumb items={c.breadcrumb.map(b => ({ label: b.label, href: b.href }))} />
 
-      {/* Smalle banner — het enige verschil met een categoriepagina */}
-      <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', marginBottom: 20, minHeight: 150, display: 'flex', alignItems: 'center', background: '#1a1a2e' }}>
-        <img src={c.banner_image} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center right' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(10,10,20,0.85) 0%, rgba(10,10,20,0.55) 45%, rgba(10,10,20,0.1) 100%)' }} />
-        <div style={{ position: 'relative', padding: 'clamp(18px, 4vw, 32px)', maxWidth: 640 }}>
-          <h1 style={{ fontSize: 'clamp(21px, 5.5vw, 28px)', fontWeight: 800, color: '#fff', margin: 0, lineHeight: 1.2 }}>
-            {c.banner_title_lead} <span style={{ color: 'var(--accent, #E8692A)' }}>{c.banner_title_accent}</span>
-          </h1>
-          {/* desktop-subtekst; op mobiel alleen de korte variant (of niets) */}
-          {c.banner_subtitle && (
-            <p className="hidden sm:block" style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.85)', margin: '8px 0 0' }}>{c.banner_subtitle}</p>
-          )}
-          {c.banner_subtitle_mobiel && (
-            <p className="sm:hidden" style={{ fontSize: 13, lineHeight: 1.5, color: 'rgba(255,255,255,0.85)', margin: '8px 0 0' }}>{c.banner_subtitle_mobiel}</p>
-          )}
-        </div>
+      {/* H1 + korte intro — exact zoals de categoriepagina */}
+      <div style={{ marginBottom: 24 }}>
+        <h1 className="section__title" style={{ marginBottom: 12 }}>{c.pagina}</h1>
+        {c.intro_boven_producten && (
+          <p style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)', maxWidth: 800, margin: 0 }}>{c.intro_boven_producten}</p>
+        )}
       </div>
-
-      {/* Korte intro (optioneel) */}
-      {c.intro_boven_producten && (
-        <p style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)', maxWidth: 800, margin: '0 0 24px' }}>{c.intro_boven_producten}</p>
-      )}
 
       {/* Filtergrid — zelfde als de categoriepagina */}
       <div ref={filterBarRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8, marginBottom: 12 }}>

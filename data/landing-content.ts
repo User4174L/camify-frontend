@@ -1,8 +1,8 @@
 /**
  * Content voor de landingspagina-opzet (/landing/[slug]).
  *
- * Een landingspagina = categoriepagina + eigen smalle banner + SEO-tekst
- * onderaan. De contentvelden spiegelen 1-op-1 de kolommen van het
+ * Een landingspagina is identiek aan een categoriepagina (H1 + intro,
+ * filters, grid), met SEO-tekst + FAQ onderaan als enige extra. De contentvelden spiegelen 1-op-1 de kolommen van het
  * content-werkbestand (OneDrive: 6. Website & Productontwikkeling/
  * Landingspaginas/concepten/"Landingspaginas V2 - content werkbestand
  * (CONCEPT).xlsx", tab `paginas` + tab `faq`). `filters` en `producten`
@@ -26,13 +26,6 @@ export type LandingContent = {
   pagina: string;
   blok: 'A' | 'B';
   breadcrumb: Array<{ label: string; href?: string }>;
-  // Banner (smal)
-  banner_title_lead: string;
-  banner_title_accent: string;
-  banner_subtitle: string;
-  /** Korte variant voor mobiel; leeg/afwezig = op mobiel alleen de titel tonen. */
-  banner_subtitle_mobiel?: string;
-  banner_image: string;
   // Productselectie (Excel-spiegel; op V2 het listingblok #534)
   filter_omschrijving: string;
   filter_machine: string;
@@ -81,12 +74,6 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
     pagina: 'Lenzen voor Canon',
     blok: 'A',
     breadcrumb: [{ label: 'Lenzen', href: '/lenses' }, { label: 'Lenzen voor Canon' }],
-    banner_title_lead: 'Lenzen voor',
-    banner_title_accent: 'Canon',
-    banner_subtitle:
-      'Van lichtsterke primes tot veelzijdige zooms: ruim duizend geteste tweedehands lenzen met RF-, EF-, EF-S- of EF-M-vatting, met garantie.',
-    banner_subtitle_mobiel: 'Ruim 1.000 geteste lenzen met RF-, EF-, EF-S- of EF-M-vatting.',
-    banner_image: '/images/canon-rf-24-70mm-f28-l-is-usm.jpg',
     filter_omschrijving: 'Alle lenzen met Canon-vatting: RF, EF, EF-S, EF-M',
     filter_machine:
       'categories=lenses/mirrorless/canon-rf-fit,lenses/dslr/canon-fit,lenses/dslr/canon-efs-fit,lenses/mirrorless/canon-efm-fit',
@@ -157,11 +144,6 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
     pagina: "Sony camera's",
     blok: 'A',
     breadcrumb: [{ label: "Camera's", href: '/cameras' }, { label: "Sony camera's" }],
-    banner_title_lead: 'Tweedehands',
-    banner_title_accent: "Sony camera's",
-    banner_subtitle:
-      'Van de A7-serie tot de compacte ZV-lijn: geteste Sony-camera’s met eerlijke conditieomschrijving en garantie.',
-    banner_image: '/images/sony-a7-iv.jpg',
     filter_omschrijving: "Alle camera's van het merk Sony",
     filter_machine: 'brands=sony&product_type=camera',
     aanbod: 140,
