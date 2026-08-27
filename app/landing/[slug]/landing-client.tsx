@@ -119,8 +119,12 @@ export default function LandingClient({ content: c }: { content: LandingContent 
           <h1 style={{ fontSize: 'clamp(21px, 5.5vw, 28px)', fontWeight: 800, color: '#fff', margin: 0, lineHeight: 1.2 }}>
             {c.banner_title_lead} <span style={{ color: 'var(--accent, #E8692A)' }}>{c.banner_title_accent}</span>
           </h1>
+          {/* desktop-subtekst; op mobiel alleen de korte variant (of niets) */}
           {c.banner_subtitle && (
-            <p style={{ fontSize: 'clamp(13px, 3.5vw, 14px)', lineHeight: 1.6, color: 'rgba(255,255,255,0.85)', margin: '8px 0 0' }}>{c.banner_subtitle}</p>
+            <p className="hidden sm:block" style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.85)', margin: '8px 0 0' }}>{c.banner_subtitle}</p>
+          )}
+          {c.banner_subtitle_mobiel && (
+            <p className="sm:hidden" style={{ fontSize: 13, lineHeight: 1.5, color: 'rgba(255,255,255,0.85)', margin: '8px 0 0' }}>{c.banner_subtitle_mobiel}</p>
           )}
         </div>
       </div>

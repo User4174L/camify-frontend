@@ -30,6 +30,8 @@ export type LandingContent = {
   banner_title_lead: string;
   banner_title_accent: string;
   banner_subtitle: string;
+  /** Korte variant voor mobiel; leeg/afwezig = op mobiel alleen de titel tonen. */
+  banner_subtitle_mobiel?: string;
   banner_image: string;
   // Productselectie (Excel-spiegel; op V2 het listingblok #534)
   filter_omschrijving: string;
@@ -83,6 +85,7 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
     banner_title_accent: 'Canon',
     banner_subtitle:
       'Van lichtsterke primes tot veelzijdige zooms: ruim duizend geteste tweedehands lenzen met RF-, EF-, EF-S- of EF-M-vatting, met garantie.',
+    banner_subtitle_mobiel: 'Ruim 1.000 geteste lenzen met RF-, EF-, EF-S- of EF-M-vatting.',
     banner_image: '/images/canon-rf-24-70mm-f28-l-is-usm.jpg',
     filter_omschrijving: 'Alle lenzen met Canon-vatting: RF, EF, EF-S, EF-M',
     filter_machine:
