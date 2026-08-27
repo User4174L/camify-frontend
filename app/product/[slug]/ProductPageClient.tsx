@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import QuickView from '@/components/product/QuickView';
 import { products, type Product, type ProductVariant } from '@/data/products';
+import { activePriceDrop } from '@/lib/price-drop';
 import { useCart } from '@/context/CartContext';
 import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
 import { assetPath } from '@/lib/utils';
@@ -585,7 +586,14 @@ export default function ProductPage() {
                   {/* Info */}
                   <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {/* Price */}
-                    <div style={{ fontSize: 20, fontWeight: 700, color: '#111' }}>&euro; {v.price.toLocaleString('nl-NL')}</div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 20, fontWeight: 700, color: '#111' }}>&euro; {v.price.toLocaleString('nl-NL')}</span>
+                      {activePriceDrop(v) && (
+                        <span style={{ fontSize: 13, fontWeight: 600, color: '#ef4444', textDecoration: 'line-through' }}>
+                          &euro; {activePriceDrop(v)!.was.toLocaleString('nl-NL')}
+                        </span>
+                      )}
+                    </div>
                     {/* Condition and shutter count stacked */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                       <span style={{ display: 'inline-flex', alignSelf: 'flex-start', background: condColors.bg, color: condColors.color, borderRadius: 999, padding: '3px 12px', fontSize: 12, fontWeight: 600 }}>{v.conditionLabel}</span>
