@@ -16,13 +16,18 @@ const ChevronDown = () => (
   <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ marginLeft: 4, flexShrink: 0 }}><path d="m6 9 6 6 6-6" /></svg>
 );
 
-/* Mini-markdown voor de SEO-tekst: ## koppen, alinea's, - lijsten */
+/* Mini-markdown voor de SEO-tekst: ## koppen, alinea's, - lijsten, **vet** */
+function bold(text: string): ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith('**') ? <strong key={i} style={{ color: 'var(--text)' }}>{part.slice(2, -2)}</strong> : <span key={i}>{part}</span>
+  );
+}
 function SeoText({ source }: { source: string }) {
   const out: ReactNode[] = [];
   let list: string[] = [];
   const flush = (k: string) => {
     if (!list.length) return;
-    out.push(<ul key={k} style={{ margin: '0 0 16px', paddingLeft: 22, display: 'grid', gap: 6 }}>{list.map((li, i) => <li key={i} style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)' }}>{li}</li>)}</ul>);
+    out.push(<ul key={k} style={{ margin: '0 0 16px', paddingLeft: 22, display: 'grid', gap: 6 }}>{list.map((li, i) => <li key={i} style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)' }}>{bold(li)}</li>)}</ul>);
     list = [];
   };
   source.split('\n').forEach((raw, i) => {
@@ -31,7 +36,7 @@ function SeoText({ source }: { source: string }) {
     if (line.startsWith('## ')) { flush(k); out.push(<h2 key={k} style={{ fontSize: 20, fontWeight: 700, margin: '28px 0 10px', color: 'var(--text)' }}>{line.slice(3)}</h2>); }
     else if (line.startsWith('- ')) list.push(line.slice(2));
     else if (line === '') flush(k);
-    else { flush(k); out.push(<p key={k} style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)', margin: '0 0 14px' }}>{line}</p>); }
+    else { flush(k); out.push(<p key={k} style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)', margin: '0 0 14px' }}>{bold(line)}</p>); }
   });
   flush('end');
   return <div style={{ maxWidth: 800 }}>{out}</div>;

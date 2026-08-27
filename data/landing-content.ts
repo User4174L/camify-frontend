@@ -84,14 +84,17 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
     intro_boven_producten:
       'Een tweedehands lens is de slimste upgrade voor je Canon. Hieronder vind je alles wat op je camera past: RF-lenzen voor de EOS R-serie en EF-, EF-S- en EF-M-lenzen voor je DSLR of EOS M. Elk exemplaar is door ons getest en eerlijk beoordeeld.',
     seo_tekst_onder_producten: [
-      '## Welke lens past op mijn Canon?',
-      'Dat hangt af van je camera. Heb je een spiegelloze camera uit de EOS R-serie (zoals de R5, R6 of R8), dan is de RF-vatting je thuisbasis — en met de EF-EOS R adapter passen ook alle EF-lenzen, zonder verlies van kwaliteit of autofocussnelheid. Fotografeer je met een DSLR (zoals de 5D, 6D of 90D), dan kies je uit EF-lenzen (full-frame) of EF-S-lenzen (APS-C). Voor de compacte EOS M-serie zijn er EF-M-lenzen.',
-      '',
-      '## Waarom een tweedehands Canon lens?',
-      'Glas veroudert nauwelijks. Een goed onderhouden lens van een paar jaar oud presteert optisch hetzelfde als nieuw, maar kost vaak tientallen procenten minder. Wij testen elke lens op autofocus, diafragma, stabilisatie en glaskwaliteit (krassen, schimmel, stof) en beschrijven de conditie eerlijk — inclusief foto’s van het echte exemplaar.',
-      '',
-      '## Eerst je oude lens inruilen?',
-      'Dat kan. Vraag online een bod aan en verreken de waarde direct met je aankoop, of laat het bedrag uitbetalen.',
+      "## Welke lens past op mijn Canon?",
+      "Dat hangt af van je camera. Heb je een spiegelloze camera uit de EOS R-serie (zoals de R5, R6 of R8), dan is de RF-vatting je thuisbasis — en met de EF-EOS R adapter passen ook alle EF-lenzen, zonder verlies van kwaliteit of autofocussnelheid. Fotografeer je met een DSLR (zoals de 5D, 6D of 90D), dan kies je uit EF-lenzen (full-frame) of EF-S-lenzen (APS-C). Voor de compacte EOS M-serie zijn er EF-M-lenzen.",
+      "",
+      "## Waarom een tweedehands Canon lens?",
+      "Glas veroudert nauwelijks. Een goed onderhouden lens van een paar jaar oud presteert optisch hetzelfde als nieuw, maar kost vaak tientallen procenten minder. Wij testen elke lens op autofocus, diafragma, stabilisatie en glaskwaliteit (krassen, schimmel, stof) en beschrijven de conditie eerlijk — inclusief foto's van het echte exemplaar.",
+      "",
+      "## De populairste Canon-lenzen van dit moment",
+      "De **RF 24-70mm f/2.8L** en **RF 70-200mm f/2.8L** zijn de werkpaarden voor de R-serie, en hun EF-voorgangers (24-70mm f/2.8L II, 70-200mm f/2.8L IS II en III) blijven tweedehands minstens zo gewild — zeker met adapter op een R-body. De **RF 24-105mm f/4L** is de veelzijdige allrounder, en voor sport- en natuurfotografen hebben we geregeld superteles op voorraad, van de EF 400mm f/2.8L tot de EF 500mm f/4L en de RF 100-500mm.",
+      "",
+      "## Eerst je oude lens inruilen?",
+      "Dat kan. Vraag online een bod aan en verreken de waarde direct met je aankoop, of laat het bedrag uitbetalen. En wil je een lens eerst zelf proberen: in onze showroom in Geldermalsen zet je hem gewoon op je eigen body. Op alles krijg je 12 maanden garantie.",
     ].join('\n'),
     faq: [
       {
