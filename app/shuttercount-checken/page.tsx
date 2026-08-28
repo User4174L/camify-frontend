@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 const C = { text: '#1E2133', sec: '#6B6D80', border: '#EEEEF2', surface: '#F4F4F7', accent: '#E8692A', ok: '#16A34A' };
 const h2: React.CSSProperties = { fontSize: 22, fontWeight: 800, margin: '40px 0 8px', color: C.text, scrollMarginTop: 90 };
 const h3s: React.CSSProperties = { fontSize: 16.5, fontWeight: 800, margin: '20px 0 6px', color: C.text };
-const p: React.CSSProperties = { fontSize: 14.5, color: C.sec, margin: '0 0 12px', lineHeight: 1.7 };
+const p: React.CSSProperties = { fontSize: 14.5, color: C.sec, margin: '0 0 12px', lineHeight: 1.7, maxWidth: 880 };
 const chipBase: React.CSSProperties = { display: 'inline-block', fontSize: 11.5, fontWeight: 800, letterSpacing: '.04em', borderRadius: 999, padding: '4px 10px', marginBottom: 10 };
 const chipTool: React.CSSProperties = { ...chipBase, background: '#F0FDF4', color: C.ok };
 const chipMenu: React.CSSProperties = { ...chipBase, background: '#EFF6FF', color: '#1e40af' };
@@ -88,7 +88,7 @@ export default function Page() {
       </div>
 
       <div className="container" style={{ paddingBottom: 80 }}>
-        <div style={{ maxWidth: 920 }}>
+        <div>
           {/* Tool */}
           <ShutterTool />
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', margin: '12px 2px 0', fontSize: 12.5, color: C.sec }}>
@@ -104,7 +104,7 @@ export default function Page() {
             verliezen de cameragegevens waar het getal in staat.
           </p>
 
-          <div style={{ display: 'grid', gap: 14 }}>
+          <div style={{ display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', alignItems: 'start' }}>
             <BrandCard id="nikon" name="Nikon shuttercount checken" chip="Direct via onze check" chipStyle={chipTool}>
               <p style={p}>Elke Nikon zet de shuttercount in elke originele foto (JPEG en NEF) — van DSLR&rsquo;s als de D750 en D850 tot de hele Z-serie. Sleep een foto in de check hierboven en je ziet het getal direct; bij Z-camera&rsquo;s tonen we waar mogelijk ook het aantal mechanische sluiteropnamen apart.</p>
               <p style={{ ...p, marginBottom: 0 }}><strong style={{ color: C.text }}>Z8 en Z9:</strong> deze hebben geen mechanische sluiter. Het getal telt elektronische opnamen en zegt niets over slijtage — kijk daar vooral naar de algehele conditie.</p>
