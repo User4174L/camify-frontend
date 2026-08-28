@@ -15,7 +15,7 @@ export interface ShutterResult {
   fileKind?: 'png' | 'heic' | 'webp' | 'cr3' | 'video' | 'unknown' | 'camera';
   shutterCount?: number;
   mechanicalShutterCount?: number;
-  method?: 'nikon-makernote' | 'pentax-makernote' | 'sony-makernote' | 'canon-camerainfo';
+  method?: 'nikon-makernote' | 'pentax-makernote' | 'sony-makernote' | 'canon-camerainfo' | 'fujifilm-makernote';
   status: 'ok' | 'no-makernote' | 'unsupported-brand' | 'not-found' | 'unreadable';
   message: string;
 }
@@ -88,6 +88,16 @@ export function readShutterCount(buf: ArrayBuffer): ShutterResult {
   if (ftyp.startsWith('ftypmp4') || ftyp.startsWith('ftypisom') || ftyp.startsWith('ftypqt') || ftyp.startsWith('ftypMSNV') || ftyp.startsWith('ftypavc1')) return { status: 'unreadable', fileKind: 'video', message: 'Dit is een videobestand — video telt niet mee in de shuttercount en bevat de teller ook niet. Gebruik een foto (JPEG of RAW).' };
   if (u8h[0] === 0x89 && u8h[1] === 0x50 && u8h[2] === 0x4e && u8h[3] === 0x47) return { status: 'unreadable', fileKind: 'png', message: 'Dit is een PNG (meestal een schermafbeelding of export) — daar staan geen cameragegevens in. Gebruik het originele JPEG/RAW-bestand van de geheugenkaart.' };
   if (td.decode(u8h.subarray(0, 4)) === 'RIFF' && td.decode(u8h.subarray(8, 12)) === 'WEBP') return { status: 'unreadable', fileKind: 'webp', message: 'Dit is een WebP (meestal opgeslagen vanaf een website of app) — daar staan geen cameragegevens in. Gebruik het originele JPEG/RAW-bestand van de geheugenkaart.' };
+  // Fujifilm RAF: eigen container met een embedded JPEG die de EXIF draagt.
+  if (td.decode(u8h.subarray(0, 8)) === 'FUJIFILM' && buf.byteLength > 96) {
+    const hdv = new DataView(buf);
+    const jOff = hdv.getUint32(84, false);
+    const jLen = hdv.getUint32(88, false);
+    if (jOff > 0 && jOff < buf.byteLength) {
+      const einde = Math.min(buf.byteLength, jLen > 0 ? jOff + jLen : buf.byteLength);
+      return readShutterCount(buf.slice(jOff, einde));
+    }
+  }
   const t = locateTiff(buf);
   if (!t) return { status: 'unreadable', fileKind: 'unknown', message: 'Dit bestand herkennen we niet als camerafoto. Gebruik een JPEG of RAW rechtstreeks van de geheugenkaart.' };
   const { dv } = t;
@@ -126,7 +136,7 @@ export function readShutterCount(buf: ArrayBuffer): ShutterResult {
   if (make.startsWith('PENTAX') || make.startsWith('RICOH')) return pentax(r, mnOff, mnLen, res);
   if (make.startsWith('SONY')) return sony(r, mnOff, mnLen, res);
   if (make.startsWith('CANON')) return canon(r, mnOff, mnLen, res);
-  if (make.startsWith('FUJI')) return { ...res, status: 'unsupported-brand', message: 'Fujifilm slaat de shuttercount niet in de foto op. X100V/VI: menu SET UP → USER SETTING → SHUTTER COUNT; X-H2/X-H2S/X-T5/X-S20: via de Fujifilm XApp (Equipment).' };
+  if (make.startsWith('FUJI')) return fuji(r, mnOff, mnLen, res);
   if (make.startsWith('OLYMPUS') || make.startsWith('OM DIGITAL')) return { ...res, status: 'unsupported-brand', message: 'OM System/Olympus slaat de shuttercount niet in de foto op; kijk in het verborgen servicemenu (zie stappen hieronder).' };
   if (make.startsWith('PANASONIC') || make.startsWith('LEICA')) return { ...res, status: 'unsupported-brand', message: `${res.make} slaat de shuttercount niet in de foto op (Lumix: servicemodus SHTCNT; Leica: alleen via service).` };
   return { ...res, status: 'unsupported-brand', message: `${res.make ?? 'Dit merk'} slaat de shuttercount niet (leesbaar) op in de foto. Geen probleem — wij lezen het uit bij ontvangst.` };
@@ -225,6 +235,34 @@ function canon(r: Reader, mnOff: number, mnLen: number, res: ShutterResult): Shu
   const n = new Reader(r.dv, true).u32(ci.valueOffset + off);
   if (n === 0 || n > 5_000_000) return { ...res, status: 'not-found', message: 'Geen plausibele shuttercount gevonden (bèta-ondersteuning voor dit model).' };
   return { ...res, shutterCount: n, method: 'canon-camerainfo', status: 'ok', message: 'Bèta: gelezen uit het Canon CameraInfo-blok (ExifTool-methode). Telt mechanische én elektronische opnamen samen.' };
+}
+
+/* ── Fujifilm: MakerNote "FUJIFILM" (8 bytes) + u32 LE IFD-offset; IFD altijd little-endian,
+ * offsets relatief aan het begin van de MakerNote. Tag 0x1438 = ImageCount (int16u, & 0x7fff —
+ * effectief 15-bit: rolt over op 32.767; kan bij firmware-update resetten; telt ook e-sluiter).
+ * Empirisch gevalideerd 28-08-2026 op 33 modellen (raw.pixls.us): aanwezig vanaf ±2016
+ * (X-T1 fw3+, X-T2+, X-Pro2+, X-E3+, X-H*, X-S*, X-T20/30, X100F/V/VI, alle GFX);
+ * ontbreekt op X-E1/E2, X-Pro1, X-T10, X100S/T, X70. */
+function fuji(r: Reader, mnOff: number, mnLen: number, res: ShutterResult): ShutterResult {
+  if (r.str(mnOff, 8) !== 'FUJIFILM') return { ...res, status: 'not-found', message: 'De Fujifilm-gegevens in deze foto hebben een onbekend formaat. Probeer een origineel JPEG- of RAF-bestand van de geheugenkaart.' };
+  const dv = r.dv;
+  const u16 = (o: number) => dv.getUint16(o, true);
+  const u32 = (o: number) => dv.getUint32(o, true);
+  const ifdOff = mnOff + u32(mnOff + 8);
+  if (ifdOff + 2 > dv.byteLength) return { ...res, status: 'not-found', message: 'De Fujifilm-gegevens zijn onvolledig in dit bestand.' };
+  const n = u16(ifdOff);
+  for (let i = 0; i < n; i++) {
+    const e = ifdOff + 2 + i * 12;
+    if (e + 12 > dv.byteLength) break;
+    if (u16(e) === 0x1438) {
+      const count = u16(e + 8) & 0x7fff;
+      return {
+        ...res, shutterCount: count, method: 'fujifilm-makernote', status: 'ok',
+        message: `Gelezen uit de Fujifilm MakerNote: totaal aantal opnamen (mechanisch + elektronisch, incl. bursts). Let op: de teller loopt tot 32.767 en begint daarna opnieuw, en kan bij een firmware-update gereset zijn — zie de Fujifilm-uitleg hieronder.`,
+      };
+    }
+  }
+  return { ...res, status: 'unsupported-brand', message: 'Dit (oudere) Fujifilm-model slaat de teller niet in de foto op — dat geldt voor modellen t/m ±2015 (o.a. X-E1/X-E2, X-Pro1, X-T10, X100S/T, X70). X100V/VI: menu SET UP → USER SETTING → SHUTTER COUNT; nieuwere bodies ook via de Fujifilm XApp (Equipment).' };
 }
 
 /* ── Nikon: MakerNote "Nikon\0" + versie(2) + TIFF-header op offset 10; tags relatief aan die header. Tag 0x00A7 = ShutterCount. */

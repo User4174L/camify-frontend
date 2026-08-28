@@ -11,6 +11,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { readShutterCount, friendlyCameraName, type ShutterResult } from '@/lib/shuttercount';
+import { sendTelemetry, shareMetadata } from '@/lib/shuttercount-telemetry';
 
 const C = { text: '#1E2133', sec: '#6B6D80', border: '#EEEEF2', surface: '#F4F4F7', accent: '#E8692A', ok: '#16A34A' };
 
@@ -66,22 +67,35 @@ export default function ShutterTool() {
   const [busy, setBusy] = useState(false);
   const [res, setRes] = useState<ShutterResult | null>(null);
   const [fileName, setFileName] = useState('');
+  const [shared, setShared] = useState<'idle' | 'busy' | 'done' | 'failed'>('idle');
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<File | null>(null);
 
   const handle = useCallback(async (file: File) => {
-    setBusy(true); setRes(null); setFileName(file.name);
+    setBusy(true); setRes(null); setFileName(file.name); setShared('idle');
+    fileRef.current = file;
     const started = Date.now();
     try {
       const slice = file.size > 8 * 1024 * 1024 ? file.slice(0, 8 * 1024 * 1024) : file;
       const buf = await slice.arrayBuffer();
       const r = readShutterCount(buf);
+      sendTelemetry({ status: r.status, make: r.make, model: r.model, fileKind: r.fileKind, count: r.shutterCount });
       // korte minimumduur zodat de analyse-animatie niet "flitst"
       const wait = Math.max(0, 900 - (Date.now() - started));
       setTimeout(() => { setRes(r); setBusy(false); }, wait);
     } catch {
+      sendTelemetry({ status: 'unreadable' });
       setRes({ status: 'unreadable', message: 'Kon dit bestand niet lezen.' }); setBusy(false);
     }
   }, []);
+
+  const share = useCallback(async () => {
+    const f = fileRef.current;
+    if (!f || !res) return;
+    setShared('busy');
+    const ok = await shareMetadata(f, { status: res.status, make: res.make, model: res.model, fileKind: res.fileKind });
+    setShared(ok ? 'done' : 'failed');
+  }, [res]);
 
   const camera = useMemo(() => (res ? friendlyCameraName(res.make, res.model) : undefined), [res]);
   const sellHref = camera ? `/trade-in/v3?product=${encodeURIComponent(camera)}` : '/trade-in/v3';
@@ -101,12 +115,12 @@ export default function ShutterTool() {
           role="button"
           aria-label="Kies of sleep een originele foto"
         >
-          <input ref={inputRef} type="file" accept=".jpg,.jpeg,.nef,.nrw,.pef,.dng,.arw,.tif,.tiff,image/jpeg,image/tiff" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) handle(f); }} />
+          <input ref={inputRef} type="file" accept=".jpg,.jpeg,.nef,.nrw,.pef,.dng,.arw,.raf,.tif,.tiff,image/jpeg,image/tiff" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) handle(f); }} />
           <Aperture busy={busy} drag={drag} />
-          <div style={{ fontWeight: 800, fontSize: 16.5, color: C.text, marginTop: 14 }}>
-            {busy ? 'Foto wordt geanalyseerd…' : drag ? 'Laat maar los!' : 'Sleep je foto hierheen'}
+          <div style={{ fontWeight: 800, fontSize: 21, color: C.text, marginTop: 16 }}>
+            {busy ? 'Foto wordt geanalyseerd…' : drag ? 'Laat maar los!' : 'Sleep je foto hierin'}
           </div>
-          <div style={{ fontSize: 13, color: C.sec, marginTop: 5, lineHeight: 1.55 }}>
+          <div style={{ fontSize: 14, color: C.sec, marginTop: 6, lineHeight: 1.55 }}>
             {busy ? 'We lezen de cameragegevens — dit blijft in je browser.' : <>of <span style={{ color: C.accent, fontWeight: 700, textDecoration: 'underline' }}>kies een bestand</span> · JPEG of RAW, rechtstreeks van de geheugenkaart</>}
           </div>
           {busy && <div className="sc-scan" />}
@@ -167,6 +181,26 @@ export default function ShutterTool() {
                       ))}
                     </ul>
                   )}
+                  {!['png', 'webp', 'video'].includes(res.fileKind ?? '') && (
+                    <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px dashed ${C.border}` }}>
+                      {shared === 'done' ? (
+                        <div style={{ fontSize: 12.5, color: C.ok, fontWeight: 700 }}>Dank! De cameragegevens zijn gedeeld — hiermee kunnen we dit model mogelijk toevoegen.</div>
+                      ) : (
+                        <>
+                          <button
+                            onClick={share}
+                            disabled={shared === 'busy'}
+                            style={{ background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 999, padding: '8px 16px', fontSize: 12.5, fontWeight: 700, color: C.text, cursor: shared === 'busy' ? 'progress' : 'pointer', fontFamily: 'inherit' }}
+                          >
+                            {shared === 'busy' ? 'Versturen…' : shared === 'failed' ? 'Versturen mislukte — probeer opnieuw' : 'Help ons dit model toevoegen: deel de cameragegevens'}
+                          </button>
+                          <div style={{ fontSize: 11.5, color: C.sec, marginTop: 5, lineHeight: 1.5 }}>
+                            Deelt alleen het technische metadata-blok van dit bestand — nooit de foto zelf. Gebeurt uitsluitend als je hierop klikt.
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
 
@@ -186,7 +220,7 @@ export default function ShutterTool() {
       <style>{`
         .sc-grid{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:22px;align-items:stretch}
         @media(max-width:760px){.sc-grid{grid-template-columns:1fr}}
-        .sc-drop{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;aspect-ratio:1/1;max-height:340px;border:2px dashed #EEEEF2;border-radius:18px;background:
+        .sc-drop{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;aspect-ratio:1/1;max-height:420px;border:2.5px dashed #D6D8E2;border-radius:18px;background:
           radial-gradient(120% 120% at 80% 0%, #FBE9DF 0%, #F8F8FA 55%, #fff 100%);cursor:pointer;padding:26px;transition:border-color .2s, transform .2s, box-shadow .2s;color:#E8692A}
         .sc-drop:hover{border-color:#E8692A;box-shadow:0 6px 24px rgba(232,105,42,.12)}
         .sc-drop--drag{border-color:#E8692A;transform:scale(1.015);box-shadow:0 10px 32px rgba(232,105,42,.18)}

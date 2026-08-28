@@ -47,7 +47,7 @@ const Step = ({ n, children }: { n: number; children: React.ReactNode }) => (
 /* FAQ — ook als JSON-LD (FAQPage) voor rich results. Antwoorden hier = plain text. */
 const FAQS = [
   { q: 'Wat is een shuttercount precies?', a: 'De shuttercount (sluitertelling) is het aantal foto’s dat de mechanische sluiter van een camera heeft gemaakt. De sluiter is een bewegend onderdeel dat slijt — vergelijk het met de kilometerstand van een auto: het zegt iets over hoeveel er gewerkt is, maar niet alles over de staat.' },
-  { q: 'Hoe kan ik de shuttercount van mijn camera checken?', a: 'Bij Nikon, Sony en Pentax/Ricoh staat de teller in elke originele foto — die lees je gratis uit met onze online check, direct in je browser. Canon EOS R3 en R1 tonen hem in het menu; voor de meeste andere Canon-modellen heb je een programma met USB-kabel nodig. Fujifilm toont hem op de X100V/VI in het menu en bij nieuwere X-modellen via de XApp. Olympus/OM System en Panasonic hebben een verborgen servicemenu.' },
+  { q: 'Hoe kan ik de shuttercount van mijn camera checken?', a: 'Bij Nikon, Sony en Pentax/Ricoh staat de teller in elke originele foto — die lees je gratis uit met onze online check, direct in je browser. Canon EOS R3 en R1 tonen hem in het menu; voor de meeste andere Canon-modellen heb je een programma met USB-kabel nodig. Fujifilm zet hem sinds ±2016 in elke foto (ook uitleesbaar met onze check, als totaal aantal opnamen); de X100V/VI tonen hem ook in het menu. Olympus/OM System en Panasonic hebben een verborgen servicemenu.' },
   { q: 'Zegt het bestandsnummer op mijn geheugenkaart iets over de shuttercount?', a: 'Nee. Het nummer in de bestandsnaam (bijv. DSC_4832 of IMG_9999) is een doorlopende bestandsteller die na 9999 opnieuw begint en die je kunt resetten of laten doorlopen bij een nieuwe kaart. Het zegt niets over het werkelijke aantal sluiteropnamen.' },
   { q: 'Tellen elektronische of stille foto’s mee in de shuttercount?', a: 'Nee. Bij elektronisch of stil fotograferen beweegt de mechanische sluiter niet, dus die slijt ook niet en de teller loopt niet op. Sony telt daarom alleen mechanische opnamen. Camera’s zonder mechanische sluiter, zoals de Nikon Z8/Z9 en Sony a9 III, hebben geen slijtende sluiter — daar is de conditie de maatstaf.' },
   { q: 'Telt video-opnemen mee in de shuttercount?', a: 'Nee. Tijdens video staat de sluiter open en beweegt hij niet. Ook live view telt bij de meeste merken niet mee.' },
@@ -55,7 +55,7 @@ const FAQS = [
   { q: 'Wat gebeurt er als de sluiter stuk gaat?', a: 'Dan kan de sluiter vervangen worden — vervelend, maar geen einde verhaal. Een sluiterrevisie kost doorgaans een fractie van een nieuwe camera. De opgegeven levensduur is bovendien een testgemiddelde, geen houdbaarheidsdatum: veel sluiters gaan er ruim overheen.' },
   { q: 'Moet ik de shuttercount weten om mijn camera te verkopen?', a: 'Nee. Bij ons kun je gewoon een bod aanvragen zonder de teller te kennen — wij lezen hem uit zodra de camera binnen is en passen het bod eerlijk aan volgens een vaste staffel. Weet je hem wel, dan is je bod direct scherper.' },
   { q: 'Is de online shuttercount-check veilig?', a: 'Ja. De check draait volledig in je browser: je foto wordt niet geüpload en verlaat je computer niet. We lezen alleen de technische gegevens die de camera zelf in het bestand zet.' },
-  { q: 'Waarom vindt de check niets in mijn foto?', a: 'Meestal omdat de foto niet origineel is: WhatsApp, Instagram, e-mailprogramma’s en bewerkingssoftware verwijderen de cameragegevens. Gebruik een foto rechtstreeks van de geheugenkaart. Bij sommige merken (de meeste Canon-modellen, Fujifilm, Olympus, Panasonic, Leica) zet de camera het getal simpelweg niet in de foto.' },
+  { q: 'Waarom vindt de check niets in mijn foto?', a: 'Meestal omdat de foto niet origineel is: WhatsApp, Instagram, e-mailprogramma’s en bewerkingssoftware verwijderen de cameragegevens. Gebruik een foto rechtstreeks van de geheugenkaart. Bij sommige merken (de meeste Canon-modellen, oudere Fujifilms, Olympus, Panasonic, Leica) zet de camera het getal simpelweg niet in de foto.' },
 ];
 
 export default function Page() {
@@ -125,11 +125,11 @@ export default function Page() {
               <p style={{ ...p, margin: '6px 0 0' }}>Lukt het niet? Geen probleem — wij lezen de teller uit zodra je camera bij ons binnen is.</p>
             </BrandCard>
 
-            <BrandCard id="fujifilm" name="Fujifilm shuttercount checken" chip="Menu of app" chipStyle={chipMenu}>
+            <BrandCard id="fujifilm" name="Fujifilm shuttercount checken" chip="Via de foto-check hierboven" chipStyle={chipTool}>
               <ol style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                <Step n={1}><strong style={{ color: C.text }}>X100V en X100VI</strong>: menu <em>SET UP → USER SETTING → SHUTTER COUNT</em>.</Step>
-                <Step n={2}><strong style={{ color: C.text }}>X-H2, X-H2S, X-T5, X-S20</strong>: verbind met de <em>Fujifilm XApp</em> en kijk onder <em>Equipment</em>.</Step>
-                <Step n={3}>Oudere modellen tonen het niet — wij meten het bij ontvangst.</Step>
+                <Step n={1}>Vrijwel alle modellen vanaf ±2016 zetten een opnameteller in elke foto: <strong style={{ color: C.text }}>X-T1 (firmware 3+) t/m X-T5, X-T20/30, X-Pro2/3, X-E3/E4, X-H1/H2/H2S, X-S10/S20, X100F/V/VI en de hele GFX-lijn</strong>. Sleep een origineel JPEG- of RAF-bestand in de check hierboven.</Step>
+                <Step n={2}>Let op de duiding: Fujifilm telt <em>alle</em> opnamen (ook elektronische sluiter en bursts), de teller loopt tot 32.767 en begint daarna opnieuw, en kan bij een firmware-update gereset zijn. Zie het getal dus als indicatie.</Step>
+                <Step n={3}>Ter controle: <strong style={{ color: C.text }}>X100V/VI</strong> tonen de teller ook in het menu (<em>SET UP → USER SETTING → SHUTTER COUNT</em>), nieuwere bodies via de <em>Fujifilm XApp</em> (Equipment). Oudere modellen (X-E1/E2, X-Pro1, X-T10, X100S/T, X70) hebben geen leesbare teller — wij meten het bij ontvangst.</Step>
               </ol>
             </BrandCard>
 
