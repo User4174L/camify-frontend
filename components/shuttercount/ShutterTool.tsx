@@ -127,7 +127,7 @@ export default function ShutterTool() {
         </div>
 
         {/* Resultaat / uitleg */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 220 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           {!res && !busy && (
             <div>
               <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, marginBottom: 6 }}>Gratis &amp; privé</div>
@@ -218,9 +218,8 @@ export default function ShutterTool() {
       </div>
 
       <style>{`
-        .sc-grid{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:22px;align-items:stretch}
-        @media(max-width:760px){.sc-grid{grid-template-columns:1fr}}
-        .sc-drop{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;aspect-ratio:1/1;max-height:420px;border:2.5px dashed #D6D8E2;border-radius:18px;background:
+        .sc-grid{display:grid;grid-template-columns:1fr;gap:18px}
+        .sc-drop{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%;min-height:280px;border:2.5px dashed #D6D8E2;border-radius:18px;background:
           radial-gradient(120% 120% at 80% 0%, #FBE9DF 0%, #F8F8FA 55%, #fff 100%);cursor:pointer;padding:26px;transition:border-color .2s, transform .2s, box-shadow .2s;color:#E8692A}
         .sc-drop:hover{border-color:#E8692A;box-shadow:0 6px 24px rgba(232,105,42,.12)}
         .sc-drop--drag{border-color:#E8692A;transform:scale(1.015);box-shadow:0 10px 32px rgba(232,105,42,.18)}
