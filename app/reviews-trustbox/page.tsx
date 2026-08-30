@@ -1,5 +1,5 @@
 import SimplePage from '@/components/layout/SimplePage';
-import TrustpilotWidget, { TP } from '@/components/ui/TrustpilotWidget';
+import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
 import {
   WebwinkelKeurLogo, FacebookLogo, GoogleLogo, TrustedShopsLogo, TrustpilotLogo,
 } from '@/components/ui/PlatformLogos';
@@ -168,7 +168,7 @@ export default function ReviewsTrustboxPage() {
       <div style={{ margin: '0 0 6px' }}>
         <TrustpilotWidget
           templateId={TP.carousel}
-          token="e1170bee-073b-47bf-a04f-f21dd7333a21"
+          token={TP_TOKEN.carousel}
           height="160px"
           stars="1,2,3,4,5"
           reviewLanguages="nl"
