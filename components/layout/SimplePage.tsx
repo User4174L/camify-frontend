@@ -95,6 +95,7 @@ export default function SimplePage({
   image,
   related,
   faqs,
+  wide = false,
 }: {
   title: string;
   breadcrumb: string;
@@ -107,8 +108,16 @@ export default function SimplePage({
   image?: string;
   related?: { label: string; desc: string; href: string }[];
   faqs?: { q: string; a: string }[];
+  /**
+   * Standaard staat de inhoud op max. 920px voor een leesbare regellengte — goed
+   * voor lopende tekst (voorwaarden, privacy). Zet `wide` aan voor pagina's die
+   * uit blokken bestaan (kaarten, tabellen, widgets) en de volle containerbreedte
+   * nodig hebben; houd losse alinea's dan zelf op leesbare breedte.
+   */
+  wide?: boolean;
 }) {
   const crumbs = parent ? [parent, { label: breadcrumb }] : [{ label: breadcrumb }];
+  const bodyMax = wide ? undefined : 920;
   return (
     <>
       <div className={image ? 'svc-header svc-header--photo' : 'svc-header'}>
@@ -136,17 +145,17 @@ export default function SimplePage({
         </div>
       </div>
       <div className="container" style={{ paddingBottom: 80 }}>
-        <div style={{ maxWidth: 920, fontSize: 15, lineHeight: 1.75, color: 'var(--text)' }}>
+        <div style={{ maxWidth: bodyMax, fontSize: 15, lineHeight: 1.75, color: 'var(--text)' }}>
           {markdown ? <Markdown source={markdown} /> : children}
         </div>
         {faqs && faqs.length ? (
-          <section style={{ maxWidth: 920, marginTop: 40 }}>
+          <section style={{ maxWidth: bodyMax, marginTop: 40 }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 14px', color: 'var(--text)' }}>Veelgestelde vragen</h2>
             <FaqList items={faqs} />
           </section>
         ) : null}
         {related && related.length ? (
-          <div style={{ maxWidth: 920 }}>
+          <div style={{ maxWidth: bodyMax }}>
             <RelatedLinks items={related} />
           </div>
         ) : null}

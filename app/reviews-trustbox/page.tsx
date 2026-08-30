@@ -20,8 +20,11 @@ import {
 //
 // De enige getallen die hier staan zijn getallen die niet verouderen: "ruim 3.600"
 // (werkelijk 3.684) groeit alleen maar, "nergens lager dan 9,4" is de laagste score
-// per platform (WebwinkelKeur, staat stil sinds nov 2024), en de 9,7 is WebwinkelKeurs
-// eigen optelsom over vijf bronnen — geen eigen gemiddelde.
+// per platform (WebwinkelKeur, staat stil sinds nov 2024), en de 9,6 in het kopblok
+// is ons eigen gewogen gemiddelde (9,64). Dat kruipt eerder omhoog dan omlaag: de
+// enige bron die nog groeit is Trustpilot, en die staat op 9,8.
+// NIET de 9,7 gebruiken — dat is WebwinkelKeurs optelsom, die weegt anders en is
+// niet van ons; als wij zeggen dat wij zelf optellen, moet het cijfer dat ook zijn.
 //
 // LET OP bij de carrousel: alle vijf de sterrenvinkjes aan laten (data-stars).
 // Alleen positieve reviews tonen is een misleidende handelspraktijk (zwarte lijst
@@ -91,13 +94,16 @@ const readMore: { label: string; href: string; what: string }[] = [
 ];
 
 const h2: React.CSSProperties = { fontSize: 20, fontWeight: 700, margin: '38px 0 10px' };
-const p: React.CSSProperties = { fontSize: 14.5, color: 'var(--text-sec)', margin: '0 0 14px', lineHeight: 1.65 };
+// Losse alinea's houden we zelf op leesbare regellengte; de blokken eronder
+// (scorekaart, platformlijst, carrousel) gebruiken de volle containerbreedte.
+const p: React.CSSProperties = { fontSize: 14.5, color: 'var(--text-sec)', margin: '0 0 14px', lineHeight: 1.65, maxWidth: 780 };
 
 export default function ReviewsTrustboxPage() {
   return (
     <SimplePage
       title="Beoordelingen"
       breadcrumb="Beoordelingen"
+      wide
       intro="Sinds 2015 verzamelen wij onze beoordelingen bij onafhankelijke platformen. Niet omdat het moet, maar omdat tweedehands kopen om vertrouwen draait — en vertrouwen laat je zien met cijfers die iemand anders bijhoudt."
     >
       {/* Interne werkbalk — hoort niet op de echte pagina. */}
