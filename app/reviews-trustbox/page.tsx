@@ -1,3 +1,5 @@
+'use client';
+
 import SimplePage from '@/components/layout/SimplePage';
 import TrustpilotWidget, { TP, TP_TOKEN } from '@/components/ui/TrustpilotWidget';
 import {
