@@ -98,7 +98,7 @@ export default function ReviewsTrustboxPage() {
     <SimplePage
       title="Beoordelingen"
       breadcrumb="Beoordelingen"
-      intro="Wij verkopen sinds 2011 tweedehands apparatuur. Wat klanten daarvan vinden, staat niet bij ons maar bij onafhankelijke platformen — daar kunnen wij niets aan veranderen, en dat is precies de bedoeling."
+      intro="Sinds 2015 verzamelen wij onze beoordelingen bij onafhankelijke platformen. Niet omdat het moet, maar omdat tweedehands kopen om vertrouwen draait — en vertrouwen laat je zien met cijfers die iemand anders bijhoudt."
     >
       {/* Interne werkbalk — hoort niet op de echte pagina. */}
       <div style={{ background: '#FFF4E8', border: '1.5px solid #F5D9BC', borderRadius: 12, padding: '14px 18px', margin: '0 0 22px', fontSize: 13.5, lineHeight: 1.6, color: '#6B4A2B' }}>
@@ -107,11 +107,42 @@ export default function ReviewsTrustboxPage() {
         de oude versie met handgetypte cijfers en vijf gekozen citaten.
       </div>
 
+      {/* Scoreblok. Bewust ONS EIGEN gemiddelde, niet de score van één platform:
+          gewogen naar aantal beoordelingen, alles omgerekend naar een schaal van 10.
+          Werkelijk 9,64 over 3.684 beoordelingen (30-08-2026). Niet de 9,7 van
+          WebwinkelKeur — die weegt anders en is niet van ons.
+          Belangrijk: hier géén Trustpilot-logo bij, anders leest het als hún score
+          en dat mag niet buiten een TrustBox om. */}
+      <div
+        style={{
+          background: '#1E2133', borderRadius: 18, padding: '30px 32px', margin: '0 0 22px',
+          display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 28,
+        }}
+      >
+        <div style={{ flex: '0 0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+            <span style={{ fontSize: 64, fontWeight: 700, lineHeight: 1, color: '#fff', fontVariantNumeric: 'tabular-nums' }}>
+              9,6
+            </span>
+            <span style={{ fontSize: 22, color: 'rgba(255,255,255,.5)' }}>/ 10</span>
+          </div>
+        </div>
+        <div style={{ flex: '1 1 260px', minWidth: 0 }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: '#fff', lineHeight: 1.45 }}>
+            Ons gemiddelde over ruim 3.600 beoordelingen
+          </div>
+          <div style={{ fontSize: 13.5, color: 'rgba(255,255,255,.72)', marginTop: 8, lineHeight: 1.6 }}>
+            Verzameld op vijf onafhankelijke platformen, gewogen naar het aantal beoordelingen per
+            platform en omgerekend naar een schaal van 10. Wij tellen ze zelf op — de losse cijfers
+            staan hieronder bij de bron.
+          </div>
+        </div>
+      </div>
+
       <h2 style={{ ...h2, marginTop: 0 }}>Waar je ons kunt nalezen</h2>
       <p style={p}>
-        Ruim 3.600 mensen hebben een beoordeling achtergelaten, verspreid over vijf platformen. Op geen
-        van die platformen staan wij lager dan een <strong>9,4</strong>; WebwinkelKeur telt ze alle vijf
-        bij elkaar op en komt uit op een <strong>9,7</strong>.
+        Op geen van de vijf platformen staan wij lager dan een <strong>9,4</strong>. Klik door naar de
+        bron voor de actuele stand en de beoordelingen zelf.
       </p>
 
       <div style={{ background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 16, padding: '4px 22px', margin: '0 0 10px' }}>
@@ -143,8 +174,9 @@ export default function ReviewsTrustboxPage() {
         ))}
       </div>
       <p style={{ fontSize: 12.5, color: '#8A8C99', margin: '0 0 8px', lineHeight: 1.6 }}>
-        Wij zetten er bewust geen cijfer bij dat wij zelf hebben ingetypt. Klik door, dan zie je de
-        actuele stand bij de bron.
+        Per platform zetten wij er geen cijfer bij. Die lopen niet gelijk op — het ene platform krijgt
+        er dagelijks beoordelingen bij, het andere al een tijd niet — en een getal dat wij hier intypen
+        is morgen alweer achterhaald. Bij de bron staat altijd de actuele stand.
       </p>
 
       <h2 style={h2}>Hoe wij met beoordelingen omgaan</h2>
