@@ -40,6 +40,8 @@ export type LandingContent = {
   // Weergavedata voor de mockup (op V2 uit de listing)
   filters: Array<{ naam: string; opties: string[] }>;
   producten: LandingProduct[];
+  /** Hub-tegels bovenaan (merkpagina als shooter-hub); optioneel. */
+  hub_tegels?: Array<{ titel: string; sub: string; href: string; image: string }>;
 };
 
 const LENS_FILTERS_CANON: Array<{ naam: string; opties: string[] }> = [
@@ -252,6 +254,52 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
       { id: 'tz15', name: 'Panasonic Lumix S PRO 70-200mm f/2.8 O.I.S.', price: 1349, priceMax: 1549, stock: 1, image: '/images/placeholder-lens.svg' },
       { id: 'tz16', name: 'Panasonic Lumix S PRO 70-200mm f/4 O.I.S.', price: 899, priceMax: 1099, stock: 2, image: '/images/placeholder-lens.svg' },
       { id: 'tz17', name: 'Canon RF 70-200mm f/4L IS USM', price: 1149, priceMax: 1349, stock: 2, image: '/images/lenses/canon-rf-70-200-f28.webp' },
+    ],
+  },
+
+  'merk-canon': {
+    slug: 'merk-canon',
+    pagina: 'Tweedehands Canon',
+    blok: 'A',
+    breadcrumb: [{ label: 'Merken', href: '#' }, { label: 'Canon' }],
+    filter_omschrijving: 'Alle producten van het merk Canon',
+    filter_machine: 'brand=canon',
+    aanbod: 811,
+    seo_title: 'Tweedehands Canon kopen | Camera-tweedehands.nl',
+    seo_description: 'Tweedehands Canon kopen? Bekijk ons geteste aanbod Canon camera\u2019s, lenzen en accessoires met 12 maanden garantie. Van EOS R tot PowerShot.',
+    intro_boven_producten: 'Van de spiegelloze EOS R-serie tot de klassieke 5D en de compacte PowerShots: hieronder vind je alles wat wij van Canon op voorraad hebben \u2014 getest, eerlijk beoordeeld en met 12 maanden garantie. Zoek je een lens die op je Canon past, ook van Sigma of Tamron? Kies dan de tegel Lenzen voor Canon.',
+    seo_tekst_onder_producten: [
+      '## Canon bij Camera-tweedehands',
+      'Canon is al decennia het meest verkochte cameramerk \u2014 en dat zie je terug in ons aanbod: doorlopend zo\u2019n 800 Canon-modellen, van de nieuwste EOS R-body\u2019s tot legendarische DSLR\u2019s en L-serie glas. Elk exemplaar is door onze specialisten getest en eerlijk beschreven.',
+      '',
+      '## Populair van dit moment',
+      'De **EOS R6 Mark II** en **R5** zijn de gewildste body\u2019s, de **RF 24-70mm f/2.8L** en **RF 70-200mm f/2.8L** het meest gezochte glas, en de **PowerShot G7 X-serie** is tweedehands haast niet aan te slepen.',
+      '',
+      '## Ook voor jouw Canon',
+      'Naast Canon-eigen producten verkopen we ook lenzen van Sigma, Tamron en Samyang die op jouw Canon passen \u2014 die vind je onder Lenzen voor Canon, samen met al het RF- en EF-glas.',
+    ].join('\n'),
+    faq: [],
+    filters: [
+      { naam: 'Type', opties: ['Camera\u2019s', 'Lenzen', 'Accessoires'] },
+      { naam: 'Prijs', opties: ['Tot \u20ac500', '\u20ac500 \u2013 \u20ac1.000', '\u20ac1.000 \u2013 \u20ac2.000', '\u20ac2.000+'] },
+      { naam: 'Serie', opties: ['EOS R', 'EOS DSLR', 'EOS M', 'PowerShot', 'Cinema'] },
+      { naam: 'Op voorraad', opties: ['Alleen op voorraad'] },
+    ],
+    producten: [
+      { id: 'mc1', name: 'Canon EOS R6 Mark II', price: 1749, priceMax: 2049, stock: 3, image: '/images/canon-r5.jpg' },
+      { id: 'mc2', name: 'Canon EOS R5', price: 2199, priceMax: 2599, stock: 2, image: '/images/canon-r5.jpg' },
+      { id: 'mc3', name: 'Canon RF 24-70mm f/2.8L IS USM', price: 1349, priceMax: 1649, stock: 3, image: '/images/canon-rf-24-70mm-f28-l-is-usm.jpg' },
+      { id: 'mc4', name: 'Canon RF 70-200mm f/2.8L IS USM', price: 1499, priceMax: 1799, stock: 2, image: '/images/lenses/canon-rf-70-200-f28.webp' },
+      { id: 'mc5', name: 'Canon EOS 5D Mark IV', price: 1099, priceMax: 1399, stock: 4, image: '/images/placeholder-camera.svg' },
+      { id: 'mc6', name: 'Canon PowerShot G7 X Mark III', price: 549, priceMax: 699, stock: 2, image: '/images/placeholder-camera.svg' },
+      { id: 'mc7', name: 'Canon RF 24-105mm f/4L IS USM', price: 599, priceMax: 849, stock: 5, image: '/images/lenses/canon-rf-24-105-f4.webp' },
+      { id: 'mc8', name: 'Canon EOS R8', price: 1249, priceMax: 1449, stock: 2, image: '/images/placeholder-camera.svg' },
+    ],
+    hub_tegels: [
+      { titel: 'Canon camera\u2019s', sub: '184 modellen', href: '/landing/canon-cameras', image: '/images/canon-r5.jpg' },
+      { titel: 'Lenzen voor Canon', sub: '1.173 lenzen \u00b7 ook Sigma & Tamron', href: '/landing/canon-lenzen', image: '/images/canon-rf-24-70mm-f28-l-is-usm.jpg' },
+      { titel: 'Canon accessoires', sub: 'grips, laders, converters', href: '#', image: '/images/upsell-battery.png' },
+      { titel: 'Canon verkopen of inruilen', sub: 'direct een bod', href: '/trade-in/v3', image: '/images/trade-in-hero.jpg' },
     ],
   },
 };

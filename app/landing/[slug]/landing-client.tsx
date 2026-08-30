@@ -123,6 +123,27 @@ export default function LandingClient({ content: c }: { content: LandingContent 
         )}
       </div>
 
+      {/* Hub-tegels (merkpagina als shooter-hub) — zelfde tegelstijl als de categoriepagina */}
+      {c.hub_tegels && c.hub_tegels.length > 0 && (
+        <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '4px 0', marginBottom: 28 }}>
+          {c.hub_tegels.map(t => (
+            <Link key={t.titel} href={t.href} style={{
+              flex: '0 0 210px', borderRadius: 12, border: '1.5px solid var(--border)', overflow: 'hidden',
+              textDecoration: 'none', color: 'var(--text)', background: '#fff',
+              display: 'flex', flexDirection: 'column',
+            }}>
+              <div style={{ height: 110, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <img src={t.image} alt="" style={{ maxWidth: '84%', maxHeight: '92%', objectFit: 'contain' }} />
+              </div>
+              <div style={{ padding: '10px 14px 12px', borderTop: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 14, fontWeight: 700 }}>{t.titel}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{t.sub}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
       {/* Filtergrid — zelfde als de categoriepagina */}
       <div ref={filterBarRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8, marginBottom: 12 }}>
         {c.filters.map(f => {
