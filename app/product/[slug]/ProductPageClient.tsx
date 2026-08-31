@@ -324,7 +324,7 @@ export default function ProductPage() {
         <h1 className="section__title" style={{ marginBottom: 4 }}>{product.title}</h1>
         {!isOos && product.variants.length > 0 && (
           <p style={{ fontSize: 15, color: 'var(--text-sec)', margin: 0 }}>
-            {product.variants.length} available used from {priceRangeStr}.
+            {product.variants.length} op voorraad &middot; vanaf &euro;&nbsp;{minPrice.toLocaleString('nl-NL')}
           </p>
         )}
       </div>
@@ -396,24 +396,6 @@ export default function ProductPage() {
         /*  IN STOCK VIEW                                               */
         /* ============================================================ */
         <>
-          {/* 3. Create Alert box */}
-          <div style={{ background: 'var(--surface)', borderRadius: 'var(--rl)', padding: '20px 24px', marginBottom: 24, display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-            <svg width="22" height="22" fill="none" stroke="var(--accent)" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0, marginTop: 1 }}>
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
-            <p style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.6, margin: 0 }}>
-              Can&apos;t find what you&apos;re looking for?{' '}
-              <button
-                onClick={() => { setShowAlertModal(true); setAlertSuccess(false); }}
-                style={{ background: 'none', border: 'none', color: 'var(--accent)', fontWeight: 700, cursor: 'pointer', padding: 0, fontSize: 'inherit', fontFamily: 'inherit', textDecoration: 'underline' }}
-              >
-                Create an alert
-              </button>{' '}
-              and choose your preferred condition and maximum shutter count — we&apos;ll email you when a matching {product.title} arrives.
-            </p>
-          </div>
-
           {/* Alert modal */}
           {showAlertModal && (
             <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={() => setShowAlertModal(false)}>
@@ -644,6 +626,24 @@ export default function ProductPage() {
                 </div>
               );
             })}
+          </div>
+
+          {/* 6b. "Niet gevonden wat je zocht?" — melding instellen (onder de varianten) */}
+          <div style={{ background: 'var(--surface)', borderRadius: 'var(--rl)', padding: '20px 24px', marginBottom: 48, marginTop: -16, display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+            <svg width="22" height="22" fill="none" stroke="var(--accent)" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0, marginTop: 1 }}>
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <p style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.6, margin: 0 }}>
+              Niet gevonden wat je zocht?{' '}
+              <button
+                onClick={() => { setShowAlertModal(true); setAlertSuccess(false); }}
+                style={{ background: 'none', border: 'none', color: 'var(--accent)', fontWeight: 700, cursor: 'pointer', padding: 0, fontSize: 'inherit', fontFamily: 'inherit', textDecoration: 'underline' }}
+              >
+                Stel een melding in
+              </button>{' '}
+              en kies je gewenste conditie en maximale sluiterstand &mdash; we mailen je zodra er een passende {product.title} binnenkomt.
+            </p>
           </div>
 
           {/* Quick View modal for variant */}
