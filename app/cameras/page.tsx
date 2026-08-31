@@ -120,6 +120,8 @@ const ArrowRight = () => (
 export default function CamerasPage() {
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
   const [openFilter, setOpenFilter] = useState<string | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetGroup, setSheetGroup] = useState<string | null>(null);
   const filterBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -378,8 +380,89 @@ export default function CamerasPage() {
         </button>
       </div>
 
-      {/* Filter grid (MPB-style: equal width, grid rows) */}
-      <div ref={filterBarRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8, marginBottom: 12 }}>
+      <style>{`
+        .filter-desktop{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px}
+        .filter-mobile{display:none}
+        @media (max-width:640px){
+          .filter-desktop{display:none}
+          .filter-mobile{display:flex;gap:8px;align-items:center;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:12px;padding-bottom:2px}
+          .filter-mobile::-webkit-scrollbar{display:none}
+        }
+        .fsheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:flex;align-items:flex-end}
+        .fsheet{background:var(--bg);border-radius:16px 16px 0 0;max-height:85vh;width:100%;display:flex;flex-direction:column}
+      `}</style>
+      {/* Mobiel: één rij — Filters-knop + horizontaal scrollbare topfilter-chips */}
+      <div className="filter-mobile">
+        <button
+          onClick={() => { setSheetGroup(null); setSheetOpen(true); }}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', borderRadius: 50, border: '1.5px solid var(--text)', background: 'var(--text)', color: 'var(--bg)', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}
+        >
+          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+          Filters{totalActiveFilters > 0 ? ` (${totalActiveFilters})` : ''}
+        </button>
+        {['Price', 'Brand', 'Camera type', 'Use case'].map(f => {
+          const n = filterStateMap[f]?.selected.length || 0;
+          return (
+            <button
+              key={f}
+              onClick={() => { setSheetGroup(f); setSheetOpen(true); }}
+              style={{ padding: '9px 14px', borderRadius: 50, border: n > 0 ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: n > 0 ? 'rgba(249,115,22,0.06)' : 'var(--bg)', color: 'var(--text)', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0 }}
+            >
+              {f}{n > 0 ? ` (${n})` : ''} ▾
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Mobiel: fullscreen filter-sheet */}
+      {sheetOpen && (
+        <div className="fsheet-overlay" onClick={() => setSheetOpen(false)}>
+          <div className="fsheet" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+              <strong style={{ fontSize: 16 }}>Filters</strong>
+              <button onClick={() => setSheetOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text)' }}>
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div style={{ overflowY: 'auto', flex: 1, padding: '4px 20px' }}>
+              {allFilters.map(f => {
+                const open = sheetGroup === f;
+                const n = filterStateMap[f]?.selected.length || 0;
+                return (
+                  <div key={f} style={{ borderBottom: '1px solid var(--border)' }}>
+                    <button onClick={() => setSheetGroup(open ? null : f)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '14px 0', background: 'none', border: 'none', fontSize: 14, fontWeight: 600, color: 'var(--text)', cursor: 'pointer' }}>
+                      <span>{f}{n > 0 ? ` (${n})` : ''}</span>
+                      <span style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .15s' }}>▾</span>
+                    </button>
+                    {open && filterOptions[f] && (
+                      <div style={{ paddingBottom: 12 }}>
+                        {filterOptions[f].map(option => (
+                          <label key={option} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', fontSize: 14, color: 'var(--text)', cursor: 'pointer' }}>
+                            <input type="checkbox" checked={filterStateMap[f].selected.includes(option)} onChange={() => { filterStateMap[f].toggle(option); setCurrentPage(1); }} style={{ accentColor: 'var(--accent)', width: 16, height: 16 }} /> {option}
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ padding: '12px 20px 20px', borderTop: '1px solid var(--border)', display: 'flex', gap: 10 }}>
+              {totalActiveFilters > 0 && (
+                <button onClick={() => { clearAllFilters(); setCurrentPage(1); }} style={{ flex: '0 0 auto', padding: '13px 16px', borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+                  Wis alles
+                </button>
+              )}
+              <button onClick={() => setSheetOpen(false)} className="btn btn--primary" style={{ flex: 1, justifyContent: 'center', padding: '13px 16px', fontSize: 14 }}>
+                Toon {filteredSortedCameras.length} resultaten
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Filter grid (MPB-style: equal width, grid rows) — desktop */}
+      <div ref={filterBarRef} className="filter-desktop">
         {allFilters.map(f => {
           const activeCount = filterStateMap[f].selected.length;
           const hasActive = activeCount > 0;
