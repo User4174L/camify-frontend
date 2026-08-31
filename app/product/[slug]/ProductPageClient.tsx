@@ -348,13 +348,28 @@ export default function ProductPage() {
               <span style={{ position: 'absolute', bottom: 16, right: 16, background: '#1f2937', color: '#fff', padding: '6px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600 }}>Out of stock</span>
             </div>
 
-            {/* Notify form */}
-            <div>
+            {/* Notify form + inruil-CTA */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ background: '#f9fafb', borderRadius: 12, padding: 32 }}>
                 <StockNotifier
                   productTitle={product.title}
                   usageMetric={usageMetricForCategory(product.category)}
                 />
+              </div>
+
+              {/* Inruil-CTA: de andere helft van het verhaal — wij kopen jouw exemplaar in */}
+              <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 12, padding: 28 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                  <svg width="20" height="20" fill="none" stroke="#f97316" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4 4 4"/><path d="M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>Heb je een {product.title}?</h3>
+                </div>
+                <p style={{ fontSize: 14, color: 'var(--text-sec)', margin: '0 0 16px' }}>
+                  Wij kopen jouw exemplaar graag in. Vraag vrijblijvend een bod aan — je ontvangt binnen 2 werkdagen een voorstel.
+                </p>
+                <a href={`/inruilen?model=${encodeURIComponent(product.title)}`} className="btn btn--primary" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                  Verkoop &apos;m aan ons
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                </a>
               </div>
             </div>
           </div>
