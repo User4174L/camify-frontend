@@ -189,10 +189,7 @@ export default function ProductCard({
         </div>
 
         {/* Price range */}
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>
-          <span style={{ fontSize: 13, fontWeight: 400, color: '#6b7280', marginRight: 4 }}>
-            From
-          </span>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#111', whiteSpace: 'nowrap' }}>
           &euro;{formatPrice(minPrice)}
           {hasRange && (
             <>
