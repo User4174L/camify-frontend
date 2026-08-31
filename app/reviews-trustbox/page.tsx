@@ -18,13 +18,21 @@ import {
 //   De pagina bestaat dus voor de footerlink en voor de twijfelaar die vanuit een
 //   productpagina doorklikt — niet om te ranken.
 //
-// De enige getallen die hier staan zijn getallen die niet verouderen: "ruim 3.600"
-// (werkelijk 3.684) groeit alleen maar, "nergens lager dan 9,4" is de laagste score
-// per platform (WebwinkelKeur, staat stil sinds nov 2024), en de 9,6 in het kopblok
-// is ons eigen gewogen gemiddelde (9,64). Dat kruipt eerder omhoog dan omlaag: de
-// enige bron die nog groeit is Trustpilot, en die staat op 9,8.
+// Alle getallen staan als ondergrens, zodat de tekst niet elk kwartaal veroudert
+// (besluit Bart 31-08-2026: "moet niet een tekst zijn die snel verandert").
+// "Meer dan 3.500" (werkelijk 3.684) groeit alleen maar, "onder de 9" heeft ruime
+// marge op de laagste platformscore, en de 9,6 in het kopblok is ons eigen gewogen
+// gemiddelde (9,64) — daar zouden ~44 opeenvolgende 1-ster-reviews voor nodig zijn
+// om naar 9,5 te zakken. Trusted Shops telt mee (besluit Bart 31-08).
 // NIET de 9,7 gebruiken — dat is WebwinkelKeurs optelsom, die weegt anders en is
 // niet van ons; als wij zeggen dat wij zelf optellen, moet het cijfer dat ook zijn.
+//
+// Tekst ingekort 31-08-2026 op verzoek Bart: te veel uitleg, te weinig ecom.
+// Eruit: de intro over 2015/vertrouwen, de verantwoording waarom er geen cijfer per
+// platform staat, en de redeneringen onder de vier principes. De carrousel staat nu
+// direct onder het scoreblok. Wat blijft is wettelijk verplicht: de herkomst van het
+// verzamelcijfer (niet-misleidend + Trustpilot-merkregel) en hoe wij borgen dat de
+// beoordelingen echt zijn (Omnibus-richtlijn). Bron: 13-reviews.nl.md in OneDrive.
 //
 // LET OP bij de carrousel: alle vijf de sterrenvinkjes aan laten (data-stars).
 // Alleen positieve reviews tonen is een misleidende handelspraktijk (zwarte lijst
@@ -39,58 +47,59 @@ const platforms: { name: string; Logo: (p: { size?: number }) => React.JSX.Eleme
     name: 'WebwinkelKeur',
     Logo: WebwinkelKeurLogo,
     href: 'https://www.webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043/reviews',
-    note: 'Het keurmerk waar wij sinds 2015 bij aangesloten zijn. Zij tellen ook de andere bronnen bij elkaar op.',
+    note: 'Ons keurmerk sinds 2015',
   },
   {
     name: 'Trustpilot',
     Logo: TrustpilotLogo,
     href: 'https://nl.trustpilot.com/review/www.camera-tweedehands.nl',
-    note: 'Hier komen op dit moment de meeste nieuwe beoordelingen binnen.',
+    note: 'De meeste nieuwe beoordelingen',
   },
   {
     name: 'Trusted Shops',
     Logo: TrustedShopsLogo,
     href: 'https://www.webwinkelkeur.nl/webshop/Camera-tweedehands-nl_4043',
-    note: 'Opgebouwd in de jaren dat wij daar aangesloten waren.',
+    note: 'Opgebouwd in de jaren dat wij daar aangesloten waren',
   },
   {
     name: 'Google',
     Logo: GoogleLogo,
     href: 'https://www.google.com/search?q=Camera-Tweedehands.nl+Geldermalsen',
-    note: 'Vooral van mensen die in de showroom in Geldermalsen zijn geweest.',
+    note: 'Vooral van bezoekers aan onze showroom in Geldermalsen',
   },
   {
     name: 'Facebook',
     Logo: FacebookLogo,
     href: 'https://www.facebook.com/cameratweedehands',
-    note: 'Waar ruim 5.100 mensen ons volgen.',
+    note: 'Meer dan 5.000 volgers',
   },
 ];
 
 const principles: { title: string; body: string }[] = [
   {
-    title: 'Wij vragen het aan iedereen, niet aan een selectie',
-    body: 'Na elke afgeronde bestelling gaat er automatisch een uitnodiging uit. Ook naar mensen die iets aan óns hebben verkocht of ingeruild — juist die ervaring willen we terugzien, want daar zit het meeste vertrouwen in.',
+    title: 'Iedereen krijgt een uitnodiging',
+    body: 'Automatisch na elke afgeronde bestelling — ook wie iets aan óns verkocht of inruilde.',
   },
   {
-    title: 'Wij kunnen een beoordeling niet weghalen of aanpassen',
-    body: 'Ze staan bij de platformen zelf. Wij hebben geen knop om er eentje te laten verdwijnen, en dat is de enige reden waarom een cijfer iets waard is.',
+    title: 'Wij kunnen niets weghalen of aanpassen',
+    body: 'De beoordelingen staan bij de platformen zelf.',
   },
   {
-    title: 'Wij tonen ze ongefilterd',
-    body: 'Hieronder staan onze meest recente beoordelingen, in de volgorde waarin ze binnenkwamen — niet de mooiste die we konden vinden. Een winkel die zelf bepaalt welke beoordelingen zichtbaar worden, kan alleen maar goede laten zien. Dan zegt een tien niets meer.',
+    title: 'Je ziet ze ongefilterd',
+    body: 'Op volgorde van binnenkomst. Niet de mooiste die we konden vinden.',
   },
   {
-    title: 'Wij reageren, ook als het minder goed ging',
-    body: 'Op elke beoordeling van drie sterren of lager reageren wij. Meestal blijkt er iets opgelost te kunnen worden.',
+    title: 'Op drie sterren of lager reageren wij altijd',
+    body: 'Meestal is er iets op te lossen.',
   },
 ];
 
 const readMore: { label: string; href: string; what: string }[] = [
-  { label: 'productcondities', href: '/product-conditions', what: 'Wat elke conditie precies betekent' },
-  { label: 'hoe het werkt', href: '/how-it-works', what: 'Hoe wij toestellen controleren en beoordelen' },
-  { label: 'verzenden en retourneren', href: '/shipping-returns', what: 'Retourneren en verzenden' },
-  { label: 'garantie en reparatie', href: '/warranty-repair', what: 'Garantie en reparatie' },
+  { label: 'Productcondities', href: '/product-conditions', what: 'wat elke conditie betekent' },
+  { label: 'Hoe het werkt', href: '/how-it-works', what: 'hoe wij toestellen controleren' },
+  { label: 'Verzenden en retourneren', href: '/shipping-returns', what: '' },
+  { label: 'Garantie en reparatie', href: '/warranty-repair', what: '' },
+  { label: 'Veelgestelde vragen', href: '/faq', what: '' },
 ];
 
 const h2: React.CSSProperties = { fontSize: 20, fontWeight: 700, margin: '38px 0 10px' };
@@ -104,7 +113,6 @@ export default function ReviewsTrustboxPage() {
       title="Beoordelingen"
       breadcrumb="Beoordelingen"
       wide
-      intro="Sinds 2015 verzamelen wij onze beoordelingen bij onafhankelijke platformen. Niet omdat het moet, maar omdat tweedehands kopen om vertrouwen draait — en vertrouwen laat je zien met cijfers die iemand anders bijhoudt."
     >
       {/* Interne werkbalk — hoort niet op de echte pagina. */}
       <div style={{ background: '#FFF4E8', border: '1.5px solid #F5D9BC', borderRadius: 12, padding: '14px 18px', margin: '0 0 22px', fontSize: 13.5, lineHeight: 1.6, color: '#6B4A2B' }}>
@@ -135,20 +143,33 @@ export default function ReviewsTrustboxPage() {
         </div>
         <div style={{ flex: '1 1 260px', minWidth: 0 }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: '#fff', lineHeight: 1.45 }}>
-            Ons gemiddelde over ruim 3.600 beoordelingen
+            Ons gemiddelde over meer dan 3.500 beoordelingen op vijf onafhankelijke platformen
           </div>
           <div style={{ fontSize: 13.5, color: 'rgba(255,255,255,.72)', marginTop: 8, lineHeight: 1.6 }}>
-            Verzameld op vijf onafhankelijke platformen, gewogen naar het aantal beoordelingen per
-            platform en omgerekend naar een schaal van 10. Wij tellen ze zelf op — de losse cijfers
-            staan hieronder bij de bron.
+            Ons eigen gemiddelde, gewogen naar het aantal beoordelingen per platform en omgerekend
+            naar een schaal van 10 — niet de score van één platform.
           </div>
         </div>
       </div>
 
-      <h2 style={{ ...h2, marginTop: 0 }}>Waar je ons kunt nalezen</h2>
+      <h2 style={{ ...h2, marginTop: 0 }}>Wat klanten schrijven</h2>
       <p style={p}>
-        Op geen van de vijf platformen staan wij lager dan een <strong>9,4</strong>. Klik door naar de
-        bron voor de actuele stand en de beoordelingen zelf.
+        Rechtstreeks van Trustpilot, de meest recente eerst — van één tot vijf sterren.
+      </p>
+      <div style={{ margin: '0 0 6px' }}>
+        <TrustpilotWidget
+          templateId={TP.carousel}
+          token={TP_TOKEN.carousel}
+          height="160px"
+          stars="1,2,3,4,5"
+          reviewLanguages="nl"
+        />
+      </div>
+
+      <h2 style={h2}>Waar je ons kunt nalezen</h2>
+      <p style={p}>
+        Op geen van deze platformen staan wij onder de <strong>9</strong>. Klik door voor de actuele
+        stand en alle beoordelingen.
       </p>
 
       <div style={{ background: '#fff', border: '1.5px solid #EEEEF2', borderRadius: 16, padding: '4px 22px', margin: '0 0 10px' }}>
@@ -179,13 +200,8 @@ export default function ReviewsTrustboxPage() {
           </a>
         ))}
       </div>
-      <p style={{ fontSize: 12.5, color: '#8A8C99', margin: '0 0 8px', lineHeight: 1.6 }}>
-        Per platform zetten wij er geen cijfer bij. Die lopen niet gelijk op — het ene platform krijgt
-        er dagelijks beoordelingen bij, het andere al een tijd niet — en een getal dat wij hier intypen
-        is morgen alweer achterhaald. Bij de bron staat altijd de actuele stand.
-      </p>
 
-      <h2 style={h2}>Hoe wij met beoordelingen omgaan</h2>
+      <h2 style={h2}>Hoe het bij ons werkt</h2>
       <div style={{ display: 'grid', gap: 12, margin: '0 0 6px' }}>
         {principles.map(pr => (
           <div
@@ -200,50 +216,31 @@ export default function ReviewsTrustboxPage() {
         ))}
       </div>
 
-      <h2 style={h2}>Wat klanten schrijven</h2>
-      <p style={p}>
-        Rechtstreeks van Trustpilot, de meest recente eerst. Alle beoordelingen tellen mee, van één tot
-        vijf sterren.
-      </p>
-      <div style={{ margin: '0 0 6px' }}>
-        <TrustpilotWidget
-          templateId={TP.carousel}
-          token={TP_TOKEN.carousel}
-          height="160px"
-          stars="1,2,3,4,5"
-          reviewLanguages="nl"
-        />
-      </div>
-
       <h2 style={h2}>Waar de beoordelingen over gaan</h2>
       <p style={p}>
-        Bij tweedehands apparatuur zitten mensen met een paar vaste vragen. Klopt de conditie die erbij
-        staat? Wat gebeurt er als er iets misgaat? Kan ik het terugsturen? Krijg ik een eerlijke prijs
-        als ik zelf iets verkoop? Mag ik eerst langskomen om te kijken?
+        Klopt de conditie? Wat als er iets misgaat? Kan ik het terugsturen? Krijg ik een eerlijke prijs
+        voor mijn eigen spullen? Hoe wij dat geregeld hebben:
       </p>
-      <p style={p}>
-        Dat zijn ook de onderwerpen die in de beoordelingen het vaakst terugkomen. Wil je weten hoe wij
-        het zelf geregeld hebben, dan staat dat hier:
-      </p>
-      <ul style={{ ...p, paddingLeft: 20 }}>
+      {/* Tailwind v4 preflight zet `ul { list-style: none }` — de bolletjes moeten
+          hier dus expliciet terug, anders leest de rij als losse regels. */}
+      <ul style={{ ...p, paddingLeft: 22, listStyleType: 'disc', listStylePosition: 'outside' }}>
         {readMore.map(r => (
           <li key={r.href} style={{ marginBottom: 6 }}>
-            {r.what}: <a href={r.href} style={{ color: 'var(--accent)' }}>{r.label}</a>
+            <a href={r.href} style={{ color: 'var(--accent)' }}>{r.label}</a>
+            {r.what ? ` — ${r.what}` : ''}
           </li>
         ))}
       </ul>
 
       <h2 style={h2}>Niet tevreden?</h2>
       <p style={p}>
-        Laat het ons dan eerst weten. Bel{' '}
-        <a href="tel:+31853018332" style={{ color: 'var(--accent)' }}>085 301 83 32</a> of mail naar{' '}
-        <a href="mailto:info@camera-tweedehands.nl" style={{ color: 'var(--accent)' }}>info@camera-tweedehands.nl</a>.
-        In verreweg de meeste gevallen lossen wij het op, en dat is voor iedereen prettiger dan een
-        beoordeling waar niets mee gebeurt.
+        Bel{' '}
+        <a href="tel:+31853018332" style={{ color: 'var(--accent)' }}>085 301 83 32</a> of mail{' '}
+        <a href="mailto:info@camera-tweedehands.nl" style={{ color: 'var(--accent)' }}>info@camera-tweedehands.nl</a>{' '}
+        — in verreweg de meeste gevallen lossen wij het op.
       </p>
       <p style={{ ...p, marginBottom: 0 }}>
-        Komen wij er samen niet uit, dan kun je terecht bij WebwinkelKeur. Zij bemiddelen onafhankelijk
-        en wij zijn daar bij aangesloten. Zie{' '}
+        Komen we er samen niet uit, dan bemiddelt WebwinkelKeur onafhankelijk. Zie{' '}
         <a href="/customer-service" style={{ color: 'var(--accent)' }}>klantenservice</a> voor de procedure.
       </p>
     </SimplePage>
