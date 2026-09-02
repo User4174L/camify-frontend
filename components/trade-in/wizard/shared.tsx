@@ -387,7 +387,9 @@ export function Page({ children, width = 880 }: { children: React.ReactNode; wid
       <div style={{ maxWidth: width, margin: '0 auto', padding: '0 24px' }}>{children}</div>
       <style>{`
         .tiw-page{padding:32px 0 88px}
-        @media(max-width:760px){.tiw-page{padding:8px 0 150px}}
+        /* Bodem ruim nemen: de vaste balk is met een omlopende tekstregel + safe-area
+           zo'n 170px hoog — met 150px kon de add-knop er nooit volledig bovenuit. */
+        @media(max-width:760px){.tiw-page{padding:8px 0 230px}}
         .tiw-add{transition:background .15s ease,box-shadow .15s ease,transform .15s ease}
         .tiw-add:not(:disabled):hover{background:#FFF4EE;box-shadow:0 5px 16px rgba(232,105,42,.2);transform:translateY(-1px)}
       `}</style>

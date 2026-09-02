@@ -114,10 +114,8 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
 
       <Page>
         <BackLink href={base(variant)} label="Terug naar je items" />
-        <PageTitle
-          title={picks.length ? 'Wat je meeneemt' : 'Wil je er iets voor terug?'}
-          sub={picks.length ? undefined : hasBid(variant) ? 'We verrekenen het direct met je bod.' : 'We verrekenen het met het bod dat je krijgt.'}
-        />
+        {/* Alleen de vraag; de twee kaarten zeggen de rest. */}
+        <PageTitle title={picks.length ? 'Wat je meeneemt' : 'Wil je er iets voor terug?'} />
 
         {/* Keuze — verdwijnt zodra er iets gekozen is: de vraag is dan beantwoord
             en de ruimte hoort bij je lijst en de knop om nog iets toe te voegen. */}
@@ -129,7 +127,6 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
             </span>
             <span className="tiw-choice-text">
               <strong>Ja, kies iets uit onze voorraad</strong>
-              <span>Ruim 2.000 gecontroleerde items, met garantie.</span>
             </span>
             <span className="tiw-choice-check" aria-hidden="true">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
@@ -142,7 +139,6 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
             </span>
             <span className="tiw-choice-text">
               <strong>Nee, ik wil alleen verkopen</strong>
-              <span>Je krijgt het bedrag gewoon op je rekening.</span>
             </span>
             <span className="tiw-choice-check" aria-hidden="true">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
@@ -150,12 +146,6 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
           </button>
           )}
         </div>
-        )}
-
-        {wants === null && (
-          <p style={{ margin: '14px 0 0', fontSize: 13, color: C.sec, lineHeight: 1.6 }}>
-            Je zit nergens aan vast: we leggen het voor je apart en je beslist pas als je het bod accepteert.
-          </p>
         )}
 
         {/* Gekozen items */}
@@ -256,7 +246,7 @@ export default function BuyScreen({ variant }: { variant: Variant }) {
           ? <><strong style={{ color: C.text }}>{picks.length} item{picks.length > 1 ? 's' : ''}</strong> gekozen — {fmt(buyTotal)} {hasBid(variant) ? 'wordt verrekend met je bod' : 'verrekenen we met het bod dat je krijgt'}.</>
           : wants === false ? 'Prima — je krijgt het bedrag op je rekening.'
             : wants ? 'Je kunt dit later ook nog toevoegen.'
-            : 'Kies hierboven of je iets wilt terugkopen.'}
+            : 'Maak eerst je keuze hierboven.'}
         cta="Verder"
         disabled={wants === null}
         onClick={() => router.push(`${base(variant)}/gegevens`)}

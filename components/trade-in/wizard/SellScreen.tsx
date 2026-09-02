@@ -207,7 +207,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
         />
 
         {/* Toegevoegde items — scrollMarginBottom houdt de add-knop boven de vaste onderbalk */}
-        <div ref={listRef} style={{ scrollMarginBottom: 130 }}>
+        <div ref={listRef} style={{ scrollMarginBottom: 200 }}>
         {visibleItems.map(it => (
           <div key={it.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', marginBottom: 10 }}>
             <Thumb category={it.category} name={it.name} />
