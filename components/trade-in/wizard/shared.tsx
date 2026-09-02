@@ -186,7 +186,9 @@ export function scrollIntoViewSoon(target: HTMLElement | null | React.RefObject<
     const el = target && 'current' in target ? target.current : target;
     // 'center' op een lijst die hoger is dan het scherm scrollt per saldo niets;
     // geef dan 'end' mee zodat het net toegevoegde item onderaan in beeld komt.
-    el?.scrollIntoView({ behavior: 'smooth', block });
+    // Geen expliciete behavior: html heeft scroll-behavior:smooth en Chrome laat
+    // een expliciete {behavior:'smooth'} hier stilletjes vallen — de CSS niet.
+    el?.scrollIntoView({ block });
   }, 80);
 }
 
