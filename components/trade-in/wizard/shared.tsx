@@ -33,6 +33,8 @@ export interface SellItem {
   category: string; // camera | lens | accessory
   condition: string;
   shutter?: string;
+  /** Vrije toelichting van de klant, bv. "autofocus werkt niet" — gaat mee naar de expert. */
+  note?: string;
 }
 export interface BuyPick extends BuyVariant { name: string; productId: string }
 export interface Contact {
@@ -175,14 +177,16 @@ export function centerOnFocus(e: React.FocusEvent<HTMLElement>) {
 
 /** Scroll een element in beeld nádat de nieuwe layout staat. Eén requestAnimationFrame
  *  is te vroeg: de kaart is dan nog niet weg en je schiet voorbij het doel. */
-export function scrollIntoViewSoon(target: HTMLElement | null | React.RefObject<HTMLElement | null>) {
+export function scrollIntoViewSoon(target: HTMLElement | null | React.RefObject<HTMLElement | null>, block: ScrollLogicalPosition = 'center') {
   // Wachten tot de nieuwe layout staat én het zoekvenster de scroll-lock op body
   // heeft losgelaten; anders wordt de scroll genegeerd.
   setTimeout(() => {
     // Ref pas hier uitlezen: het doel bestaat vaak nog niet op het moment van aanroepen
     // (de knop verschijnt juist door dezelfde state-wijziging).
     const el = target && 'current' in target ? target.current : target;
-    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // 'center' op een lijst die hoger is dan het scherm scrollt per saldo niets;
+    // geef dan 'end' mee zodat het net toegevoegde item onderaan in beeld komt.
+    el?.scrollIntoView({ behavior: 'smooth', block });
   }, 80);
 }
 
@@ -392,7 +396,8 @@ export function Page({ children, width = 880 }: { children: React.ReactNode; wid
 export function PageTitle({ title, sub }: { title: string; sub?: string }) {
   return (
     <>
-      <h2 className="tiw-page-title">{title}</h2>
+      {/* Zonder subregel levert de titel zelf de ruimte naar de inhoud eronder. */}
+      <h2 className="tiw-page-title" style={sub ? undefined : { marginBottom: 18 }}>{title}</h2>
       {sub && <p className="tiw-page-sub">{sub}</p>}
       <style>{`
         .tiw-page-title{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:10px 0 0;color:${C.text}}

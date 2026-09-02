@@ -33,6 +33,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   const [picked, setPicked] = useState<{ name: string; category: string } | null>(null);
   const [condition, setCondition] = useState('');
   const [shutter, setShutter] = useState<string | undefined>(undefined);
+  const [note, setNote] = useState('');
   const [showHelp, setShowHelp] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [shutterHelp, setShutterHelp] = useState(false);
@@ -48,7 +49,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   useEffect(() => {
     if (!ready || !state.editingId) return;
     const it = state.items.find(i => i.id === state.editingId);
-    if (it) { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); }
+    if (it) { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setNote(it.note ?? ''); }
     update({ editingId: null });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
@@ -76,22 +77,24 @@ export default function SellScreen({ variant }: { variant: Variant }) {
   }, [q]);
 
   const pick = (p: { name: string; category: string }) => {
-    setPicked(p); setQ(''); setShowResults(false); setCondition(''); setShowHelp(false);
+    setPicked(p); setQ(''); setShowResults(false); setCondition(''); setShowHelp(false); setNote('');
     // op mobiel blijft het venster open: conditie en shuttercount horen bij dezelfde handeling
     setSheet(isMobile);
     setShutter(p.category === 'camera' ? DEFAULT_SHUTTER : p.category === 'cinema' ? DEFAULT_HOURS : undefined);
   };
-  const reset = () => { setQ(''); setPicked(null); setCondition(''); setShutter(undefined); setShowHelp(false); setEditId(null); };
+  const reset = () => { setQ(''); setPicked(null); setCondition(''); setShutter(undefined); setNote(''); setShowHelp(false); setEditId(null); };
   const canAdd = !!picked && !!condition;
   const addItem = () => {
     if (!picked || !condition) return;
-    const item: SellItem = { id: editId ?? Date.now(), name: picked.name, category: picked.category, condition, shutter };
+    const item: SellItem = { id: editId ?? Date.now(), name: picked.name, category: picked.category, condition, shutter, note: note.trim() || undefined };
     update(s => ({ ...s, items: editId ? s.items.map(i => (i.id === editId ? item : i)) : [...s.items, item] }));
     reset(); setSearchOpen(false); setSheet(false);
-    scrollIntoViewSoon(listRef);
+    // Einde van de lijst: het nieuwe item én "+ Nog een product toevoegen" in beeld,
+    // vrij van de vaste onderbalk (scrollMarginBottom op de lijst).
+    scrollIntoViewSoon(listRef, 'end');
   };
   const removeItem = (id: number) => update(s => ({ ...s, items: s.items.filter(i => i.id !== id) }));
-  const editItem = (it: SellItem) => { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setQ(''); if (isMobile) setSheet(true); else window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const editItem = (it: SellItem) => { setEditId(it.id); setPicked({ name: it.name, category: it.category }); setCondition(it.condition); setShutter(it.shutter); setNote(it.note ?? ''); setQ(''); if (isMobile) setSheet(true); else window.scrollTo({ top: 0, behavior: 'smooth' }); };
   /** Tijdens het zoeken staat de resultatenlijst open; de onderbalk zou eroverheen vallen. */
   const zoekActief = !picked && showResults && q.trim().length >= 2;
   const hasWear = picked?.category === 'camera' || picked?.category === 'cinema';
@@ -155,6 +158,23 @@ export default function SellScreen({ variant }: { variant: Variant }) {
               </div>
             )}
 
+            {/* Vrije toelichting: defecten of afwijkingen die de conditieknoppen niet
+                dekken ("AF werkt niet") horen bij het item, niet pas in een mailwisseling. */}
+            <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 8 }}>
+                Iets bijzonders? <span style={{ fontWeight: 500, color: C.sec }}>(optioneel)</span>
+              </label>
+              <textarea
+                value={note}
+                onChange={e => setNote(e.target.value)}
+                onFocus={centerOnFocus}
+                rows={2}
+                maxLength={300}
+                placeholder="Bijv. autofocus werkt niet, of er zit een kras op het glas."
+                style={{ ...input, fontSize: 14, resize: 'vertical', minHeight: 56 }}
+              />
+            </div>
+
     </>
   );
 
@@ -179,15 +199,15 @@ export default function SellScreen({ variant }: { variant: Variant }) {
       <ShutterHelp open={shutterHelp} onClose={() => setShutterHelp(false)} />
 
       <Page>
+        {/* Variant 2 zonder uitlegregel: de kop en het zoekveld zeggen al wat je moet doen.
+            Variant 3 houdt hem — "hoe preciezer, hoe scherper" stuurt op eerlijk invullen. */}
         <PageTitle
           title="Wat verkoop je?"
-          sub={hasBid(variant)
-            ? 'Zoek je product en kies de conditie. Hoe preciezer, hoe scherper het bod.'
-            : 'Zoek je product en kies de conditie. Onze experts bepalen daarna je persoonlijke bod.'}
+          sub={hasBid(variant) ? 'Zoek je product en kies de conditie. Hoe preciezer, hoe scherper het bod.' : undefined}
         />
 
-        {/* Toegevoegde items */}
-        <div ref={listRef}>
+        {/* Toegevoegde items — scrollMarginBottom houdt de add-knop boven de vaste onderbalk */}
+        <div ref={listRef} style={{ scrollMarginBottom: 130 }}>
         {visibleItems.map(it => (
           <div key={it.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px', marginBottom: 10 }}>
             <Thumb category={it.category} name={it.name} />
@@ -197,6 +217,7 @@ export default function SellScreen({ variant }: { variant: Variant }) {
                 Conditie: <strong style={{ color: C.text }}>{it.condition}</strong>
                 {wearLine(it)}
               </div>
+              {it.note && <div style={{ fontSize: 13, color: C.sec, marginTop: 2, fontStyle: 'italic' }}>“{it.note}”</div>}
             </div>
             <IconBtn kind="edit" title="Wijzigen" onClick={() => editItem(it)} />
             <IconBtn kind="trash" title="Verwijderen" onClick={() => removeItem(it.id)} />

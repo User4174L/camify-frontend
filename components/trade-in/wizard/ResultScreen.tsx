@@ -42,7 +42,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
   const [state, update, ready] = useWizardState(variant);
   const { items, picks, contact } = state;
   const [loading, setLoading] = useState(withBid);
-  const [openIncl, setOpenIncl] = useState<number | null>(null);
+  const [showIncl, setShowIncl] = useState(false);
   const [done, setDone] = useState(false);
 
   useEffect(() => { if (ready && (items.length === 0 || !contact.email)) router.replace(base(variant)); }, [ready, items.length, contact.email, router, variant]);
@@ -114,7 +114,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
             <BackLink href={`${base(variant)}/gegevens`} label="Terug naar je gegevens" />
             <PageTitle
               title={withBid ? 'Je bod' : 'Klopt dit zo?'}
-              sub={withBid ? undefined : 'Controleer je aanvraag en verstuur hem. Onze expert bepaalt daarna het bod — geen automaat, maar iemand die je spullen echt bekijkt.'}
+              sub={withBid ? undefined : 'Na versturen bepaalt onze expert je bod — geen automaat.'}
             />
 
             <div className="tiw-result-grid">
@@ -131,6 +131,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                           Conditie: <strong style={{ color: C.text }}>{it.condition}</strong>
                           {wearLine(it)}
                         </div>
+                        {it.note && <div style={{ fontSize: 13.5, color: C.sec, marginTop: 4, fontStyle: 'italic' }}>“{it.note}”</div>}
                       </div>
                       <div className="tiw-item-side">
                         {withBid && <ItemBid it={it} />}
@@ -140,23 +141,37 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
                         </div>
                       </div>
                     </div>
-                    <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.border}`, fontSize: 13.5, color: C.sec, lineHeight: 1.65 }}>
-                      <strong style={{ color: C.text }}>Let op:</strong> {withBid
-                        ? 'prijs is inclusief de originele accessoires en gaat uit van de door jou gekozen conditie.'
-                        : 'we gaan uit van de conditie die je hebt gekozen, inclusief de originele accessoires.'}
-                      <button onClick={() => setOpenIncl(openIncl === it.id ? null : it.id)} style={{ display: 'block', background: 'none', border: 'none', padding: 0, marginTop: 6, color: C.text, fontWeight: 700, fontSize: 13.5, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit' }}>
-                        Wat is inbegrepen? {openIncl === it.id ? '▴' : '▾'}
-                      </button>
-                      {openIncl === it.id && (
-                        <div style={{ marginTop: 10, padding: '14px 16px', background: C.accentSoft, borderRadius: 10, lineHeight: 1.7 }}>
-                          <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>We verwachten {withBid ? 'bij dit bod' : 'hierbij'}:</div>
-                          <ul style={{ margin: 0, paddingLeft: 18, listStyle: 'disc' }}>{(INCLUDED[it.category] ?? INCLUDED.accessory).map(a => <li key={a}>{a}</li>)}</ul>
-                          <div style={{ marginTop: 10 }}>Ontbreekt iets of wijkt de conditie/shuttercount af? Dan {withBid ? 'passen we het bod aan' : 'houden we daar rekening mee'} volgens onze vaste staffel. Jij beslist daarna — niet akkoord is gratis retour.</div>
-                        </div>
-                      )}
-                    </div>
                   </div>
                 ))}
+
+                {/* Eén keer onder de lijst; per item stond hier drie keer dezelfde tekst. */}
+                <div style={{ fontSize: 13.5, color: C.sec, lineHeight: 1.65, margin: '2px 4px 14px' }}>
+                  <strong style={{ color: C.text }}>Let op:</strong> {withBid
+                    ? 'de boden zijn inclusief de originele accessoires en gaan uit van de gekozen conditie.'
+                    : 'we gaan uit van de gekozen conditie, inclusief de originele accessoires.'}
+                  {' '}
+                  <button onClick={() => setShowIncl(v => !v)} style={{ background: 'none', border: 'none', padding: 0, color: C.text, fontWeight: 700, fontSize: 13.5, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit' }}>
+                    Wat is inbegrepen? {showIncl ? '▴' : '▾'}
+                  </button>
+                  {showIncl && (
+                    <div style={{ marginTop: 10, padding: '14px 16px', background: C.accentSoft, borderRadius: 10, lineHeight: 1.7 }}>
+                      <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>We verwachten {withBid ? 'bij dit bod' : 'hierbij'}:</div>
+                      {(() => {
+                        const cats = [...new Set(items.map(i => (INCLUDED[i.category] ? i.category : 'accessory')))];
+                        const naam: Record<string, string> = { camera: 'Camera', cinema: 'Camera', lens: 'Lens', accessory: 'Accessoire' };
+                        return cats.map(cat => (
+                          <div key={cat} style={{ marginBottom: 6 }}>
+                            {cats.length > 1 && <div style={{ fontWeight: 700, color: C.text, fontSize: 13 }}>{naam[cat] ?? 'Overig'}</div>}
+                            <ul style={{ margin: 0, paddingLeft: 18, listStyle: 'disc' }}>
+                              {INCLUDED[cat].map(a => <li key={a}>{a}</li>)}
+                            </ul>
+                          </div>
+                        ));
+                      })()}
+                      <div style={{ marginTop: 10 }}>Ontbreekt iets of wijkt de conditie/shuttercount af? Dan {withBid ? 'passen we het bod aan' : 'houden we daar rekening mee'} volgens onze vaste staffel. Jij beslist daarna — niet akkoord is gratis retour.</div>
+                    </div>
+                  )}
+                </div>
                 <div style={{ display: 'flex', justifyContent: 'center', margin: '6px 0 26px' }}>
                   <button onClick={() => router.push(base(variant))} className="tiw-add" style={btnGhost}>Nog een item verkopen <span style={{ fontSize: 18, lineHeight: 1 }}>+</span></button>
                 </div>
@@ -262,7 +277,7 @@ export default function ResultScreen({ variant }: { variant: Variant }) {
           width={1080}
           note={withBid
             ? <>Je bod van <strong style={{ color: C.text }}>{fmt(Math.abs(net))}</strong> staat 7 dagen vast — gratis verzekerd verzenden.</>
-            : <>Je aanvraag is <strong style={{ color: C.text }}>nog niet verstuurd</strong>. Klopt alles? Dan gaat hij naar onze expert.</>}
+            : <>Je aanvraag is <strong style={{ color: C.text }}>nog niet verstuurd</strong>.</>}
           cta={withBid ? 'Akkoord, regel de verzending' : 'Verstuur je aanvraag'}
           onClick={() => setDone(true)}
         />
